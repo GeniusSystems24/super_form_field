@@ -1,0 +1,22 @@
+name: super_form_field_example
+description: Runnable gallery for the Super Form Field Flutter package.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  super_form_field:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

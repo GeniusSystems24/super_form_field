@@ -1,0 +1,50 @@
+name: super_form_field
+description: >
+  Super Form Field — three GeniusLink design-system form fields for Flutter
+  (SuperTextFormField, SuperNumericFormField, SuperAttachmentFormField) built on
+  Clean Architecture with an MVC presentation split. Validation surfaces through
+  a suffix error badge (never inline), with light/dark and LTR/RTL parity.
+  Dependency-free — no platform plugins required.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo-mark.png
+    - assets/logo-mark-white.png
+  # Drop the brand .ttf files under assets/fonts/ to match the design system
+  # exactly. Families used by the kit:
+  #   Manrope (display) · Inter (body) · JetBrainsMono (mono) · NotoNaskhArabic
+  #
+  # fonts:
+  #   - family: Inter
+  #     fonts:
+  #       - asset: assets/fonts/Inter-Regular.ttf
+  #       - asset: assets/fonts/Inter-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Inter-Bold.ttf
+  #         weight: 700
+  #   - family: JetBrainsMono
+  #     fonts:
+  #       - asset: assets/fonts/JetBrainsMono-Regular.ttf
+  #   - family: Manrope
+  #     fonts:
+  #       - asset: assets/fonts/Manrope-Bold.ttf
+  #         weight: 700
+  #   - family: NotoNaskhArabic
+  #     fonts:
+  #       - asset: assets/fonts/NotoNaskhArabic-Regular.ttf
