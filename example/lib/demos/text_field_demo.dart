@@ -53,7 +53,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 ),
               ),
               const SizedBox(height: SuperTokens.space6),
-              const SuperTextFormField(
+              SuperTextFormField(
                 label: 'Reference',
                 placeholder: 'e.g. ACC-0042',
                 prefix: 'ACC-',
@@ -89,7 +89,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        SectionCard(
           title: 'Notes',
           subtitle: 'Add any notes about this account',
           marker: Marker.notes,

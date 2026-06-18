@@ -63,7 +63,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        SectionCard(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
           marker: Marker.ledger,
@@ -78,7 +78,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 allowNegative: false,
                 initialValue: 3.7512,
               ),
-              SizedBox(height: SuperTokens.space6),
+              const SizedBox(height: SuperTokens.space6),
               SuperNumericFormField(
                 label: 'Tax Rate',
                 suffix: '%',

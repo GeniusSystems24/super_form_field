@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart';
 
 import 'demos/attachment_field_demo.dart';
+import 'demos/date_field_demo.dart';
+import 'demos/demo_scaffold.dart';
 import 'demos/numeric_field_demo.dart';
 import 'demos/text_field_demo.dart';
 
@@ -82,6 +84,8 @@ class _Launcher extends StatelessWidget {
         Icons.pin_rounded, (_) => const NumericFieldDemo()),
     _DemoItem('Super Attachment Field', 'Drop zone · typed file list · validation',
         Icons.attach_file_rounded, (_) => const AttachmentFieldDemo()),
+    _DemoItem('Super Date Field', 'Masked YYYY-MM-DD · calendar popover · min/max',
+        Icons.event_rounded, (_) => const DateFieldDemo()),
   ];
 
   @override

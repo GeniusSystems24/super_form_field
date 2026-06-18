@@ -27,28 +27,11 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
   // A rotating set of sample files — including one oversized .exe to trip the
   // per-file size + accept errors.
   static const _samples = [
-    SuperFile(
-        id: '',
-        name: 'invoice-q4-2024.pdf',
-        size: 482318,
-        mimeType: 'application/pdf'),
-    SuperFile(
-        id: '',
-        name: 'bank-statement.xlsx',
-        size: 96204,
-        mimeType: 'application/vnd.ms-excel'),
-    SuperFile(
-        id: '', name: 'receipt-scan.png', size: 1284882, mimeType: 'image/png'),
-    SuperFile(
-        id: '',
-        name: 'vendor-contract.docx',
-        size: 245010,
-        mimeType: 'application/msword'),
-    SuperFile(
-        id: '',
-        name: 'archive.exe',
-        size: 28400000,
-        mimeType: 'application/octet-stream'),
+    SuperFile(id: '', name: 'invoice-q4-2024.pdf', size: 482318, mimeType: 'application/pdf'),
+    SuperFile(id: '', name: 'bank-statement.xlsx', size: 96204, mimeType: 'application/vnd.ms-excel'),
+    SuperFile(id: '', name: 'receipt-scan.png', size: 1284882, mimeType: 'image/png'),
+    SuperFile(id: '', name: 'vendor-contract.docx', size: 245010, mimeType: 'application/msword'),
+    SuperFile(id: '', name: 'archive.exe', size: 28400000, mimeType: 'application/octet-stream'),
   ];
 
   Future<List<SuperFile>> _pick() async {
@@ -66,8 +49,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
       children: [
         SectionCard(
           title: 'Supporting Documents',
-          subtitle:
-              'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
+          subtitle: 'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
           marker: Marker.notes,
           child: SuperAttachmentFormField(
             label: 'Attachments',
@@ -75,8 +57,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
             accept: '.pdf,.docx,.xlsx,.png,.jpg',
             maxSizeMB: 5,
             maxFiles: 4,
-            hint:
-                'Tap Browse to add a sample file. Try adding the 5th to trip the limit.',
+            hint: 'Tap Browse to add a sample file. Try adding the 5th to trip the limit.',
             onBrowse: _pick,
             forceError: _force,
           ),
@@ -98,9 +79,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: SuperTokens.accent,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(SuperTokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

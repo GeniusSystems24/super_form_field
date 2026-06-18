@@ -1,6 +1,6 @@
 # Super Form Field
 
-GeniusLink design-system **form fields for Flutter** — three precision inputs
+GeniusLink design-system **form fields for Flutter** — four precision inputs
 ported faithfully from the React toolkit, on one shared field foundation:
 
 | Widget | Purpose |
@@ -8,6 +8,7 @@ ported faithfully from the React toolkit, on one shared field foundation:
 | **`SuperTextFormField`** | Text · email · password · multiline · prefix/suffix · clear · character counter |
 | **`SuperNumericFormField`** | Grouped thousands while idle, raw digits while editing, clamp + round on blur, `+/-` stepper, unit adornments |
 | **`SuperAttachmentFormField`** | Drag-drop / browse drop zone + typed file list with per-file and field-level validation |
+| **`SuperDateFormField`** | Masked `YYYY-MM-DD` mono input + calendar popover, min/max bounds, ISO `DateTime?` value |
 
 Every field shares the GeniusLink look: a 4px-radius bordered control, electric
 royal-blue focus, JetBrains Mono numerics, and **validation that surfaces only
@@ -122,6 +123,40 @@ The field stays **picker-agnostic**: `onBrowse` (and `controller.add(...)` for
 OS drag-and-drop) hand files in as `SuperFile` metadata, so you choose
 `file_picker`, `image_picker`, a server record, or a test fixture.
 
+### Date
+
+The same input chrome the web ledger uses: a masked, mono `YYYY-MM-DD` text
+field with a trailing calendar trigger that opens a month-grid popover. The
+value is a date-only `DateTime?` (`null` when empty); typed text is masked live
+and a non-empty, incomplete entry raises the suffix badge on blur.
+
+```dart
+SuperDateFormField(
+  label: 'Posting Date',
+  required: true,
+  initialValue: DateTime(2024, 1, 1),
+  minDate: DateTime(2024, 1, 1),
+  maxDate: DateTime(2024, 12, 31),
+  onChanged: (DateTime? v) => print(v),
+);
+
+// type-only (no calendar) · clearable · custom invalid message
+SuperDateFormField(label: 'Due', calendar: false, clearable: true);
+SuperDateFormField(label: 'Date', invalidMessage: 'Use YYYY-MM-DD');
+```
+
+The field — and the popover — keep Western digits, mono, and LTR even in RTL
+layouts, matching the design system's international-accounting rule. Tap a day
+(or **Today**) to commit; out-of-range days are disabled. `minDate` / `maxDate`
+add `Must be on or after …` / `… or before …` validators automatically.
+
+**Keyboard stepping** (on by default while focused): `↑`/`↓` increment or
+decrement the segment the cursor is on — **year** (offset 0–4), **month** (5–7),
+or **day** (8–10). Day steps roll across months; month/year steps clamp the day
+to the new month's length; results clamp to `minDate`/`maxDate`. Move between
+segments with `←`/`→`. Disable with `keyboardShortcuts: false`, or drive it from
+a controller via `step.stepSegment(segment, ±1)` / `step.stepAtCursor(±1)`.
+
 ---
 
 ## Controllers (optional)
@@ -141,6 +176,10 @@ SuperNumericFormField(controller: amount, label: 'Amount', decimals: 2);
 final docs = SuperAttachmentFieldController();
 SuperAttachmentFormField(controller: docs, label: 'Docs');
 // later:  docs.files   docs.add([...])   docs.remove(id)   docs.setDragOver(true)
+
+final date = SuperDateFieldController(initialValue: DateTime(2024, 1, 1));
+SuperDateFormField(controller: date, label: 'Date');
+// later:  date.value   date.error   date.pick(DateTime)   date.setValue(null)   date.markTouched()
 ```
 
 ### Validation timing
@@ -180,8 +219,11 @@ lib/
       super_attachment_form_field/
         domain/         super_file · attachment_logic
         presentation/   super_attachment_field_controller · super_attachment_form_field
+      super_date_form_field/
+        domain/         date_logic                                       (pure Dart)
+        presentation/   super_date_field_controller · super_date_form_field · mini_calendar
   super_form_field.dart           public barrel
-example/                          runnable gallery (3 demos, theme + dir toggles)
+example/                          runnable gallery (4 demos, theme + dir toggles)
 test/                             pure-domain unit tests
 ```
 

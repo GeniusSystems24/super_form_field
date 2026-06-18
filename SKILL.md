@@ -3,15 +3,16 @@ name: super-form-field
 description: >
   Use the super_form_field Flutter package to build GeniusLink design-system
   form inputs — SuperTextFormField (text/email/password/multiline),
-  SuperNumericFormField (formatted numeric with stepper), and
-  SuperAttachmentFormField (file drop zone + list). Apply when a Flutter app
+  SuperNumericFormField (formatted numeric with stepper),
+  SuperAttachmentFormField (file drop zone + list), and SuperDateFormField
+  (masked YYYY-MM-DD + calendar popover). Apply when a Flutter app
   needs validated, themed (light/dark, LTR/RTL) form fields whose errors surface
   through a suffix badge tooltip rather than inline text.
 ---
 
 # Super Form Field — Agent Skill
 
-`super_form_field` ships three GeniusLink form inputs on one field foundation.
+`super_form_field` ships four GeniusLink form inputs on one field foundation.
 This skill tells you how to wire them correctly.
 
 ## When to use
@@ -41,7 +42,7 @@ This skill tells you how to wire them correctly.
 
 `import 'package:super_form_field/super_form_field.dart';` exposes everything.
 
-## The three fields
+## The four fields
 
 ### SuperTextFormField
 Key props: `label`, `required`, `placeholder`, `hint`, `type`
@@ -68,6 +69,22 @@ Key props: `label`, `required`, `accept` (`".pdf,.docx"` or `"image/*"`),
 **You must supply `onBrowse`** — the package has no picker. Build `SuperFile`
 from your picker result: `SuperFile(id, name, size, mimeType?, path?, bytes?)`.
 For OS drag-and-drop, call `controller.setDragOver(bool)` and `controller.add(files)`.
+
+### SuperDateFormField
+Key props: `label`, `required`, `placeholder` (default `YYYY-MM-DD`), `minDate`,
+`maxDate` (add bounds validators), `calendar` (show/hide the calendar popover —
+default `true`), `keyboardShortcuts` (arrow-key segment stepping — default
+`true`), `clearable`, `leadingIcon` (defaults to `SffIcons.calendar`,
+pass `null` to hide), `invalidMessage`, `validators` (`Validator<DateTime?>`),
+`onChanged` (`DateTime?`), `onValidity`, `forceError`, `arabic`, `density`,
+`disabled`, `readOnly`. Value is a date-only `DateTime?` (`null` = empty).
+Users type a masked `YYYY-MM-DD` value (masked live), pick from the
+month-grid popover (`Today` shortcut, out-of-range days disabled), **or** step
+with the arrows — `↑`/`↓` change the year/month/day the cursor is on (`←`/`→`
+move between segments). A non-empty, incomplete entry shows the badge on blur.
+Drive it from a `SuperDateFieldController` via `pick(DateTime)`,
+`setValue(DateTime?)`, `clear()`, `stepSegment(segment, ±1)`,
+`stepAtCursor(±1)`.
 
 ## Rules that matter
 

@@ -22,6 +22,9 @@ abstract final class SffIcons {
   static const IconData minus = Icons.remove_rounded;
   static const IconData uploadCloud = Icons.cloud_upload_outlined;
   static const IconData trash = Icons.delete_outline_rounded;
+  static const IconData calendar = Icons.calendar_today_outlined;
+  static const IconData chevronLeft = Icons.chevron_left_rounded;
+  static const IconData chevronRight = Icons.chevron_right_rounded;
 
   // ── file-type glyphs ──
   static const IconData image = Icons.image_outlined;
@@ -35,4 +38,5 @@ abstract final class SffIcons {
   static const IconData lock = Icons.lock_outline_rounded;
   static const IconData user = Icons.person_outline_rounded;
   static const IconData hash = Icons.tag_rounded;
+  static const IconData calendarDays = Icons.event_outlined;
 }

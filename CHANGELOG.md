@@ -6,13 +6,39 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-06-18
+
 ### Added
 
+- **`SuperDateFormField`** — a new field matching the web ledger's date input: a
+  masked, mono `YYYY-MM-DD` text entry with a trailing calendar trigger that
+  opens a `MiniCalendar` month-grid popover (prev/next month, today outlined,
+  selection filled accent, **Today** shortcut). Value is a date-only `DateTime?`;
+  typed text masks live and a non-empty incomplete entry raises the suffix badge
+  on blur. Props: `minDate` / `maxDate` (auto bounds validators), `calendar`
+  (show/hide the popover), `keyboardShortcuts` (arrow-key segment stepping),
+  `clearable`, `leadingIcon`, `invalidMessage`, plus the
+  shared `required` / `validators` / `forceError` / `arabic` / `density` /
+  `disabled` / `readOnly`. Western-digit, mono, LTR even in RTL.
+  - **Arrow-key segment stepping** (while focused, on by default): `↑`/`↓`
+    increment/decrement the year, month, or day the cursor sits on (day rolls
+    across months; month/year clamp the day to the new month length; result
+    clamps to `minDate`/`maxDate`). Toggle with `keyboardShortcuts`.
+  - `SuperDateFieldController` (Model) with `value` / `error` / `pick(DateTime)`
+    / `setValue(DateTime?)` / `clear()` / `markTouched()` / `stepSegment` /
+    `stepAtCursor`.
+  - `DateLogic` (pure domain usecase): `mask`, `parse`, `format`, `dateOnly`,
+    `sameDay`, `buildValidators`.
+  - `SffIcons.calendar` / `calendarDays` / `chevronLeft` / `chevronRight` added.
 - **`SuperNumericFormField`** — keyboard stepping while focused: `↑`/`↓` change
   the value by `step`, `PageUp`/`PageDown` by the new `largeStep` (defaults to
   `step * 10`). Both clamp + round like the stepper buttons. Toggle with
   `keyboardShortcuts` (default `true`). Controller adds `bumpLarge(direction)`;
   `bump` is unchanged.
+- **Example app** — a fourth demo, *Super Date Field*, with three usage examples
+  (basic / controlled linked range / validated bilingual submit-sweep) under
+  `example/lib/demos/date/`.
+- **Tests** — pure-domain unit tests for `DateLogic` (mask / parse / validators).
 
 ## [0.1.0] — 2026-06-16
 

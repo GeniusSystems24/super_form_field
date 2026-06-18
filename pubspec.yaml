@@ -1,12 +1,12 @@
 name: super_form_field
 description: >
-  Super Form Field — three GeniusLink design-system form fields for Flutter
-  (SuperTextFormField, SuperNumericFormField, SuperAttachmentFormField) built on
-  Clean Architecture with an MVC presentation split. Validation surfaces through
-  a suffix error badge (never inline), with light/dark and LTR/RTL parity.
-  Dependency-free — no platform plugins required.
+  Super Form Field — four GeniusLink design-system form fields for Flutter
+  (SuperTextFormField, SuperNumericFormField, SuperAttachmentFormField,
+  SuperDateFormField) built on Clean Architecture with an MVC presentation split.
+  Validation surfaces through a suffix error badge (never inline), with
+  light/dark and LTR/RTL parity. Dependency-free — no platform plugins required.
 publish_to: "none"
-version: 0.1.0
+version: 0.2.0
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
