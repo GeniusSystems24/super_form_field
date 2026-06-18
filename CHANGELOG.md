@@ -20,10 +20,14 @@ to [Semantic Versioning](https://semver.org/).
   `clearable`, `leadingIcon`, `invalidMessage`, plus the
   shared `required` / `validators` / `forceError` / `arabic` / `density` /
   `disabled` / `readOnly`. Western-digit, mono, LTR even in RTL.
+  - **Segment-aware typing**: the buffer is `YYYY`·`MM`·`DD` and the cursor's
+    segment is the one edited — typing overwrites it and auto-advances rightward
+    (year→month→day; the day is terminal, so extra digits keep re-editing it).
+    `←`/`→` move between segments; a separator key jumps to the next.
   - **Arrow-key segment stepping** (while focused, on by default): `↑`/`↓`
-    increment/decrement the year, month, or day the cursor sits on (day rolls
-    across months; month/year clamp the day to the new month length; result
-    clamps to `minDate`/`maxDate`). Toggle with `keyboardShortcuts`.
+    increment/decrement the active segment (day rolls across months; month/year
+    clamp the day to the new month length; result clamps to `minDate`/`maxDate`).
+    Toggle with `keyboardShortcuts`.
   - `SuperDateFieldController` (Model) with `value` / `error` / `pick(DateTime)`
     / `setValue(DateTime?)` / `clear()` / `markTouched()` / `stepSegment` /
     `stepAtCursor`.

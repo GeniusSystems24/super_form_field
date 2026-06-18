@@ -78,10 +78,13 @@ default `true`), `keyboardShortcuts` (arrow-key segment stepping — default
 pass `null` to hide), `invalidMessage`, `validators` (`Validator<DateTime?>`),
 `onChanged` (`DateTime?`), `onValidity`, `forceError`, `arabic`, `density`,
 `disabled`, `readOnly`. Value is a date-only `DateTime?` (`null` = empty).
-Users type a masked `YYYY-MM-DD` value (masked live), pick from the
+Users type a masked `YYYY-MM-DD` value, pick from the
 month-grid popover (`Today` shortcut, out-of-range days disabled), **or** step
-with the arrows — `↑`/`↓` change the year/month/day the cursor is on (`←`/`→`
-move between segments). A non-empty, incomplete entry shows the badge on blur.
+with the arrows. **Typing is segment-aware** — the cursor's segment is the one
+you edit: start on the year and input flows year→month→day, start on the month
+and it flows month→day, start on the day and it stays on the day (extra digits
+keep re-editing it). `←`/`→` move between segments; `↑`/`↓` step the active one.
+A non-empty, incomplete entry shows the badge on blur.
 Drive it from a `SuperDateFieldController` via `pick(DateTime)`,
 `setValue(DateTime?)`, `clear()`, `stepSegment(segment, ±1)`,
 `stepAtCursor(±1)`.

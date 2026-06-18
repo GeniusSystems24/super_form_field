@@ -150,12 +150,19 @@ layouts, matching the design system's international-accounting rule. Tap a day
 (or **Today**) to commit; out-of-range days are disabled. `minDate` / `maxDate`
 add `Must be on or after …` / `… or before …` validators automatically.
 
+**Keyboard editing** — the buffer is three segments (`YYYY` · `MM` · `DD`) and
+editing is **segment-aware**: whichever segment the cursor is on is the one you
+edit. Typing overwrites that segment and auto-advances rightward as it fills —
+start on the **year** and it flows year → month → day; start on the **month** and
+it flows month → day; start on the **day** and it stays there (the day is the
+last segment, so further digits keep re-editing the day). `←`/`→` move between
+segments; a separator key (`-` `/` `.`) jumps to the next one.
+
 **Keyboard stepping** (on by default while focused): `↑`/`↓` increment or
-decrement the segment the cursor is on — **year** (offset 0–4), **month** (5–7),
-or **day** (8–10). Day steps roll across months; month/year steps clamp the day
-to the new month's length; results clamp to `minDate`/`maxDate`. Move between
-segments with `←`/`→`. Disable with `keyboardShortcuts: false`, or drive it from
-a controller via `step.stepSegment(segment, ±1)` / `step.stepAtCursor(±1)`.
+decrement the active segment — **year**, **month**, or **day**. Day steps roll
+across months; month/year steps clamp the day to the new month's length; results
+clamp to `minDate`/`maxDate`. Disable with `keyboardShortcuts: false`, or drive
+it from a controller via `step.stepSegment(segment, ±1)` / `step.stepAtCursor(±1)`.
 
 ---
 

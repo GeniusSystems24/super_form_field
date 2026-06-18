@@ -35,7 +35,7 @@ class _DateBasicExampleState extends State<DateBasicExample> {
           SuperDateFormField(
             label: 'Posting Date',
             initialValue: _value,
-            hint: 'Type 8 digits (e.g. 20240131), tap the calendar, or step with ↑/↓.',
+            hint: 'Click a segment and type (year→month→day), or step with ↑/↓ · ←/→ moves segments.',
             onChanged: (v) => setState(() => _value = v),
           ),
           const SizedBox(height: SuperTokens.space3),
