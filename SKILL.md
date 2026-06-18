@@ -71,23 +71,22 @@ from your picker result: `SuperFile(id, name, size, mimeType?, path?, bytes?)`.
 For OS drag-and-drop, call `controller.setDragOver(bool)` and `controller.add(files)`.
 
 ### SuperDateFormField
-Key props: `label`, `required`, `placeholder` (default `YYYY-MM-DD`), `minDate`,
-`maxDate` (add bounds validators), `calendar` (show/hide the calendar popover —
-default `true`), `keyboardShortcuts` (arrow-key segment stepping — default
-`true`), `clearable`, `leadingIcon` (defaults to `SffIcons.calendar`,
-pass `null` to hide), `invalidMessage`, `validators` (`Validator<DateTime?>`),
-`onChanged` (`DateTime?`), `onValidity`, `forceError`, `arabic`, `density`,
-`disabled`, `readOnly`. Value is a date-only `DateTime?` (`null` = empty).
-Users type a masked `YYYY-MM-DD` value, pick from the
-month-grid popover (`Today` shortcut, out-of-range days disabled), **or** step
-with the arrows. **Typing is segment-aware** — the cursor's segment is the one
-you edit: start on the year and input flows year→month→day, start on the month
-and it flows month→day, start on the day and it stays on the day (extra digits
-keep re-editing it). `←`/`→` move between segments; `↑`/`↓` step the active one.
-A non-empty, incomplete entry shows the badge on blur.
-Drive it from a `SuperDateFieldController` via `pick(DateTime)`,
-`setValue(DateTime?)`, `clear()`, `stepSegment(segment, ±1)`,
-`stepAtCursor(±1)`.
+Key props: `label`, `required`, `placeholder` (defaults to the format template),
+`format` (`SuperDateFormat.yearMonthDay` | `yearMonth` | `year` | `monthDay` |
+`month` | `day`), `minDate`, `maxDate` (add bounds validators), `calendar`
+(show/hide the popover — only when the format has a day; default `true`),
+`keyboardShortcuts` (arrow-key segment stepping — default `true`), `clearable`,
+`leadingIcon` (defaults to `SffIcons.calendar`, pass `null` to hide),
+`invalidMessage`, `validators` (`Validator<DateTime?>`), `onChanged`
+(`DateTime?`), `onValidity`, `forceError`, `arabic`, `density`, `disabled`,
+`readOnly`. Value is a `DateTime?` — absent format parts fill with defaults
+(year→current, month→1, day→1). **Editing keeps the zero-padded format**: digits
+shift into the active segment from the right (`0002→0020→2024`) and the cursor's
+segment is the one edited — typing flows year→month→day (day terminal). `←`/`→`
+move segments; `↑`/`↓` step the active one (wraps within its range). The calendar
+opens below the icon, flipping above when there's no room. Pick from the
+popover, or drive it from a `SuperDateFieldController` via `pick(DateTime)`,
+`setValue(DateTime?)`, `clear()`, `stepSegment(kind, ±1)`, `stepAtCursor(±1)`.
 
 ## Rules that matter
 

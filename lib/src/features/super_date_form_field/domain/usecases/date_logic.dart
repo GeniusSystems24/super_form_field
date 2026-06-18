@@ -87,4 +87,61 @@ abstract final class DateLogic {
       ...extra,
     ];
   }
+
+  /// Composes a calendar-valid date-only [DateTime] from optional parts, filling
+  /// absent ones with sensible defaults (year → current year, month → 1, day →
+  /// 1). Returns null when the supplied parts form an impossible date. Used by
+  /// partial formats (e.g. year-month, month-day) that don't carry every part.
+  static DateTime? compose({int? year, int? month, int? day}) {
+    final y = year ?? DateTime.now().year;
+    final m = month ?? 1;
+    final d = day ?? 1;
+    if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+    final dt = DateTime(y, m, d);
+    if (dt.year != y || dt.month != m || dt.day != d) return null;
+    return dt;
+  }
+}
+
+/// Which date segments a [SuperDateFormField] shows, in order. Only contiguous
+/// runs of `year · month · day` are offered.
+enum SuperDateFormat {
+  /// `YYYY-MM-DD` (the default).
+  yearMonthDay,
+
+  /// `YYYY-MM`.
+  yearMonth,
+
+  /// `YYYY`.
+  year,
+
+  /// `MM-DD`.
+  monthDay,
+
+  /// `MM`.
+  month,
+
+  /// `DD`.
+  day,
+}
+
+/// Segment kinds: 0 = year, 1 = month, 2 = day.
+extension SuperDateFormatX on SuperDateFormat {
+  /// The present segment kinds, in display order.
+  List<int> get segments => switch (this) {
+        SuperDateFormat.yearMonthDay => const [0, 1, 2],
+        SuperDateFormat.yearMonth => const [0, 1],
+        SuperDateFormat.year => const [0],
+        SuperDateFormat.monthDay => const [1, 2],
+        SuperDateFormat.month => const [1],
+        SuperDateFormat.day => const [2],
+      };
+
+  bool get hasYear => segments.contains(0);
+  bool get hasMonth => segments.contains(1);
+  bool get hasDay => segments.contains(2);
+
+  /// The placeholder template, e.g. `YYYY-MM-DD` or `MM-DD`.
+  String get placeholder =>
+      segments.map((k) => k == 0 ? 'YYYY' : (k == 1 ? 'MM' : 'DD')).join('-');
 }

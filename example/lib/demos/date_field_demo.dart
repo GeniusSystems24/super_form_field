@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'date/example_basic.dart';
 import 'date/example_controlled_range.dart';
+import 'date/example_formats.dart';
 import 'date/example_validated_form.dart';
 import 'demo_scaffold.dart';
 
@@ -25,6 +26,7 @@ class DateFieldDemo extends StatelessWidget {
         DateBasicExample(),
         DateControlledRangeExample(),
         DateValidatedFormExample(),
+        DateFormatsExample(),
       ],
     );
   }

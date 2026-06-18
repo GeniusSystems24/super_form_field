@@ -140,29 +140,39 @@ SuperDateFormField(
   onChanged: (DateTime? v) => print(v),
 );
 
-// type-only (no calendar) · clearable · custom invalid message
+// configurable format · type-only · clearable · custom invalid message
+SuperDateFormField(label: 'Period', format: SuperDateFormat.yearMonth);
+SuperDateFormField(label: 'Fiscal Year', format: SuperDateFormat.year);
 SuperDateFormField(label: 'Due', calendar: false, clearable: true);
-SuperDateFormField(label: 'Date', invalidMessage: 'Use YYYY-MM-DD');
 ```
 
+**Formats** — `format:` chooses which segments show (any contiguous run of
+year/month/day): `yearMonthDay` (default), `yearMonth`, `year`, `monthDay`,
+`month`, `day`. The placeholder follows the format (`YYYY-MM`, `MM-DD`, …) and
+the calendar trigger only appears when a day segment is present. The value is
+always a `DateTime?` — absent parts fill with defaults (year → current, month →
+1, day → 1).
+
 The field — and the popover — keep Western digits, mono, and LTR even in RTL
-layouts, matching the design system's international-accounting rule. Tap a day
-(or **Today**) to commit; out-of-range days are disabled. `minDate` / `maxDate`
-add `Must be on or after …` / `… or before …` validators automatically.
+layouts, matching the design system's international-accounting rule. The
+calendar opens **below the trigger icon**, flipping **above** it when there isn't
+room below. Tap a day (or **Today**) to commit; out-of-range days are disabled.
+`minDate` / `maxDate` add `Must be on or after …` / `… or before …` validators.
 
-**Keyboard editing** — the buffer is three segments (`YYYY` · `MM` · `DD`) and
-editing is **segment-aware**: whichever segment the cursor is on is the one you
-edit. Typing overwrites that segment and auto-advances rightward as it fills —
-start on the **year** and it flows year → month → day; start on the **month** and
-it flows month → day; start on the **day** and it stays there (the day is the
-last segment, so further digits keep re-editing the day). `←`/`→` move between
-segments; a separator key (`-` `/` `.`) jumps to the next one.
+**Keyboard editing** keeps the format at all times — each segment is fixed-width
+and zero-padded, and digits shift in from the right: typing the year reads
+`0002 → 0020 → 0202 → 2024`, then advances to the next segment; month and day
+behave the same at two digits (with smart early-advance, e.g. a leading `4` for
+the day). Editing is **segment-aware**: whichever segment the cursor is on is the
+one you edit, flowing rightward (year → month → day; the day is terminal, so
+further digits keep re-editing it). `←`/`→` move between segments; a separator
+key (`-` `/` `.`) jumps to the next.
 
-**Keyboard stepping** (on by default while focused): `↑`/`↓` increment or
-decrement the active segment — **year**, **month**, or **day**. Day steps roll
-across months; month/year steps clamp the day to the new month's length; results
-clamp to `minDate`/`maxDate`. Disable with `keyboardShortcuts: false`, or drive
-it from a controller via `step.stepSegment(segment, ±1)` / `step.stepAtCursor(±1)`.
+**Keyboard stepping** (on by default while focused): `↑`/`↓` step the active
+segment, wrapping within its own range (month `1↔12`, day within the month
+length) — the year is unbounded. Disable with `keyboardShortcuts: false`, or
+drive it from a controller via `step.stepSegment(kind, ±1)` /
+`step.stepAtCursor(±1)`.
 
 ---
 

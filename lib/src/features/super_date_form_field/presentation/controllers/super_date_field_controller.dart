@@ -1,13 +1,14 @@
 // ============================================================
 // features/super_date_form_field/presentation/controllers/super_date_field_controller.dart
 // ------------------------------------------------------------
-// The MVC controller (Model) for a date field. The buffer is three segments —
-// year · month · day — laid out as `YYYY-MM-DD`. Editing is SEGMENT-AWARE: the
-// segment the cursor sits on is the one you edit. Typing overwrites that segment
-// and auto-advances rightward (year → month → day) as each fills; the day is the
-// last segment, so once it is complete extra digits keep re-editing the day.
-// `↑`/`↓` step the active segment; `←`/`→` move between segments. A non-empty but
-// incomplete buffer raises the "valid date" error on blur. Never imports a widget.
+// The MVC controller (Model) for a date field. The buffer is a fixed-width,
+// zero-padded set of segments laid out per the configured format — full
+// `YYYY-MM-DD`, or any contiguous subset (`YYYY-MM`, `YYYY`, `MM-DD`, `MM`,
+// `DD`). Editing is SEGMENT-AWARE and keeps the format at all times: digits
+// shift into the active segment from the RIGHT, always shown padded — typing the
+// year reads `0002 → 0020 → 0202 → 2024`, then advances to the next segment;
+// month/day behave the same at two digits. `↑`/`↓` step the active segment,
+// `←`/`→` move between segments. Never imports a widget.
 // ============================================================
 
 import 'package:flutter/services.dart';
@@ -19,8 +20,8 @@ import '../../domain/usecases/date_logic.dart';
 class SuperDateFieldController extends ChangeNotifier {
   SuperDateFieldController({DateTime? initialValue})
       : _value = initialValue == null ? null : DateLogic.dateOnly(initialValue) {
-    _partsFromValue();
-    text = TextEditingController(text: DateLogic.format(_value));
+    _dispFromValue();
+    text = TextEditingController(text: _composeString().text);
     _lastComposed = text.text;
     focusNode = FocusNode(onKeyEvent: _onKey);
     text.addListener(_onTextChanged);
@@ -36,25 +37,27 @@ class SuperDateFieldController extends ChangeNotifier {
   bool _syncing = false; // guards programmatic text writes from re-entrancy
 
   // ── segmented editing state ──
-  // _parts[0]=year (≤4 digits), [1]=month, [2]=day (≤2 digits each). Strings so
-  // they can hold partial input mid-type. _seg is the active segment; _fresh is
-  // true when the next digit should OVERWRITE the segment (just entered it).
-  final List<String> _parts = ['', '', ''];
-  int _seg = 0;
+  // Segment kinds: 0 = year, 1 = month, 2 = day. _order is the present kinds in
+  // display order. _disp[kind] is the zero-padded display ('' if empty);
+  // _committed[kind] marks a segment as finalized (counts toward the value).
+  // _buf holds the raw typed digits for the ACTIVE segment; _ai indexes _order.
+  List<int> _order = const [0, 1, 2];
+  final List<String> _disp = ['', '', ''];
+  final List<bool> _committed = [false, false, false];
+  String _buf = '';
+  int _ai = 0;
   bool _fresh = true;
   String _lastComposed = '';
 
   // ── validation config (set by the View) ──
   List<Validator<DateTime?>> _validators = const [];
   bool _forceError = false;
-  String _malformedMessage = 'Enter a valid date (YYYY-MM-DD)';
+  String _malformedMessage = 'Enter a valid date';
   ValidityChanged? _onValidity;
   ValueChanged<DateTime?>? _onChanged;
   String? _lastReported;
 
   // ── stepping config (set by the View) ──
-  DateTime? _minDate;
-  DateTime? _maxDate;
   bool _keyboardEnabled = true;
   bool _readOnly = false;
 
@@ -63,11 +66,12 @@ class SuperDateFieldController extends ChangeNotifier {
   bool get touched => _touched;
   bool get focused => focusNode.hasFocus;
 
-  /// The active segment (0 year · 1 month · 2 day).
-  int get activeSegment => _seg;
+  /// The active segment kind (0 year · 1 month · 2 day).
+  int get activeSegment => _order[_ai];
 
-  /// True when the buffer holds non-empty text that is not a complete,
-  /// calendar-valid date.
+  int _width(int kind) => kind == 0 ? 4 : 2;
+
+  /// True when the buffer holds text but no complete value yet.
   bool get malformed => text.text.trim().isNotEmpty && _value == null;
 
   String? get error {
@@ -83,9 +87,8 @@ class SuperDateFieldController extends ChangeNotifier {
   void configure({
     required List<Validator<DateTime?>> validators,
     required bool forceError,
-    String malformedMessage = 'Enter a valid date (YYYY-MM-DD)',
-    DateTime? minDate,
-    DateTime? maxDate,
+    List<int> segments = const [0, 1, 2],
+    String malformedMessage = 'Enter a valid date',
     bool keyboardEnabled = true,
     bool readOnly = false,
     ValidityChanged? onValidity,
@@ -94,12 +97,31 @@ class SuperDateFieldController extends ChangeNotifier {
     _validators = validators;
     _forceError = forceError;
     _malformedMessage = malformedMessage;
-    _minDate = minDate;
-    _maxDate = maxDate;
     _keyboardEnabled = keyboardEnabled;
     _readOnly = readOnly;
     _onValidity = onValidity;
     _onChanged = onChanged;
+
+    if (!_sameOrder(segments, _order)) {
+      _order = List<int>.from(segments);
+      _ai = 0;
+      _buf = '';
+      _fresh = true;
+      _dispFromValue();
+      // Re-render after the frame so we don't mutate the editing controller
+      // mid-build of a mounted field.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _render();
+      });
+    }
+  }
+
+  bool _sameOrder(List<int> a, List<int> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   /// Reports the current validity once — call after the first frame so a host
@@ -113,26 +135,35 @@ class SuperDateFieldController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Programmatically set the value (external reset / linked range). Re-formats
-  /// the buffer to canonical ISO.
+  // ── external value setters ────────────────────────────────────────────────
+
+  /// Programmatically set the value (external reset / linked range).
   void setValue(DateTime? v) {
     _value = v == null ? null : DateLogic.dateOnly(v);
-    _partsFromValue();
-    _seg = 0;
+    _dispFromValue();
+    _ai = 0;
+    _buf = '';
     _fresh = true;
+    _recomputeValue();
     _render();
     _emit();
     notifyListeners();
   }
 
-  /// Pick a date from the calendar popup: commits the value, marks touched, and
-  /// writes the canonical ISO text.
+  /// Pick a date from the calendar popup: commits the present segments, marks
+  /// touched, and writes the formatted text.
   void pick(DateTime date) {
-    _value = DateLogic.dateOnly(date);
-    _partsFromValue();
-    _seg = 0;
+    final d = DateLogic.dateOnly(date);
+    for (final k in _order) {
+      final v = k == 0 ? d.year : (k == 1 ? d.month : d.day);
+      _disp[k] = v.toString().padLeft(_width(k), '0');
+      _committed[k] = true;
+    }
+    _ai = 0;
+    _buf = '';
     _fresh = true;
     _touched = true;
+    _recomputeValue();
     _render();
     _emit();
     notifyListeners();
@@ -140,9 +171,13 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// Clear the field.
   void clear() {
+    for (final k in [0, 1, 2]) {
+      _disp[k] = '';
+      _committed[k] = false;
+    }
     _value = null;
-    _parts[0] = _parts[1] = _parts[2] = '';
-    _seg = 0;
+    _ai = 0;
+    _buf = '';
     _fresh = true;
     _touched = true;
     _render();
@@ -151,143 +186,144 @@ class SuperDateFieldController extends ChangeNotifier {
   }
 
   // ── arrow-key segment stepping ───────────────────────────────────────────
-  // Day stepping rolls into the next/previous month; month/year stepping clamps
-  // the day to the new month's length. The result clamps to [minDate, maxDate].
 
-  /// Segment index (0 year · 1 month · 2 day) for a cursor [offset] in a
-  /// canonical `YYYY-MM-DD` buffer.
+  /// Segment kind (0 year · 1 month · 2 day) for a cursor [offset] in a
+  /// canonical `YYYY-MM-DD` buffer. Retained for the full format.
   static int segmentForOffset(int offset) {
     if (offset <= 4) return 0;
     if (offset <= 7) return 1;
     return 2;
   }
 
-  /// Step the active segment by [direction] (±1). Seeds today when the field is
-  /// empty/malformed so an arrow press always lands on a valid date.
-  void stepAtCursor(int direction) => stepSegment(_seg, direction);
+  /// Step the segment under the cursor by [direction] (±1).
+  void stepAtCursor(int direction) {
+    final off = text.selection.baseOffset;
+    final i = off < 0 ? _ai : _indexForOffset(off);
+    stepSegment(_order[i], direction);
+  }
 
-  /// Step a specific [segment] (0 year · 1 month · 2 day) by [direction] (±1).
-  void stepSegment(int segment, int direction) {
-    if (_readOnly) return;
-    _seg = segment;
-    final base = _value ?? DateLogic.dateOnly(DateTime.now());
-    final DateTime next;
-    switch (segment) {
-      case 0:
-        next = _addYears(base, direction);
-      case 1:
-        next = _addMonths(base, direction);
-      default:
-        next = DateTime(base.year, base.month, base.day + direction);
+  /// Step a present [kind] (0 year · 1 month · 2 day) by [direction] (±1). The
+  /// segment wraps within its own range (month 1↔12, day 1↔month-length); the
+  /// year is unbounded above. Seeds empty segments from today first so the value
+  /// resolves.
+  void stepSegment(int kind, int direction) {
+    if (_readOnly || !_order.contains(kind)) return;
+    _ai = _order.indexOf(kind);
+    // Seed any empty present segments from today so the value can form.
+    final now = DateLogic.dateOnly(DateTime.now());
+    for (final k in _order) {
+      if (_disp[k].isEmpty) {
+        final tv = k == 0 ? now.year : (k == 1 ? now.month : now.day);
+        _disp[k] = tv.toString().padLeft(_width(k), '0');
+        _committed[k] = true;
+      }
     }
-    _value = _clampToBounds(DateLogic.dateOnly(next));
-    _partsFromValue();
+    final cur = int.parse(_disp[kind]);
+    int v;
+    if (kind == 0) {
+      v = cur + direction;
+      if (v < 1) v = 1;
+    } else if (kind == 1) {
+      v = ((cur - 1 + direction) % 12 + 12) % 12 + 1;
+    } else {
+      final maxd = _dayMax();
+      v = ((cur - 1 + direction) % maxd + maxd) % maxd + 1;
+    }
+    _disp[kind] = v.toString().padLeft(_width(kind), '0');
+    _committed[kind] = true;
+    if (kind == 0 || kind == 1) _clampDayToMonth();
+    _buf = '';
     _fresh = true;
     _touched = true;
+    _recomputeValue();
     _render();
     _emit();
     notifyListeners();
   }
 
-  DateTime _addYears(DateTime d, int delta) {
-    final y = d.year + delta;
-    final dim = DateTime(y, d.month + 1, 0).day; // last day of d.month in year y
-    return DateTime(y, d.month, d.day > dim ? dim : d.day);
+  int _dayMax() {
+    final hasY = _order.contains(0) && _disp[0].isNotEmpty;
+    final hasM = _order.contains(1) && _disp[1].isNotEmpty;
+    final y = hasY ? int.parse(_disp[0]) : DateTime.now().year;
+    final m = hasM ? int.parse(_disp[1]) : 1;
+    return DateTime(y, m + 1, 0).day;
   }
 
-  DateTime _addMonths(DateTime d, int delta) {
-    final total = d.year * 12 + (d.month - 1) + delta;
-    final y = total ~/ 12;
-    final month = total % 12 + 1;
-    final dim = DateTime(y, month + 1, 0).day;
-    return DateTime(y, month, d.day > dim ? dim : d.day);
-  }
-
-  DateTime _clampToBounds(DateTime d) {
-    final lo = _minDate == null ? null : DateLogic.dateOnly(_minDate!);
-    final hi = _maxDate == null ? null : DateLogic.dateOnly(_maxDate!);
-    if (lo != null && d.isBefore(lo)) return lo;
-    if (hi != null && d.isAfter(hi)) return hi;
-    return d;
+  void _clampDayToMonth() {
+    if (!_order.contains(2) || _disp[2].isEmpty) return;
+    final maxd = _dayMax();
+    if (int.parse(_disp[2]) > maxd) _disp[2] = maxd.toString().padLeft(2, '0');
   }
 
   // ── segmented typing ──────────────────────────────────────────────────────
 
-  int _cap(int seg) => seg == 0 ? 4 : 2;
-
-  void _partsFromValue() {
-    if (_value == null) {
-      _parts[0] = _parts[1] = _parts[2] = '';
-    } else {
-      _parts[0] = _value!.year.toString().padLeft(4, '0');
-      _parts[1] = _value!.month.toString().padLeft(2, '0');
-      _parts[2] = _value!.day.toString().padLeft(2, '0');
+  void _dispFromValue() {
+    for (final k in [0, 1, 2]) {
+      _disp[k] = '';
+      _committed[k] = false;
+    }
+    if (_value != null) {
+      for (final k in _order) {
+        final v = k == 0 ? _value!.year : (k == 1 ? _value!.month : _value!.day);
+        _disp[k] = v.toString().padLeft(_width(k), '0');
+        _committed[k] = true;
+      }
     }
   }
 
-  /// Append/overwrite a digit into the active segment, auto-advancing as it
-  /// fills. Empty trailing segments stay empty until typed — the value is not
-  /// considered complete until every segment is full-width.
+  /// Shift a digit into the active segment from the right (always zero-padded to
+  /// width), auto-advancing when the segment fills (or can't take a 2nd digit).
   void _typeDigit(String d) {
     if (_readOnly) return;
-    final cap = _cap(_seg);
+    final kind = _order[_ai];
+    final w = _width(kind);
     if (_fresh) {
-      _parts[_seg] = d;
+      _buf = d;
       _fresh = false;
-    } else if (_parts[_seg].length < cap) {
-      _parts[_seg] = _parts[_seg] + d;
     } else {
-      _parts[_seg] = d; // segment already full (day) → start over
+      _buf = _buf + d;
+      if (_buf.length > w) _buf = _buf.substring(_buf.length - w);
     }
-    _afterDigit();
+    _disp[kind] = _buf.padLeft(w, '0');
+    _committed[kind] = false;
+    final n = int.parse(_buf);
+    final full = _buf.length >= w;
+    final early = (kind == 1 && _buf.length == 1 && n > 1) || (kind == 2 && _buf.length == 1 && n > 3);
+    if (full || early) _finalizeAndAdvance();
     _commit();
   }
 
-  // Decides whether the active segment is complete (and clamps it), then either
-  // advances to the next segment or — for the day — re-arms `_fresh` so the next
-  // digit overwrites the day again.
-  void _afterDigit() {
-    final p = _parts[_seg];
-    if (p.isEmpty) return;
-    final n = int.tryParse(p) ?? 0;
-    if (_seg == 0) {
-      if (p.length >= 4) _advance();
-    } else if (_seg == 1) {
-      if (p.length >= 2) {
-        _parts[1] = n.clamp(1, 12).toString().padLeft(2, '0');
-        _advance();
-      } else if (n > 1) {
-        // 2–9 can only be a single-digit month → complete it.
-        _parts[1] = p.padLeft(2, '0');
-        _advance();
-      }
-    } else {
-      if (p.length >= 2) {
-        _parts[2] = n.clamp(1, 31).toString().padLeft(2, '0');
-        _fresh = true; // stay on day; next digit overwrites
-      } else if (n > 3) {
-        _parts[2] = p.padLeft(2, '0');
-        _fresh = true;
-      }
-    }
+  void _commitActive() {
+    final kind = _order[_ai];
+    if (_buf.isEmpty) return;
+    var n = int.parse(_buf);
+    if (kind == 1) n = n.clamp(1, 12);
+    if (kind == 2) n = n.clamp(1, 31);
+    _disp[kind] = kind == 0 ? _buf.padLeft(4, '0') : n.toString().padLeft(2, '0');
+    _committed[kind] = true;
   }
 
-  void _advance() {
-    _parts[_seg] = _parts[_seg].padLeft(_cap(_seg), '0');
-    if (_seg < 2) {
-      _seg++;
-      _fresh = true;
-    }
+  void _finalizeAndAdvance() {
+    _commitActive();
+    if (_order[_ai] != 0) _clampDayToMonth();
+    if (_ai < _order.length - 1) _ai++;
+    _buf = '';
+    _fresh = true; // terminal segment re-arms to overwrite
   }
 
   void _backspace() {
     if (_readOnly) return;
-    final p = _parts[_seg];
-    if (p.isNotEmpty) {
-      _parts[_seg] = p.substring(0, p.length - 1);
-      _fresh = false;
-    } else if (_seg > 0) {
-      _seg--;
+    final kind = _order[_ai];
+    final w = _width(kind);
+    if (_buf.isNotEmpty) {
+      _buf = _buf.substring(0, _buf.length - 1);
+      _disp[kind] = _buf.isEmpty ? '' : _buf.padLeft(w, '0');
+      _committed[kind] = false;
+    } else if (_ai > 0) {
+      _ai--;
+      final pk = _order[_ai];
+      _buf = _disp[pk].isEmpty ? '' : int.parse(_disp[pk]).toString();
+      _committed[pk] = false;
       _fresh = false;
     }
     _commit();
@@ -297,24 +333,28 @@ class SuperDateFieldController extends ChangeNotifier {
   /// jumps to the next one.
   void _jumpSeparator() {
     if (_readOnly) return;
-    if (_parts[_seg].isNotEmpty) _parts[_seg] = _parts[_seg].padLeft(_cap(_seg), '0');
-    if (_seg < 2) {
-      _seg++;
+    if (_buf.isNotEmpty) _commitActive();
+    if (_ai < _order.length - 1) {
+      _ai++;
+      _buf = '';
       _fresh = true;
     }
     _commit();
   }
 
-  void _moveSeg(int delta) {
-    final n = _seg + delta;
-    if (n < 0 || n > 2) return;
-    if (_parts[_seg].isNotEmpty) _parts[_seg] = _parts[_seg].padLeft(_cap(_seg), '0');
-    _seg = n;
-    _fresh = true;
+  void _moveActive(int delta) {
+    if (_buf.isNotEmpty) _commitActive();
+    final ni = _ai + delta;
+    if (ni >= 0 && ni < _order.length) {
+      _ai = ni;
+      _buf = '';
+      _fresh = true;
+    }
     _commit();
   }
 
-  // Recompute the value from the parts and re-render.
+  // ── value + render ──────────────────────────────────────────────────────
+
   void _commit() {
     _recomputeValue();
     _render();
@@ -323,24 +363,20 @@ class SuperDateFieldController extends ChangeNotifier {
   }
 
   void _recomputeValue() {
-    if (_full(0) && _full(1) && _full(2)) {
-      final iso = '${_parts[0]}-${_parts[1]}-${_parts[2]}';
-      _value = DateLogic.parse(iso);
-    } else {
+    if (!_order.every((k) => _committed[k])) {
       _value = null;
+      return;
     }
+    final y = _order.contains(0) ? int.parse(_disp[0]) : null;
+    final m = _order.contains(1) ? int.parse(_disp[1]) : null;
+    final dd = _order.contains(2) ? int.parse(_disp[2]) : null;
+    _value = DateLogic.compose(year: y, month: m, day: dd);
   }
 
-  /// A segment is full when it holds its capacity of digits (4 year · 2 month ·
-  /// 2 day) — the gate for forming a complete [DateTime].
-  bool _full(int i) => _parts[i].length == _cap(i);
-
-  // Compose the display text from the parts (completed segments padded, the
-  // active segment shown raw) and select the active segment.
-  void _render() {
-    var maxShown = _seg;
-    for (var i = 0; i < 3; i++) {
-      if (_parts[i].isNotEmpty && i > maxShown) maxShown = i;
+  ({String text, int selStart, int selEnd}) _composeString() {
+    var maxShown = _ai;
+    for (var i = 0; i < _order.length; i++) {
+      if (_disp[_order[i]].isNotEmpty && i > maxShown) maxShown = i;
     }
     final buf = StringBuffer();
     var selStart = 0;
@@ -348,33 +384,36 @@ class SuperDateFieldController extends ChangeNotifier {
     for (var i = 0; i <= maxShown; i++) {
       if (i > 0) buf.write('-');
       final start = buf.length;
-      final seg = i == _seg ? _parts[i] : (_parts[i].isEmpty ? '' : _parts[i].padLeft(_cap(i), '0'));
-      buf.write(seg);
-      if (i == _seg) {
+      buf.write(_disp[_order[i]]);
+      if (i == _ai) {
         selStart = start;
         selEnd = buf.length;
       }
     }
-    final t = buf.toString();
-    _lastComposed = t;
+    return (text: buf.toString(), selStart: selStart, selEnd: selEnd);
+  }
+
+  void _render() {
+    final c = _composeString();
+    _lastComposed = c.text;
     _syncing = true;
     text.value = TextEditingValue(
-      text: t,
-      selection: TextSelection(baseOffset: selStart, extentOffset: selEnd),
+      text: c.text,
+      selection: TextSelection(baseOffset: c.selStart, extentOffset: c.selEnd),
     );
     _syncing = false;
   }
 
-  /// The active segment for a cursor [offset] in the CURRENT (possibly partial)
-  /// buffer, located by its dash positions.
-  int _segFromOffset(int offset) {
+  /// The active [_order] index for a cursor [offset] — the count of separators
+  /// before it (works for any format width).
+  int _indexForOffset(int offset) {
     final t = text.text;
-    final firstDash = t.indexOf('-');
-    if (firstDash < 0) return 0;
-    final secondDash = t.indexOf('-', firstDash + 1);
-    if (offset <= firstDash) return 0;
-    if (secondDash < 0 || offset <= secondDash) return 1;
-    return 2;
+    if (t.isEmpty) return 0;
+    var idx = 0;
+    for (var i = 0; i < offset && i < t.length; i++) {
+      if (t[i] == '-') idx++;
+    }
+    return idx.clamp(0, _order.length - 1);
   }
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
@@ -385,7 +424,6 @@ class SuperDateFieldController extends ChangeNotifier {
     if (hw.isControlPressed || hw.isMetaPressed || hw.isAltPressed) return KeyEventResult.ignored;
     final k = event.logicalKey;
 
-    // Arrow stepping (gated on keyboardShortcuts); shift+arrow falls through.
     if (k == LogicalKeyboardKey.arrowUp && _keyboardEnabled && !hw.isShiftPressed) {
       stepAtCursor(1);
       return KeyEventResult.handled;
@@ -394,13 +432,12 @@ class SuperDateFieldController extends ChangeNotifier {
       stepAtCursor(-1);
       return KeyEventResult.handled;
     }
-    // Segment navigation.
     if (k == LogicalKeyboardKey.arrowLeft && !hw.isShiftPressed) {
-      _moveSeg(-1);
+      _moveActive(-1);
       return KeyEventResult.handled;
     }
     if (k == LogicalKeyboardKey.arrowRight && !hw.isShiftPressed) {
-      _moveSeg(1);
+      _moveActive(1);
       return KeyEventResult.handled;
     }
     if (k == LogicalKeyboardKey.backspace) {
@@ -425,21 +462,35 @@ class SuperDateFieldController extends ChangeNotifier {
   void _onTextChanged() {
     if (_syncing) return;
     if (text.text == _lastComposed) {
-      // Selection-only change (mouse click) → re-target the active segment.
       final off = text.selection.baseOffset;
       if (off >= 0) {
-        _seg = _segFromOffset(off);
+        if (_buf.isNotEmpty) _commitActive();
+        _ai = _indexForOffset(off);
+        _buf = '';
         _fresh = true;
       }
       return;
     }
-    // Paste / IME fallback: mask left-to-right and resync the segments.
-    final masked = DateLogic.mask(text.text);
-    final segs = masked.split('-');
-    _parts[0] = segs.isNotEmpty ? segs[0] : '';
-    _parts[1] = segs.length > 1 ? segs[1] : '';
-    _parts[2] = segs.length > 2 ? segs[2] : '';
-    _seg = _parts[2].isNotEmpty ? 2 : (_parts[1].isNotEmpty ? 1 : 0);
+    // Paste / IME fallback: take the digits, fill segments left-to-right.
+    final digits = text.text.replaceAll(RegExp(r'[^0-9]'), '');
+    var pos = 0;
+    for (final k in _order) {
+      final w = _width(k);
+      if (pos >= digits.length) {
+        _disp[k] = '';
+        _committed[k] = false;
+        continue;
+      }
+      final chunk = digits.substring(pos, (pos + w).clamp(0, digits.length));
+      pos += chunk.length;
+      var n = int.parse(chunk);
+      if (k == 1) n = n.clamp(1, 12);
+      if (k == 2) n = n.clamp(1, 31);
+      _disp[k] = k == 0 ? chunk.padLeft(4, '0') : n.toString().padLeft(2, '0');
+      _committed[k] = chunk.length == w;
+    }
+    _ai = _order.length - 1;
+    _buf = '';
     _fresh = true;
     _recomputeValue();
     _render();
@@ -449,23 +500,14 @@ class SuperDateFieldController extends ChangeNotifier {
 
   void _onFocusChanged() {
     if (focusNode.hasFocus) {
-      // Entering the field: sync segments from the value and arm the year for
-      // overwrite (a mouse click then re-targets the clicked segment).
-      _partsFromValue();
-      _seg = 0;
+      _ai = 0;
+      _buf = '';
       _fresh = true;
       _render();
     } else {
       _touched = true;
-      // Complete a single-digit month/day (3 → 03) so a nearly-finished entry
-      // resolves; leave a partial year as-is (it stays an error to fix).
-      for (final i in const [1, 2]) {
-        if (_parts[i].length == 1) _parts[i] = _parts[i].padLeft(2, '0');
-      }
+      if (_buf.isNotEmpty) _commitActive();
       _recomputeValue();
-      // Re-format a complete value to canonical ISO; leave a malformed buffer
-      // as-is so the user can see and fix it.
-      if (_value != null) _partsFromValue();
       _render();
       _emit();
     }

@@ -11,38 +11,45 @@ to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - **`SuperDateFormField`** — a new field matching the web ledger's date input: a
-  masked, mono `YYYY-MM-DD` text entry with a trailing calendar trigger that
+  fixed-width, zero-padded segmented buffer with a trailing calendar trigger that
   opens a `MiniCalendar` month-grid popover (prev/next month, today outlined,
-  selection filled accent, **Today** shortcut). Value is a date-only `DateTime?`;
-  typed text masks live and a non-empty incomplete entry raises the suffix badge
-  on blur. Props: `minDate` / `maxDate` (auto bounds validators), `calendar`
-  (show/hide the popover), `keyboardShortcuts` (arrow-key segment stepping),
-  `clearable`, `leadingIcon`, `invalidMessage`, plus the
+  selection filled accent, **Today** shortcut). Value is a `DateTime?`; a
+  non-empty incomplete entry raises the suffix badge on blur. Props: `format`
+  (year-month-day / year-month / year / month-day / month / day), `minDate` /
+  `maxDate` (auto bounds validators), `calendar` (show/hide the popover),
+  `keyboardShortcuts`, `clearable`, `leadingIcon`, `invalidMessage`, plus the
   shared `required` / `validators` / `forceError` / `arabic` / `density` /
   `disabled` / `readOnly`. Western-digit, mono, LTR even in RTL.
-  - **Segment-aware typing**: the buffer is `YYYY`·`MM`·`DD` and the cursor's
-    segment is the one edited — typing overwrites it and auto-advances rightward
-    (year→month→day; the day is terminal, so extra digits keep re-editing it).
-    `←`/`→` move between segments; a separator key jumps to the next.
-  - **Arrow-key segment stepping** (while focused, on by default): `↑`/`↓`
-    increment/decrement the active segment (day rolls across months; month/year
-    clamp the day to the new month length; result clamps to `minDate`/`maxDate`).
-    Toggle with `keyboardShortcuts`.
+  - **Configurable format**: any contiguous run of year/month/day; the
+    placeholder follows the format and the calendar shows only when a day is
+    present. Absent parts fill the value with defaults (year→current, month→1,
+    day→1).
+  - **Segment-aware, format-preserving typing**: each segment is fixed-width and
+    zero-padded; digits shift in from the right (`0002→0020→0202→2024`). The
+    cursor's segment is the one edited — typing flows year→month→day (day
+    terminal; extra digits keep re-editing it), with smart early-advance for
+    month/day. `←`/`→` move between segments; a separator key jumps to the next.
+  - **Arrow-key segment stepping** (while focused, on by default): `↑`/`↓` step
+    the active segment, wrapping within its own range (month `1↔12`, day within
+    the month length; year unbounded). Toggle with `keyboardShortcuts`.
+  - **Smart calendar placement**: the popover drops below the trigger icon, and
+    flips above it when there isn't room below.
   - `SuperDateFieldController` (Model) with `value` / `error` / `pick(DateTime)`
     / `setValue(DateTime?)` / `clear()` / `markTouched()` / `stepSegment` /
     `stepAtCursor`.
   - `DateLogic` (pure domain usecase): `mask`, `parse`, `format`, `dateOnly`,
-    `sameDay`, `buildValidators`.
+    `sameDay`, `compose`, `buildValidators`; `SuperDateFormat` enum.
   - `SffIcons.calendar` / `calendarDays` / `chevronLeft` / `chevronRight` added.
 - **`SuperNumericFormField`** — keyboard stepping while focused: `↑`/`↓` change
   the value by `step`, `PageUp`/`PageDown` by the new `largeStep` (defaults to
   `step * 10`). Both clamp + round like the stepper buttons. Toggle with
   `keyboardShortcuts` (default `true`). Controller adds `bumpLarge(direction)`;
   `bump` is unchanged.
-- **Example app** — a fourth demo, *Super Date Field*, with three usage examples
-  (basic / controlled linked range / validated bilingual submit-sweep) under
-  `example/lib/demos/date/`.
-- **Tests** — pure-domain unit tests for `DateLogic` (mask / parse / validators).
+- **Example app** — a fourth demo, *Super Date Field*, with four usage examples
+  (basic / controlled linked range / validated bilingual submit-sweep /
+  configurable formats) under `example/lib/demos/date/`.
+- **Tests** — pure-domain unit tests for `DateLogic` (parse / validators /
+  compose / formats) and segment stepping.
 
 ## [0.1.0] — 2026-06-16
 
