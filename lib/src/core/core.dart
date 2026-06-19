@@ -24,6 +24,9 @@ export 'utils/validators.dart';
 // Extensions
 export 'extensions/context_extensions.dart';
 
+// Entities (shared, cross-feature)
+export 'entities/super_option.dart';
+
 // Foundation widgets (form-field-specific)
 export 'foundation/sff_icon.dart';
 export 'foundation/error_badge.dart';
@@ -31,3 +34,8 @@ export 'foundation/field_shell.dart';
 export 'foundation/field_box.dart';
 export 'foundation/field_icon_button.dart';
 export 'foundation/count_pill.dart';
+export 'foundation/super_chip.dart';
+export 'foundation/field_popover.dart';
+export 'foundation/option_menu.dart';
+export 'foundation/option_tile.dart';
+export 'foundation/menu_search_field.dart';

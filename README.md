@@ -1,7 +1,7 @@
 # Super Form Field
 
-GeniusLink design-system **form fields for Flutter** — four precision inputs
-ported faithfully from the React toolkit, on one shared field foundation:
+GeniusLink design-system **form fields for Flutter** — eight precision inputs
+for ERP and accounting screens, on one shared field foundation:
 
 | Widget | Purpose |
 |---|---|
@@ -9,6 +9,10 @@ ported faithfully from the React toolkit, on one shared field foundation:
 | **`SuperNumericFormField`** | Grouped thousands while idle, raw digits while editing, clamp + round on blur, `+/-` stepper, unit adornments |
 | **`SuperAttachmentFormField`** | Drag-drop / browse drop zone + typed file list with per-file and field-level validation |
 | **`SuperDateFormField`** | Masked `YYYY-MM-DD` mono input + calendar popover, min/max bounds, ISO `DateTime?` value |
+| **`SuperSelectFormField<T>`** | Searchable single-select dropdown over typed `SuperOption<T>` options, clearable, above/below popover |
+| **`SuperMultiSelectFormField<T>`** | Multi-select with in-field removable chips, count pill, checkable popover, min/max selections |
+| **`SuperBoolFormField`** | Boolean toggle or checkbox — active/status flags, acknowledgements, `mustBeTrue` gate |
+| **`SuperChoiceFormField<T>`** | Inline option group — segmented control, radio list, or checkbox list |
 
 Every field shares the GeniusLink look: a 4px-radius bordered control, electric
 royal-blue focus, JetBrains Mono numerics, and **validation that surfaces only
@@ -174,6 +178,130 @@ length) — the year is unbounded. Disable with `keyboardShortcuts: false`, or
 drive it from a controller via `step.stepSegment(kind, ±1)` /
 `step.stepAtCursor(±1)`.
 
+### Select
+
+A searchable single-select dropdown over typed options. The value is `T?`
+(`null` when nothing is chosen); options are `SuperOption<T>` (a domain `value`
+presented as a `label`, with optional `description` / `icon` / `disabled`).
+
+```dart
+SuperSelectFormField<String>(
+  label: 'Account Type',
+  required: true,
+  placeholder: 'Choose a type…',
+  options: const [
+    SuperOption(value: 'asset', label: 'Asset'),
+    SuperOption(value: 'liability', label: 'Liability'),
+    SuperOption(value: 'equity', label: 'Equity'),
+  ],
+  onChanged: (String? v) => print(v),
+);
+
+// searchable + clearable, with descriptions
+SuperSelectFormField<String>(
+  label: 'Reporting Currency',
+  searchable: true,
+  clearable: true,
+  initialValue: 'SAR',
+  options: const [
+    SuperOption(value: 'SAR', label: 'SAR — Saudi Riyal', description: 'ر.س'),
+    SuperOption(value: 'USD', label: 'USD — US Dollar', description: r'$'),
+  ],
+);
+
+// build options from a value→label map
+final options = SuperOption.fromMap({'draft': 'Draft', 'posted': 'Posted'});
+```
+
+The trigger opens a popover that drops **below** the control and flips **above**
+when there isn't room; the panel matches the control width. `searchable: true`
+adds a filter box (matches label + description). Disabled options render dimmed
+and can't be picked.
+
+### Multi-select
+
+Multi-select with the chosen values shown as removable **chips** inside the
+field and a checkable popover that stays open across toggles. The value is
+`List<T>`.
+
+```dart
+SuperMultiSelectFormField<String>(
+  label: 'Permissions',
+  required: true,
+  searchable: true,
+  minSelections: 1,
+  maxSelections: 3,            // hard cap — further picks are blocked
+  options: const [
+    SuperOption(value: 'post', label: 'Post entries', description: 'Create & submit'),
+    SuperOption(value: 'approve', label: 'Approve'),
+    SuperOption(value: 'reverse', label: 'Reverse'),
+  ],
+  onChanged: (List<String> v) => print(v),
+);
+```
+
+A label-right **count pill** shows `n selected`. Tapping a chip's × removes that
+value; tapping the field opens/closes the menu.
+
+### Bool
+
+A labelled boolean drawn as a sliding **toggle** (default) or a **checkbox**.
+Use `enabledLabel` / `disabledLabel` for a status caption, or `title` for a
+statement (acknowledgements). `mustBeTrue` gates required confirmations.
+
+```dart
+SuperBoolFormField(
+  label: 'Account Status',
+  initialValue: true,
+  enabledLabel: 'Active',
+  disabledLabel: 'Inactive',
+  onChanged: (bool v) => print(v),
+);
+
+// checkbox acknowledgement that must be accepted
+SuperBoolFormField(
+  label: 'Confirmation',
+  required: true,
+  style: SuperBoolStyle.checkbox,
+  title: 'I confirm these details are accurate.',
+  mustBeTrue: true,
+  mustBeTrueMessage: 'You must confirm before saving.',
+);
+```
+
+### Choice
+
+An **inline** option group (no popover) — a horizontal **segmented** control, a
+**radio** list, or a **checkbox** list. Best for small fixed sets. The value is
+`List<T>`; single-pick styles keep one element (read `controller.single`).
+
+```dart
+// segmented, single-pick
+SuperChoiceFormField<String>(
+  label: 'Status',
+  required: true,
+  initialValue: const ['draft'],
+  options: const [
+    SuperOption(value: 'draft', label: 'Draft'),
+    SuperOption(value: 'posted', label: 'Posted'),
+    SuperOption(value: 'void', label: 'Void'),
+  ],
+);
+
+// radio list (single) · checkbox list (multi, min/max)
+SuperChoiceFormField<String>(label: 'Period', style: SuperChoiceStyle.radio, options: periods);
+SuperChoiceFormField<String>(
+  label: 'Document Types',
+  style: SuperChoiceStyle.checkbox,
+  minSelections: 1,
+  maxSelections: 3,
+  options: docTypes,
+);
+```
+
+`checkbox` style is multi-pick by default; pass `multiple: true` to allow
+multiple picks in any style.
+
 ---
 
 ## Controllers (optional)
@@ -197,6 +325,22 @@ SuperAttachmentFormField(controller: docs, label: 'Docs');
 final date = SuperDateFieldController(initialValue: DateTime(2024, 1, 1));
 SuperDateFormField(controller: date, label: 'Date');
 // later:  date.value   date.error   date.pick(DateTime)   date.setValue(null)   date.markTouched()
+
+final type = SuperSelectFieldController<String>(initialValue: 'asset');
+SuperSelectFormField<String>(controller: type, label: 'Type', options: types);
+// later:  type.value   type.selectedOption   type.open()   type.close()   type.clear()
+
+final perms = SuperMultiSelectFieldController<String>(initialValue: const ['post']);
+SuperMultiSelectFormField<String>(controller: perms, label: 'Permissions', options: all);
+// later:  perms.values   perms.toggle(option)   perms.removeValue(v)   perms.clear()
+
+final active = SuperBoolFieldController(initialValue: true);
+SuperBoolFormField(controller: active, label: 'Status');
+// later:  active.value   active.toggle()   active.set(false)   active.markTouched()
+
+final status = SuperChoiceFieldController<String>(initialValue: const ['draft']);
+SuperChoiceFormField<String>(controller: status, label: 'Status', options: states);
+// later:  status.values   status.single   status.pick(value)   status.setSingle('posted')
 ```
 
 ### Validation timing
@@ -224,8 +368,10 @@ lib/
   src/
     core/                         shared foundation (theme, validators, field chrome)
       (theme/type/sizes come from the shared super_core package)
+      entities/   super_option (the generic SuperOption<T> choice type)
       utils/      validators
       foundation/ field_shell · field_box · error_badge · field_icon_button · sff_icon · count_pill
+                  super_chip · field_popover · option_menu · option_tile · menu_search_field
     features/
       super_text_form_field/
         domain/         text_field_config · build_text_validators        (pure Dart)
@@ -239,8 +385,20 @@ lib/
       super_date_form_field/
         domain/         date_logic                                       (pure Dart)
         presentation/   super_date_field_controller · super_date_form_field · mini_calendar
+      super_select_form_field/
+        domain/         select_logic                                     (pure Dart)
+        presentation/   super_select_field_controller · super_select_form_field
+      super_multi_select_form_field/
+        domain/         multi_select_logic
+        presentation/   super_multi_select_field_controller · super_multi_select_form_field
+      super_bool_form_field/
+        domain/         bool_field_config · build_bool_validators        (pure Dart)
+        presentation/   super_bool_field_controller · super_bool_form_field
+      super_choice_form_field/
+        domain/         choice_field_config · choice_logic               (pure Dart)
+        presentation/   super_choice_field_controller · super_choice_form_field
   super_form_field.dart           public barrel
-example/                          runnable gallery (4 demos, theme + dir toggles)
+example/                          runnable gallery (8 demos, theme + dir toggles)
 test/                             pure-domain unit tests
 ```
 
@@ -264,6 +422,24 @@ Toggle Light/Dark and English/Arabic from the launcher; each demo has a
 **Validate** button that force-shows every error badge.
 
 ---
+
+## Roadmap
+
+Planned for future **minor** releases — additive, on the same foundation and
+validation contract, no breaking changes to the eight current fields:
+
+| Planned field | Purpose |
+|---|---|
+| **`SuperPhoneFormField`** | Country-code selector + national number, format + length validation |
+| **`SuperCurrencyFormField`** | Amount + currency-code preset (numeric field paired with a select) |
+| **`SuperTimeFormField`** | Masked `HH:mm` (+ optional seconds) and a date-time composite |
+| **`SuperRangeFormField`** | Numeric / date **ranges** (from–to) with cross-field validation |
+| **`SuperColorFormField`** | Swatch + hex input for tags / category colors |
+| **Masked inputs** | IBAN · tax id · card number — reusable mask + checksum validators |
+
+Have an ERP field you need next? The Clean-Architecture split means a new field
+is a `domain/` usecase + a controller (Model) + a thin widget (View) — open an
+issue describing the input and its validation rules.
 
 ## Notes & substitutions
 

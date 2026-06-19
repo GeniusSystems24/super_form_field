@@ -7,7 +7,6 @@
 // wires (file_picker, image_picker, drag-and-drop, a server record…).
 // ============================================================
 
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 

@@ -121,12 +121,63 @@
   .legend { display:flex; flex-wrap:wrap; gap:9px 18px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
   .legend .row { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--fg3); }
   kbd { font-family:var(--mono); font-size:11px; color:var(--fg2); background:var(--input); border:1px solid var(--border-strong); border-bottom-width:2px; border-radius:4px; padding:2px 6px; min-width:16px; text-align:center; line-height:1.3; }
+
+  /* select / option menu */
+  .box.select { cursor:pointer; }
+  .selwrap { position:relative; }
+  .menu.pop { position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:40; margin-top:0; }
+  .val { flex:1; min-width:0; color:var(--fg1); font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .val.ph { color:var(--fg4); }
+  .chev { color:var(--fg3); display:flex; flex-shrink:0; }
+  .menu { background:var(--surface); border:1px solid var(--border-strong); border-radius:6px; box-shadow:0 10px 24px -6px rgba(0,0,0,.45); padding:4px; margin-top:6px; overflow:hidden; }
+  .msearch { display:flex; align-items:center; gap:8px; padding:6px 8px; border-bottom:1px solid var(--border); color:var(--fg4); margin:-4px -4px 4px; }
+  .msearch input { flex:1; border:none; outline:none; background:transparent; color:var(--fg1); font-size:13.5px; font-family:var(--body); }
+  .opt { display:flex; align-items:center; gap:8px; padding:8px; border-radius:4px; cursor:pointer; }
+  .opt:hover { background:var(--hover); }
+  .opt.sel { background:rgba(74,124,255,.12); }
+  .opt .otext { flex:1; min-width:0; }
+  .opt .olabel { font-size:13.5px; color:var(--fg2); }
+  .opt.sel .olabel { color:var(--fg1); font-weight:600; }
+  .opt .odesc { font-size:12px; color:var(--fg4); }
+  .opt .ocheck { color:var(--accent); display:flex; }
+  .opt.dim { opacity:.4; cursor:default; }
+  .csq { width:17px; height:17px; border:1.5px solid var(--border-strong); border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; }
+  .csq.on { background:var(--accent); border-color:var(--accent); }
+
+  /* multi-select chips */
+  .chips { display:flex; flex-wrap:wrap; gap:4px; flex:1; padding:5px 0; min-width:0; }
+  .chip { display:inline-flex; align-items:center; gap:3px; padding:2px 4px 2px 8px; background:rgba(74,124,255,.14); border:1px solid rgba(74,124,255,.42); border-radius:6px; font-size:12.5px; color:var(--fg1); }
+  .chip .x { color:var(--fg3); display:flex; cursor:pointer; }
+  .chip .x:hover { color:var(--danger); }
+
+  /* bool toggle / checkbox */
+  .boolrow { display:flex; align-items:center; gap:12px; padding:5px 0; }
+  .toggle { width:40px; height:23px; border-radius:999px; border:1.4px solid var(--border-strong); background:var(--input); padding:2.5px; display:flex; align-items:center; flex-shrink:0; transition:.15s; }
+  .toggle .thumb { width:16px; height:16px; border-radius:50%; background:var(--fg3); transition:.15s; }
+  .toggle.on { background:var(--accent); border-color:var(--accent); justify-content:flex-end; }
+  .toggle.on .thumb { background:#fff; }
+  .chk { width:20px; height:20px; border:1.5px solid var(--border-strong); border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; }
+  .chk.on { background:var(--accent); border-color:var(--accent); }
+  .cap { flex:1; font-size:14px; color:var(--fg3); }
+  .cap.on { color:var(--fg1); font-weight:500; }
+
+  /* choice segmented (full-width) + lists */
+  .seg.full { display:flex; }
+  .seg.full button { flex:1; text-align:center; }
+  .optrow { display:flex; align-items:center; gap:12px; padding:11px 12px; border:1px solid var(--border-strong); border-radius:4px; background:var(--input); margin-top:6px; cursor:pointer; }
+  .optrow.sel { border-color:var(--accent); background:rgba(74,124,255,.10); }
+  .optrow .rt { font-size:14px; color:var(--fg1); }
+  .optrow.sel .rt { font-weight:600; }
+  .optrow .rd { font-size:12px; color:var(--fg4); }
+  .optrow .rmeta { flex:1; min-width:0; }
+  .circ { width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong); flex-shrink:0; }
+  .circ.on { border:5.5px solid var(--accent); }
 </style>
 </head>
 <body>
 <div class="page">
   <div class="eyebrow">Super Form Field • Flutter Package Preview</div>
-  <h1>Four GeniusLink Form Fields</h1>
+  <h1>Eight GeniusLink Form Fields</h1>
 
   <!-- TEXT -->
   <div class="card">
@@ -261,6 +312,76 @@
         <div class="meta"><div class="name">archive.exe</div><div class="size">27.1 MB  ·  EXE</div></div>
         <span class="err" title="exceeds 5 MB"><svg viewBox="0 0 24 24" style="font-size:16px"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg></span>
         <button class="trash"><svg viewBox="0 0 24 24" style="font-size:15px"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M7 7l1 13h8l1-13"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELECT -->
+  <div class="card">
+    <div class="head"><div class="bar identity"></div><div style="flex:1"><h2>Super Select Field</h2><p>Searchable single-select dropdown · typed options · clearable</p></div></div>
+    <div class="grid2">
+      <div class="field">
+        <div class="labelrow"><label>Account Type<span class="req">*</span></label></div>
+        <div class="selwrap" data-select="accountType"></div>
+      </div>
+      <div class="field">
+        <div class="labelrow"><label>Reporting Currency<span class="req">*</span></label></div>
+        <div class="selwrap" data-select="currency"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTI-SELECT -->
+  <div class="card">
+    <div class="head"><div class="bar notes"></div><div style="flex:1"><h2>Super Multi-Select Field</h2><p>In-field chips · count pill · checkable popover · min/max</p></div></div>
+    <div class="field">
+      <div class="labelrow"><label>Entry Tags<span class="req">*</span></label><span class="spacer"></span><span class="pill" data-count="tags" style="display:none"></span></div>
+      <div class="selwrap" data-multi="tags"></div>
+    </div>
+  </div>
+
+  <!-- BOOL -->
+  <div class="card">
+    <div class="head"><div class="bar identity"></div><div style="flex:1"><h2>Super Bool Field</h2><p>Toggle · checkbox · status flags · acknowledgement gate</p></div></div>
+    <div class="grid2" style="margin-bottom:24px;">
+      <div class="field">
+        <div class="labelrow"><label>Account Status</label></div>
+        <div class="boolrow" data-bool data-on="Active" data-off="Inactive" data-checked="1"><span class="toggle on"><span class="thumb"></span></span><span class="cap on">Active</span></div>
+      </div>
+      <div class="field">
+        <div class="labelrow"><label>Allow Manual Posting</label></div>
+        <div class="boolrow" data-bool data-on="Manual journals allowed" data-off="System postings only"><span class="toggle"><span class="thumb"></span></span><span class="cap off">System postings only</span></div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="labelrow"><label>Confirmation<span class="req">*</span></label></div>
+      <div class="boolrow" data-bool data-style="checkbox" data-title="I confirm these account details are accurate and approved." data-checked="1"><span class="chk on"><svg viewBox="0 0 24 24" style="font-size:14px;stroke-width:2.4"><path d="M5 12l5 5 9-11"/></svg></span><span class="cap on">I confirm these account details are accurate and approved.</span></div>
+    </div>
+  </div>
+
+  <!-- CHOICE -->
+  <div class="card">
+    <div class="head"><div class="bar ledger"></div><div style="flex:1"><h2>Super Choice Field</h2><p>Segmented · radio list · checkbox list · inline</p></div></div>
+    <div class="field" style="margin-bottom:24px;">
+      <div class="labelrow"><label>Status<span class="req">*</span></label></div>
+      <div class="seg full" data-choice="single"><button class="on" data-v="draft">Draft</button><button data-v="posted">Posted</button><button data-v="void">Void</button></div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <div class="labelrow"><label>Posting Period<span class="req">*</span></label></div>
+        <div data-choice="single">
+          <div class="optrow sel" data-v="current"><span class="circ on"></span><span class="rmeta"><div class="rt">Current period</div><div class="rd">Jun 2026 — open</div></span></div>
+          <div class="optrow" data-v="prior"><span class="circ"></span><span class="rmeta"><div class="rt">Prior period</div><div class="rd">May 2026 — open</div></span></div>
+          <div class="optrow" data-v="adjust"><span class="circ"></span><span class="rmeta"><div class="rt">Adjustment period</div><div class="rd">Year-end only</div></span></div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="labelrow"><label>Document Types<span class="req">*</span></label></div>
+        <div data-choice="multi">
+          <div class="optrow sel" data-v="invoice"><span class="chk on"><svg viewBox="0 0 24 24" style="font-size:13px;stroke-width:2.4"><path d="M5 12l5 5 9-11"/></svg></span><span class="rmeta"><div class="rt">Invoice</div></span></div>
+          <div class="optrow" data-v="receipt"><span class="chk"></span><span class="rmeta"><div class="rt">Receipt</div></span></div>
+          <div class="optrow" data-v="contract"><span class="chk"></span><span class="rmeta"><div class="rt">Contract</div></span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -499,6 +620,125 @@
     seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
     fields.forEach(function(f){ f.setFormat(b.dataset.fmt); });
   });
+})();
+</script>
+
+<script>
+(function(){
+  var X='<svg viewBox="0 0 24 24" style="font-size:14px"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  var CK='<svg viewBox="0 0 24 24" style="font-size:12px;stroke-width:2.4"><path d="M5 12l5 5 9-11"/></svg>';
+  var SR='<svg viewBox="0 0 24 24" style="font-size:16px"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>';
+  function chev(up){ return '<svg viewBox="0 0 24 24" style="font-size:18px"><path d="'+(up?'M18 15l-6-6-6 6':'M6 9l6 6 6-6')+'"/></svg>'; }
+  function esc(s){ return (''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var SELECTS={
+    accountType:{ placeholder:'Choose a type…', lead:'<svg viewBox="0 0 24 24" style="font-size:16px"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
+      options:[{v:'asset',l:'Asset'},{v:'liability',l:'Liability'},{v:'equity',l:'Equity'},{v:'revenue',l:'Revenue'},{v:'expense',l:'Expense'}] },
+    currency:{ placeholder:'Search currencies…', searchable:true, clearable:true, value:'SAR',
+      options:[{v:'SAR',l:'SAR — Saudi Riyal',d:'ر.س'},{v:'USD',l:'USD — US Dollar',d:'$'},{v:'EUR',l:'EUR — Euro',d:'€'},{v:'GBP',l:'GBP — British Pound',d:'£'},{v:'AED',l:'AED — UAE Dirham',d:'د.إ'},{v:'EGP',l:'EGP — Egyptian Pound',d:'ج.م'},{v:'JPY',l:'JPY — Japanese Yen',d:'¥'}] }
+  };
+  var MULTIS={
+    tags:{ placeholder:'Add tags…', searchable:true, values:['recurring','reconciled'],
+      options:[{v:'recurring',l:'Recurring'},{v:'intercompany',l:'Intercompany'},{v:'reconciled',l:'Reconciled'},{v:'audited',l:'Audited'},{v:'fx',l:'FX Adjustment'},{v:'accrual',l:'Accrual'},{v:'deferred',l:'Deferred'}] }
+  };
+
+  var openMenu=null;
+  document.addEventListener('mousedown', function(e){ if(openMenu && !openMenu.wrap.contains(e.target)) openMenu.close(); });
+
+  function filterOpts(options, q){ q=(q||'').trim().toLowerCase(); return options.filter(function(o){ return !q || o.l.toLowerCase().indexOf(q)>=0 || (o.d&&o.d.toLowerCase().indexOf(q)>=0); }); }
+
+  function makeSelect(wrap, cfg){
+    var value=cfg.value||null, query='', open=false;
+    var box=document.createElement('div'); box.className='box select'; box.tabIndex=0;
+    var menu=document.createElement('div'); menu.className='menu pop'; menu.style.display='none';
+    wrap.appendChild(box); wrap.appendChild(menu);
+    var self={ wrap:wrap, close:function(){ open=false; if(openMenu===self) openMenu=null; render(); } };
+    function lab(v){ for(var i=0;i<cfg.options.length;i++) if(cfg.options[i].v===v) return cfg.options[i]; return null; }
+    function toggle(){ open=!open; if(open){ if(openMenu&&openMenu!==self) openMenu.close(); openMenu=self; query=''; } else if(openMenu===self) openMenu=null; render(); }
+    function render(){
+      var sel=lab(value); box.classList.toggle('focus', open);
+      var h=''; if(cfg.lead) h+='<span class="lead">'+cfg.lead+'</span>';
+      h+='<span class="val'+(sel?'':' ph')+'">'+esc(sel?sel.l:cfg.placeholder)+'</span>';
+      if(cfg.clearable&&sel) h+='<button class="iconbtn" data-clear>'+X+'</button>';
+      h+='<span class="chev">'+chev(open)+'</span>'; box.innerHTML=h;
+      var cb=box.querySelector('[data-clear]'); if(cb) cb.onclick=function(e){ e.stopPropagation(); value=null; render(); };
+      menu.style.display=open?'':'none';
+      if(open){
+        var mh=''; if(cfg.searchable) mh+='<div class="msearch">'+SR+'<input placeholder="Search…"></div>';
+        var list=filterOpts(cfg.options, query);
+        if(!list.length) mh+='<div class="opt dim" style="justify-content:center;color:var(--fg4)">No matches</div>';
+        list.forEach(function(o){ mh+='<div class="opt'+(o.v===value?' sel':'')+'" data-v="'+o.v+'"><span class="otext"><div class="olabel">'+esc(o.l)+'</div>'+(o.d?'<div class="odesc">'+esc(o.d)+'</div>':'')+'</span>'+(o.v===value?'<span class="ocheck">'+CK+'</span>':'')+'</div>'; });
+        menu.innerHTML=mh;
+        if(cfg.searchable){ var inp=menu.querySelector('.msearch input'); inp.value=query; inp.oninput=function(){ query=inp.value; render(); }; setTimeout(function(){ var i2=menu.querySelector('.msearch input'); if(i2){ i2.focus(); i2.setSelectionRange(query.length,query.length); } },0); }
+        menu.querySelectorAll('.opt[data-v]').forEach(function(d){ d.onmousedown=function(e){ e.preventDefault(); value=d.dataset.v; open=false; openMenu=null; render(); }; });
+      }
+    }
+    box.addEventListener('click', function(e){ if(e.target.closest('[data-clear]')) return; toggle(); });
+    render();
+  }
+
+  function makeMulti(wrap, cfg, pill){
+    var values=(cfg.values||[]).slice(), query='', open=false;
+    var box=document.createElement('div'); box.className='box select'; box.tabIndex=0;
+    var menu=document.createElement('div'); menu.className='menu pop'; menu.style.display='none';
+    wrap.appendChild(box); wrap.appendChild(menu);
+    var self={ wrap:wrap, close:function(){ open=false; if(openMenu===self) openMenu=null; render(); } };
+    function lab(v){ for(var i=0;i<cfg.options.length;i++) if(cfg.options[i].v===v) return cfg.options[i]; return {v:v,l:v}; }
+    function toggle(){ open=!open; if(open){ if(openMenu&&openMenu!==self) openMenu.close(); openMenu=self; query=''; } else if(openMenu===self) openMenu=null; render(); }
+    function render(){
+      box.classList.toggle('focus', open);
+      var h='';
+      if(values.length){ h+='<div class="chips">'+values.map(function(v){ var o=lab(v); return '<span class="chip" data-v="'+v+'">'+esc(o.l)+' <span class="x" data-rm>'+X+'</span></span>'; }).join('')+'</div>'; }
+      else h+='<span class="val ph">'+esc(cfg.placeholder)+'</span>';
+      h+='<span class="chev">'+chev(open)+'</span>'; box.innerHTML=h;
+      box.querySelectorAll('[data-rm]').forEach(function(x){ x.onclick=function(e){ e.stopPropagation(); var v=x.closest('.chip').dataset.v; values=values.filter(function(z){return z!==v;}); render(); }; });
+      if(pill){ if(values.length){ pill.style.display=''; pill.textContent=values.length+' selected'; } else pill.style.display='none'; }
+      menu.style.display=open?'':'none';
+      if(open){
+        var mh=''; if(cfg.searchable) mh+='<div class="msearch">'+SR+'<input placeholder="Search…"></div>';
+        var list=filterOpts(cfg.options, query);
+        if(!list.length) mh+='<div class="opt dim" style="justify-content:center;color:var(--fg4)">No matches</div>';
+        list.forEach(function(o){ var on=values.indexOf(o.v)>=0; mh+='<div class="opt'+(on?' sel':'')+'" data-v="'+o.v+'"><span class="csq'+(on?' on':'')+'">'+(on?CK:'')+'</span><span class="otext"><div class="olabel">'+esc(o.l)+'</div></span></div>'; });
+        menu.innerHTML=mh;
+        if(cfg.searchable){ var inp=menu.querySelector('.msearch input'); inp.value=query; inp.oninput=function(){ query=inp.value; render(); }; setTimeout(function(){ var i2=menu.querySelector('.msearch input'); if(i2){ i2.focus(); i2.setSelectionRange(query.length,query.length); } },0); }
+        menu.querySelectorAll('.opt[data-v]').forEach(function(d){ d.onmousedown=function(e){ e.preventDefault(); var v=d.dataset.v; if(values.indexOf(v)>=0) values=values.filter(function(z){return z!==v;}); else values.push(v); render(); }; });
+      }
+    }
+    box.addEventListener('click', function(e){ if(e.target.closest('[data-rm]')) return; toggle(); });
+    render();
+  }
+
+  // bool toggles / checkboxes
+  document.querySelectorAll('[data-bool]').forEach(function(row){
+    row.addEventListener('click', function(){
+      var checked = row.dataset.checked!=='1'; row.dataset.checked = checked?'1':'0';
+      var ctrl=row.querySelector('.toggle, .chk'), cap=row.querySelector('.cap');
+      ctrl.classList.toggle('on', checked);
+      if(row.dataset.style==='checkbox') ctrl.innerHTML = checked?CK:'';
+      if(!row.dataset.title){ cap.textContent = checked?row.dataset.on:row.dataset.off; cap.className='cap '+(checked?'on':'off'); }
+    });
+  });
+
+  // choice groups (segmented / radio = single, checkbox = multi)
+  function isOn(it){ return it.classList.contains('on')||it.classList.contains('sel'); }
+  function setItem(it,on){
+    if(it.tagName==='BUTTON'){ it.classList.toggle('on',on); return; }
+    it.classList.toggle('sel',on);
+    var c=it.querySelector('.circ'); if(c) c.classList.toggle('on',on);
+    var k=it.querySelector('.chk'); if(k){ k.classList.toggle('on',on); k.innerHTML=on?CK:''; }
+  }
+  document.querySelectorAll('[data-choice]').forEach(function(g){
+    var multi=g.dataset.choice==='multi';
+    var items=g.classList.contains('seg') ? g.querySelectorAll('button') : g.querySelectorAll('.optrow');
+    items.forEach(function(it){ it.addEventListener('click', function(){
+      if(multi) setItem(it, !isOn(it));
+      else items.forEach(function(o){ setItem(o, o===it); });
+    }); });
+  });
+
+  // boot
+  document.querySelectorAll('[data-select]').forEach(function(w){ var c=SELECTS[w.dataset.select]; if(c) makeSelect(w,c); });
+  document.querySelectorAll('[data-multi]').forEach(function(w){ var c=MULTIS[w.dataset.multi]; if(c) makeMulti(w,c, document.querySelector('.pill[data-count="'+w.dataset.multi+'"]')); });
 })();
 </script>
 </body>

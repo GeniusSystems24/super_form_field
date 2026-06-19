@@ -6,6 +6,71 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-06-19
+
+The **1.0** release rounds the kit out into a full ERP form toolkit: four new
+option- and boolean-driven fields join the original four, all on the same shared
+foundation, validation contract (silent-until-touched, suffix error badge), and
+light/dark + LTR/RTL parity. No breaking changes to the existing four fields.
+
+### Added
+
+- **`SuperSelectFormField<T>`** — a searchable single-select dropdown over typed
+  `SuperOption<T>` options. A tappable FieldBox trigger opens a popover that
+  drops below the control and flips above when there's no room. Props:
+  `options`, `searchable` + `searchHint`, `clearable`, `placeholder`,
+  `leadingIcon`, `emptyLabel`, plus the shared `required` / `validators` /
+  `forceError` / `arabic` / `density` / `disabled` / `readOnly`. Value is `T?`.
+  Options carry `value` / `label` / optional `description` / `icon` / `disabled`.
+  - `SuperSelectFieldController<T>` (Model): `value` / `selectedOption` /
+    `filtered` / `isOpen` / `open()` / `close()` / `select(option)` /
+    `setValue(T?)` / `clear()` / `markTouched()`.
+  - `SelectLogic` (pure domain): `filter` (label + description), `buildValidators`.
+- **`SuperMultiSelectFormField<T>`** — multi-select with the chosen values shown
+  as removable chips inside the field, a label-right count pill, and a checkable
+  popover that stays open across toggles. Props: `options`, `searchable`,
+  `minSelections`, `maxSelections` (a hard cap — further picks are blocked),
+  `showCount`, plus the shared validation/theme props. Value is `List<T>`.
+  - `SuperMultiSelectFieldController<T>` (Model): `values` / `isSelected` /
+    `selectedOptions` / `count` / `atCapacity` / `toggle(option)` /
+    `removeValue(v)` / `setValues` / `clear()`.
+  - `MultiSelectLogic` (pure domain): `filter`, `buildValidators` (required ▸ min
+    ▸ max).
+- **`SuperBoolFormField`** — a labelled boolean drawn as a sliding **toggle**
+  (default) or a **checkbox**, with an `enabledLabel` / `disabledLabel` state
+  caption or a custom `title` statement. A `mustBeTrue` gate covers required
+  acknowledgements (terms, compliance). Value is `bool`.
+  - `SuperBoolFieldController` (Model): `value` / `set(bool)` / `toggle()` /
+    `setValue(bool)` / `markTouched()`.
+  - `buildBoolValidators` (pure domain): the `mustBeTrue` rule + custom chain;
+    `SuperBoolStyle` enum.
+- **`SuperChoiceFormField<T>`** — an **inline** option group (no popover): a
+  horizontal **segmented** control, a **radio** list, or a **checkbox** list.
+  Best for small fixed sets (status, period, document types). `multiple`,
+  `minSelections`, `maxSelections`. Value is `List<T>` (with a `single`
+  convenience on the controller).
+  - `SuperChoiceFieldController<T>` (Model): `values` / `single` / `isSelected` /
+    `pick(value)` / `setValues` / `setSingle` / `clear()`.
+  - `ChoiceLogic` (pure domain): `buildValidators`; `SuperChoiceStyle` enum.
+- **Shared core** — a generic `SuperOption<T>` value type (`core/entities`) plus
+  reusable foundation widgets: `FieldPopover` (anchored above/below dropdown
+  overlay), `OptionMenu` (themed popover surface), `OptionTile` (+
+  `OptionGroupHeader`), `MenuSearchField`, and `SuperChip`. New `SffIcons`:
+  `chevronDown` / `chevronUp` / `check` / `checkboxOn` / `checkboxOff` /
+  `radioOn` / `radioOff`.
+- **Example app** — four new demos (Select / Multi-Select / Bool / Choice), each
+  with a *Validate* submit-sweep, registered in the gallery launcher.
+- **Tests** — pure-domain unit tests for `SelectLogic`, `MultiSelectLogic`,
+  `ChoiceLogic`, and `buildBoolValidators`.
+
+### Roadmap
+
+Planned for future minor releases (non-breaking): `SuperPhoneFormField`
+(country code + national number), `SuperCurrencyFormField` (amount + currency
+preset), `SuperTimeFormField` / date-time, `SuperRangeFormField` (numeric / date
+ranges), `SuperColorFormField`, and masked inputs (IBAN / tax id / card).
+
+
 ## [0.2.0] — 2026-06-18
 
 ### Added

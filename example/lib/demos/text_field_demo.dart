@@ -107,9 +107,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: SuperTokens.accent,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(SuperTokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

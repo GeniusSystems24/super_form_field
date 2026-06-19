@@ -25,6 +25,13 @@ abstract final class SffIcons {
   static const IconData calendar = Icons.calendar_today_outlined;
   static const IconData chevronLeft = Icons.chevron_left_rounded;
   static const IconData chevronRight = Icons.chevron_right_rounded;
+  static const IconData chevronDown = Icons.keyboard_arrow_down_rounded;
+  static const IconData chevronUp = Icons.keyboard_arrow_up_rounded;
+  static const IconData check = Icons.check_rounded;
+  static const IconData checkboxOn = Icons.check_box_rounded;
+  static const IconData checkboxOff = Icons.check_box_outline_blank_rounded;
+  static const IconData radioOn = Icons.radio_button_checked_rounded;
+  static const IconData radioOff = Icons.radio_button_unchecked_rounded;
 
   // ── file-type glyphs ──
   static const IconData image = Icons.image_outlined;

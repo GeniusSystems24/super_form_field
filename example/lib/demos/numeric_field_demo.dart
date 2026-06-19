@@ -78,7 +78,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 allowNegative: false,
                 initialValue: 3.7512,
               ),
-              const SizedBox(height: SuperTokens.space6),
+              SizedBox(height: SuperTokens.space6),
               SuperNumericFormField(
                 label: 'Tax Rate',
                 suffix: '%',

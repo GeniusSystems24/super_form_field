@@ -78,8 +78,7 @@ void main() {
           isNotNull); // > maxFiles
       expect(runValidators<List<SuperFile>>(const [png], v), isNotNull);
     });
-  });
-   // wrong type
+  }); // wrong type
   group('SuperNumericFieldController stepping', () {
     test('bump uses step, bumpLarge uses largeStep, both clamp', () {
       final c = SuperNumericFieldController(initialValue: 10);
@@ -199,6 +198,151 @@ void main() {
       expect(c.value!.year, 2025);
       c.stepSegment(2, 1); // day 28 → 29 (Jan has 31)
       expect(c.value!.day, 29);
+      c.dispose();
+    });
+  });
+
+  group('SelectLogic', () {
+    const opts = [
+      SuperOption(value: 'asset', label: 'Asset', description: 'CC-100'),
+      SuperOption(value: 'liability', label: 'Liability'),
+      SuperOption(value: 'equity', label: 'Equity'),
+    ];
+
+    test('filter matches label and description, blank returns all', () {
+      expect(SelectLogic.filter(opts, '').length, 3);
+      expect(SelectLogic.filter(opts, 'lia').single.value, 'liability');
+      expect(SelectLogic.filter(opts, 'cc-1').single.value,
+          'asset'); // description
+      expect(SelectLogic.filter(opts, 'zzz'), isEmpty);
+    });
+
+    test('required validator', () {
+      final v = SelectLogic.buildValidators<String>(required: true);
+      expect(runValidators<String?>(null, v), isNotNull);
+      expect(runValidators<String?>('asset', v), isNull);
+    });
+  });
+
+  group('MultiSelectLogic', () {
+    test('validators honor required + min + max', () {
+      final v = MultiSelectLogic.buildValidators<String>(
+          required: true, minSelections: 2, maxSelections: 3);
+      expect(runValidators<List<String>>(const [], v), isNotNull); // required
+      expect(runValidators<List<String>>(const ['a'], v), isNotNull); // < min
+      expect(runValidators<List<String>>(const ['a', 'b', 'c', 'd'], v),
+          isNotNull); // > max
+      expect(runValidators<List<String>>(const ['a', 'b'], v), isNull);
+    });
+  });
+
+  group('ChoiceLogic', () {
+    test('validators honor required + min + max', () {
+      final v =
+          ChoiceLogic.buildValidators<String>(required: true, maxSelections: 2);
+      expect(runValidators<List<String>>(const [], v), isNotNull);
+      expect(runValidators<List<String>>(const ['a', 'b', 'c'], v), isNotNull);
+      expect(runValidators<List<String>>(const ['a'], v), isNull);
+    });
+  });
+
+  group('buildBoolValidators', () {
+    test('mustBeTrue rejects false, accepts true', () {
+      final v = buildBoolValidators(mustBeTrue: true);
+      expect(runValidators<bool>(false, v), isNotNull);
+      expect(runValidators<bool>(true, v), isNull);
+    });
+  });
+
+  group('SuperSelectFieldController', () {
+    const opts = [
+      SuperOption(value: 'a', label: 'A'),
+      SuperOption(value: 'b', label: 'B', disabled: true),
+    ];
+
+    test('select sets value + closes, disabled is ignored, clear resets', () {
+      final c = SuperSelectFieldController<String>();
+      c.configure(
+        options: opts,
+        validators: SelectLogic.buildValidators<String>(required: true),
+        forceError: false,
+      );
+      c.open();
+      expect(c.isOpen, isTrue);
+      c.select(opts[0]);
+      expect(c.value, 'a');
+      expect(c.isOpen, isFalse);
+      c.select(opts[1]); // disabled → no change
+      expect(c.value, 'a');
+      c.clear();
+      expect(c.value, isNull);
+      c.dispose();
+    });
+  });
+
+  group('SuperMultiSelectFieldController', () {
+    const opts = [
+      SuperOption(value: 'a', label: 'A'),
+      SuperOption(value: 'b', label: 'B'),
+      SuperOption(value: 'c', label: 'C'),
+    ];
+
+    test('toggle adds/removes and honors the maxSelections cap', () {
+      final c = SuperMultiSelectFieldController<String>();
+      c.configure(
+        options: opts,
+        maxSelections: 2,
+        validators: const [],
+        forceError: false,
+      );
+      c.toggle(opts[0]);
+      c.toggle(opts[1]);
+      expect(c.values, ['a', 'b']);
+      expect(c.atCapacity, isTrue);
+      c.toggle(opts[2]); // blocked by cap
+      expect(c.values, ['a', 'b']);
+      c.toggle(opts[0]); // remove
+      expect(c.values, ['b']);
+      c.removeValue('b');
+      expect(c.isEmpty, isTrue);
+      c.dispose();
+    });
+  });
+
+  group('SuperChoiceFieldController', () {
+    test('single mode replaces, multiple mode toggles', () {
+      final single = SuperChoiceFieldController<String>();
+      single.configure(
+          multiple: false, validators: const [], forceError: false);
+      single.pick('a');
+      single.pick('b');
+      expect(single.values, ['b']); // replaced
+      expect(single.single, 'b');
+
+      final multi = SuperChoiceFieldController<String>();
+      multi.configure(multiple: true, validators: const [], forceError: false);
+      multi.pick('a');
+      multi.pick('b');
+      multi.pick('a'); // toggle off
+      expect(multi.values, ['b']);
+    });
+  });
+
+  group('SuperBoolFieldController', () {
+    test('toggle flips value and marks touched; visibleError gates on touched',
+        () {
+      final c = SuperBoolFieldController(initialValue: false);
+      c.configure(
+        validators: buildBoolValidators(mustBeTrue: true),
+        forceError: false,
+      );
+      expect(c.visibleError, isNull); // untouched
+      c.toggle();
+      expect(c.value, isTrue);
+      expect(c.visibleError, isNull); // true → valid
+      c.toggle();
+      expect(c.value, isFalse);
+      expect(c.visibleError, isNotNull); // touched + invalid
       c.dispose();
     });
   });

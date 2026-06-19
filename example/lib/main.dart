@@ -10,9 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart';
 
 import 'demos/attachment_field_demo.dart';
+import 'demos/bool_field_demo.dart';
+import 'demos/choice_field_demo.dart';
 import 'demos/date_field_demo.dart';
-import 'demos/demo_scaffold.dart';
+import 'demos/multi_select_field_demo.dart';
 import 'demos/numeric_field_demo.dart';
+import 'demos/select_field_demo.dart';
 import 'demos/text_field_demo.dart';
 
 void main() => runApp(const ExampleApp());
@@ -86,6 +89,14 @@ class _Launcher extends StatelessWidget {
         Icons.attach_file_rounded, (_) => const AttachmentFieldDemo()),
     _DemoItem('Super Date Field', 'Masked YYYY-MM-DD · calendar popover · min/max',
         Icons.event_rounded, (_) => const DateFieldDemo()),
+    _DemoItem('Super Select Field', 'Searchable single-select dropdown · options',
+        Icons.arrow_drop_down_circle_outlined, (_) => const SelectFieldDemo()),
+    _DemoItem('Super Multi-Select Field', 'Chips · checkable popover · min/max',
+        Icons.checklist_rounded, (_) => const MultiSelectFieldDemo()),
+    _DemoItem('Super Bool Field', 'Toggle · checkbox · active flags · mustBeTrue',
+        Icons.toggle_on_outlined, (_) => const BoolFieldDemo()),
+    _DemoItem('Super Choice Field', 'Segmented · radio · checkbox group',
+        Icons.tune_rounded, (_) => const ChoiceFieldDemo()),
   ];
 
   @override

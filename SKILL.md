@@ -4,15 +4,18 @@ description: >
   Use the super_form_field Flutter package to build GeniusLink design-system
   form inputs — SuperTextFormField (text/email/password/multiline),
   SuperNumericFormField (formatted numeric with stepper),
-  SuperAttachmentFormField (file drop zone + list), and SuperDateFormField
-  (masked YYYY-MM-DD + calendar popover). Apply when a Flutter app
-  needs validated, themed (light/dark, LTR/RTL) form fields whose errors surface
-  through a suffix badge tooltip rather than inline text.
+  SuperAttachmentFormField (file drop zone + list), SuperDateFormField
+  (masked YYYY-MM-DD + calendar), SuperSelectFormField (searchable single-select
+  dropdown), SuperMultiSelectFormField (chips + checkable popover),
+  SuperBoolFormField (toggle/checkbox), and SuperChoiceFormField (segmented /
+  radio / checkbox group). Apply when a Flutter app needs validated, themed
+  (light/dark, LTR/RTL) ERP form fields whose errors surface through a suffix
+  badge tooltip rather than inline text.
 ---
 
 # Super Form Field — Agent Skill
 
-`super_form_field` ships four GeniusLink form inputs on one field foundation.
+`super_form_field` ships eight GeniusLink form inputs on one field foundation.
 This skill tells you how to wire them correctly.
 
 ## When to use
@@ -42,7 +45,7 @@ This skill tells you how to wire them correctly.
 
 `import 'package:super_form_field/super_form_field.dart';` exposes everything.
 
-## The four fields
+## The four core fields
 
 ### SuperTextFormField
 Key props: `label`, `required`, `placeholder`, `hint`, `type`
@@ -87,6 +90,43 @@ move segments; `↑`/`↓` step the active one (wraps within its range). The cal
 opens below the icon, flipping above when there's no room. Pick from the
 popover, or drive it from a `SuperDateFieldController` via `pick(DateTime)`,
 `setValue(DateTime?)`, `clear()`, `stepSegment(kind, ±1)`, `stepAtCursor(±1)`.
+
+## The four option / boolean fields
+
+All four use the generic `SuperOption<T>` value type from `core`
+(`SuperOption(value: T, label: String, description?, icon?, disabled?)`; build
+lists with `SuperOption.fromMap({value: label})`).
+
+### SuperSelectFormField&lt;T&gt;
+Searchable single-select dropdown. Key props: `options` (required
+`List<SuperOption<T>>`), `searchable` + `searchHint`, `clearable`, `placeholder`,
+`leadingIcon`, `emptyLabel`, plus shared `required` / `validators`
+(`Validator<T?>`) / `forceError` / `arabic` / `density` / `disabled` /
+`readOnly`. `onChanged` is `ValueChanged<T?>` — value is `T?` (`null` = empty).
+The popover drops below the control, flipping above when needed, and matches the
+control width. Disabled options can't be picked.
+
+### SuperMultiSelectFormField&lt;T&gt;
+Multi-select with in-field removable chips + a checkable popover that stays open
+across toggles. Key props: `options`, `searchable`, `minSelections`,
+`maxSelections` (a **hard cap** — extra picks are blocked), `showCount` (the
+`n selected` label-right pill). `onChanged` is `ValueChanged<List<T>>` — value is
+`List<T>`.
+
+### SuperBoolFormField
+A labelled boolean as a sliding toggle (default) or checkbox. Key props: `label`,
+`style` (`SuperBoolStyle.toggle | checkbox`), `enabledLabel` / `disabledLabel`
+(status caption) OR `title` (a statement, e.g. "I accept …"), `mustBeTrue` +
+`mustBeTrueMessage` (required-acceptance gate), shared validation/theme props.
+`onChanged` is `ValueChanged<bool>` — value is `bool`. The whole row is tappable.
+
+### SuperChoiceFormField&lt;T&gt;
+Inline option group (no popover). Key props: `options`, `style`
+(`SuperChoiceStyle.segmented | radio | checkbox`), `multiple` (segmented/radio
+default single; checkbox is multi), `minSelections`, `maxSelections`. `onChanged`
+is `ValueChanged<List<T>>` — value is `List<T>`; for single-pick styles read one
+value via `controller.single`. The error shows in the FieldShell label-right
+slot. Best for small fixed sets (status, period, document types).
 
 ## Rules that matter
 

@@ -10,7 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart';
 
-import '../demo_scaffold.dart' hide SectionCard;
+import '../demo_scaffold.dart';
 
 class DateBasicExample extends StatefulWidget {
   const DateBasicExample({super.key});
