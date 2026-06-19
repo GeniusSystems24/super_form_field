@@ -11,8 +11,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../extensions/context_extensions.dart';
-import '../theme/sff_text_styles.dart';
-import '../theme/sff_tokens.dart';
+import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;
 
 /// Vertical density of a field.
 enum FieldDensity { comfortable, compact }

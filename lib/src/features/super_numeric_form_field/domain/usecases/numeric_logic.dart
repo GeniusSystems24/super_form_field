@@ -7,7 +7,7 @@
 // imports — unit-testable in isolation.
 // ============================================================
 
-import '../../../../core/utils/sff_format.dart';
+import 'package:super_core/super_core.dart' hide Validator, ValidityChanged;
 import '../../../../core/utils/validators.dart';
 
 /// Numeric field business rules, grouped as a stateless helper.

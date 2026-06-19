@@ -10,7 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart';
 
-import '../demo_scaffold.dart';
+import '../demo_scaffold.dart' hide SectionCard;
 
 class DateBasicExample extends StatefulWidget {
   const DateBasicExample({super.key});
@@ -28,7 +28,7 @@ class _DateBasicExampleState extends State<DateBasicExample> {
     return SectionCard(
       title: '1 · Basic',
       subtitle: 'Uncontrolled — type a masked date or pick from the calendar',
-      marker: Marker.identity,
+      marker: SuperMarker.identity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

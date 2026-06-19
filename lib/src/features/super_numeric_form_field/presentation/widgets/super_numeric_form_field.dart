@@ -217,7 +217,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
     );
   }
 
-  Widget _unit(SuperFieldTheme t, String text) => Padding(
+  Widget _unit(SuperThemeData t, String text) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 1),
         child: Text(
           text,

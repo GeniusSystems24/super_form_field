@@ -1,7 +1,7 @@
 // ============================================================
 // example/lib/main.dart
 // ------------------------------------------------------------
-// Gallery launcher for Super Form Field. Registers the SuperFieldTheme
+// Gallery launcher for Super Form Field. Registers the SuperThemeData
 // extension (light + dark parity), exposes a global Light/Dark + LTR/RTL
 // toggle, and lists the three field demos.
 // ============================================================
@@ -28,7 +28,7 @@ class _ExampleAppState extends State<ExampleApp> {
   ThemeMode _mode = ThemeMode.dark;
   TextDirection _dir = TextDirection.ltr;
 
-  ThemeData _theme(SuperFieldTheme s) => ThemeData(
+  ThemeData _theme(SuperThemeData s) => ThemeData(
         brightness: s.brightness,
         scaffoldBackgroundColor: s.bg,
         fontFamily: SuperTokens.bodyFont,
@@ -41,8 +41,8 @@ class _ExampleAppState extends State<ExampleApp> {
       debugShowCheckedModeBanner: false,
       title: 'Super Form Field',
       themeMode: _mode,
-      theme: _theme(SuperFieldTheme.light),
-      darkTheme: _theme(SuperFieldTheme.dark),
+      theme: _theme(SuperThemeData.light),
+      darkTheme: _theme(SuperThemeData.dark),
       builder: (context, child) => Directionality(textDirection: _dir, child: child!),
       home: _Launcher(
         mode: _mode,

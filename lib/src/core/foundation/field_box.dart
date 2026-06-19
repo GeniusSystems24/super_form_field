@@ -10,7 +10,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../extensions/context_extensions.dart';
-import '../theme/sff_tokens.dart';
+import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;
 import 'error_badge.dart';
 import 'field_shell.dart';
 

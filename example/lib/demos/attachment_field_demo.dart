@@ -11,7 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart';
 
-import 'demo_scaffold.dart';
+import 'demo_scaffold.dart' hide SectionCard;
 
 class AttachmentFieldDemo extends StatefulWidget {
   const AttachmentFieldDemo({super.key});
@@ -50,7 +50,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
         SectionCard(
           title: 'Supporting Documents',
           subtitle: 'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperAttachmentFormField(
             label: 'Attachments',
             required: true,
@@ -65,7 +65,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
         SectionCard(
           title: 'Single Receipt',
           subtitle: 'Single-file mode replaces the previous attachment',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperAttachmentFormField(
             label: 'Receipt',
             multiple: false,

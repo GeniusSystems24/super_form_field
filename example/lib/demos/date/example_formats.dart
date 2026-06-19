@@ -20,7 +20,7 @@ class DateFormatsExample extends StatelessWidget {
     return SectionCard(
       title: '4 · Formats',
       subtitle: 'Year-month-day · year-month · year · month-day',
-      marker: Marker.identity,
+      marker: SuperMarker.identity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

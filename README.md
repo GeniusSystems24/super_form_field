@@ -33,8 +33,8 @@ Register the theme extension once so the fields pick up colors, then build:
 import 'package:super_form_field/super_form_field.dart';
 
 MaterialApp(
-  theme:     ThemeData(extensions: const [SuperFieldTheme.light]),
-  darkTheme: ThemeData(extensions: const [SuperFieldTheme.dark]),
+  theme:     ThemeData(extensions: const [SuperThemeData.light]),
+  darkTheme: ThemeData(extensions: const [SuperThemeData.dark]),
   // RTL: wrap with Directionality(textDirection: TextDirection.rtl, …)
 );
 ```
@@ -223,8 +223,8 @@ Clean Architecture **per feature**, with an MVC presentation split:
 lib/
   src/
     core/                         shared foundation (theme, validators, field chrome)
-      theme/      sff_tokens · sff_theme · sff_text_styles
-      utils/      validators · sff_format
+      (theme/type/sizes come from the shared super_core package)
+      utils/      validators
       foundation/ field_shell · field_box · error_badge · field_icon_button · sff_icon · count_pill
     features/
       super_text_form_field/

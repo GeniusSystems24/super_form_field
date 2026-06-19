@@ -31,7 +31,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
         SectionCard(
           title: 'Identity',
           subtitle: 'Define the account name in both languages',
-          marker: Marker.identity,
+          marker: SuperMarker.identity,
           child: Column(
             children: [
               BilingualRow(
@@ -53,7 +53,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 ),
               ),
               const SizedBox(height: SuperTokens.space6),
-              SuperTextFormField(
+              const SuperTextFormField(
                 label: 'Reference',
                 placeholder: 'e.g. ACC-0042',
                 prefix: 'ACC-',
@@ -65,7 +65,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
         SectionCard(
           title: 'Contact & Access',
           subtitle: 'Email and password validation patterns',
-          marker: Marker.identity,
+          marker: SuperMarker.identity,
           child: Column(
             children: [
               SuperTextFormField(
@@ -89,10 +89,10 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        const SectionCard(
           title: 'Notes',
           subtitle: 'Add any notes about this account',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperTextFormField(
             label: 'Description',
             multiline: true,
@@ -107,7 +107,9 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: SuperTokens.accent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

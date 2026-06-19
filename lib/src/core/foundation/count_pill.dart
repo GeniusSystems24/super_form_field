@@ -8,8 +8,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../extensions/context_extensions.dart';
-import '../theme/sff_text_styles.dart';
-import '../theme/sff_tokens.dart';
+import 'package:super_core/super_core.dart';
 
 /// A rounded pill: [color]-tinted background behind [color] text.
 class CountPill extends StatelessWidget {

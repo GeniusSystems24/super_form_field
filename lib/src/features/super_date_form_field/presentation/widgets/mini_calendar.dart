@@ -5,15 +5,14 @@
 // of the web DateColumn's `MiniCalendar`: a header with prev/next month chevrons,
 // a Su–Sa day-of-week row, a 7-column day grid (today outlined, selection filled
 // accent, hover tint), and a "Today" shortcut. Mono day numerals, themed via
-// SuperFieldTheme. Out-of-range days (min/max) render disabled.
+// SuperThemeData. Out-of-range days (min/max) render disabled.
 // ============================================================
 
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/foundation/sff_icon.dart';
-import '../../../../core/theme/sff_text_styles.dart';
-import '../../../../core/theme/sff_tokens.dart';
+import 'package:super_core/super_core.dart';
 import '../../domain/usecases/date_logic.dart';
 
 const _months = [

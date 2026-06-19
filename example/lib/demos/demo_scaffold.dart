@@ -69,75 +69,75 @@ class DemoPage extends StatelessWidget {
   }
 }
 
-/// A GeniusLink section card: 4px marker bar + heading + subtitle + body.
-class SectionCard extends StatelessWidget {
-  const SectionCard({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.marker = Marker.identity,
-    required this.child,
-  });
+// /// A GeniusLink section card: 4px marker bar + heading + subtitle + body.
+// class SectionCard extends StatelessWidget {
+//   const SectionCard({
+//     super.key,
+//     required this.title,
+//     this.subtitle,
+//     this.marker = Marker.identity,
+//     required this.child,
+//   });
 
-  final String title;
-  final String? subtitle;
-  final Marker marker;
-  final Widget child;
+//   final String title;
+//   final String? subtitle;
+//   final Marker marker;
+//   final Widget child;
 
-  @override
-  Widget build(BuildContext context) {
-    final t = context.sffTheme;
-    return Container(
-      margin: const EdgeInsets.only(bottom: SuperTokens.space8),
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
-      decoration: BoxDecoration(
-        color: t.surface,
-        borderRadius: BorderRadius.circular(SuperTokens.radiusCard),
-        border: Border.all(color: t.border),
-        boxShadow: t.brightness == Brightness.dark
-            ? const [BoxShadow(color: Color(0x40000000), blurRadius: 50, spreadRadius: -12, offset: Offset(0, 25))]
-            : const [
-                BoxShadow(color: Color(0x0F000000), blurRadius: 2, offset: Offset(0, 1)),
-                BoxShadow(color: Color(0x14000000), blurRadius: 24, offset: Offset(0, 8)),
-              ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 4,
-                height: 40,
-                margin: const EdgeInsets.only(top: 2),
-                decoration: BoxDecoration(
-                  color: marker.color,
-                  borderRadius: BorderRadius.circular(SuperTokens.radiusPill),
-                ),
-              ),
-              const SizedBox(width: SuperTokens.space4),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: SuperText.heading.copyWith(color: t.fg1)),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 3),
-                      Text(subtitle!, style: SuperText.caption.copyWith(color: t.fg3)),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: SuperTokens.space8),
-          child,
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final t = context.sffTheme;
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: SuperTokens.space8),
+//       padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+//       decoration: BoxDecoration(
+//         color: t.surface,
+//         borderRadius: BorderRadius.circular(SuperTokens.radiusCard),
+//         border: Border.all(color: t.border),
+//         boxShadow: t.brightness == Brightness.dark
+//             ? const [BoxShadow(color: Color(0x40000000), blurRadius: 50, spreadRadius: -12, offset: Offset(0, 25))]
+//             : const [
+//                 BoxShadow(color: Color(0x0F000000), blurRadius: 2, offset: Offset(0, 1)),
+//                 BoxShadow(color: Color(0x14000000), blurRadius: 24, offset: Offset(0, 8)),
+//               ],
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Row(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Container(
+//                 width: 4,
+//                 height: 40,
+//                 margin: const EdgeInsets.only(top: 2),
+//                 decoration: BoxDecoration(
+//                   color: marker.color,
+//                   borderRadius: BorderRadius.circular(SuperTokens.radiusPill),
+//                 ),
+//               ),
+//               const SizedBox(width: SuperTokens.space4),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(title, style: SuperText.heading.copyWith(color: t.fg1)),
+//                     if (subtitle != null) ...[
+//                       const SizedBox(height: 3),
+//                       Text(subtitle!, style: SuperText.caption.copyWith(color: t.fg3)),
+//                     ],
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: SuperTokens.space8),
+//           child,
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 /// A 2-column English-left / Arabic-right form row (the bilingual grid).
 class BilingualRow extends StatelessWidget {

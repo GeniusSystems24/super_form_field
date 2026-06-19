@@ -31,8 +31,8 @@ This skill tells you how to wire them correctly.
 1. Add the dependency (path or hosted) in `pubspec.yaml`.
 2. Register the theme extension on the `MaterialApp`:
    ```dart
-   theme:     ThemeData(extensions: const [SuperFieldTheme.light]),
-   darkTheme: ThemeData(extensions: const [SuperFieldTheme.dark]),
+   theme:     ThemeData(extensions: const [SuperThemeData.light]),
+   darkTheme: ThemeData(extensions: const [SuperThemeData.dark]),
    ```
 3. For Arabic, wrap the subtree in `Directionality(textDirection: TextDirection.rtl, …)`
    and set `arabic: true` on the field (switches to the Noto Naskh Arabic face).

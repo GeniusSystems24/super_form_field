@@ -32,7 +32,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
         SectionCard(
           title: 'Amounts',
           subtitle: 'Currency and quantity with mathematical constraints',
-          marker: Marker.ledger,
+          marker: SuperMarker.ledger,
           child: Column(
             children: [
               SuperNumericFormField(
@@ -66,7 +66,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
         SectionCard(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
-          marker: Marker.ledger,
+          marker: SuperMarker.ledger,
           child: Column(
             children: [
               SuperNumericFormField(

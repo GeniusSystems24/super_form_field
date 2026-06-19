@@ -108,6 +108,19 @@
   .cal .days button.dim { color:var(--fg4); opacity:.35; cursor:default; }
   .cal .todaybtn { display:flex; justify-content:flex-end; padding-top:6px; }
   .cal .todaybtn button { font-size:12px; color:var(--accent); background:none; border:none; cursor:pointer; font-weight:600; }
+  .cal.float { position:fixed; z-index:60; margin:0; }
+
+  /* interactive date demo */
+  .seg { display:inline-flex; gap:2px; background:var(--input); border:1px solid var(--border-strong); border-radius:6px; padding:3px; flex-wrap:nowrap; max-width:100%; }
+  .seg button { font-family:var(--body); font-size:11.5px; font-weight:600; white-space:nowrap; color:var(--fg3); background:none; border:none; padding:6px 11px; border-radius:4px; cursor:pointer; transition:background .12s,color .12s; }
+  .seg button.on { background:var(--accent); color:#fff; }
+  .seg button:not(.on):hover { color:var(--fg1); }
+  .readout { font-family:var(--mono); font-size:12.5px; color:var(--fg3); margin-top:14px; }
+  .readout b { color:var(--fg1); }
+  .readout .ok { color:var(--success); } .readout .bad { color:var(--danger); }
+  .legend { display:flex; flex-wrap:wrap; gap:9px 18px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+  .legend .row { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--fg3); }
+  kbd { font-family:var(--mono); font-size:11px; color:var(--fg2); background:var(--input); border:1px solid var(--border-strong); border-bottom-width:2px; border-radius:4px; padding:2px 6px; min-width:16px; text-align:center; line-height:1.3; }
 </style>
 </head>
 <body>
@@ -190,62 +203,37 @@
     </div>
   </div>
 
-  <!-- DATE -->
+  <!-- DATE (interactive) -->
   <div class="card">
-    <div class="head"><div class="bar identity"></div><div><h2>Super Date Field</h2><p>Masked YYYY-MM-DD · calendar popover · min/max</p></div></div>
-    <div class="grid2" style="margin-bottom:24px;">
+    <div class="head"><div class="bar identity"></div><div style="flex:1"><h2>Super Date Field</h2><p>Live demo · format-preserving segmented editing · keyboard shortcuts · calendar that flips</p></div></div>
+
+    <div class="seg" id="fmtSeg">
+      <button data-fmt="ymd" class="on">Year-Month-Day</button>
+      <button data-fmt="ym">Year-Month</button>
+      <button data-fmt="y">Year</button>
+      <button data-fmt="md">Month-Day</button>
+    </div>
+
+    <div class="grid2" style="margin-top:18px;">
       <div class="field">
         <div class="labelrow"><label>Posting Date<span class="req">*</span></label></div>
-        <div class="box focus">
-          <span class="lead"><svg viewBox="0 0 24 24" style="font-size:16px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-          <input class="mono" style="text-align:start" value="2024-01-31">
-          <button class="step"><svg viewBox="0 0 24 24" style="font-size:15px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></button>
-        </div>
-        <!-- open calendar popover -->
-        <div class="cal">
-          <div class="calhead">
-            <button class="nav"><svg viewBox="0 0 24 24" style="font-size:18px"><path d="M15 6l-6 6 6 6"/></svg></button>
-            <span class="mo">January 2024</span>
-            <button class="nav"><svg viewBox="0 0 24 24" style="font-size:18px"><path d="M9 6l6 6-6 6"/></svg></button>
-          </div>
-          <div class="dow"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
-          <div class="days">
-            <button class="dim">31</button><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button>
-            <button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button>
-            <button>14</button><button class="today">15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button>
-            <button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button>
-            <button>28</button><button>29</button><button>30</button><button class="sel">31</button>
-          </div>
-          <div class="todaybtn"><button>Today</button></div>
-        </div>
+        <div class="dffield" data-date data-required="1" data-value="2024-01-31"></div>
+        <div class="readout" id="ro_en">VALUE&nbsp; <b>2024-01-31</b></div>
       </div>
       <div class="field ar">
-        <div class="labelrow"><label>تاريخ القيد<span class="req">*</span></label></div>
-        <div class="box error">
-          <span class="lead"><svg viewBox="0 0 24 24" style="font-size:16px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-          <input class="mono" style="text-align:start" dir="ltr" value="2024-13">
-          <span class="err"><svg viewBox="0 0 24 24" style="font-size:17px"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg></span>
-          <button class="step"><svg viewBox="0 0 24 24" style="font-size:15px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></button>
-        </div>
+        <div class="labelrow"><label>تاريخ القيد</label></div>
+        <div class="dffield" data-date data-rtl="1"></div>
+        <div class="readout" id="ro_ar" dir="ltr">VALUE&nbsp; <b>—</b></div>
       </div>
     </div>
-    <div class="grid2">
-      <div class="field">
-        <div class="labelrow"><label>Period (Year-Month)</label></div>
-        <div class="box">
-          <span class="lead"><svg viewBox="0 0 24 24" style="font-size:16px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-          <input class="mono" style="text-align:start" value="2024-03">
-        </div>
-      </div>
-      <div class="field">
-        <div class="labelrow"><label>Fiscal Year</label></div>
-        <div class="box">
-          <span class="lead"><svg viewBox="0 0 24 24" style="font-size:16px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
-          <input class="mono" style="text-align:start" value="2024">
-        </div>
-      </div>
+
+    <div class="legend">
+      <div class="row"><kbd>0</kbd>–<kbd>9</kbd> type the active segment (shifts in, zero-padded)</div>
+      <div class="row"><kbd>↑</kbd><kbd>↓</kbd> step the active segment</div>
+      <div class="row"><kbd>←</kbd><kbd>→</kbd> move between segments</div>
+      <div class="row"><kbd>-</kbd> / <kbd>/</kbd> jump to next segment</div>
+      <div class="row"><kbd>⌫</kbd> delete</div>
     </div>
-    <div class="hint" style="margin-top:16px;">Format-preserving, zero-padded editing — typing the year reads 0002 → 0020 → 0202 → 2024, then advances to month, then day · ↑/↓ step the active segment · ←/→ move between them · format configurable (year-month-day, year-month, year, month-day…) · the calendar drops below the icon, or flips above when there's no room.</div>
   </div>
 
   <!-- ATTACHMENT -->
@@ -279,5 +267,239 @@
 
   <div class="note">Static HTML approximation of the Flutter widgets · dark theme · run example/ for the live app</div>
 </div>
+
+<script>
+(function () {
+  var FMT = { ymd:[0,1,2], ym:[0,1], y:[0], md:[1,2], m:[1], d:[2] };
+  var DOW = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function w(k){ return k===0?4:2; }
+  function pad(s,n){ s=''+s; while(s.length<n) s='0'+s; return s; }
+  function daysIn(y,m){ return new Date(y, m, 0).getDate(); } // m 1-based
+  function svgCal(){ return '<svg viewBox="0 0 24 24" style="font-size:16px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>'; }
+
+  function DateField(root){
+    this.root = root;
+    this.rtl = root.dataset.rtl === '1';
+    this.required = root.dataset.required === '1';
+    this.order = FMT[root.dataset.fmt || 'ymd'].slice();
+    this.disp = ['','',''];
+    this.committed = [false,false,false];
+    this.buf=''; this.ai=0; this.fresh=true; this.touched=false; this.value=null;
+    this.open=false; this.calY=0; this.calM=0; this.pop=null;
+    var iv = root.dataset.value;
+    if (iv){ var p=iv.split('-'); this.value={y:+p[0],m:+p[1],d:+p[2]}; }
+    this.dispFromValue();
+    this.build();
+    this.recompute(); this.render(); this.updateReadout();
+  }
+  DateField.prototype.has = function(k){ return this.order.indexOf(k) >= 0; };
+  DateField.prototype.hasDay = function(){ return this.has(2); };
+
+  DateField.prototype.setFormat = function(fmt){
+    this.order = FMT[fmt].slice();
+    this.ai=0; this.buf=''; this.fresh=true;
+    this.dispFromValue();
+    if (this.calBtn) this.calBtn.style.display = this.hasDay() ? '' : 'none';
+    this.recompute(); this.render(); this.updateReadout();
+  };
+
+  DateField.prototype.dispFromValue = function(){
+    this.disp=['','','']; this.committed=[false,false,false];
+    if (this.value){
+      var self=this;
+      this.order.forEach(function(k){
+        var v = k===0?self.value.y : k===1?self.value.m : self.value.d;
+        self.disp[k]=pad(v, w(k)); self.committed[k]=true;
+      });
+    }
+  };
+
+  DateField.prototype.build = function(){
+    var box = document.createElement('div'); box.className='box';
+    var lead = document.createElement('span'); lead.className='lead'; lead.innerHTML=svgCal();
+    var input = document.createElement('input'); input.className='mono'; input.style.textAlign='start'; input.setAttribute('dir','ltr');
+    var err = document.createElement('span'); err.className='err'; err.style.display='none';
+    err.innerHTML='<svg viewBox="0 0 24 24" style="font-size:17px"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>';
+    var cal = document.createElement('button'); cal.className='step'; cal.type='button';
+    cal.innerHTML='<svg viewBox="0 0 24 24" style="font-size:15px"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>';
+    cal.style.display = this.hasDay() ? '' : 'none';
+    box.appendChild(lead); box.appendChild(input); box.appendChild(err); box.appendChild(cal);
+    this.root.appendChild(box);
+    this.box=box; this.input=input; this.err=err; this.calBtn=cal;
+    var self=this;
+    input.addEventListener('keydown', function(e){ self.onKey(e); });
+    input.addEventListener('focus', function(){ self.ai=0; self.fresh=true; box.classList.add('focus'); self.render(); });
+    input.addEventListener('blur', function(){ box.classList.remove('focus'); self.touched=true; if(self.buf) self.commitActive(); self.recompute(); self.render(); self.updateReadout(); });
+    input.addEventListener('mouseup', function(){ self.ai = self.indexForOffset(input.selectionStart||0); self.fresh=true; });
+    cal.addEventListener('mousedown', function(e){ e.preventDefault(); });
+    cal.addEventListener('click', function(){ self.toggleCal(); });
+  };
+
+  DateField.prototype.onKey = function(e){
+    if (e.ctrlKey||e.metaKey||e.altKey) return;
+    var k=e.key;
+    if (k==='ArrowUp'){ e.preventDefault(); this.step(1); return; }
+    if (k==='ArrowDown'){ e.preventDefault(); this.step(-1); return; }
+    if (k==='ArrowLeft'){ e.preventDefault(); this.moveSeg(-1); return; }
+    if (k==='ArrowRight'){ e.preventDefault(); this.moveSeg(1); return; }
+    if (k==='Backspace'){ e.preventDefault(); this.backspace(); return; }
+    if (/^[0-9]$/.test(k)){ e.preventDefault(); this.typeDigit(k); return; }
+    if ('-/.: '.indexOf(k)>=0){ e.preventDefault(); this.jumpSep(); return; }
+  };
+
+  DateField.prototype.typeDigit = function(d){
+    var kind=this.order[this.ai], cap=w(kind);
+    if (this.fresh){ this.buf=d; this.fresh=false; }
+    else { this.buf+=d; if(this.buf.length>cap) this.buf=this.buf.slice(this.buf.length-cap); }
+    this.disp[kind]=pad(this.buf, cap); this.committed[kind]=false;
+    var n=parseInt(this.buf,10);
+    var full=this.buf.length>=cap;
+    var early=(kind===1&&this.buf.length===1&&n>1)||(kind===2&&this.buf.length===1&&n>3);
+    if (full||early) this.finalizeAdvance();
+    this.commit();
+  };
+  DateField.prototype.commitActive = function(){
+    var kind=this.order[this.ai]; if(!this.buf) return;
+    var n=parseInt(this.buf,10);
+    if(kind===1) n=Math.min(12,Math.max(1,n));
+    if(kind===2) n=Math.min(31,Math.max(1,n));
+    this.disp[kind]= kind===0? pad(this.buf,4) : pad(n,2);
+    this.committed[kind]=true;
+  };
+  DateField.prototype.finalizeAdvance = function(){
+    this.commitActive();
+    if(this.order[this.ai]!==0) this.clampDay();
+    if(this.ai<this.order.length-1) this.ai++;
+    this.buf=''; this.fresh=true;
+  };
+  DateField.prototype.backspace = function(){
+    var kind=this.order[this.ai], cap=w(kind);
+    if(this.buf){ this.buf=this.buf.slice(0,-1); this.disp[kind]=this.buf?pad(this.buf,cap):''; this.committed[kind]=false; }
+    else if(this.ai>0){ this.ai--; var pk=this.order[this.ai]; this.buf=this.disp[pk]? (''+parseInt(this.disp[pk],10)) : ''; this.committed[pk]=false; this.fresh=false; }
+    this.commit();
+  };
+  DateField.prototype.jumpSep = function(){
+    if(this.buf) this.commitActive();
+    if(this.ai<this.order.length-1){ this.ai++; this.buf=''; this.fresh=true; }
+    this.commit();
+  };
+  DateField.prototype.moveSeg = function(delta){
+    if(this.buf) this.commitActive();
+    var ni=this.ai+delta;
+    if(ni>=0 && ni<this.order.length){ this.ai=ni; this.buf=''; this.fresh=true; }
+    this.commit();
+  };
+  DateField.prototype.dayMax = function(){
+    var y=(this.has(0)&&this.disp[0])?+this.disp[0]:new Date().getFullYear();
+    var m=(this.has(1)&&this.disp[1])?+this.disp[1]:1;
+    return daysIn(y,m);
+  };
+  DateField.prototype.clampDay = function(){
+    if(!this.has(2)||!this.disp[2]) return;
+    var mx=this.dayMax(); if(+this.disp[2]>mx) this.disp[2]=pad(mx,2);
+  };
+  DateField.prototype.step = function(dir){
+    var off=this.input.selectionStart||0; this.ai=this.indexForOffset(off);
+    var kind=this.order[this.ai]; var self=this; var now=new Date();
+    this.order.forEach(function(k){ if(!self.disp[k]){ var tv=k===0?now.getFullYear():k===1?now.getMonth()+1:now.getDate(); self.disp[k]=pad(tv,w(k)); self.committed[k]=true; } });
+    var cur=parseInt(this.disp[kind],10), v;
+    if(kind===0){ v=cur+dir; if(v<1)v=1; }
+    else if(kind===1){ v=((cur-1+dir)%12+12)%12+1; }
+    else { var mx=this.dayMax(); v=((cur-1+dir)%mx+mx)%mx+1; }
+    this.disp[kind]=pad(v,w(kind)); this.committed[kind]=true;
+    if(kind===0||kind===1) this.clampDay();
+    this.buf=''; this.fresh=true; this.touched=true;
+    this.commit();
+  };
+  DateField.prototype.indexForOffset = function(off){
+    var t=this.input.value, idx=0; for(var i=0;i<off&&i<t.length;i++){ if(t[i]==='-') idx++; }
+    return Math.max(0, Math.min(this.order.length-1, idx));
+  };
+  DateField.prototype.commit = function(){ this.recompute(); this.render(); this.updateReadout(); };
+  DateField.prototype.recompute = function(){
+    var all=this.order.every(function(k){ return this.committed[k]; }, this);
+    if(!all){ this.value=null; return; }
+    var y=this.has(0)?+this.disp[0]:new Date().getFullYear();
+    var m=this.has(1)?+this.disp[1]:1;
+    var d=this.has(2)?+this.disp[2]:1;
+    var dt=new Date(y,m-1,d);
+    this.value=(m>=1&&m<=12&&d>=1&&d<=31&&dt.getFullYear()===y&&dt.getMonth()===m-1&&dt.getDate()===d)?{y:y,m:m,d:d}:null;
+  };
+  DateField.prototype.compose = function(){
+    var maxShown=this.ai;
+    for(var i=0;i<this.order.length;i++){ if(this.disp[this.order[i]]&&i>maxShown) maxShown=i; }
+    var s='', ss=0, se=0;
+    for(var j=0;j<=maxShown;j++){ if(j>0) s+='-'; var st=s.length; s+=this.disp[this.order[j]]; if(j===this.ai){ ss=st; se=s.length; } }
+    return {text:s, ss:ss, se:se};
+  };
+  DateField.prototype.render = function(){
+    var c=this.compose(); this.input.value=c.text; this.input.setAttribute('value', c.text); this.input.placeholder=this.order.map(function(k){return k===0?'YYYY':k===1?'MM':'DD';}).join('-');
+    if(document.activeElement===this.input){ try{ this.input.setSelectionRange(c.ss,c.se); }catch(e){} }
+    var malformed = c.text.trim()!=='' && !this.value;
+    var hasErr = (this.touched) && ((this.required && !this.value && c.text.trim()==='') || malformed);
+    this.box.classList.toggle('error', !!hasErr);
+    this.err.style.display = hasErr ? '' : 'none';
+  };
+  DateField.prototype.updateReadout = function(){
+    var ro = this.root.parentNode.querySelector('.readout'); if(!ro) return;
+    if(this.value){ var p=[]; if(this.has(0))p.push(pad(this.value.y,4)); if(this.has(1))p.push(pad(this.value.m,2)); if(this.has(2))p.push(pad(this.value.d,2));
+      ro.innerHTML='VALUE&nbsp; <b>'+p.join('-')+'</b> &nbsp; <span class="ok">valid</span>'; }
+    else { ro.innerHTML='VALUE&nbsp; <b>—</b>'+(this.touched?' &nbsp; <span class="bad">incomplete</span>':''); }
+  };
+
+  // ── calendar popover ──
+  DateField.prototype.toggleCal = function(){ if(this.open) this.closeCal(); else this.openCal(); };
+  DateField.prototype.openCal = function(){
+    var base=this.value||{y:new Date().getFullYear(),m:new Date().getMonth()+1};
+    this.calY=base.y; this.calM=base.m-1;
+    this.pop=document.createElement('div'); this.pop.className='cal float';
+    document.body.appendChild(this.pop);
+    this.renderCal(); this.positionCal(); this.open=true; this.box.classList.add('focus');
+    var self=this;
+    this._out=function(e){ if(self.pop && !self.pop.contains(e.target) && e.target!==self.calBtn && !self.calBtn.contains(e.target)) self.closeCal(); };
+    setTimeout(function(){ document.addEventListener('mousedown', self._out); }, 0);
+  };
+  DateField.prototype.closeCal = function(){ if(this.pop){ this.pop.remove(); this.pop=null; } this.open=false; this.box.classList.remove('focus'); document.removeEventListener('mousedown', this._out); };
+  DateField.prototype.positionCal = function(){
+    var r=this.calBtn.getBoundingClientRect(), ph=this.pop.offsetHeight, pw=this.pop.offsetWidth;
+    var above = (r.bottom+ph+8 > window.innerHeight) && (r.top-ph-8 > 0);
+    var top = above ? (r.top-ph-6) : (r.bottom+6);
+    var left = this.rtl ? r.left : (r.right-pw);
+    left=Math.max(8, Math.min(left, window.innerWidth-pw-8));
+    this.pop.style.top=top+'px'; this.pop.style.left=left+'px';
+  };
+  DateField.prototype.renderCal = function(){
+    var y=this.calY, m=this.calM; var dim=daysIn(y,m+1); var start=new Date(y,m,1).getDay();
+    var today=new Date(); var ti=today.getFullYear()+'-'+pad(today.getMonth()+1,2)+'-'+pad(today.getDate(),2);
+    var sel=this.value?(pad(this.value.y,4)+'-'+pad(this.value.m,2)+'-'+pad(this.value.d,2)):'';
+    var h='<div class="calhead"><button class="nav" data-n="-1"><svg viewBox="0 0 24 24" style="font-size:18px"><path d="M15 6l-6 6 6 6"/></svg></button><span class="mo">'+MONTHS[m]+' '+y+'</span><button class="nav" data-n="1"><svg viewBox="0 0 24 24" style="font-size:18px"><path d="M9 6l6 6-6 6"/></svg></button></div>';
+    h+='<div class="dow">'+DOW.map(function(d){return '<span>'+d+'</span>';}).join('')+'</div><div class="days">';
+    for(var i=0;i<start;i++) h+='<button class="dim" disabled></button>';
+    for(var d=1;d<=dim;d++){ var iso=y+'-'+pad(m+1,2)+'-'+pad(d,2); var cls=iso===sel?'sel':(iso===ti?'today':''); h+='<button class="'+cls+'" data-d="'+d+'">'+d+'</button>'; }
+    h+='</div><div class="todaybtn"><button data-today="1">Today</button></div>';
+    this.pop.innerHTML=h;
+    var self=this;
+    this.pop.querySelectorAll('.nav').forEach(function(b){ b.addEventListener('mousedown',function(e){ e.preventDefault(); var n=+b.dataset.n; self.calM+=n; if(self.calM<0){self.calM=11;self.calY--;} if(self.calM>11){self.calM=0;self.calY++;} self.renderCal(); self.positionCal(); }); });
+    this.pop.querySelectorAll('.days button[data-d]').forEach(function(b){ b.addEventListener('mousedown',function(e){ e.preventDefault(); self.pick(self.calY, self.calM+1, +b.dataset.d); }); });
+    this.pop.querySelector('[data-today]').addEventListener('mousedown',function(e){ e.preventDefault(); var t=new Date(); self.pick(t.getFullYear(), t.getMonth()+1, t.getDate()); });
+  };
+  DateField.prototype.pick = function(y,m,d){
+    var self=this; var src={0:y,1:m,2:d};
+    this.order.forEach(function(k){ self.disp[k]=pad(src[k], w(k)); self.committed[k]=true; });
+    this.ai=0; this.buf=''; this.fresh=true; this.touched=true;
+    this.closeCal(); this.recompute(); this.render(); this.updateReadout();
+  };
+
+  // ── boot ──
+  var fields=[];
+  document.querySelectorAll('[data-date]').forEach(function(el){ fields.push(new DateField(el)); });
+  var seg=document.getElementById('fmtSeg');
+  if(seg) seg.addEventListener('click', function(e){ var b=e.target.closest('button'); if(!b) return;
+    seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
+    fields.forEach(function(f){ f.setFormat(b.dataset.fmt); });
+  });
+})();
+</script>
 </body>
 </html>

@@ -11,7 +11,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../../../core/utils/sff_format.dart';
+import 'package:super_core/super_core.dart' hide Validator, ValidityChanged;
 import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/numeric_logic.dart';
 

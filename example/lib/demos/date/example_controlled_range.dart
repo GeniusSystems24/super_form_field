@@ -44,7 +44,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
     return SectionCard(
       title: '2 · Controlled range',
       subtitle: 'Linked controllers — Start caps End, and vice-versa',
-      marker: Marker.ledger,
+      marker: SuperMarker.ledger,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

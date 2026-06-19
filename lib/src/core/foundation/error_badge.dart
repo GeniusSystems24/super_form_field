@@ -9,9 +9,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../theme/sff_theme.dart';
-import '../theme/sff_text_styles.dart';
-import '../theme/sff_tokens.dart';
+import 'package:super_core/super_core.dart';
 import 'sff_icon.dart';
 
 /// A danger alert-circle icon that reveals [error] in a tooltip on hover /
@@ -41,7 +39,7 @@ class ErrorBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: SuperTokens.danger,
         borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
-        boxShadow: SuperFieldTheme.popShadow,
+        boxShadow: SuperThemeData.popShadow,
       ),
       textStyle: SuperText.caption.copyWith(
         color: const Color(0xFFFFFFFF),

@@ -23,11 +23,14 @@
 /// Register the theme extension once:
 /// ```dart
 /// MaterialApp(
-///   theme:     ThemeData(extensions: const [SuperFieldTheme.light]),
-///   darkTheme: ThemeData(extensions: const [SuperFieldTheme.dark]),
+///   theme:     ThemeData(extensions: const [SuperThemeData.light]),
+///   darkTheme: ThemeData(extensions: const [SuperThemeData.dark]),
 /// );
 /// ```
-library super_form_field;
+library;
+
+export 'package:super_core/super_core.dart'
+    hide FieldShell, FieldDensity, Validator, ValidityChanged;
 
 // ── Core foundation ──────────────────────────────────────────────────────
 export 'src/core/core.dart';

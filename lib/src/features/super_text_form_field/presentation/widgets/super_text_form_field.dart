@@ -198,7 +198,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
   }
 
   // ── the editable text, sans chrome ──
-  Widget _input(SuperFieldTheme t, {int? maxLines, int? minLines}) {
+  Widget _input(SuperThemeData t, {int? maxLines, int? minLines}) {
     return TextField(
       controller: _controller.text,
       focusNode: _controller.focusNode,
@@ -233,12 +233,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     );
   }
 
-  Widget _adorn(SuperFieldTheme t, String text) => Padding(
+  Widget _adorn(SuperThemeData t, String text) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2),
         child: Text(text, style: SuperText.body.copyWith(color: t.fg3, fontSize: 13)),
       );
 
-  Widget _buildSingleLine(SuperFieldTheme t, String? error) {
+  Widget _buildSingleLine(SuperThemeData t, String? error) {
     final editable = !widget.disabled && !widget.readOnly;
     final trailing = <Widget>[
       if (widget.clearable && _controller.value.isNotEmpty && editable)
@@ -272,7 +272,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     );
   }
 
-  Widget _buildMultiline(SuperFieldTheme t, String? error) {
+  Widget _buildMultiline(SuperThemeData t, String? error) {
     final hasError = error != null;
     final border = hasError
         ? SuperTokens.danger

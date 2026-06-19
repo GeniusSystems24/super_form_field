@@ -40,7 +40,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
     return SectionCard(
       title: '3 · Validated',
       subtitle: 'Required + min bound + custom rule, silent until blur or submit',
-      marker: Marker.notes,
+      marker: SuperMarker.notes,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

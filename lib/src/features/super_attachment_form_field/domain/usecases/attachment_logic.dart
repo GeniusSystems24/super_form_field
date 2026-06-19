@@ -10,7 +10,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../../core/foundation/sff_icon.dart';
-import '../../../../core/theme/sff_tokens.dart';
+import 'package:super_core/super_core.dart' hide Validator, ValidityChanged;
 import '../../../../core/utils/validators.dart';
 import '../entities/super_file.dart';
 

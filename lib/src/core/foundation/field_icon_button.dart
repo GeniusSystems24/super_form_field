@@ -10,7 +10,7 @@
 import 'package:flutter/material.dart';
 
 import '../extensions/context_extensions.dart';
-import '../theme/sff_tokens.dart';
+import 'package:super_core/super_core.dart';
 
 /// A compact icon button for in-field affordances.
 class FieldIconButton extends StatefulWidget {
