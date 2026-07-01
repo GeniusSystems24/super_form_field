@@ -59,12 +59,27 @@ class _FieldPopoverState extends State<FieldPopover> {
   double _width = 0;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.open) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && widget.open) {
+          _place();
+          _overlay.show();
+        }
+      });
+    }
+  }
+
+  @override
   void didUpdateWidget(FieldPopover old) {
     super.didUpdateWidget(old);
     if (widget.open != old.open) {
       if (widget.open) {
         _place();
-        _overlay.show();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && widget.open) _overlay.show();
+        });
       } else {
         _overlay.hide();
       }
