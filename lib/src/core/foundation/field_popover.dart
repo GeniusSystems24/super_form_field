@@ -62,12 +62,7 @@ class _FieldPopoverState extends State<FieldPopover> {
   void initState() {
     super.initState();
     if (widget.open) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && widget.open) {
-          _place();
-          _overlay.show();
-        }
-      });
+      _scheduleOverlaySync();
     }
   }
 
@@ -75,21 +70,20 @@ class _FieldPopoverState extends State<FieldPopover> {
   void didUpdateWidget(FieldPopover old) {
     super.didUpdateWidget(old);
     if (widget.open != old.open) {
-      if (widget.open) {
-        _place();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && widget.open) _overlay.show();
-        });
-      } else {
-        _overlay.hide();
-      }
+      _scheduleOverlaySync();
     }
   }
 
-  @override
-  void dispose() {
-    if (_overlay.isShowing) _overlay.hide();
-    super.dispose();
+  void _scheduleOverlaySync() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (widget.open) {
+        _place();
+        if (!_overlay.isShowing) _overlay.show();
+      } else if (_overlay.isShowing) {
+        _overlay.hide();
+      }
+    });
   }
 
   void _place() {
