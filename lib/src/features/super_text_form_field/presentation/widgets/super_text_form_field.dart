@@ -326,7 +326,14 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       decoration: decoration,
     );
 
-    // Red border color already signals error state — no extra halo needed.
+    // ── Wrap in fixed-height SizedBox for single-line fields ─────────────────
+    // This is the final, authoritative height constraint. InputDecoration's
+    // own `constraints` can be overridden by suffix/prefix intrinsics in some
+    // Flutter versions; wrapping guarantees a consistent visual height.
+    if (!multiline) {
+      return SizedBox(height: minH, child: field);
+    }
+
     return field;
   }
 }

@@ -96,7 +96,7 @@ class FieldBox extends StatelessWidget {
       child: AnimatedContainer(
         duration: SuperTokens.durBase,
         curve: SuperTokens.curveStandard,
-        constraints: BoxConstraints(minHeight: h),
+        constraints: BoxConstraints.tightFor(height: h),
         padding: const EdgeInsetsDirectional.only(
           start: SuperTokens.space3,
           end: SuperTokens.space1,
