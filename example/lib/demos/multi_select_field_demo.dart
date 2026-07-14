@@ -42,7 +42,6 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Journal • Tagging & Access',
       title: 'Super Multi-Select Field',
@@ -80,7 +79,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: cs.primary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

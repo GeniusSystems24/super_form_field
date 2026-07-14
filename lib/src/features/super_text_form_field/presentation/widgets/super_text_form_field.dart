@@ -1,12 +1,14 @@
 // ============================================================
 // features/super_text_form_field/presentation/widgets/super_text_form_field.dart
 // ------------------------------------------------------------
-// The View for the GeniusLink text field. A thin Flutter wrapper that builds
-// the validator chain (domain usecase), drives a [SuperTextFieldController]
-// (the Model), and renders the FieldShell + FieldBox chrome. Validation errors
-// surface ONLY through the suffix ErrorBadge — never inline. Supports leading
-// icon, prefix / suffix adornments, clear, password reveal, character counter,
-// multiline, email, disabled & read-only, and full LTR/RTL.
+// The View for the GeniusLink text field. Uses a single TextField with a
+// fully-specified InputDecoration — border states (enabled / focused / error /
+// disabled) are driven by the field's own state rather than the ambient
+// inputDecorationTheme, eliminating any double-border artefact.
+//
+// Validation errors surface ONLY through the suffix ErrorBadge, never inline.
+// Supports leading icon, prefix / suffix adornments, clear, password reveal,
+// character counter, multiline, email, disabled & read-only, and LTR/RTL.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -50,12 +52,8 @@ class SuperTextFormField extends StatefulWidget {
     this.autofocus = false,
   });
 
-  /// External controller — when null, the field manages its own.
   final SuperTextFieldController? controller;
-
-  /// Seed value, used only when [controller] is null.
   final String initialValue;
-
   final ValueChanged<String>? onChanged;
   final ValidityChanged? onValidity;
 
@@ -67,17 +65,9 @@ class SuperTextFormField extends StatefulWidget {
   final FieldDensity density;
   final bool disabled;
   final bool readOnly;
-
-  /// Leading icon (tints to accent on focus).
   final IconData? leadingIcon;
-
-  /// Static text before the value (`www.`).
   final String? prefix;
-
-  /// Static text after the value (`@company.com`).
   final String? suffix;
-
-  /// Show a × button (while non-empty, enabled & editable).
   final bool clearable;
 
   // ── multiline ──
@@ -90,18 +80,10 @@ class SuperTextFormField extends StatefulWidget {
   final int? maxLength;
   final RegExp? pattern;
   final String? patternMessage;
-
-  /// Extra custom validators, appended to the built-in chain.
   final List<Validator<String>> validators;
-
-  /// Show an `n/max` counter in the label-right slot ([maxLength] required).
   final bool showCounter;
-
   final bool arabic;
-
-  /// Force the error to display even before the field is touched.
   final bool forceError;
-
   final bool autofocus;
 
   @override
@@ -116,10 +98,10 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
   void initState() {
     super.initState();
     _controller = widget.controller ??
-        (SuperTextFieldController(
+        SuperTextFieldController(
           initialValue: widget.initialValue,
           obscured: widget.type == SuperTextType.password,
-        ));
+        );
     _ownsController = widget.controller == null;
     _controller.text.addListener(_emitChange);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -168,7 +150,6 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    // Configure the Model from the View's declarative props each build.
     _controller.configure(
       validators: _buildValidators(),
       forceError: widget.forceError,
@@ -179,7 +160,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
-    final cs = context.sffColorScheme;
+        final cs = context.sffColorScheme;
         final error = widget.disabled ? null : _controller.visibleError;
         final counter = (widget.showCounter && widget.maxLength != null)
             ? _Counter(length: _controller.value.length, max: widget.maxLength!)
@@ -192,58 +173,44 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           hasError: error != null,
           arabic: widget.arabic,
           labelRight: counter,
-          child: widget.multiline ? _buildMultiline(t, error) : _buildSingleLine(t, error),
+          child: widget.multiline
+              ? _buildField(context, t, cs, error, multiline: true)
+              : _buildField(context, t, cs, error, multiline: false),
         );
       },
     );
   }
 
-  // ── the editable text, sans chrome ──
-  Widget _input(SuperThemeData t, {int? maxLines, int? minLines}) {
-    final cs = Theme.of(context).colorScheme;
-    return TextField(
-      controller: _controller.text,
-      focusNode: _controller.focusNode,
-      enabled: !widget.disabled,
-      readOnly: widget.readOnly,
-      autofocus: widget.autofocus,
-      obscureText: widget.type == SuperTextType.password && _controller.obscured,
-      maxLines: widget.multiline ? maxLines : 1,
-      minLines: minLines,
-      maxLength: widget.maxLength,
-      maxLengthEnforcement:
-          widget.maxLength != null ? MaxLengthEnforcement.enforced : MaxLengthEnforcement.none,
-      buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
-      keyboardType: widget.multiline
-          ? TextInputType.multiline
-          : widget.type == SuperTextType.email
-              ? TextInputType.emailAddress
-              : TextInputType.text,
-      cursorColor: cs.primary,
-      style: SuperText.body.copyWith(
-        color: t.fg1,
-        fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
-      ),
-      textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
-      decoration: InputDecoration.collapsed(
-        hintText: widget.placeholder,
-        hintStyle: SuperText.body.copyWith(
-          color: t.fg4,
-          fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
-        ),
-      ),
-    );
-  }
+  // ── Single InputDecoration field — no FieldBox, no double border ─────────────
 
-  Widget _adorn(SuperThemeData t, String text) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2),
-        child: Text(text, style: SuperText.body.copyWith(color: t.fg3, fontSize: 13)),
-      );
-
-  Widget _buildSingleLine(SuperThemeData t, String? error) {
+  Widget _buildField(
+    BuildContext context,
+    SuperThemeData t,
+    ColorScheme cs,
+    String? error, {
+    required bool multiline,
+  }) {
+    final hasError = error != null;
     final editable = !widget.disabled && !widget.readOnly;
-    final trailing = <Widget>[
-      if (widget.clearable && _controller.value.isNotEmpty && editable)
+    final focused = _controller.focused;
+
+    // ── Border states ──
+    final enabledBorderColor  = hasError ? cs.error : t.borderStrong;
+    final focusedBorderColor  = hasError ? cs.error : cs.primary;
+    final disabledBorderColor = t.border;
+
+    OutlineInputBorder _border(Color color, {double width = 1.4}) =>
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+          borderSide: BorderSide(color: color, width: width),
+        );
+
+    // ── Fill ──
+    final fillColor = focused && !widget.disabled ? t.surface : t.inputBg;
+
+    // ── Suffix icon row ──
+    final trailingWidgets = <Widget>[
+      if (!multiline && widget.clearable && _controller.value.isNotEmpty && editable)
         FieldIconButton(
           icon: SffIcons.clear,
           tooltip: 'Clear',
@@ -255,58 +222,116 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           tooltip: _controller.obscured ? 'Show' : 'Hide',
           onPressed: _controller.toggleObscure,
         ),
+      if (hasError) ErrorBadge(error: error),
     ];
 
-    return FieldBox(
-      focused: _controller.focused,
-      error: error,
-      disabled: widget.disabled,
-      density: widget.density,
-      leading: widget.leadingIcon != null ? Icon(widget.leadingIcon) : null,
-      trailing: trailing,
-      child: Row(
-        children: [
-          if (widget.prefix != null) _adorn(t, widget.prefix!),
-          Expanded(child: _input(t)),
-          if (widget.suffix != null) _adorn(t, widget.suffix!),
-        ],
-      ),
-    );
-  }
+    Widget? suffixWidget;
+    if (trailingWidgets.isNotEmpty) {
+      suffixWidget = Padding(
+        padding: const EdgeInsets.only(right: 4),
+        child: Row(mainAxisSize: MainAxisSize.min, children: trailingWidgets),
+      );
+    }
 
-  Widget _buildMultiline(SuperThemeData t, String? error) {
-    final cs = Theme.of(context).colorScheme;
-    final hasError = error != null;
-    final border = hasError
-        ? cs.error
-        : _controller.focused
-            ? cs.primary
-            : t.borderStrong;
-    return Opacity(
-      opacity: widget.disabled ? 0.55 : 1,
-      child: AnimatedContainer(
-        duration: SuperTokens.durBase,
-        curve: SuperTokens.curveStandard,
-        padding: const EdgeInsets.fromLTRB(12, 9, 6, 9),
-        decoration: BoxDecoration(
-          color: widget.disabled ? const Color(0x00000000) : (_controller.focused ? t.surface : t.inputBg),
-          border: Border.all(color: border, width: 1.4),
-          borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
-          boxShadow: hasError
-              ? [BoxShadow(color: cs.error.withOpacity(0.14), spreadRadius: 3)]
-              : null,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: _input(t, maxLines: widget.rows, minLines: widget.rows)),
-            if (hasError) Padding(padding: const EdgeInsets.only(top: 2), child: ErrorBadge(error: error)),
-          ],
-        ),
+    // ── Leading icon ──
+    Widget? prefixIconWidget;
+    if (widget.leadingIcon != null) {
+      prefixIconWidget = Icon(
+        widget.leadingIcon,
+        size: 18,
+        color: focused ? cs.primary : t.fg4,
+      );
+    }
+
+    // ── Density ──
+    final minH = widget.density == FieldDensity.compact
+        ? SuperTokens.fieldCompact
+        : SuperTokens.fieldComfortable;
+
+    // ── Prefix / suffix text adornments ──
+    final adornStyle = SuperText.body.copyWith(color: t.fg3, fontSize: 13);
+
+    final decoration = InputDecoration(
+      // Hint
+      hintText: widget.placeholder,
+      hintStyle: SuperText.body.copyWith(
+        color: t.fg4,
+        fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
       ),
+      // Leading / trailing
+      prefixIcon: prefixIconWidget,
+      prefixIconConstraints: prefixIconWidget != null
+          ? const BoxConstraints(minWidth: 36, minHeight: 36)
+          : null,
+      prefixText: widget.prefix,
+      prefixStyle: adornStyle,
+      suffixIcon: suffixWidget,
+      suffixIconConstraints: suffixWidget != null
+          ? BoxConstraints(minHeight: minH, maxHeight: minH, minWidth: 0)
+          : null,
+      suffixText: widget.suffix,
+      suffixStyle: adornStyle,
+      // Fill
+      filled: true,
+      fillColor: widget.disabled ? Colors.transparent : fillColor,
+      // Sizing — tight height for single-line; unconstrained for multiline
+      isDense: true,
+      constraints: multiline
+          ? BoxConstraints(minHeight: minH)
+          : BoxConstraints.tightFor(height: minH),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: SuperTokens.space3,
+        vertical: widget.density == FieldDensity.compact
+            ? SuperTokens.space1
+            : SuperTokens.space2,
+      ),
+      // Borders — fully specified; overrides inputDecorationTheme
+      border: _border(enabledBorderColor),
+      enabledBorder: _border(enabledBorderColor),
+      focusedBorder: _border(focusedBorderColor),
+      disabledBorder: _border(disabledBorderColor),
+      errorBorder: _border(cs.error),
+      focusedErrorBorder: _border(cs.error),
+      // Error shadow via container — NOT via errorText (that would show inline text)
+      // No errorText: error UX is the suffix ErrorBadge + border color change only.
     );
+
+    final textStyle = SuperText.body.copyWith(
+      color: t.fg1,
+      fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
+    );
+
+    final field = TextField(
+      controller: _controller.text,
+      focusNode: _controller.focusNode,
+      enabled: !widget.disabled,
+      readOnly: widget.readOnly,
+      autofocus: widget.autofocus,
+      obscureText: widget.type == SuperTextType.password && _controller.obscured,
+      maxLines: multiline ? widget.rows : 1,
+      minLines: multiline ? widget.rows : 1,
+      maxLength: widget.maxLength,
+      maxLengthEnforcement: widget.maxLength != null
+          ? MaxLengthEnforcement.enforced
+          : MaxLengthEnforcement.none,
+      buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
+      keyboardType: multiline
+          ? TextInputType.multiline
+          : widget.type == SuperTextType.email
+              ? TextInputType.emailAddress
+              : TextInputType.text,
+      cursorColor: cs.primary,
+      style: textStyle,
+      textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
+      decoration: decoration,
+    );
+
+    // Red border color already signals error state — no extra halo needed.
+    return field;
   }
 }
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 class _Counter extends StatelessWidget {
   const _Counter({required this.length, required this.max});
@@ -317,12 +342,11 @@ class _Counter extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
-    final over = length > max;
     return Text(
       '$length/$max',
       style: SuperText.mono.copyWith(
         fontSize: 11,
-        color: over ? cs.error : t.fg4,
+        color: length > max ? cs.error : t.fg4,
       ),
     );
   }

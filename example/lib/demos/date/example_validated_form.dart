@@ -36,7 +36,6 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = Theme.of(context).colorScheme;
     final valid = _error == null;
     return SectionCard(
       title: '3 · Validated',
@@ -64,7 +63,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
             children: [
               FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: cs.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
                 ),
@@ -81,7 +80,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
                 Text(
                   valid ? 'READY TO POST' : 'FIX 1 FIELD',
                   style: SuperText.label.copyWith(
-                    color: valid ? SuperTokens.success : cs.error,
+                    color: valid ? SuperTokens.success : Theme.of(context).colorScheme.error,
                   ),
                 ),
             ],

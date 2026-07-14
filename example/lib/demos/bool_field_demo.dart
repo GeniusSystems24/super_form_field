@@ -24,12 +24,11 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Accounts • Status & Flags',
       title: 'Super Bool Field',
       children: [
-        const SectionCard(
+        SectionCard(
           title: 'Status Flags',
           subtitle: 'Toggle account behaviour',
           marker: Marker.identity,
@@ -50,14 +49,14 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
                   disabledLabel: 'متوقف',
                 ),
               ),
-              SizedBox(height: SuperTokens.space6),
+              const SizedBox(height: SuperTokens.space6),
               SuperBoolFormField(
                 label: 'Allow Manual Posting',
                 enabledLabel: 'Manual journals allowed',
                 disabledLabel: 'System postings only',
                 hint: 'When off, only automated integrations may post to this account.',
               ),
-              SizedBox(height: SuperTokens.space6),
+              const SizedBox(height: SuperTokens.space6),
               SuperBoolFormField(
                 label: 'Reconciliation Required',
                 style: SuperBoolStyle.checkbox,
@@ -84,7 +83,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: cs.primary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

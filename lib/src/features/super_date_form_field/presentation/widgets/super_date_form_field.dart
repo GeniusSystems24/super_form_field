@@ -284,9 +284,16 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                   inputFormatters: [LengthLimitingTextInputFormatter(10)],
                   cursorColor: cs.primary,
                   style: SuperText.mono.copyWith(color: t.fg1),
-                  decoration: InputDecoration.collapsed(
+                  decoration: InputDecoration(
                     hintText: widget.placeholder ?? widget.format.placeholder,
                     hintStyle: SuperText.mono.copyWith(color: t.fg4),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    filled: false,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
                   ),
                 ),
               ),

@@ -161,6 +161,7 @@ class OptionGroupHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         SuperTokens.space2,

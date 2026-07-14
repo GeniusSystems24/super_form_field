@@ -4,7 +4,7 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
-## [1.2.0] — 2026-07-14
+## [1.1.0] — 2026-07-14
 
 ### Changed
 

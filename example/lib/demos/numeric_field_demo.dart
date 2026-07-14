@@ -25,7 +25,6 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Ledger • Opening Journal Entry',
       title: 'Super Numeric Field',
@@ -64,7 +63,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        SectionCard(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
           marker: Marker.ledger,
@@ -79,7 +78,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 allowNegative: false,
                 initialValue: 3.7512,
               ),
-              SizedBox(height: SuperTokens.space6),
+              const SizedBox(height: SuperTokens.space6),
               SuperNumericFormField(
                 label: 'Tax Rate',
                 suffix: '%',
@@ -96,7 +95,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: cs.primary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

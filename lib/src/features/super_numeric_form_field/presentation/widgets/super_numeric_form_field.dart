@@ -206,9 +206,19 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
                 cursorColor: cs.primary,
                 style: SuperText.mono.copyWith(color: t.fg1),
-                decoration: InputDecoration.collapsed(
+                // All borders are suppressed — FieldBox owns the single border.
+                decoration: InputDecoration(
                   hintText: widget.placeholder,
                   hintStyle: SuperText.mono.copyWith(color: t.fg4),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  focusedErrorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  filled: false,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             ),

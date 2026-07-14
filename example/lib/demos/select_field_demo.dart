@@ -49,7 +49,6 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Accounts • Classification',
       title: 'Super Select Field',
@@ -99,7 +98,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        SectionCard(
           title: 'Allocation',
           subtitle: 'Assign a cost center (some are locked)',
           marker: Marker.ledger,

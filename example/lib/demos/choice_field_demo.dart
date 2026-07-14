@@ -43,7 +43,6 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Journal • Entry Options',
       title: 'Super Choice Field',
@@ -54,10 +53,10 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
           marker: Marker.identity,
           child: Column(
             children: [
-              const SuperChoiceFormField<String>(
+              SuperChoiceFormField<String>(
                 label: 'Status',
                 required: true,
-                initialValue: ['draft'],
+                initialValue: const ['draft'],
                 options: _status,
               ),
               const SizedBox(height: SuperTokens.space6),
@@ -90,7 +89,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: cs.primary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

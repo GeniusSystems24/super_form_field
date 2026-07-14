@@ -8,8 +8,7 @@
 // FieldPopover (placement) and OptionTile (rows).
 // ============================================================
 
-import 'package:flutter/material.dart' show Material, MaterialType;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../extensions/context_extensions.dart';
 import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;

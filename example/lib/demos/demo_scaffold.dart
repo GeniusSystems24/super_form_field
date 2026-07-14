@@ -7,13 +7,13 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 /// The three section-marker intents.
 enum Marker { identity, ledger, notes }
 
 extension on Marker {
-  Color  color(BuildContext context) => switch (this) {
+  Color colorFor(BuildContext context) => switch (this) {
         Marker.identity => Theme.of(context).colorScheme.primary,
         Marker.ledger => SuperTokens.success,
         Marker.notes => SuperTokens.warning,
@@ -112,7 +112,7 @@ class SectionCard extends StatelessWidget {
                 height: 40,
                 margin: const EdgeInsets.only(top: 2),
                 decoration: BoxDecoration(
-                  color: marker.color(context),
+                  color: marker.colorFor(context),
                   borderRadius: BorderRadius.circular(SuperTokens.radiusPill),
                 ),
               ),

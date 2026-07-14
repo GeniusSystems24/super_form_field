@@ -24,7 +24,6 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Accounts • Create Account',
       title: 'Super Text Field',
@@ -54,7 +53,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 ),
               ),
               const SizedBox(height: SuperTokens.space6),
-              const SuperTextFormField(
+              SuperTextFormField(
                 label: 'Reference',
                 placeholder: 'e.g. ACC-0042',
                 prefix: 'ACC-',
@@ -90,7 +89,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        SectionCard(
           title: 'Notes',
           subtitle: 'Add any notes about this account',
           marker: Marker.notes,
@@ -107,7 +106,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: cs.primary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

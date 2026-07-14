@@ -1,40 +1,32 @@
 // ============================================================
 // core/foundation/field_box.dart
 // ------------------------------------------------------------
-// The bordered control row used by the text + numeric fields: an optional
-// leading icon · the control (any child) · trailing adornments · the suffix
-// ErrorBadge. Owns the rest / focus / error / disabled visual states and the
-// 150ms color+background transition. RTL-safe via logical padding.
+// The bordered control shell used by numeric, attachment and other fields that
+// cannot express their trailing adornments (stepper, unit label, error badge)
+// as standard InputDecoration suffix widgets.
+//
+// To eliminate the double-border issue, the child is wrapped in a Theme
+// override that neutralises all inputDecorationTheme borders — FieldBox is the
+// sole owner of the field border.
+//
+// Text fields (SuperTextFormField) use InputDecoration directly and do NOT
+// go through FieldBox.
 // ============================================================
 
-import 'package:flutter/material.dart'
-    show
-        
-        StatelessWidget,
-        Widget,
-        BuildContext,
-        Color,
-        EdgeInsetsDirectional,
-        SizedBox,
-        BoxConstraints,
-        Border,
-        BorderRadius,
-        BoxShadow,
-        BoxDecoration,
-        IconTheme,
-        IconThemeData,
-        Expanded,
-        Row,
-        AnimatedContainer,
-        Opacity;
+import 'package:flutter/material.dart';
 
 import '../extensions/context_extensions.dart';
 import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;
 import 'error_badge.dart';
 import 'field_shell.dart';
 
-/// The bordered, single-line control shell. The concrete field supplies [child]
-/// (its `EditableText`/input); FieldBox owns only the frame around it.
+/// Bordered shell for fields that compose trailing adornments (stepper, units,
+/// error badge) outside of Material's InputDecoration. Owns the border,
+/// background, error halo and disabled opacity.
+///
+/// Wrap the inner [TextField] with `InputDecoration.collapsed` or explicit
+/// `border: InputBorder.none` — FieldBox neutralises the theme's borders
+/// automatically via a [Theme] override so no double border appears.
 class FieldBox extends StatelessWidget {
   const FieldBox({
     super.key,
@@ -50,81 +42,102 @@ class FieldBox extends StatelessWidget {
   final Widget child;
   final bool focused;
 
-  /// Error message — when non-null, paints the danger frame + halo + badge.
+  /// Error message — when non-null paints the danger frame + halo + error badge.
   final String? error;
   final bool disabled;
   final FieldDensity density;
 
-  /// Leading icon slot (tints to accent on focus, fg4 at rest).
+  /// Leading icon slot (tints to primary on focus, fg4 at rest).
   final Widget? leading;
 
-  /// Trailing adornments (clear / reveal / stepper / unit). The ErrorBadge is
-  /// appended automatically after these.
+  /// Trailing adornments (stepper / unit). The [ErrorBadge] is appended
+  /// automatically after these.
   final List<Widget> trailing;
 
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     final hasError = error != null;
     final h = density == FieldDensity.compact
         ? SuperTokens.fieldCompact
         : SuperTokens.fieldComfortable;
 
-    final cs = context.sffColorScheme;
-    final border = hasError
+    final borderColor = hasError
         ? cs.error
         : focused
             ? cs.primary
             : t.borderStrong;
-    final bg = disabled
-        ? const Color(0x00000000)
+
+    final bgColor = disabled
+        ? Colors.transparent
         : focused
             ? t.surface
             : t.inputBg;
 
+    // A no-border InputDecorationTheme so any TextField child does not render
+    // its own border on top of FieldBox's border.
+    final innerTheme = Theme.of(context).copyWith(
+      inputDecorationTheme: const InputDecorationTheme(
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        filled: false,
+        contentPadding: EdgeInsets.zero,
+        isDense: true,
+      ),
+    );
+
     return Opacity(
-      opacity: disabled ? 0.55 : 1,
+      opacity: disabled ? 0.55 : 1.0,
       child: AnimatedContainer(
         duration: SuperTokens.durBase,
         curve: SuperTokens.curveStandard,
         constraints: BoxConstraints(minHeight: h),
         padding: const EdgeInsetsDirectional.only(
-            start: SuperTokens.space3, end: SuperTokens.space1),
+          start: SuperTokens.space3,
+          end: SuperTokens.space1,
+        ),
         decoration: BoxDecoration(
-          color: bg,
-          border: Border.all(color: border, width: 1.4),
+          color: bgColor,
+          border: Border.all(color: borderColor, width: 1.4),
           borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
           boxShadow: hasError
-              ? [
-                  BoxShadow(
-                      color: cs.error.withOpacity(0.14),
-                      blurRadius: 0,
-                      spreadRadius: 3)
-                ]
+              ? [BoxShadow(
+                  color: cs.error.withOpacity(0.14),
+                  blurRadius: 0,
+                  spreadRadius: 3,
+                )]
               : null,
         ),
-        child: Row(
-          children: [
-            if (leading != null) ...[
-              IconTheme.merge(
-                data: IconThemeData(
-                  size: 16,
-                  color: focused ? cs.primary : t.fg4,
+        child: Theme(
+          data: innerTheme,
+          child: Row(
+            children: [
+              if (leading != null) ...[
+                IconTheme.merge(
+                  data: IconThemeData(
+                    size: 16,
+                    color: focused ? cs.primary : t.fg4,
+                  ),
+                  child: leading!,
                 ),
-                child: leading!,
-              ),
-              const SizedBox(width: SuperTokens.space2),
+                const SizedBox(width: SuperTokens.space2),
+              ],
+              Expanded(child: child),
+              for (final w in trailing) ...[
+                const SizedBox(width: SuperTokens.space1),
+                w,
+              ],
+              if (hasError) ...[
+                const SizedBox(width: SuperTokens.space1),
+                ErrorBadge(error: error),
+              ],
             ],
-            Expanded(child: child),
-            for (final w in trailing) ...[
-              const SizedBox(width: SuperTokens.space1),
-              w
-            ],
-            if (hasError) ...[
-              const SizedBox(width: SuperTokens.space1),
-              ErrorBadge(error: error)
-            ],
-          ],
+          ),
         ),
       ),
     );

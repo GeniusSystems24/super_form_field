@@ -9,9 +9,9 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
-import 'demo_scaffold.dart' hide SectionCard;
+import 'demo_scaffold.dart';
 
 class AttachmentFieldDemo extends StatefulWidget {
   const AttachmentFieldDemo({super.key});
@@ -50,7 +50,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
         SectionCard(
           title: 'Supporting Documents',
           subtitle: 'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
-          marker: SuperMarker.notes,
+          marker: Marker.notes,
           child: SuperAttachmentFormField(
             label: 'Attachments',
             required: true,
@@ -65,7 +65,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
         SectionCard(
           title: 'Single Receipt',
           subtitle: 'Single-file mode replaces the previous attachment',
-          marker: SuperMarker.notes,
+          marker: Marker.notes,
           child: SuperAttachmentFormField(
             label: 'Receipt',
             multiple: false,
@@ -78,7 +78,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: SuperTokens.accent,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

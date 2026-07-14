@@ -8,7 +8,7 @@
 // errors surface through the suffix ErrorBadge, never as inline text.
 // ============================================================
 
-import 'package:flutter/material.dart' show Theme, StatelessWidget, Widget, BuildContext, Spacer, SizedBox, Color, CrossAxisAlignment, MainAxisSize, Row, Text, Column, TextSpan;
+import 'package:flutter/material.dart';
 
 import '../extensions/context_extensions.dart';
 import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;

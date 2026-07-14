@@ -60,13 +60,20 @@ class MenuSearchField extends StatelessWidget {
                 fontFamily: arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
               ),
               textAlign: arabic ? TextAlign.right : TextAlign.left,
-              decoration: InputDecoration.collapsed(
+              decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: SuperText.body.copyWith(
                   color: t.fg4,
                   fontSize: 13.5,
                   fontFamily: arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
                 ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                filled: false,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
               ),
             ),
           ),
