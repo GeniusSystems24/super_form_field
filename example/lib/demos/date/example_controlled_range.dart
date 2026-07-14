@@ -9,7 +9,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import '../demo_scaffold.dart';
 
@@ -44,7 +44,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
     return SectionCard(
       title: '2 · Controlled range',
       subtitle: 'Linked controllers — Start caps End, and vice-versa',
-      marker: SuperMarker.ledger,
+      marker: Marker.ledger,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

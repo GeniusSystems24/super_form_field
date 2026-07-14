@@ -47,8 +47,9 @@ class _FieldIconButtonState extends State<FieldIconButton> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     final enabled = widget.onPressed != null;
-    final fg = (_hover && widget.danger) ? SuperTokens.danger : (widget.bordered ? t.fg2 : t.fg4);
+    final fg = (_hover && widget.danger) ? cs.error : (widget.bordered ? t.fg2 : t.fg4);
 
     Widget btn = MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,

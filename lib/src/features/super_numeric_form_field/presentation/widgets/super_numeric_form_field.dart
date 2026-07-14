@@ -155,6 +155,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
+    final cs = context.sffColorScheme;
         final error = widget.disabled ? null : _controller.visibleError;
 
         final trailing = <Widget>[
@@ -203,7 +204,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 readOnly: widget.readOnly,
                 textAlign: TextAlign.right,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                cursorColor: SuperTokens.accent,
+                cursorColor: cs.primary,
                 style: SuperText.mono.copyWith(color: t.fg1),
                 decoration: InputDecoration.collapsed(
                   hintText: widget.placeholder,

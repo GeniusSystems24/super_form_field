@@ -9,7 +9,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import '../demo_scaffold.dart';
 
@@ -36,11 +36,12 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = Theme.of(context).colorScheme;
     final valid = _error == null;
     return SectionCard(
       title: '3 · Validated',
       subtitle: 'Required + min bound + custom rule, silent until blur or submit',
-      marker: SuperMarker.notes,
+      marker: Marker.notes,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -63,7 +64,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
             children: [
               FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: SuperTokens.accent,
+                  backgroundColor: cs.primary,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
                 ),
@@ -80,7 +81,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
                 Text(
                   valid ? 'READY TO POST' : 'FIX 1 FIELD',
                   style: SuperText.label.copyWith(
-                    color: valid ? SuperTokens.success : SuperTokens.danger,
+                    color: valid ? SuperTokens.success : cs.error,
                   ),
                 ),
             ],

@@ -27,6 +27,7 @@ class ErrorBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final err = error;
     if (err == null) return const SizedBox.shrink();
+    final cs = Theme.of(context).colorScheme;
     return Tooltip(
       message: err,
       preferBelow: false,
@@ -37,7 +38,7 @@ class ErrorBadge extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: SuperTokens.space4),
       decoration: BoxDecoration(
-        color: SuperTokens.danger,
+        color: cs.error,
         borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
         boxShadow: SuperThemeData.popShadow,
       ),
@@ -49,7 +50,7 @@ class ErrorBadge extends StatelessWidget {
       child: SizedBox(
         width: SuperTokens.trailingIcon,
         height: SuperTokens.trailingIcon,
-        child: Icon(SffIcons.alertCircle, size: size, color: SuperTokens.danger),
+        child: Icon(SffIcons.alertCircle, size: size, color: cs.error),
       ),
     );
   }

@@ -131,6 +131,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
+    final cs = context.sffColorScheme;
         final on = _controller.value;
         final error = widget.disabled ? null : _controller.visibleError;
         final fontFamily = widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont;
@@ -198,6 +199,7 @@ class _Toggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     return AnimatedContainer(
       duration: SuperTokens.durBase,
       curve: SuperTokens.curveStandard,
@@ -205,8 +207,8 @@ class _Toggle extends StatelessWidget {
       height: 23,
       padding: const EdgeInsets.all(2.5),
       decoration: BoxDecoration(
-        color: value ? SuperTokens.accent : t.inputBg,
-        border: Border.all(color: value ? SuperTokens.accent : t.borderStrong, width: 1.4),
+        color: value ? cs.primary : t.inputBg,
+        border: Border.all(color: value ? cs.primary : t.borderStrong, width: 1.4),
         borderRadius: BorderRadius.circular(999),
       ),
       child: AnimatedAlign(
@@ -235,13 +237,14 @@ class _CheckBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     return AnimatedContainer(
       duration: SuperTokens.durFast,
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: value ? SuperTokens.accent : const Color(0x00000000),
-        border: Border.all(color: value ? SuperTokens.accent : t.borderStrong, width: 1.5),
+        color: value ? cs.primary : const Color(0x00000000),
+        border: Border.all(color: value ? cs.primary : t.borderStrong, width: 1.5),
         borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
       ),
       child: value

@@ -7,7 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import 'demo_scaffold.dart';
 
@@ -42,6 +42,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Journal • Tagging & Access',
       title: 'Super Multi-Select Field',
@@ -49,7 +50,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
         SectionCard(
           title: 'Tags',
           subtitle: 'Classify this entry — pick one or more',
-          marker: SuperMarker.notes,
+          marker: Marker.notes,
           child: SuperMultiSelectFormField<String>(
             label: 'Entry Tags',
             required: true,
@@ -63,7 +64,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
         SectionCard(
           title: 'Role Permissions',
           subtitle: 'Grant up to three permissions for this role',
-          marker: SuperMarker.identity,
+          marker: Marker.identity,
           child: SuperMultiSelectFormField<String>(
             label: 'Permissions',
             required: true,
@@ -79,7 +80,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: SuperTokens.accent,
+                backgroundColor: cs.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

@@ -11,7 +11,8 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../../../../core/core.dart';
+import 'package:super_form_field/src/core/entities/super_option.dart';
+import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/multi_select_logic.dart';
 
 class SuperMultiSelectFieldController<T> extends ChangeNotifier {

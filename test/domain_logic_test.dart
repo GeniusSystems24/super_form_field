@@ -76,9 +76,11 @@ void main() {
       expect(runValidators<List<SuperFile>>(const [], v), isNotNull);
       expect(runValidators<List<SuperFile>>(const [pdf, png], v),
           isNotNull); // > maxFiles
-      expect(runValidators<List<SuperFile>>(const [png], v), isNotNull);
+      expect(runValidators<List<SuperFile>>(const [png], v),
+          isNotNull); // wrong type
     });
-  }); // wrong type
+  });
+
   group('SuperNumericFieldController stepping', () {
     test('bump uses step, bumpLarge uses largeStep, both clamp', () {
       final c = SuperNumericFieldController(initialValue: 10);

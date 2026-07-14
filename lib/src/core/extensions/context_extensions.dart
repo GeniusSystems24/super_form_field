@@ -6,11 +6,15 @@
 // terse `context.sffTheme` alias the kit's widgets read from.
 // ============================================================
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import 'package:super_core/super_core.dart';
 
 extension SuperFieldContextX on BuildContext {
   /// The registered [SuperThemeData] (falls back to the dark preset).
   SuperThemeData get sffTheme => SuperThemeData.of(this);
+
+  /// The active Material [ColorScheme] — primary, error and other semantic
+  /// roles reflect the active [SuperPalette] when using [SuperMaterialThemeData].
+  ColorScheme get sffColorScheme => Theme.of(this).colorScheme;
 }

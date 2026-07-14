@@ -32,6 +32,7 @@ class MenuSearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     return Container(
       padding: const EdgeInsets.fromLTRB(
         SuperTokens.space3,
@@ -52,7 +53,7 @@ class MenuSearchField extends StatelessWidget {
               focusNode: focusNode,
               autofocus: true,
               onChanged: onChanged,
-              cursorColor: SuperTokens.accent,
+              cursorColor: cs.primary,
               style: SuperText.body.copyWith(
                 color: t.fg1,
                 fontSize: 13.5,

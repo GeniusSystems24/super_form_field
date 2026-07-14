@@ -7,7 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import 'demo_scaffold.dart';
 
@@ -49,6 +49,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Accounts • Classification',
       title: 'Super Select Field',
@@ -56,7 +57,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
         SectionCard(
           title: 'Classification',
           subtitle: 'Pick the account type and reporting currency',
-          marker: SuperMarker.identity,
+          marker: Marker.identity,
           child: Column(
             children: [
               BilingualRow(
@@ -98,11 +99,11 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        const SectionCard(
           title: 'Allocation',
           subtitle: 'Assign a cost center (some are locked)',
-          marker: SuperMarker.ledger,
-          child: const SuperSelectFormField<String>(
+          marker: Marker.ledger,
+          child: SuperSelectFormField<String>(
             label: 'Cost Center',
             placeholder: 'Optional…',
             clearable: true,
@@ -114,7 +115,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: SuperTokens.accent,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

@@ -7,7 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import 'demo_scaffold.dart';
 
@@ -24,6 +24,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Accounts • Create Account',
       title: 'Super Text Field',
@@ -31,7 +32,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
         SectionCard(
           title: 'Identity',
           subtitle: 'Define the account name in both languages',
-          marker: SuperMarker.identity,
+          marker: Marker.identity,
           child: Column(
             children: [
               BilingualRow(
@@ -65,7 +66,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
         SectionCard(
           title: 'Contact & Access',
           subtitle: 'Email and password validation patterns',
-          marker: SuperMarker.identity,
+          marker: Marker.identity,
           child: Column(
             children: [
               SuperTextFormField(
@@ -92,7 +93,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
         const SectionCard(
           title: 'Notes',
           subtitle: 'Add any notes about this account',
-          marker: SuperMarker.notes,
+          marker: Marker.notes,
           child: SuperTextFormField(
             label: 'Description',
             multiline: true,
@@ -106,7 +107,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: SuperTokens.accent,
+                backgroundColor: cs.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

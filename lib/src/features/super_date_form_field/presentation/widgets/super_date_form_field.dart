@@ -196,6 +196,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
+    final cs = context.sffColorScheme;
         final error = widget.disabled ? null : _controller.visibleError;
 
         final trailing = <Widget>[
@@ -281,7 +282,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                   textAlign: TextAlign.left,
                   keyboardType: TextInputType.datetime,
                   inputFormatters: [LengthLimitingTextInputFormatter(10)],
-                  cursorColor: SuperTokens.accent,
+                  cursorColor: cs.primary,
                   style: SuperText.mono.copyWith(color: t.fg1),
                   decoration: InputDecoration.collapsed(
                     hintText: widget.placeholder ?? widget.format.placeholder,

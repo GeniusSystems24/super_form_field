@@ -7,7 +7,26 @@
 // 150ms color+background transition. RTL-safe via logical padding.
 // ============================================================
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart'
+    show
+        
+        StatelessWidget,
+        Widget,
+        BuildContext,
+        Color,
+        EdgeInsetsDirectional,
+        SizedBox,
+        BoxConstraints,
+        Border,
+        BorderRadius,
+        BoxShadow,
+        BoxDecoration,
+        IconTheme,
+        IconThemeData,
+        Expanded,
+        Row,
+        AnimatedContainer,
+        Opacity;
 
 import '../extensions/context_extensions.dart';
 import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;
@@ -51,10 +70,11 @@ class FieldBox extends StatelessWidget {
         ? SuperTokens.fieldCompact
         : SuperTokens.fieldComfortable;
 
+    final cs = context.sffColorScheme;
     final border = hasError
-        ? SuperTokens.danger
+        ? cs.error
         : focused
-            ? SuperTokens.accent
+            ? cs.primary
             : t.borderStrong;
     final bg = disabled
         ? const Color(0x00000000)
@@ -68,13 +88,19 @@ class FieldBox extends StatelessWidget {
         duration: SuperTokens.durBase,
         curve: SuperTokens.curveStandard,
         constraints: BoxConstraints(minHeight: h),
-        padding: const EdgeInsetsDirectional.only(start: SuperTokens.space3, end: SuperTokens.space1),
+        padding: const EdgeInsetsDirectional.only(
+            start: SuperTokens.space3, end: SuperTokens.space1),
         decoration: BoxDecoration(
           color: bg,
           border: Border.all(color: border, width: 1.4),
           borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
           boxShadow: hasError
-              ? [BoxShadow(color: SuperTokens.danger.withOpacity(0.14), blurRadius: 0, spreadRadius: 3)]
+              ? [
+                  BoxShadow(
+                      color: cs.error.withOpacity(0.14),
+                      blurRadius: 0,
+                      spreadRadius: 3)
+                ]
               : null,
         ),
         child: Row(
@@ -83,15 +109,21 @@ class FieldBox extends StatelessWidget {
               IconTheme.merge(
                 data: IconThemeData(
                   size: 16,
-                  color: focused ? SuperTokens.accent : t.fg4,
+                  color: focused ? cs.primary : t.fg4,
                 ),
                 child: leading!,
               ),
               const SizedBox(width: SuperTokens.space2),
             ],
             Expanded(child: child),
-            for (final w in trailing) ...[const SizedBox(width: SuperTokens.space1), w],
-            if (hasError) ...[const SizedBox(width: SuperTokens.space1), ErrorBadge(error: error)],
+            for (final w in trailing) ...[
+              const SizedBox(width: SuperTokens.space1),
+              w
+            ],
+            if (hasError) ...[
+              const SizedBox(width: SuperTokens.space1),
+              ErrorBadge(error: error)
+            ],
           ],
         ),
       ),

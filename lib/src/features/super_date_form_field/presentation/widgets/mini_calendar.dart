@@ -79,6 +79,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     final daysInMonth = DateTime(_y, _m + 2, 0).day;
     final startDow = DateTime(_y, _m + 1, 1).weekday % 7; // Sun=0
     final today = DateLogic.dateOnly(DateTime.now());
@@ -166,7 +167,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text('Today',
-                  style: SuperText.caption.copyWith(color: SuperTokens.accent, fontWeight: FontWeight.w600)),
+                  style: SuperText.caption.copyWith(color: cs.primary, fontWeight: FontWeight.w600)),
             ),
           ),
         ],
@@ -183,6 +184,7 @@ class _NavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
@@ -221,8 +223,9 @@ class _DayCellState extends State<_DayCell> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     final Color bg = widget.selected
-        ? SuperTokens.accent
+        ? cs.primary
         : (_hover && !widget.disabled ? t.hover : const Color(0x00000000));
     final Color fg = widget.disabled
         ? t.fg4

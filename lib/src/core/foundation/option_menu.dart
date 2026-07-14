@@ -8,7 +8,7 @@
 // FieldPopover (placement) and OptionTile (rows).
 // ============================================================
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Material, MaterialType;
 import 'package:flutter/widgets.dart';
 
 import '../extensions/context_extensions.dart';

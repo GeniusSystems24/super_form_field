@@ -7,7 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import 'demo_scaffold.dart';
 
@@ -43,6 +43,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Journal • Entry Options',
       title: 'Super Choice Field',
@@ -50,7 +51,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
         SectionCard(
           title: 'Entry State',
           subtitle: 'A segmented single-pick control',
-          marker: SuperMarker.identity,
+          marker: Marker.identity,
           child: Column(
             children: [
               const SuperChoiceFormField<String>(
@@ -73,7 +74,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
         SectionCard(
           title: 'Supporting Documents',
           subtitle: 'Attach at least one document type (multi-pick)',
-          marker: SuperMarker.notes,
+          marker: Marker.notes,
           child: SuperChoiceFormField<String>(
             label: 'Document Types',
             required: true,
@@ -89,7 +90,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: SuperTokens.accent,
+                backgroundColor: cs.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

@@ -38,6 +38,7 @@ class _SuperChipState extends State<SuperChip> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     return Container(
       padding: EdgeInsetsDirectional.only(
         start: SuperTokens.space2,
@@ -77,7 +78,7 @@ class _SuperChipState extends State<SuperChip> {
                 child: Icon(
                   SffIcons.clear,
                   size: 14,
-                  color: _hover ? SuperTokens.danger : t.fg3,
+                  color: _hover ? cs.error : t.fg3,
                 ),
               ),
             ),

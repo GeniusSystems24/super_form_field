@@ -179,6 +179,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
+    final cs = context.sffColorScheme;
         final error = widget.disabled ? null : _controller.visibleError;
         final counter = (widget.showCounter && widget.maxLength != null)
             ? _Counter(length: _controller.value.length, max: widget.maxLength!)
@@ -199,6 +200,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
   // ── the editable text, sans chrome ──
   Widget _input(SuperThemeData t, {int? maxLines, int? minLines}) {
+    final cs = Theme.of(context).colorScheme;
     return TextField(
       controller: _controller.text,
       focusNode: _controller.focusNode,
@@ -217,7 +219,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           : widget.type == SuperTextType.email
               ? TextInputType.emailAddress
               : TextInputType.text,
-      cursorColor: SuperTokens.accent,
+      cursorColor: cs.primary,
       style: SuperText.body.copyWith(
         color: t.fg1,
         fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
@@ -273,11 +275,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
   }
 
   Widget _buildMultiline(SuperThemeData t, String? error) {
+    final cs = Theme.of(context).colorScheme;
     final hasError = error != null;
     final border = hasError
-        ? SuperTokens.danger
+        ? cs.error
         : _controller.focused
-            ? SuperTokens.accent
+            ? cs.primary
             : t.borderStrong;
     return Opacity(
       opacity: widget.disabled ? 0.55 : 1,
@@ -290,7 +293,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           border: Border.all(color: border, width: 1.4),
           borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
           boxShadow: hasError
-              ? [BoxShadow(color: SuperTokens.danger.withOpacity(0.14), spreadRadius: 3)]
+              ? [BoxShadow(color: cs.error.withOpacity(0.14), spreadRadius: 3)]
               : null,
         ),
         child: Row(
@@ -313,12 +316,13 @@ class _Counter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     final over = length > max;
     return Text(
       '$length/$max',
       style: SuperText.mono.copyWith(
         fontSize: 11,
-        color: over ? SuperTokens.danger : t.fg4,
+        color: over ? cs.error : t.fg4,
       ),
     );
   }

@@ -7,7 +7,8 @@
 // Flutter imports — unit-testable in isolation.
 // ============================================================
 
-import '../../../../core/core.dart';
+import 'package:super_form_field/super_form_field.dart' show SuperOption;
+import '../../../../core/utils/validators.dart';
 
 /// Multi-select business rules, grouped as a stateless helper.
 abstract final class MultiSelectLogic {

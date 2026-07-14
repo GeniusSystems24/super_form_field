@@ -7,7 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import 'demo_scaffold.dart';
 
@@ -24,15 +24,16 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Accounts • Status & Flags',
       title: 'Super Bool Field',
       children: [
-        SectionCard(
+        const SectionCard(
           title: 'Status Flags',
           subtitle: 'Toggle account behaviour',
-          marker: SuperMarker.identity,
-          child: const Column(
+          marker: Marker.identity,
+          child: Column(
             children: [
               BilingualRow(
                 english: SuperBoolFormField(
@@ -68,7 +69,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
         SectionCard(
           title: 'Compliance',
           subtitle: 'A required acknowledgement gate',
-          marker: SuperMarker.notes,
+          marker: Marker.notes,
           child: SuperBoolFormField(
             label: 'Confirmation',
             required: true,
@@ -83,7 +84,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: SuperTokens.accent,
+                backgroundColor: cs.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

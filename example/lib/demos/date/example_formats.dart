@@ -8,7 +8,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import '../demo_scaffold.dart';
 
@@ -20,7 +20,7 @@ class DateFormatsExample extends StatelessWidget {
     return SectionCard(
       title: '4 · Formats',
       subtitle: 'Year-month-day · year-month · year · month-day',
-      marker: SuperMarker.identity,
+      marker: Marker.identity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

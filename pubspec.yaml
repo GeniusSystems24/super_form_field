@@ -6,7 +6,7 @@ description: >
   a suffix error badge (never inline), with light/dark and LTR/RTL parity.
   Dependency-free — no platform plugins required.
 
-version: 1.0.2
+version: 1.1.0
 homepage: https://geniussystems24.github.io/super_form_field
 repository: https://github.com/GeniusSystems24/super_form_field
 issue_tracker: https://github.com/GeniusSystems24/super_form_field/issues
@@ -26,7 +26,7 @@ dependencies:
   flutter:
     sdk: flutter
   # Shared GeniusLink design-system foundation (theme, tokens, type, sizes).
-  super_core: ^0.1.0
+  super_core: ^1.0.0
 
 dev_dependencies:
   flutter_test:

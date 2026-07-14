@@ -7,7 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart';
+import 'package:super_form_field/super_form_field.dart' hide SectionCard;
 
 import 'demo_scaffold.dart';
 
@@ -25,6 +25,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = Theme.of(context).colorScheme;
     return DemoPage(
       eyebrow: 'Ledger • Opening Journal Entry',
       title: 'Super Numeric Field',
@@ -32,7 +33,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
         SectionCard(
           title: 'Amounts',
           subtitle: 'Currency and quantity with mathematical constraints',
-          marker: SuperMarker.ledger,
+          marker: Marker.ledger,
           child: Column(
             children: [
               SuperNumericFormField(
@@ -63,10 +64,10 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        const SectionCard(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
-          marker: SuperMarker.ledger,
+          marker: Marker.ledger,
           child: Column(
             children: [
               SuperNumericFormField(
@@ -95,7 +96,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
           children: [
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: SuperTokens.accent,
+                backgroundColor: cs.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),

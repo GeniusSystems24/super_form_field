@@ -11,7 +11,8 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../../../../core/core.dart';
+import 'package:super_form_field/super_form_field.dart' show SuperOption;
+import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/select_logic.dart';
 
 class SuperSelectFieldController<T> extends ChangeNotifier {

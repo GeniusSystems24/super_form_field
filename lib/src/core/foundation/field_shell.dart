@@ -8,7 +8,7 @@
 // errors surface through the suffix ErrorBadge, never as inline text.
 // ============================================================
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart' show Theme, StatelessWidget, Widget, BuildContext, Spacer, SizedBox, Color, CrossAxisAlignment, MainAxisSize, Row, Text, Column, TextSpan;
 
 import '../extensions/context_extensions.dart';
 import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;
@@ -105,7 +105,7 @@ class _Label extends StatelessWidget {
         text: text.toUpperCase(),
         style: style,
         children: [
-          TextSpan(text: ' *', style: style.copyWith(color: SuperTokens.danger)),
+          TextSpan(text: ' *', style: style.copyWith(color: Theme.of(context).colorScheme.error)),
         ],
       ),
     );

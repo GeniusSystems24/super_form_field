@@ -27,7 +27,8 @@ plugins).
 ```yaml
 # pubspec.yaml
 dependencies:
-  super_form_field: ^1.0.2
+  super_form_field:
+    path: ../super_form_field   # or your hosted source
 ```
 
 Register the theme extension once so the fields pick up colors, then build:

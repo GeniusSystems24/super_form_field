@@ -51,6 +51,7 @@ class _OptionTileState extends State<OptionTile> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     final fontFamily = widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont;
     final enabled = !widget.disabled && widget.onTap != null;
 
@@ -83,7 +84,7 @@ class _OptionTileState extends State<OptionTile> {
                   const SizedBox(width: SuperTokens.space2),
                 ],
                 if (widget.icon != null) ...[
-                  Icon(widget.icon, size: 16, color: widget.selected ? SuperTokens.accent : t.fg3),
+                  Icon(widget.icon, size: 16, color: widget.selected ? cs.primary : t.fg3),
                   const SizedBox(width: SuperTokens.space2),
                 ],
                 Expanded(
@@ -115,7 +116,7 @@ class _OptionTileState extends State<OptionTile> {
                 ),
                 if (!widget.checkbox && widget.selected) ...[
                   const SizedBox(width: SuperTokens.space2),
-                  const Icon(SffIcons.check, size: 16, color: SuperTokens.accent),
+                  Icon(SffIcons.check, size: 16, color: cs.primary),
                 ],
               ],
             ),
@@ -134,13 +135,14 @@ class _CheckSquare extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final cs = context.sffColorScheme;
     return AnimatedContainer(
       duration: SuperTokens.durFast,
       width: 17,
       height: 17,
       decoration: BoxDecoration(
-        color: checked ? SuperTokens.accent : const Color(0x00000000),
-        border: Border.all(color: checked ? SuperTokens.accent : t.borderStrong, width: 1.5),
+        color: checked ? cs.primary : const Color(0x00000000),
+        border: Border.all(color: checked ? cs.primary : t.borderStrong, width: 1.5),
         borderRadius: BorderRadius.circular(4),
       ),
       child: checked
