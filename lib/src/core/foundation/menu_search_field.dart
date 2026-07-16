@@ -72,7 +72,7 @@ class MenuSearchField extends StatelessWidget {
                 focusedBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
                 filled: false,
-                isDense: true,
+                
                 contentPadding: EdgeInsets.zero,
               ),
             ),

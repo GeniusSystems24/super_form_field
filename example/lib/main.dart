@@ -13,7 +13,6 @@ import 'demos/attachment_field_demo.dart';
 import 'demos/bool_field_demo.dart';
 import 'demos/choice_field_demo.dart';
 import 'demos/date_field_demo.dart';
-import 'demos/demo_scaffold.dart';
 import 'demos/multi_select_field_demo.dart';
 import 'demos/numeric_field_demo.dart';
 import 'demos/select_field_demo.dart';
@@ -33,12 +32,8 @@ class _ExampleAppState extends State<ExampleApp> {
   TextDirection _dir = TextDirection.ltr;
 
   ThemeData _theme(SuperThemeData s) => (s.brightness == Brightness.dark
-              ? SuperMaterialThemeData.dark()
-              : SuperMaterialThemeData.light())
-          .copyWith(
-        scaffoldBackgroundColor: s.bg,
-        extensions: [s],
-      );
+      ? SuperMaterialThemeData.dark()
+      : SuperMaterialThemeData.light());
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +43,15 @@ class _ExampleAppState extends State<ExampleApp> {
       themeMode: _mode,
       theme: _theme(SuperThemeData.light),
       darkTheme: _theme(SuperThemeData.dark),
-      builder: (context, child) => Directionality(textDirection: _dir, child: child!),
+      builder: (context, child) =>
+          Directionality(textDirection: _dir, child: child!),
       home: _Launcher(
         mode: _mode,
         dir: _dir,
-        onToggleTheme: () =>
-            setState(() => _mode = _mode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark),
-        onToggleDir: () =>
-            setState(() => _dir = _dir == TextDirection.ltr ? TextDirection.rtl : TextDirection.ltr),
+        onToggleTheme: () => setState(() =>
+            _mode = _mode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark),
+        onToggleDir: () => setState(() => _dir =
+            _dir == TextDirection.ltr ? TextDirection.rtl : TextDirection.ltr),
       ),
     );
   }
@@ -83,20 +79,38 @@ class _Launcher extends StatelessWidget {
   final VoidCallback onToggleDir;
 
   static final _demos = <_DemoItem>[
-    _DemoItem('Super Text Field', 'Text · email · password · multiline · counter',
-        Icons.text_fields_rounded, (_) => const TextFieldDemo()),
-    _DemoItem('Super Numeric Field', 'Grouping · clamp · round · stepper · units',
-        Icons.pin_rounded, (_) => const NumericFieldDemo()),
-    _DemoItem('Super Attachment Field', 'Drop zone · typed file list · validation',
-        Icons.attach_file_rounded, (_) => const AttachmentFieldDemo()),
-    _DemoItem('Super Date Field', 'Masked YYYY-MM-DD · calendar popover · min/max',
-        Icons.event_rounded, (_) => const DateFieldDemo()),
-    _DemoItem('Super Select Field', 'Searchable single-select dropdown · options',
-        Icons.arrow_drop_down_circle_outlined, (_) => const SelectFieldDemo()),
+    _DemoItem(
+        'Super Text Field',
+        'Text · email · password · multiline · counter',
+        Icons.text_fields_rounded,
+        (_) => const TextFieldDemo()),
+    _DemoItem(
+        'Super Numeric Field',
+        'Grouping · clamp · round · stepper · units',
+        Icons.pin_rounded,
+        (_) => const NumericFieldDemo()),
+    _DemoItem(
+        'Super Attachment Field',
+        'Drop zone · typed file list · validation',
+        Icons.attach_file_rounded,
+        (_) => const AttachmentFieldDemo()),
+    _DemoItem(
+        'Super Date Field',
+        'Masked YYYY-MM-DD · calendar popover · min/max',
+        Icons.event_rounded,
+        (_) => const DateFieldDemo()),
+    _DemoItem(
+        'Super Select Field',
+        'Searchable single-select dropdown · options',
+        Icons.arrow_drop_down_circle_outlined,
+        (_) => const SelectFieldDemo()),
     _DemoItem('Super Multi-Select Field', 'Chips · checkable popover · min/max',
         Icons.checklist_rounded, (_) => const MultiSelectFieldDemo()),
-    _DemoItem('Super Bool Field', 'Toggle · checkbox · active flags · mustBeTrue',
-        Icons.toggle_on_outlined, (_) => const BoolFieldDemo()),
+    _DemoItem(
+        'Super Bool Field',
+        'Toggle · checkbox · active flags · mustBeTrue',
+        Icons.toggle_on_outlined,
+        (_) => const BoolFieldDemo()),
     _DemoItem('Super Choice Field', 'Segmented · radio · checkbox group',
         Icons.tune_rounded, (_) => const ChoiceFieldDemo()),
   ];
@@ -116,9 +130,11 @@ class _Launcher extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text('SUPER FORM FIELD • GALLERY',
-                      style: SuperText.eyebrow.copyWith(color: Theme.of(context).colorScheme.primary)),
+                      style: SuperText.eyebrow.copyWith(
+                          color: Theme.of(context).colorScheme.primary)),
                   const SizedBox(height: SuperTokens.space2),
-                  Text('Form Fields حقول النماذج', style: SuperText.h1.copyWith(color: t.fg1)),
+                  Text('Form Fields حقول النماذج',
+                      style: SuperText.h1.copyWith(color: t.fg1)),
                   const SizedBox(height: SuperTokens.space8),
                   for (final d in _demos) ...[
                     _Card(item: d),
@@ -133,10 +149,13 @@ class _Launcher extends StatelessWidget {
                           foregroundColor: t.fg1,
                           side: BorderSide(color: t.borderStrong),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
+                              borderRadius: BorderRadius.circular(
+                                  SuperTokens.radiusControl)),
                         ),
                         onPressed: onToggleTheme,
-                        child: Text(mode == ThemeMode.dark ? 'Light Theme' : 'Dark Theme'),
+                        child: Text(mode == ThemeMode.dark
+                            ? 'Light Theme'
+                            : 'Dark Theme'),
                       ),
                       const SizedBox(width: SuperTokens.space3),
                       OutlinedButton(
@@ -144,10 +163,13 @@ class _Launcher extends StatelessWidget {
                           foregroundColor: t.fg1,
                           side: BorderSide(color: t.borderStrong),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
+                              borderRadius: BorderRadius.circular(
+                                  SuperTokens.radiusControl)),
                         ),
                         onPressed: onToggleDir,
-                        child: Text(dir == TextDirection.ltr ? 'العربية (RTL)' : 'English (LTR)'),
+                        child: Text(dir == TextDirection.ltr
+                            ? 'العربية (RTL)'
+                            : 'English (LTR)'),
                       ),
                     ],
                   ),
@@ -172,7 +194,8 @@ class _Card extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(SuperTokens.radiusCard),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: item.builder)),
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute<void>(builder: item.builder)),
         child: Container(
           padding: const EdgeInsets.all(SuperTokens.space4),
           decoration: BoxDecoration(
@@ -186,19 +209,25 @@ class _Card extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Color.alphaBlend(Theme.of(context).colorScheme.primary.withOpacity(0.14), t.surface),
-                  borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+                  color: Color.alphaBlend(
+                      Theme.of(context).colorScheme.primary.withOpacity(0.14),
+                      t.surface),
+                  borderRadius:
+                      BorderRadius.circular(SuperTokens.radiusControl),
                 ),
-                child: Icon(item.icon, size: 22, color: Theme.of(context).colorScheme.primary),
+                child: Icon(item.icon,
+                    size: 22, color: Theme.of(context).colorScheme.primary),
               ),
               const SizedBox(width: SuperTokens.space4),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: SuperText.heading.copyWith(color: t.fg1)),
+                    Text(item.title,
+                        style: SuperText.heading.copyWith(color: t.fg1)),
                     const SizedBox(height: 2),
-                    Text(item.subtitle, style: SuperText.caption.copyWith(color: t.fg3)),
+                    Text(item.subtitle,
+                        style: SuperText.caption.copyWith(color: t.fg3)),
                   ],
                 ),
               ),

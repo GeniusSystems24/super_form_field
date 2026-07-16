@@ -3,13 +3,6 @@ description: Runnable gallery for the Super Form Field Flutter package.
 publish_to: "none"
 version: 0.1.0
 
-topics:
-  - flutter
-  - widgets
-  - material-design
-  - design-system
-  - theme
-
 environment:
   sdk: ">=3.0.0 <4.0.0"
   flutter: ">=3.10.0"
@@ -18,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   # Shared GeniusLink foundation (transitive via the package; listed for resolution).
-  super_core: ^1.0.0
+  super_core: ">=1.2.0 <2.0.0"
   super_form_field:
     path: ../
 

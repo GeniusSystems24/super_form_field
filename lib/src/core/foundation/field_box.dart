@@ -87,7 +87,7 @@ class FieldBox extends StatelessWidget {
         disabledBorder: InputBorder.none,
         filled: false,
         contentPadding: EdgeInsets.zero,
-        isDense: true,
+        
       ),
     );
 

@@ -199,7 +199,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     final focusedBorderColor  = hasError ? cs.error : cs.primary;
     final disabledBorderColor = t.border;
 
-    OutlineInputBorder _border(Color color, {double width = 1.4}) =>
+    OutlineInputBorder border(Color color, {double width = 1.4}) =>
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
           borderSide: BorderSide(color: color, width: width),
@@ -275,7 +275,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       filled: true,
       fillColor: widget.disabled ? Colors.transparent : fillColor,
       // Sizing — tight height for single-line; unconstrained for multiline
-      isDense: true,
+      
       constraints: multiline
           ? BoxConstraints(minHeight: minH)
           : BoxConstraints.tightFor(height: minH),
@@ -286,12 +286,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
             : SuperTokens.space2,
       ),
       // Borders — fully specified; overrides inputDecorationTheme
-      border: _border(enabledBorderColor),
-      enabledBorder: _border(enabledBorderColor),
-      focusedBorder: _border(focusedBorderColor),
-      disabledBorder: _border(disabledBorderColor),
-      errorBorder: _border(cs.error),
-      focusedErrorBorder: _border(cs.error),
+      border: border(enabledBorderColor),
+      enabledBorder: border(enabledBorderColor),
+      focusedBorder: border(focusedBorderColor),
+      disabledBorder: border(disabledBorderColor),
+      errorBorder: border(cs.error),
+      focusedErrorBorder: border(cs.error),
       // Error shadow via container — NOT via errorText (that would show inline text)
       // No errorText: error UX is the suffix ErrorBadge + border color change only.
     );

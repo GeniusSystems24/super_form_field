@@ -98,7 +98,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        const SectionCard(
           title: 'Allocation',
           subtitle: 'Assign a cost center (some are locked)',
           marker: Marker.ledger,

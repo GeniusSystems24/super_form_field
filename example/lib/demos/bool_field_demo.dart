@@ -28,7 +28,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
       eyebrow: 'Accounts • Status & Flags',
       title: 'Super Bool Field',
       children: [
-        SectionCard(
+        const SectionCard(
           title: 'Status Flags',
           subtitle: 'Toggle account behaviour',
           marker: Marker.identity,
@@ -49,14 +49,14 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
                   disabledLabel: 'متوقف',
                 ),
               ),
-              const SizedBox(height: SuperTokens.space6),
+              SizedBox(height: SuperTokens.space6),
               SuperBoolFormField(
                 label: 'Allow Manual Posting',
                 enabledLabel: 'Manual journals allowed',
                 disabledLabel: 'System postings only',
                 hint: 'When off, only automated integrations may post to this account.',
               ),
-              const SizedBox(height: SuperTokens.space6),
+              SizedBox(height: SuperTokens.space6),
               SuperBoolFormField(
                 label: 'Reconciliation Required',
                 style: SuperBoolStyle.checkbox,

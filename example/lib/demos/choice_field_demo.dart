@@ -53,10 +53,10 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
           marker: Marker.identity,
           child: Column(
             children: [
-              SuperChoiceFormField<String>(
+              const SuperChoiceFormField<String>(
                 label: 'Status',
                 required: true,
-                initialValue: const ['draft'],
+                initialValue: ['draft'],
                 options: _status,
               ),
               const SizedBox(height: SuperTokens.space6),
