@@ -94,10 +94,10 @@ class _MiniCalendarState extends State<MiniCalendar> {
 
     return Container(
       width: 248,
-      padding: const EdgeInsets.all(SuperTokens.space3),
+      padding: const EdgeInsets.all(SuperTokensData.defaultSpace3),
       decoration: BoxDecoration(
         color: t.surface,
-        borderRadius: BorderRadius.circular(SuperTokens.radiusCard),
+        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusCard),
         border: Border.all(color: t.borderStrong),
         boxShadow: const [
           BoxShadow(color: Color(0x59000000), blurRadius: 24, spreadRadius: -6, offset: Offset(0, 10)),
@@ -108,7 +108,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
         children: [
           // ── header: month nav ──
           Padding(
-            padding: const EdgeInsets.only(bottom: SuperTokens.space2),
+            padding: const EdgeInsets.only(bottom: SuperTokensData.defaultSpace2),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -131,7 +131,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 ),
             ],
           ),
-          const SizedBox(height: SuperTokens.space1),
+          const SizedBox(height: SuperTokensData.defaultSpace1),
           // ── day grid ──
           GridView.count(
             crossAxisCount: 7,
@@ -155,7 +155,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                   ),
             ],
           ),
-          const SizedBox(height: SuperTokens.space1),
+          const SizedBox(height: SuperTokensData.defaultSpace1),
           // ── Today shortcut ──
           Align(
             alignment: AlignmentDirectional.centerEnd,
@@ -187,7 +187,7 @@ class _NavButton extends StatelessWidget {
     final cs = context.sffColorScheme;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
+      borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
       child: Padding(
         padding: const EdgeInsets.all(4),
         child: Icon(icon, size: 18, color: t.fg2),
@@ -248,7 +248,7 @@ class _DayCellState extends State<_DayCell> {
             decoration: BoxDecoration(
               color: bg,
               border: border,
-              borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
+              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
             ),
             alignment: Alignment.center,
             child: Text(

@@ -162,7 +162,7 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
         overflow: TextOverflow.ellipsis,
         style: SuperText.body.copyWith(
           color: t.fg4,
-          fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
+          fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
         ),
         textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
       );
@@ -170,8 +170,8 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Wrap(
-        spacing: SuperTokens.space1,
-        runSpacing: SuperTokens.space1,
+        spacing: SuperTokensData.defaultSpace1,
+        runSpacing: SuperTokensData.defaultSpace1,
         children: [
           for (final o in chosen)
             SuperChip(

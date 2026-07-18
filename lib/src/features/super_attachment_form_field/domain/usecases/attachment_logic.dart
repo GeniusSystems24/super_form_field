@@ -33,13 +33,13 @@ abstract final class AttachmentLogic {
     final e = f.extension;
     final type = (f.mimeType ?? '').toLowerCase();
     if (_image.hasMatch(e) || type.startsWith('image/')) {
-      return const FileGlyph(SffIcons.image, SuperTokens.success);
+      return const FileGlyph(SffIcons.image, SuperTokensData.defaultSuccess);
     }
     if (e == 'pdf' || type.contains('pdf')) {
-      return const FileGlyph(SffIcons.fileText, SuperTokens.danger);
+      return const FileGlyph(SffIcons.fileText, SuperTokensData.defaultDanger);
     }
-    if (_doc.hasMatch(e)) return const FileGlyph(SffIcons.fileText, SuperTokens.accent);
-    if (_sheet.hasMatch(e)) return const FileGlyph(SffIcons.sheet, SuperTokens.success);
+    if (_doc.hasMatch(e)) return const FileGlyph(SffIcons.fileText, SuperTokensData.defaultAccent);
+    if (_sheet.hasMatch(e)) return const FileGlyph(SffIcons.sheet, SuperTokensData.defaultSuccess);
     return const FileGlyph(SffIcons.file, Color(0xFF8D90A0)); // neutral fg-3
   }
 

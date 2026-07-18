@@ -134,7 +134,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
     final cs = context.sffColorScheme;
         final on = _controller.value;
         final error = widget.disabled ? null : _controller.visibleError;
-        final fontFamily = widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont;
+        final fontFamily = widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont;
 
         final caption = widget.title ?? (on ? widget.enabledLabel : widget.disabledLabel);
 
@@ -145,7 +145,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
         final row = Row(
           children: [
             control,
-            const SizedBox(width: SuperTokens.space3),
+            const SizedBox(width: SuperTokensData.defaultSpace3),
             Expanded(
               child: Text(
                 caption,
@@ -158,7 +158,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
               ),
             ),
             if (error != null) ...[
-              const SizedBox(width: SuperTokens.space1),
+              const SizedBox(width: SuperTokensData.defaultSpace1),
               ErrorBadge(error: error),
             ],
           ],
@@ -178,7 +178,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
                 behavior: HitTestBehavior.opaque,
                 onTap: _editable ? _controller.toggle : null,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: SuperTokens.space1),
+                  padding: const EdgeInsets.symmetric(vertical: SuperTokensData.defaultSpace1),
                   child: row,
                 ),
               ),
@@ -201,8 +201,8 @@ class _Toggle extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return AnimatedContainer(
-      duration: SuperTokens.durBase,
-      curve: SuperTokens.curveStandard,
+      duration: SuperTokensData.defaultDurBase,
+      curve: SuperTokensData.defaultCurveStandard,
       width: 40,
       height: 23,
       padding: const EdgeInsets.all(2.5),
@@ -212,8 +212,8 @@ class _Toggle extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: AnimatedAlign(
-        duration: SuperTokens.durBase,
-        curve: SuperTokens.curveStandard,
+        duration: SuperTokensData.defaultDurBase,
+        curve: SuperTokensData.defaultCurveStandard,
         alignment: value ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
         child: Container(
           width: 16,
@@ -239,13 +239,13 @@ class _CheckBox extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return AnimatedContainer(
-      duration: SuperTokens.durFast,
+      duration: SuperTokensData.defaultDurFast,
       width: 20,
       height: 20,
       decoration: BoxDecoration(
         color: value ? cs.primary : const Color(0x00000000),
         border: Border.all(color: value ? cs.primary : t.borderStrong, width: 1.5),
-        borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
       ),
       child: value
           ? const Icon(SffIcons.check, size: 14, color: Color(0xFFFFFFFF))

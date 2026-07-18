@@ -201,7 +201,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     OutlineInputBorder border(Color color, {double width = 1.4}) =>
         OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+          borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
           borderSide: BorderSide(color: color, width: width),
         );
 
@@ -245,8 +245,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     // ── Density ──
     final minH = widget.density == FieldDensity.compact
-        ? SuperTokens.fieldCompact
-        : SuperTokens.fieldComfortable;
+        ? SuperTokensData.defaultFieldCompact
+        : SuperTokensData.defaultFieldComfortable;
 
     // ── Prefix / suffix text adornments ──
     final adornStyle = SuperText.body.copyWith(color: t.fg3, fontSize: 13);
@@ -256,7 +256,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       hintText: widget.placeholder,
       hintStyle: SuperText.body.copyWith(
         color: t.fg4,
-        fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
+        fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
       ),
       // Leading / trailing
       prefixIcon: prefixIconWidget,
@@ -280,10 +280,10 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           ? BoxConstraints(minHeight: minH)
           : BoxConstraints.tightFor(height: minH),
       contentPadding: EdgeInsets.symmetric(
-        horizontal: SuperTokens.space3,
+        horizontal: SuperTokensData.defaultSpace3,
         vertical: widget.density == FieldDensity.compact
-            ? SuperTokens.space1
-            : SuperTokens.space2,
+            ? SuperTokensData.defaultSpace1
+            : SuperTokensData.defaultSpace2,
       ),
       // Borders — fully specified; overrides inputDecorationTheme
       border: border(enabledBorderColor),
@@ -298,7 +298,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     final textStyle = SuperText.body.copyWith(
       color: t.fg1,
-      fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
+      fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
     );
 
     final field = TextField(

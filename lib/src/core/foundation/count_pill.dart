@@ -12,7 +12,7 @@ import 'package:super_core/super_core.dart';
 
 /// A rounded pill: [color]-tinted background behind [color] text.
 class CountPill extends StatelessWidget {
-  const CountPill({super.key, required this.label, this.color = SuperTokens.accent});
+  const CountPill({super.key, required this.label, this.color = SuperTokensData.defaultAccent});
 
   final String label;
   final Color color;

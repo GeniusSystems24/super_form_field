@@ -8,4 +8,4 @@
 // working unchanged.
 // ============================================================
 
-export 'package:super_core/super_core.dart' show SuperTokens, SuperMarker;
+export 'package:super_core/super_core.dart' show SuperTokensData, SuperMarker;

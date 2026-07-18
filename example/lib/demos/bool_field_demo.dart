@@ -49,14 +49,14 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
                   disabledLabel: 'متوقف',
                 ),
               ),
-              SizedBox(height: SuperTokens.space6),
+              SizedBox(height: SuperTokensData.defaultSpace6),
               SuperBoolFormField(
                 label: 'Allow Manual Posting',
                 enabledLabel: 'Manual journals allowed',
                 disabledLabel: 'System postings only',
                 hint: 'When off, only automated integrations may post to this account.',
               ),
-              SizedBox(height: SuperTokens.space6),
+              SizedBox(height: SuperTokensData.defaultSpace6),
               SuperBoolFormField(
                 label: 'Reconciliation Required',
                 style: SuperBoolStyle.checkbox,
@@ -84,12 +84,12 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            const SizedBox(width: SuperTokens.space3),
+            const SizedBox(width: SuperTokensData.defaultSpace3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

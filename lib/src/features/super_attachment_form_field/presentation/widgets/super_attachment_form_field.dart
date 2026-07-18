@@ -165,7 +165,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   onTap: _browse,
                 ),
                 if (_controller.files.isNotEmpty) ...[
-                  const SizedBox(height: SuperTokens.space2),
+                  const SizedBox(height: SuperTokensData.defaultSpace2),
                   for (final f in _controller.files) ...[
                     _FileCard(
                       file: f,
@@ -173,7 +173,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                       disabled: widget.disabled,
                       onRemove: () => _controller.remove(f.id),
                     ),
-                    const SizedBox(height: SuperTokens.space2),
+                    const SizedBox(height: SuperTokensData.defaultSpace2),
                   ],
                 ],
               ],
@@ -223,14 +223,14 @@ class _DropZone extends StatelessWidget {
       child: GestureDetector(
         onTap: disabled ? null : onTap,
         child: CustomPaint(
-          painter: _DashedRRectPainter(color: border, radius: SuperTokens.radiusMd),
+          painter: _DashedRRectPainter(color: border, radius: SuperTokensData.defaultRadiusMd),
           child: AnimatedContainer(
-            duration: SuperTokens.durBase,
-            curve: SuperTokens.curveStandard,
+            duration: SuperTokensData.defaultDurBase,
+            curve: SuperTokensData.defaultCurveStandard,
             padding: pad,
             decoration: BoxDecoration(
               color: bg,
-              borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
+              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -244,7 +244,7 @@ class _DropZone extends StatelessWidget {
                   ),
                   child: Icon(SffIcons.uploadCloud, size: 21, color: cs.primary),
                 ),
-                const SizedBox(height: SuperTokens.space2),
+                const SizedBox(height: SuperTokensData.defaultSpace2),
                 Text.rich(
                   TextSpan(
                     children: [
@@ -264,7 +264,7 @@ class _DropZone extends StatelessWidget {
                   ),
                 ),
                 if (acceptHint != null) ...[
-                  const SizedBox(height: SuperTokens.space1),
+                  const SizedBox(height: SuperTokensData.defaultSpace1),
                   Text(acceptHint!, style: SuperText.mono.copyWith(color: t.fg4, fontSize: 11)),
                 ],
               ],
@@ -305,7 +305,7 @@ class _FileCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: t.surface,
         border: Border.all(color: bad ? cs.error : t.border),
-        borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
       ),
       child: Row(
         children: [
@@ -314,11 +314,11 @@ class _FileCard extends StatelessWidget {
             height: 30,
             decoration: BoxDecoration(
               color: Color.alphaBlend(g.color.withOpacity(0.14), t.surface),
-              borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
+              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
             ),
             child: Icon(g.icon, size: 16, color: g.color),
           ),
-          const SizedBox(width: SuperTokens.space3),
+          const SizedBox(width: SuperTokensData.defaultSpace3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -19,7 +19,7 @@ class FieldIconButton extends StatefulWidget {
     required this.icon,
     required this.onPressed,
     this.tooltip,
-    this.size = SuperTokens.trailingIcon,
+    this.size = SuperTokensData.defaultTrailingIcon,
     this.iconSize = 16,
     this.bordered = false,
     this.danger = false,
@@ -58,13 +58,13 @@ class _FieldIconButtonState extends State<FieldIconButton> {
       child: GestureDetector(
         onTap: widget.onPressed,
         child: AnimatedContainer(
-          duration: SuperTokens.durFast,
+          duration: SuperTokensData.defaultDurFast,
           width: widget.size,
           height: widget.size,
           decoration: BoxDecoration(
             color: widget.bordered ? t.inputBg : (_hover ? t.hover : const Color(0x00000000)),
             border: widget.bordered ? Border.all(color: t.borderStrong) : null,
-            borderRadius: BorderRadius.circular(widget.bordered ? 5 : SuperTokens.radiusMd),
+            borderRadius: BorderRadius.circular(widget.bordered ? 5 : SuperTokensData.defaultRadiusMd),
           ),
           child: Icon(widget.icon, size: widget.iconSize, color: fg),
         ),

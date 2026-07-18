@@ -52,7 +52,7 @@ class _OptionTileState extends State<OptionTile> {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
-    final fontFamily = widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont;
+    final fontFamily = widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont;
     final enabled = !widget.disabled && widget.onTap != null;
 
     final Color bg = widget.selected
@@ -68,24 +68,24 @@ class _OptionTileState extends State<OptionTile> {
         child: Opacity(
           opacity: widget.disabled ? 0.4 : 1,
           child: AnimatedContainer(
-            duration: SuperTokens.durFast,
+            duration: SuperTokensData.defaultDurFast,
             padding: const EdgeInsets.symmetric(
-              horizontal: SuperTokens.space2,
-              vertical: SuperTokens.space2,
+              horizontal: SuperTokensData.defaultSpace2,
+              vertical: SuperTokensData.defaultSpace2,
             ),
             decoration: BoxDecoration(
               color: bg,
-              borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
             ),
             child: Row(
               children: [
                 if (widget.checkbox) ...[
                   _CheckSquare(checked: widget.selected),
-                  const SizedBox(width: SuperTokens.space2),
+                  const SizedBox(width: SuperTokensData.defaultSpace2),
                 ],
                 if (widget.icon != null) ...[
                   Icon(widget.icon, size: 16, color: widget.selected ? cs.primary : t.fg3),
-                  const SizedBox(width: SuperTokens.space2),
+                  const SizedBox(width: SuperTokensData.defaultSpace2),
                 ],
                 Expanded(
                   child: Column(
@@ -115,7 +115,7 @@ class _OptionTileState extends State<OptionTile> {
                   ),
                 ),
                 if (!widget.checkbox && widget.selected) ...[
-                  const SizedBox(width: SuperTokens.space2),
+                  const SizedBox(width: SuperTokensData.defaultSpace2),
                   Icon(SffIcons.check, size: 16, color: cs.primary),
                 ],
               ],
@@ -137,7 +137,7 @@ class _CheckSquare extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return AnimatedContainer(
-      duration: SuperTokens.durFast,
+      duration: SuperTokensData.defaultDurFast,
       width: 17,
       height: 17,
       decoration: BoxDecoration(
@@ -164,16 +164,16 @@ class OptionGroupHeader extends StatelessWidget {
     final cs = context.sffColorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        SuperTokens.space2,
-        SuperTokens.space2,
-        SuperTokens.space2,
-        SuperTokens.space1,
+        SuperTokensData.defaultSpace2,
+        SuperTokensData.defaultSpace2,
+        SuperTokensData.defaultSpace2,
+        SuperTokensData.defaultSpace1,
       ),
       child: Text(
         label.toUpperCase(),
         style: SuperText.label.copyWith(
           color: t.fg4,
-          fontFamily: arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
+          fontFamily: arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
         ),
       ),
     );

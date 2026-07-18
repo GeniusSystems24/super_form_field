@@ -48,7 +48,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 largeStep: 100,
                 forceError: _force,
               ),
-              const SizedBox(height: SuperTokens.space6),
+              const SizedBox(height: SuperTokensData.defaultSpace6),
               SuperNumericFormField(
                 label: 'Quantity',
                 required: true,
@@ -78,7 +78,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 allowNegative: false,
                 initialValue: 3.7512,
               ),
-              SizedBox(height: SuperTokens.space6),
+              SizedBox(height: SuperTokensData.defaultSpace6),
               SuperNumericFormField(
                 label: 'Tax Rate',
                 suffix: '%',
@@ -96,12 +96,12 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            const SizedBox(width: SuperTokens.space3),
+            const SizedBox(width: SuperTokensData.defaultSpace3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

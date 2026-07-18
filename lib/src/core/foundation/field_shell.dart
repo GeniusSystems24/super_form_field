@@ -53,7 +53,7 @@ class FieldShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final fontFamily = arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont;
+    final fontFamily = arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,11 +68,11 @@ class FieldShell extends StatelessWidget {
               if (labelRight != null) labelRight!,
             ],
           ),
-          const SizedBox(height: SuperTokens.space2),
+          const SizedBox(height: SuperTokensData.defaultSpace2),
         ],
         child,
         if (hint != null && !hasError) ...[
-          const SizedBox(height: SuperTokens.space2),
+          const SizedBox(height: SuperTokensData.defaultSpace2),
           Text(
             hint!,
             style: SuperText.caption.copyWith(color: t.fg4, fontFamily: fontFamily),

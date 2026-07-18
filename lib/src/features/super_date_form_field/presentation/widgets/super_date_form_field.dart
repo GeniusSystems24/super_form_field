@@ -214,7 +214,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 icon: SffIcons.calendarDays,
                 tooltip: 'Open calendar',
                 bordered: true,
-                size: SuperTokens.trailingIcon,
+                size: SuperTokensData.defaultTrailingIcon,
                 iconSize: 15,
                 onPressed: _editable ? _toggleCalendar : null,
               ),

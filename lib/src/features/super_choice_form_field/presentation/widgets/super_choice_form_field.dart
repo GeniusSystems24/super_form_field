@@ -195,7 +195,7 @@ class _Segmented<T> extends StatelessWidget {
       decoration: BoxDecoration(
         color: t.inputBg,
         border: Border.all(color: t.borderStrong),
-        borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
+        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
       ),
       child: Row(
         children: [
@@ -230,12 +230,12 @@ class _Segment<T> extends StatelessWidget {
       child: GestureDetector(
         onTap: option.disabled ? null : () => onPick(option),
         child: AnimatedContainer(
-          duration: SuperTokens.durFast,
-          curve: SuperTokens.curveStandard,
+          duration: SuperTokensData.defaultDurFast,
+          curve: SuperTokensData.defaultCurveStandard,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
           decoration: BoxDecoration(
             color: selected ? cs.primary : const Color(0x00000000),
-            borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+            borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
           ),
           child: Opacity(
             opacity: option.disabled ? 0.4 : 1,
@@ -244,7 +244,7 @@ class _Segment<T> extends StatelessWidget {
               children: [
                 if (option.icon != null) ...[
                   Icon(option.icon, size: 15, color: selected ? const Color(0xFFFFFFFF) : t.fg3),
-                  const SizedBox(width: SuperTokens.space2),
+                  const SizedBox(width: SuperTokensData.defaultSpace2),
                 ],
                 Flexible(
                   child: Text(
@@ -255,7 +255,7 @@ class _Segment<T> extends StatelessWidget {
                     style: SuperText.button.copyWith(
                       color: selected ? const Color(0xFFFFFFFF) : t.fg3,
                       fontSize: 13,
-                      fontFamily: arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
+                      fontFamily: arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
                     ),
                   ),
                 ),
@@ -290,7 +290,7 @@ class _OptionList<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var i = 0; i < options.length; i++) ...[
-          if (i > 0) const SizedBox(height: SuperTokens.space1),
+          if (i > 0) const SizedBox(height: SuperTokensData.defaultSpace1),
           _OptionRow<T>(
             option: options[i],
             selected: controller.isSelected(options[i].value),
@@ -333,7 +333,7 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
     final o = widget.option;
     final sel = widget.selected;
     final enabled = !o.disabled;
-    final fontFamily = widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont;
+    final fontFamily = widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont;
 
     return MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -344,17 +344,17 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
         child: Opacity(
           opacity: enabled ? 1 : 0.4,
           child: AnimatedContainer(
-            duration: SuperTokens.durFast,
+            duration: SuperTokensData.defaultDurFast,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
             decoration: BoxDecoration(
               color: sel ? t.selectionFill(0.10) : (_hover && enabled ? t.hover : t.inputBg),
               border: Border.all(color: sel ? cs.primary : t.borderStrong, width: sel ? 1.4 : 1),
-              borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
             ),
             child: Row(
               children: [
                 widget.checkbox ? _Square(checked: sel) : _Circle(checked: sel),
-                const SizedBox(width: SuperTokens.space3),
+                const SizedBox(width: SuperTokensData.defaultSpace3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,7 +396,7 @@ class _Square extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return AnimatedContainer(
-      duration: SuperTokens.durFast,
+      duration: SuperTokensData.defaultDurFast,
       width: 19,
       height: 19,
       decoration: BoxDecoration(

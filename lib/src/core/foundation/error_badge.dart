@@ -33,13 +33,13 @@ class ErrorBadge extends StatelessWidget {
       preferBelow: false,
       waitDuration: const Duration(milliseconds: 120),
       padding: const EdgeInsets.symmetric(
-        horizontal: SuperTokens.space3,
-        vertical: SuperTokens.space2,
+        horizontal: SuperTokensData.defaultSpace3,
+        vertical: SuperTokensData.defaultSpace2,
       ),
-      margin: const EdgeInsets.symmetric(horizontal: SuperTokens.space4),
+      margin: const EdgeInsets.symmetric(horizontal: SuperTokensData.defaultSpace4),
       decoration: BoxDecoration(
         color: cs.error,
-        borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
+        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
         boxShadow: SuperThemeData.popShadow,
       ),
       textStyle: SuperText.caption.copyWith(
@@ -48,8 +48,8 @@ class ErrorBadge extends StatelessWidget {
         height: 1.45,
       ),
       child: SizedBox(
-        width: SuperTokens.trailingIcon,
-        height: SuperTokens.trailingIcon,
+        width: SuperTokensData.defaultTrailingIcon,
+        height: SuperTokensData.defaultTrailingIcon,
         child: Icon(SffIcons.alertCircle, size: size, color: cs.error),
       ),
     );

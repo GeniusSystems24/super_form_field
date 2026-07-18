@@ -215,7 +215,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                     overflow: TextOverflow.ellipsis,
                     style: SuperText.body.copyWith(
                       color: selected != null ? t.fg1 : t.fg4,
-                      fontFamily: widget.arabic ? SuperTokens.arabicFont : SuperTokens.bodyFont,
+                      fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
                     ),
                     textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
                   ),

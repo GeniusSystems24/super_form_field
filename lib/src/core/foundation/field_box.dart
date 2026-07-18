@@ -60,8 +60,8 @@ class FieldBox extends StatelessWidget {
     final cs = context.sffColorScheme;
     final hasError = error != null;
     final h = density == FieldDensity.compact
-        ? SuperTokens.fieldCompact
-        : SuperTokens.fieldComfortable;
+        ? SuperTokensData.defaultFieldCompact
+        : SuperTokensData.defaultFieldComfortable;
 
     final borderColor = hasError
         ? cs.error
@@ -94,17 +94,17 @@ class FieldBox extends StatelessWidget {
     return Opacity(
       opacity: disabled ? 0.55 : 1.0,
       child: AnimatedContainer(
-        duration: SuperTokens.durBase,
-        curve: SuperTokens.curveStandard,
+        duration: SuperTokensData.defaultDurBase,
+        curve: SuperTokensData.defaultCurveStandard,
         constraints: BoxConstraints.tightFor(height: h),
         padding: const EdgeInsetsDirectional.only(
-          start: SuperTokens.space3,
-          end: SuperTokens.space1,
+          start: SuperTokensData.defaultSpace3,
+          end: SuperTokensData.defaultSpace1,
         ),
         decoration: BoxDecoration(
           color: bgColor,
           border: Border.all(color: borderColor, width: 1.4),
-          borderRadius: BorderRadius.circular(SuperTokens.radiusControl),
+          borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
           boxShadow: hasError
               ? [BoxShadow(
                   color: cs.error.withOpacity(0.14),
@@ -125,15 +125,15 @@ class FieldBox extends StatelessWidget {
                   ),
                   child: leading!,
                 ),
-                const SizedBox(width: SuperTokens.space2),
+                const SizedBox(width: SuperTokensData.defaultSpace2),
               ],
               Expanded(child: child),
               for (final w in trailing) ...[
-                const SizedBox(width: SuperTokens.space1),
+                const SizedBox(width: SuperTokensData.defaultSpace1),
                 w,
               ],
               if (hasError) ...[
-                const SizedBox(width: SuperTokens.space1),
+                const SizedBox(width: SuperTokensData.defaultSpace1),
                 ErrorBadge(error: error),
               ],
             ],

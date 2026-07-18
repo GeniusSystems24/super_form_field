@@ -45,7 +45,7 @@ class OptionMenu extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: t.surface,
-          borderRadius: BorderRadius.circular(SuperTokens.radiusMd),
+          borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
           border: Border.all(color: t.borderStrong),
           boxShadow: SuperThemeData.popShadow,
         ),
@@ -58,8 +58,8 @@ class OptionMenu extends StatelessWidget {
             if (isEmpty && empty != null)
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: SuperTokens.space3,
-                  vertical: SuperTokens.space4,
+                  horizontal: SuperTokensData.defaultSpace3,
+                  vertical: SuperTokensData.defaultSpace4,
                 ),
                 child: empty!,
               )
@@ -68,7 +68,7 @@ class OptionMenu extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxHeight: maxHeight),
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(SuperTokens.space1),
+                    padding: const EdgeInsets.all(SuperTokensData.defaultSpace1),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,

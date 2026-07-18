@@ -34,7 +34,7 @@ class DateFormatsExample extends StatelessWidget {
                   initialValue: DateTime(2024, 1, 31),
                 ),
               ),
-              const SizedBox(width: SuperTokens.space4),
+              const SizedBox(width: SuperTokensData.defaultSpace4),
               Expanded(
                 child: SuperDateFormField(
                   label: 'Period',
@@ -44,7 +44,7 @@ class DateFormatsExample extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: SuperTokens.space6),
+          const SizedBox(height: SuperTokensData.defaultSpace6),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -55,7 +55,7 @@ class DateFormatsExample extends StatelessWidget {
                   initialValue: DateTime(2024, 1, 1),
                 ),
               ),
-              const SizedBox(width: SuperTokens.space4),
+              const SizedBox(width: SuperTokensData.defaultSpace4),
               Expanded(
                 child: SuperDateFormField(
                   label: 'Recurring (Month-Day)',
