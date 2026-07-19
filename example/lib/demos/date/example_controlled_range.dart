@@ -9,7 +9,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -44,7 +45,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
     return SectionCard(
       title: '2 · Controlled range',
       subtitle: 'Linked controllers — Start caps End, and vice-versa',
-      marker: Marker.ledger,
+      marker: SuperMarker.ledger,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -53,8 +54,10 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
             children: [
               Expanded(
                 child: SuperDateFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Period Start',
+                  ),
                   controller: _start,
-                  label: 'Period Start',
                   required: true,
                   maxDate: _end.value,
                   onChanged: _onStartChanged,
@@ -63,8 +66,10 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
               SizedBox(width: SuperThemeData.of(context).tokens.space4),
               Expanded(
                 child: SuperDateFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Period End',
+                  ),
                   controller: _end,
-                  label: 'Period End',
                   required: true,
                   minDate: _start.value,
                   onChanged: (_) => setState(() {}),

@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/usecases/select_logic.dart';
 import '../controllers/super_select_field_controller.dart';
 
@@ -24,14 +25,11 @@ class SuperSelectFormField<T> extends StatefulWidget {
     this.initialValue,
     this.onChanged,
     this.onValidity,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
-    this.placeholder,
-    this.hint,
     this.density = FieldDensity.comfortable,
     this.disabled = false,
     this.readOnly = false,
-    this.leadingIcon,
     this.searchable = false,
     this.searchHint = 'Search…',
     this.clearable = false,
@@ -53,15 +51,14 @@ class SuperSelectFormField<T> extends StatefulWidget {
   final ValueChanged<T?>? onChanged;
   final ValidityChanged? onValidity;
 
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  final InputDecoration decoration;
+
   // ── chrome ──
-  final String? label;
   final bool required;
-  final String? placeholder;
-  final String? hint;
   final FieldDensity density;
   final bool disabled;
   final bool readOnly;
-  final IconData? leadingIcon;
 
   // ── behaviour ──
   /// Show a search box at the top of the menu that filters the options.
@@ -170,10 +167,16 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
         final selected = _controller.selectedOption;
 
         final trailing = <Widget>[
+          ...SffDecoration.buildTrailing(context, widget.decoration),
           if (widget.clearable && selected != null && _editable)
             FieldIconButton(
               icon: SffIcons.clear,
@@ -191,9 +194,8 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
         ];
 
         return FieldShell(
-          label: widget.label,
+          decoration: widget.decoration,
           required: widget.required,
-          hint: widget.hint,
           hasError: error != null,
           arabic: widget.arabic,
           child: FieldPopover(
@@ -212,22 +214,41 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                   error: error,
                   disabled: widget.disabled,
                   density: widget.density,
-                  leading: widget.leadingIcon != null
-                      ? Icon(widget.leadingIcon)
-                      : (selected?.icon != null ? Icon(selected!.icon) : null),
-                  trailing: trailing,
-                  child: Text(
-                    selected?.label ?? widget.placeholder ?? 'Select…',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: SuperText.body.copyWith(
-                      color: selected != null ? t.fg1 : t.fg4,
-                      fontFamily: widget.arabic
-                          ? SuperThemeData.of(context).tokens.arabicFont
-                          : SuperThemeData.of(context).tokens.bodyFont,
-                    ),
-                    textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
+                  leading: SffDecoration.buildLeading(
+                    context,
+                    widget.decoration,
+                    fallback: selected?.icon != null
+                        ? Icon(selected!.icon)
+                        : null,
                   ),
+                  trailing: trailing,
+                  child: selected != null
+                      ? Text(
+                          selected.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: SuperText.body.copyWith(
+                            color: t.fg1,
+                            fontFamily: widget.arabic
+                                ? SuperThemeData.of(context).tokens.arabicFont
+                                : SuperThemeData.of(context).tokens.bodyFont,
+                          ),
+                          textAlign: widget.arabic
+                              ? TextAlign.right
+                              : TextAlign.left,
+                        )
+                      : SffDecoration.buildHint(
+                          context,
+                          widget.decoration,
+                          fallback: 'Select…',
+                          arabic: widget.arabic,
+                          baseStyle: SuperText.body.copyWith(
+                            color: t.fg4,
+                            fontFamily: widget.arabic
+                                ? SuperThemeData.of(context).tokens.arabicFont
+                                : SuperThemeData.of(context).tokens.bodyFont,
+                          ),
+                        ),
                 ),
               ),
             ),

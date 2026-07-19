@@ -20,7 +20,10 @@ class FieldIconButton extends StatefulWidget {
     required this.onPressed,
     this.tooltip,
     this.size = 26, // trailingIcon token default
+    this.width,
+    this.height,
     this.iconSize = 16,
+    this.borderRadius,
     this.bordered = false,
     this.danger = false,
   });
@@ -29,7 +32,13 @@ class FieldIconButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final String? tooltip;
   final double size;
+
+  /// Optional non-square dimensions. Defaults to [size].
+  final double? width;
+  final double? height;
+
   final double iconSize;
+  final BorderRadiusGeometry? borderRadius;
 
   /// Draw a hairline border + input fill (the numeric stepper look).
   final bool bordered;
@@ -61,16 +70,20 @@ class _FieldIconButtonState extends State<FieldIconButton> {
         onTap: widget.onPressed,
         child: AnimatedContainer(
           duration: SuperThemeData.of(context).tokens.durFast,
-          width: widget.size,
-          height: widget.size,
+          width: widget.width ?? widget.size,
+          height: widget.height ?? widget.size,
           decoration: BoxDecoration(
             color: widget.bordered
                 ? t.inputBg
                 : (_hover ? t.hover : const Color(0x00000000)),
             border: widget.bordered ? Border.all(color: t.borderStrong) : null,
-            borderRadius: BorderRadius.circular(
-              widget.bordered ? 5 : SuperThemeData.of(context).tokens.radiusMd,
-            ),
+            borderRadius:
+                widget.borderRadius ??
+                BorderRadius.circular(
+                  widget.bordered
+                      ? 5
+                      : SuperThemeData.of(context).tokens.radiusMd,
+                ),
           ),
           child: Icon(widget.icon, size: widget.iconSize, color: fg),
         ),

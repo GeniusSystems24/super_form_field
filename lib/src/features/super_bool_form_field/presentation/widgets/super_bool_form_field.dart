@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/entities/bool_field_config.dart';
 import '../../domain/usecases/build_bool_validators.dart';
 import '../controllers/super_bool_field_controller.dart';
@@ -24,10 +25,8 @@ class SuperBoolFormField extends StatefulWidget {
     this.initialValue = false,
     this.onChanged,
     this.onValidity,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
-    this.title,
-    this.hint,
     this.style = SuperBoolStyle.toggle,
     this.enabledLabel = 'Enabled',
     this.disabledLabel = 'Disabled',
@@ -45,26 +44,19 @@ class SuperBoolFormField extends StatefulWidget {
   final ValueChanged<bool>? onChanged;
   final ValidityChanged? onValidity;
 
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  final InputDecoration decoration;
+
   // ── chrome ──
-  /// Uppercase field label (the FieldShell label). Null hides the label row.
-  final String? label;
-
-  /// Appends a required asterisk to [label].
   final bool required;
-
-  /// The inline statement shown next to the control (e.g. "I accept the terms").
-  /// When null, the [enabledLabel] / [disabledLabel] state caption is shown.
-  final String? title;
-
-  final String? hint;
 
   // ── behaviour ──
   final SuperBoolStyle style;
 
-  /// State caption when on (used when [title] is null).
+  /// State caption when on (used when decoration.hintText is null).
   final String enabledLabel;
 
-  /// State caption when off (used when [title] is null).
+  /// State caption when off (used when decoration.hintText is null).
   final String disabledLabel;
 
   /// Require the value to be true (e.g. an acknowledgement gate).
@@ -136,35 +128,64 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
       builder: (context, _) {
         final t = context.sffTheme;
         final on = _controller.value;
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
         final fontFamily = widget.arabic
             ? SuperThemeData.of(context).tokens.arabicFont
             : SuperThemeData.of(context).tokens.bodyFont;
 
-        final caption =
-            widget.title ?? (on ? widget.enabledLabel : widget.disabledLabel);
+        final hasCustomCaption =
+            widget.decoration.hint != null ||
+            widget.decoration.hintText != null;
+        final captionStyle = SffDecoration.mergeStyle(
+          SuperText.body.copyWith(
+            color: on ? t.fg1 : t.fg3,
+            fontFamily: fontFamily,
+            fontWeight: hasCustomCaption ? FontWeight.w400 : FontWeight.w500,
+          ),
+          widget.decoration.hintStyle,
+        );
+        final caption = widget.decoration.hint != null
+            ? DefaultTextStyle.merge(
+                style: captionStyle,
+                child: widget.decoration.hint!,
+              )
+            : Text(
+                widget.decoration.hintText ??
+                    (on ? widget.enabledLabel : widget.disabledLabel),
+                style: captionStyle,
+                textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
+              );
 
         final control = widget.style == SuperBoolStyle.checkbox
             ? _CheckBox(value: on, disabled: widget.disabled)
             : _Toggle(value: on, disabled: widget.disabled);
+        final leading = SffDecoration.buildLeading(
+          context,
+          widget.decoration,
+        );
+        final trailing = SffDecoration.buildTrailing(
+          context,
+          widget.decoration,
+        );
 
         final row = Row(
           children: [
+            if (leading != null) ...[
+              leading,
+              SizedBox(width: SuperThemeData.of(context).tokens.space2),
+            ],
             control,
             SizedBox(width: SuperThemeData.of(context).tokens.space3),
-            Expanded(
-              child: Text(
-                caption,
-                style: SuperText.body.copyWith(
-                  color: on ? t.fg1 : t.fg3,
-                  fontFamily: fontFamily,
-                  fontWeight: widget.title != null
-                      ? FontWeight.w400
-                      : FontWeight.w500,
-                ),
-                textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
-              ),
-            ),
+            Expanded(child: caption),
+            for (final item in trailing) ...[
+              SizedBox(width: SuperThemeData.of(context).tokens.space1),
+              item,
+            ],
             if (error != null) ...[
               SizedBox(width: SuperThemeData.of(context).tokens.space1),
               ErrorBadge(error: error),
@@ -173,9 +194,8 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
         );
 
         return FieldShell(
-          label: widget.label,
+          decoration: widget.decoration,
           required: widget.required,
-          hint: widget.hint,
           hasError: error != null,
           arabic: widget.arabic,
           child: Opacity(

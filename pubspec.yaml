@@ -1,14 +1,11 @@
 name: super_form_field
 description: >
-  Super Form Field — eight GeniusLink design-system form fields for Flutter
-  (text, numeric, attachment, date, select, multi-select, bool, choice) built on
-  Clean Architecture with an MVC presentation split. Validation surfaces through
-  a suffix error badge (never inline), with light/dark and LTR/RTL parity.
-  Dependency-free — no platform plugins required.
-
+  GeniusLink design-system form fields for Flutter with unified InputDecoration
+  APIs, badge validation, responsive interactions, light/dark themes, and
+  LTR/RTL support.
 
 # package version
-version: 1.2.2
+version: 1.3.0
 
 # package homepage, repository, and issue tracker
 homepage: https://geniussystems24.github.io/super_form_field

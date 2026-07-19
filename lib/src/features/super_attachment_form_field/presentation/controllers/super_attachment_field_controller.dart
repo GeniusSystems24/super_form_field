@@ -5,7 +5,7 @@
 // list and interaction state (touched / drag-over), enforces dedupe + the
 // single-file constraint when `multiple` is off, and derives the field error.
 // File ACQUISITION (picker / OS drag-drop) is the host's job — it calls [add];
-// the controller stays platform- and dependency-free.
+// the controller stays platform-plugin independent.
 // ============================================================
 
 import 'package:flutter/foundation.dart';

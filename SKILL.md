@@ -1,176 +1,199 @@
 ---
 name: super-form-field
 description: >
-  Use the super_form_field Flutter package to build GeniusLink design-system
-  form inputs — SuperTextFormField (text/email/password/multiline),
-  SuperNumericFormField (formatted numeric with stepper),
-  SuperAttachmentFormField (file drop zone + list), SuperDateFormField
-  (masked YYYY-MM-DD + calendar), SuperSelectFormField (searchable single-select
-  dropdown), SuperMultiSelectFormField (chips + checkable popover),
-  SuperBoolFormField (toggle/checkbox), and SuperChoiceFormField (segmented /
-  radio / checkbox group). Apply when a Flutter app needs validated, themed
-  (light/dark, LTR/RTL) ERP form fields whose errors surface through a suffix
-  badge tooltip rather than inline text.
+  Build GeniusLink Flutter forms with super_form_field 1.3.0: text, numeric,
+  attachment, date, select, multi-select, bool, and choice fields. Use the
+  unified InputDecoration API, package controllers and validators, responsive
+  date picker behavior, badge validation, light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field — Agent Skill
+# Super Form Field 1.3.0
 
-`super_form_field` ships eight GeniusLink form inputs on one field foundation.
-This skill tells you how to wire them correctly.
+Use this skill when implementing or reviewing forms that depend on
+`package:super_form_field/super_form_field.dart`.
 
-## When to use
+## Setup
 
-- Any Flutter form built in the GeniusLink visual language (dark-first ERP /
-  accounting screens, bilingual English+Arabic).
-- You need validation that is **silent until blur** and shown via a **suffix
-  error badge tooltip**, never as inline text.
-- You need numeric inputs that group thousands at rest, clean to raw digits
-  while editing, and clamp/round on blur.
-- You need a file-attachment field with typed validation but **no** assumptions
-  about which picker plugin the app uses.
-
-## Setup (do this once)
-
-1. Add the dependency (path or hosted) in `pubspec.yaml`.
-2. Register the theme extension on the `MaterialApp`:
-   ```dart
-   theme:     ThemeData(extensions: const [SuperThemeData.light]),
-   darkTheme: ThemeData(extensions: const [SuperThemeData.dark]),
-   ```
-3. For Arabic, wrap the subtree in `Directionality(textDirection: TextDirection.rtl, …)`
-   and set `arabic: true` on the field (switches to the Noto Naskh Arabic face).
-4. (Optional but recommended) add the brand `.ttf` fonts under `assets/fonts/`
-   and uncomment the `fonts:` block — Manrope, Inter, JetBrains Mono, Noto Naskh
-   Arabic.
-
-`import 'package:super_form_field/super_form_field.dart';` exposes everything.
-
-## The four core fields
-
-### SuperTextFormField
-Key props: `label`, `required`, `placeholder`, `hint`, `type`
-(`SuperTextType.text|email|password`), `leadingIcon` (use `SffIcons.*`),
-`prefix`/`suffix`, `clearable`, `multiline` + `rows`, `minLength`/`maxLength`,
-`pattern` + `patternMessage`, `showCounter` (needs `maxLength`), `validators`
-(extra `Validator<String>`), `density`, `disabled`, `readOnly`, `arabic`,
-`onChanged`, `onValidity`, `forceError`.
-
-### SuperNumericFormField
-Key props: `label`, `required`, `min`, `max`, `decimals`, `grouping`, `step`,
-`largeStep`, `stepper`, `keyboardShortcuts`, `allowNegative`, `prefix`/`suffix`
-(mono units like `SAR`, `%`), `leadingIcon`, `validators` (`Validator<num?>`),
-`onChanged` (`num?`), `onValidity`, `forceError`. Value type is `num?` — `null`
-means empty. **Keyboard stepping** (while focused, on by default): `↑`/`↓` by
-`step`, `PageUp`/`PageDown` by `largeStep` (defaults `step * 10`); set
-`keyboardShortcuts: false` to disable, or drive it via `controller.bump(±1)` /
-`controller.bumpLarge(±1)`.
-
-### SuperAttachmentFormField
-Key props: `label`, `required`, `accept` (`".pdf,.docx"` or `"image/*"`),
-`maxSizeMB`, `maxFiles`, `multiple`, `onBrowse` (async → `List<SuperFile>`),
-`onChanged` (`List<SuperFile>`), `onValidity`, `forceError`.
-**You must supply `onBrowse`** — the package has no picker. Build `SuperFile`
-from your picker result: `SuperFile(id, name, size, mimeType?, path?, bytes?)`.
-For OS drag-and-drop, call `controller.setDragOver(bool)` and `controller.add(files)`.
-
-### SuperDateFormField
-Key props: `label`, `required`, `placeholder` (defaults to the format template),
-`format` (`SuperDateFormat.yearMonthDay` | `yearMonth` | `year` | `monthDay` |
-`month` | `day`), `minDate`, `maxDate` (add bounds validators), `calendar`
-(show/hide the popover — only when the format has a day; default `true`),
-`keyboardShortcuts` (arrow-key segment stepping — default `true`), `clearable`,
-`leadingIcon` (defaults to `SffIcons.calendar`, pass `null` to hide),
-`invalidMessage`, `validators` (`Validator<DateTime?>`), `onChanged`
-(`DateTime?`), `onValidity`, `forceError`, `arabic`, `density`, `disabled`,
-`readOnly`. Value is a `DateTime?` — absent format parts fill with defaults
-(year→current, month→1, day→1). **Editing keeps the zero-padded format**: digits
-shift into the active segment from the right (`0002→0020→2024`) and the cursor's
-segment is the one edited — typing flows year→month→day (day terminal). `←`/`→`
-move segments; `↑`/`↓` step the active one (wraps within its range). The calendar
-opens below the icon, flipping above when there's no room. Pick from the
-popover, or drive it from a `SuperDateFieldController` via `pick(DateTime)`,
-`setValue(DateTime?)`, `clear()`, `stepSegment(kind, ±1)`, `stepAtCursor(±1)`.
-
-## The four option / boolean fields
-
-All four use the generic `SuperOption<T>` value type from `core`
-(`SuperOption(value: T, label: String, description?, icon?, disabled?)`; build
-lists with `SuperOption.fromMap({value: label})`).
-
-### SuperSelectFormField&lt;T&gt;
-Searchable single-select dropdown. Key props: `options` (required
-`List<SuperOption<T>>`), `searchable` + `searchHint`, `clearable`, `placeholder`,
-`leadingIcon`, `emptyLabel`, plus shared `required` / `validators`
-(`Validator<T?>`) / `forceError` / `arabic` / `density` / `disabled` /
-`readOnly`. `onChanged` is `ValueChanged<T?>` — value is `T?` (`null` = empty).
-The popover drops below the control, flipping above when needed, and matches the
-control width. Disabled options can't be picked.
-
-### SuperMultiSelectFormField&lt;T&gt;
-Multi-select with in-field removable chips + a checkable popover that stays open
-across toggles. Key props: `options`, `searchable`, `minSelections`,
-`maxSelections` (a **hard cap** — extra picks are blocked), `showCount` (the
-`n selected` label-right pill). `onChanged` is `ValueChanged<List<T>>` — value is
-`List<T>`.
-
-### SuperBoolFormField
-A labelled boolean as a sliding toggle (default) or checkbox. Key props: `label`,
-`style` (`SuperBoolStyle.toggle | checkbox`), `enabledLabel` / `disabledLabel`
-(status caption) OR `title` (a statement, e.g. "I accept …"), `mustBeTrue` +
-`mustBeTrueMessage` (required-acceptance gate), shared validation/theme props.
-`onChanged` is `ValueChanged<bool>` — value is `bool`. The whole row is tappable.
-
-### SuperChoiceFormField&lt;T&gt;
-Inline option group (no popover). Key props: `options`, `style`
-(`SuperChoiceStyle.segmented | radio | checkbox`), `multiple` (segmented/radio
-default single; checkbox is multi), `minSelections`, `maxSelections`. `onChanged`
-is `ValueChanged<List<T>>` — value is `List<T>`; for single-pick styles read one
-value via `controller.single`. The error shows in the FieldShell label-right
-slot. Best for small fixed sets (status, period, document types).
-
-## Rules that matter
-
-- **Never** expect inline error text under a field — errors are a tooltip on the
-  suffix `ErrorBadge`. To show a field-level summary, read `controller.error`.
-- Validation is gated on `touched` (first blur) OR `forceError`. On submit, set
-  `forceError: true` for every field (or call `controller.markTouched()`), then
-  check validity.
-- Aggregate form validity with `onValidity: (error) { … }` per field, or hold a
-  controller per field and read `controller.error`.
-- Numbers are always Western digits, right-aligned, mono — do not override this
-  for RTL.
-- Use `SffIcons` for `leadingIcon` (e.g. `SffIcons.mail`, `SffIcons.user`,
-  `SffIcons.lock`, `SffIcons.hash`, `SffIcons.search`).
-
-## Minimal submit-sweep pattern
+Prefer the complete `super_core` theme:
 
 ```dart
-bool _force = false;
-String? _nameError;
-
-SuperTextFormField(
-  label: 'Name English', required: true, minLength: 3,
-  forceError: _force,
-  onValidity: (e) => _nameError = e,
+MaterialApp(
+  theme: SuperMaterialThemeData.light(),
+  darkTheme: SuperMaterialThemeData.dark(),
 );
-
-void _submit() {
-  setState(() => _force = true);
-  if (_nameError == null /* && other errors null */) { /* proceed */ }
-}
 ```
 
-## Architecture (for extending)
+Import only the package barrel from application code:
 
-Clean Architecture per feature; the **controller** is the Model
-(`ChangeNotifier`, single source of truth), the **widget** is the thin View, and
-`domain/` holds pure validator/format logic that is unit-testable without
-Flutter. Add new constraints by extending the `build*Validators` / `*Logic`
-usecase in `domain/`, not by stuffing logic into the widget.
+```dart
+import 'package:super_form_field/super_form_field.dart';
+```
 
-## Don't
+## Decoration contract
 
-- Don't reach into `lib/src/` internals from app code — import only the public
-  barrel.
-- Don't add a picker dependency to the package; wire it at the app via `onBrowse`.
-- Don't recolor numbers or move the error badge inline.
+Every public field has one canonical decoration parameter:
+
+```dart
+decoration: const InputDecoration(
+  labelText: 'Amount',
+  hintText: '0.00',
+  helperText: 'Enter the gross amount',
+  prefixIcon: Icon(SffIcons.hash),
+  prefixText: 'SAR',
+  suffixText: 'incl. VAT',
+),
+```
+
+Use these mappings:
+
+- `label` / `labelText`: external field label.
+- `helper` / `helperText`: helper below the control.
+- `hint` / `hintText`: empty-value prompt or inline statement.
+- `icon`, `prefixIcon`, `prefix`, `prefixText`: leading adornments.
+- `suffix`, `suffixText`, `suffixIcon`: trailing adornments.
+- `counter` / `counterText`: label-row counter.
+- `errorText`: forced external error using the package error badge.
+
+Do not add separate `label`, `placeholder`, `hint`, `leadingIcon`, `prefix`,
+`suffix`, or boolean `title` properties back to public fields. `InputDecoration`
+is the single source of decoration content. The package still owns borders,
+control height, spacing, focus/error states, and badge validation.
+
+## Fields
+
+### SuperTextFormField
+
+Value: `String`. Controller: `SuperTextFieldController`.
+
+Use `type`, `multiline`, `rows`, `minLength`, `maxLength`, `pattern`,
+`patternMessage`, `showCounter`, `clearable`, `disabled`, `readOnly`, and
+`autofocus`. Prefix/suffix widgets come from `decoration`.
+
+```dart
+SuperTextFormField(
+  decoration: const InputDecoration(
+    labelText: 'Email',
+    hintText: 'name@example.com',
+    prefixIcon: Icon(SffIcons.mail),
+  ),
+  type: SuperTextType.email,
+  required: true,
+);
+```
+
+### SuperNumericFormField
+
+Value: `num?`. Controller: `SuperNumericFieldController`.
+
+Use `min`, `max`, `decimals`, `grouping`, `step`, `largeStep`, `stepper`,
+`keyboardShortcuts`, and `allowNegative`. Units belong in
+`decoration.prefixText` and `decoration.suffixText`. Numbers remain Western,
+mono, and LTR. Text is vertically centered; stepper buttons fill field height.
+
+### SuperAttachmentFormField
+
+Value: `List<SuperFile>`. Controller: `SuperAttachmentFieldController`.
+
+Use `accept`, `maxSizeMB`, `maxFiles`, `multiple`, and `onBrowse`. The host must
+provide file acquisition and convert picker results to `SuperFile`. Do not add a
+platform picker dependency to this package. For drag-and-drop adapters, call
+`controller.setDragOver` and `controller.add`.
+
+### SuperDateFormField
+
+Value: `DateTime?`. Controller: `SuperDateFieldController`.
+
+Use `format`, `minDate`, `maxDate`, `calendar`, `keyboardShortcuts`,
+`clearable`, and `invalidMessage`. The hint defaults to the format placeholder.
+The calendar button dismisses the keyboard. Mobile uses a modal bottom sheet;
+tablet and desktop use the anchored popover. The field supplies its historical
+leading calendar glyph when no leading decoration is provided. Override it with
+`prefixIcon`, or suppress it with `prefixIcon: SizedBox.shrink()`.
+
+### SuperSelectFormField<T>
+
+Value: `T?`. Controller: `SuperSelectFieldController<T>`.
+
+Provide `List<SuperOption<T>> options`. Optional behavior includes `searchable`,
+`searchHint`, `clearable`, and `emptyLabel`. Disabled options cannot be selected.
+
+### SuperMultiSelectFormField<T>
+
+Value: `List<T>`. Controller: `SuperMultiSelectFieldController<T>`.
+
+Use `minSelections`, `maxSelections`, `showCount`, and `searchable`.
+`maxSelections` is a hard cap. Selected values render as removable chips.
+
+### SuperBoolFormField
+
+Value: `bool`. Controller: `SuperBoolFieldController`.
+
+Use `style`, `enabledLabel`, `disabledLabel`, `mustBeTrue`, and
+`mustBeTrueMessage`. Put a fixed acknowledgement statement in
+`decoration.hintText` or `decoration.hint`; otherwise state labels are used.
+
+### SuperChoiceFormField<T>
+
+Value: `List<T>`. Controller: `SuperChoiceFieldController<T>`.
+
+Use `style` (`segmented`, `radio`, or `checkbox`), `multiple`,
+`minSelections`, and `maxSelections`. Checkbox style is multi-select; use
+`controller.single` for a single-pick controller value.
+
+## Validation rules
+
+- A `Validator<T>` returns `String?`; the first error wins.
+- Errors remain hidden until touch/blur unless `forceError` is true.
+- Errors are shown through `ErrorBadge`, never as ordinary inline error text.
+- Use `onValidity` to aggregate form validity.
+- On submit, set `forceError` or call each controller's `markTouched()`.
+- `InputDecoration.errorText` is treated as an external field error.
+- Do not use `InputDecoration.error`; the badge validation surface requires the string from `errorText`.
+
+```dart
+bool forceErrors = false;
+String? nameError;
+
+SuperTextFormField(
+  decoration: const InputDecoration(labelText: 'Name'),
+  required: true,
+  minLength: 3,
+  forceError: forceErrors,
+  onValidity: (error) => nameError = error,
+);
+```
+
+## RTL and Arabic
+
+Wrap the field in RTL `Directionality` and set `arabic: true`. Date and numeric
+editing intentionally remain LTR with Western digits. Do not reverse or localize
+their internal buffers.
+
+## Architecture
+
+Preserve the package layout:
+
+```text
+lib/src/features/<feature>/
+├── domain/
+│   ├── entities/
+│   └── usecases/
+└── presentation/
+    ├── controllers/
+    └── widgets/
+```
+
+Keep validation, parsing, filtering, and formatting in feature use cases. Keep
+state in controllers and composition in widgets. Shared visual behavior belongs
+under `lib/src/core/foundation`; decoration mapping belongs in
+`field_decoration.dart`.
+
+## Review checklist
+
+- Every new example uses `decoration: InputDecoration(...)`.
+- No public field reintroduces duplicated decoration parameters.
+- Package theme tokens are resolved from the ambient `SuperThemeData`.
+- Mobile date changes do not alter tablet/desktop popover behavior.
+- Numeric steppers match the active compact/comfortable field height.
+- Error display remains badge-based.
+- Application imports do not reach into `lib/src`.

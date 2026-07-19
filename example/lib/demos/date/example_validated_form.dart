@@ -9,7 +9,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -40,13 +41,15 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
     return SectionCard(
       title: '3 · Validated',
       subtitle: 'Required + min bound + custom rule, silent until blur or submit',
-      marker: Marker.notes,
+      marker: SuperMarker.notes,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           BilingualRow(
             english: SuperDateFormField(
-              label: 'Value Date',
+              decoration: const InputDecoration(
+                labelText: 'Value Date',
+              ),
               required: true,
               minDate: DateTime(2024, 1, 1),
               validators: [_noWeekend],
@@ -54,7 +57,9 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
               onValidity: (e) => setState(() => _error = e),
             ),
             arabic: const SuperDateFormField(
-              label: 'تاريخ القيمة',
+              decoration: InputDecoration(
+                labelText: 'تاريخ القيمة',
+              ),
               arabic: true,
             ),
           ),

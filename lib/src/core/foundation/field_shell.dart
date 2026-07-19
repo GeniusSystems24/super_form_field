@@ -1,129 +1,99 @@
 // ============================================================
 // core/foundation/field_shell.dart
 // ------------------------------------------------------------
-// The labelled wrapper shared by every Super…Field. Renders the uppercase label
-// (with optional required asterisk) and an optional right-aligned slot
-// (character counter / file count / field-level error badge), then the control,
-// then an optional hint line beneath — but ONLY when there is no error, since
-// errors surface through the suffix ErrorBadge, never as inline text.
+// The labelled wrapper shared by every Super…Field. InputDecoration is the
+// canonical source for label/helper/counter chrome; errors remain badge-only.
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart' hide FieldDensity, FieldShell;
 
-import '../extensions/context_extensions.dart';
-import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;
+import 'field_decoration.dart';
 
 /// Vertical density of a field.
 enum FieldDensity { comfortable, compact }
 
-/// The label + control + hint chrome around any form control.
+/// The label + control + helper chrome around any form control.
 class FieldShell extends StatelessWidget {
   const FieldShell({
     super.key,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
     required this.child,
-    this.hint,
     this.hasError = false,
     this.labelRight,
     this.arabic = false,
+    @Deprecated('Use decoration: InputDecoration(labelText: ...)') this.label,
+    @Deprecated('Use decoration: InputDecoration(helperText: ...)') this.hint,
   });
 
-  /// Uppercase field label. Null hides the label row (unless [labelRight] set).
-  final String? label;
+  /// Canonical Material decoration mapped onto the GeniusLink field shell.
+  final InputDecoration decoration;
 
-  /// Appends a red required asterisk to the label.
+  /// Appends a red required asterisk to the decoration label.
   final bool required;
 
-  /// The control (an input row, a drop zone…).
+  /// The control (an input row, a drop zone, or an option group).
   final Widget child;
 
-  /// Helper text under the control. Hidden whenever [hasError] is true.
-  final String? hint;
-
-  /// True when the field is showing an error (suppresses the hint line).
+  /// True when the field is showing an error (suppresses helper content).
   final bool hasError;
 
   /// Optional trailing slot on the label row (counter / count pill / badge).
   final Widget? labelRight;
 
-  /// Use the Arabic display face for the label + hint.
+  /// Use the Arabic display face for label and helper content.
   final bool arabic;
+
+  /// Compatibility bridge for callers that use FieldShell directly.
+  final String? label;
+
+  /// Compatibility bridge for callers that use FieldShell directly.
+  final String? hint;
 
   @override
   Widget build(BuildContext context) {
-    final t = context.sffTheme;
-    final fontFamily = arabic
-        ? SuperThemeData.of(context).tokens.arabicFont
-        : SuperThemeData.of(context).tokens.bodyFont;
+    final labelWidget = SffDecoration.buildLabel(
+      context,
+      decoration,
+      required: required,
+      arabic: arabic,
+      legacyLabel: label,
+    );
+    final helperWidget = SffDecoration.buildHelper(
+      context,
+      decoration,
+      arabic: arabic,
+      legacyHint: hint,
+    );
+    final effectiveRight = labelRight ??
+        SffDecoration.buildCounter(
+          context,
+          decoration,
+          arabic: arabic,
+        );
+    final tokens = SuperThemeData.of(context).tokens;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (label != null || labelRight != null) ...[
+        if (labelWidget != null || effectiveRight != null) ...[
           Row(
             children: [
-              if (label != null)
-                _Label(
-                  text: label!,
-                  required: required,
-                  color: t.fg2,
-                  fontFamily: fontFamily,
-                ),
-              const Spacer(),
-              if (labelRight != null) labelRight!,
+              if (labelWidget != null) Expanded(child: labelWidget),
+              if (labelWidget == null) const Spacer(),
+              if (effectiveRight != null) effectiveRight,
             ],
           ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space2),
+          SizedBox(height: tokens.space2),
         ],
         child,
-        if (hint != null && !hasError) ...[
-          SizedBox(height: SuperThemeData.of(context).tokens.space2),
-          Text(
-            hint!,
-            style: SuperText.caption.copyWith(
-              color: t.fg4,
-              fontFamily: fontFamily,
-            ),
-          ),
+        if (helperWidget != null && !hasError) ...[
+          SizedBox(height: tokens.space2),
+          helperWidget,
         ],
       ],
-    );
-  }
-}
-
-class _Label extends StatelessWidget {
-  const _Label({
-    required this.text,
-    required this.required,
-    required this.color,
-    required this.fontFamily,
-  });
-
-  final String text;
-  final bool required;
-  final Color color;
-  final String fontFamily;
-
-  @override
-  Widget build(BuildContext context) {
-    final style = SuperText.label.copyWith(
-      color: color,
-      fontFamily: fontFamily,
-    );
-    if (!required) return Text(text.toUpperCase(), style: style);
-    return Text.rich(
-      TextSpan(
-        text: text.toUpperCase(),
-        style: style,
-        children: [
-          TextSpan(
-            text: ' *',
-            style: style.copyWith(color: Theme.of(context).colorScheme.error),
-          ),
-        ],
-      ),
     );
   }
 }

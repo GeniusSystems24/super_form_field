@@ -96,7 +96,7 @@ class _Launcher extends StatelessWidget {
         (_) => const AttachmentFieldDemo()),
     _DemoItem(
         'Super Date Field',
-        'Masked YYYY-MM-DD · calendar popover · min/max',
+        'Masked date · mobile sheet · desktop popover · min/max',
         Icons.event_rounded,
         (_) => const DateFieldDemo()),
     _DemoItem(

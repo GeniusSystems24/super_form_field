@@ -1,46 +1,41 @@
-/// Super Form Field — GeniusLink design-system form fields for Flutter.
+/// GeniusLink design-system form fields for Flutter.
 ///
-/// A focused, dependency-free package of ERP-grade form fields for Flutter on a
-/// shared GeniusLink field foundation:
+/// The package provides eight ERP-oriented inputs with one shared
+/// `InputDecoration` contract:
 ///
-///   • [SuperTextFormField]        — validated text / email / password, multiline,
-///                                   prefix/suffix, clear, counter.
-///   • [SuperNumericFormField]     — grouped-while-idle / raw-while-editing numeric
-///                                   input, clamp + round on blur, +/- stepper.
-///   • [SuperAttachmentFormField]  — drop-zone + typed file list with per-file +
-///                                   field-level validation.
-///   • [SuperDateFormField]        — masked `YYYY-MM-DD` input + calendar popover,
-///                                   min/max bounds, ISO `DateTime?` value.
-///   • [SuperSelectFormField]      — searchable single-select dropdown over
-///                                   typed `SuperOption<T>` options.
-///   • [SuperMultiSelectFormField] — multi-select with in-field chips + a
-///                                   checkable popover, min/max selections.
-///   • [SuperBoolFormField]        — boolean toggle / checkbox (active flags,
-///                                   acknowledgements) with a mustBeTrue gate.
-///   • [SuperChoiceFormField]      — inline option group: segmented control,
-///                                   radio list, or checkbox list.
+/// * [SuperTextFormField] — text, email, password, and multiline input.
+/// * [SuperNumericFormField] — formatted numeric input with a full-height
+///   increment/decrement stepper.
+/// * [SuperAttachmentFormField] — picker-agnostic drop zone and typed file list.
+/// * [SuperDateFormField] — segmented date input with a mobile bottom sheet and
+///   tablet/desktop anchored calendar.
+/// * [SuperSelectFormField] — searchable typed single-select.
+/// * [SuperMultiSelectFormField] — typed multi-select with removable chips.
+/// * [SuperBoolFormField] — toggle or checkbox with optional true-value gate.
+/// * [SuperChoiceFormField] — segmented, radio, or checkbox option group.
 ///
-/// Every field surfaces validation ONLY through the suffix ErrorBadge (icon +
-/// tooltip) — never inline text — and supports light/dark + LTR/RTL.
+/// Decoration content comes from each field's `decoration` parameter. The
+/// package maps Material labels, hints, helpers, adornments, counters, and
+/// `errorText` onto the GeniusLink field foundation while retaining its own
+/// control geometry, focus treatment, typography, and error badges.
 ///
-/// Architecture: Clean Architecture per feature with an MVC presentation split.
-///   domain/      — entities + usecases (pure Dart, no Flutter)
-///   presentation/— controllers (the Model / state) + widgets (the View)
-/// Shared, cross-feature code lives in `lib/src/core/`.
+/// Validation errors are quiet until touch/blur unless `forceError` is enabled.
+/// All fields support light/dark themes and LTR/RTL layouts.
 ///
-/// Register the theme extension once:
+/// Use the complete `super_core` theme in the host application:
+///
 /// ```dart
 /// MaterialApp(
-///   theme:     ThemeData(extensions: const [SuperThemeData.light]),
-///   darkTheme: ThemeData(extensions: const [SuperThemeData.dark]),
+///   theme: SuperMaterialThemeData.light(),
+///   darkTheme: SuperMaterialThemeData.dark(),
 /// );
 /// ```
 library super_form_field;
 
-// ── Core foundation ──────────────────────────────────────────────────────
+// Core foundation.
 export 'src/core/core.dart';
 
-// ── Features ───────────────────────────────────────────────────────────────
+// Features.
 export 'src/features/super_text_form_field/super_text_form_field.dart';
 export 'src/features/super_numeric_form_field/super_numeric_form_field.dart';
 export 'src/features/super_attachment_form_field/super_attachment_form_field.dart';

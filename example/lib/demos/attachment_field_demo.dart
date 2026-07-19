@@ -9,7 +9,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -50,14 +51,16 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
         SectionCard(
           title: 'Supporting Documents',
           subtitle: 'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperAttachmentFormField(
-            label: 'Attachments',
+            decoration: const InputDecoration(
+              labelText: 'Attachments',
+              helperText: 'Tap Browse to add a sample file. Try adding the 5th to trip the limit.',
+            ),
             required: true,
             accept: '.pdf,.docx,.xlsx,.png,.jpg',
             maxSizeMB: 5,
             maxFiles: 4,
-            hint: 'Tap Browse to add a sample file. Try adding the 5th to trip the limit.',
             onBrowse: _pick,
             forceError: _force,
           ),
@@ -65,9 +68,11 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
         SectionCard(
           title: 'Single Receipt',
           subtitle: 'Single-file mode replaces the previous attachment',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperAttachmentFormField(
-            label: 'Receipt',
+            decoration: const InputDecoration(
+              labelText: 'Receipt',
+            ),
             multiple: false,
             accept: 'image/*,.pdf',
             maxSizeMB: 2,

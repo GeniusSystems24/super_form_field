@@ -2,8 +2,9 @@
 // features/super_attachment_form_field/domain/entities/super_file.dart
 // ------------------------------------------------------------
 // The immutable descriptor for one attached file. Deliberately platform-neutral
-// so the kit stays dependency-free: it carries metadata (name / size / mime)
-// plus optional [path] / [bytes] the host can populate from whatever picker it
+// so the kit stays independent of picker plugins: it carries metadata
+// (name / size / MIME) plus optional [path] / [bytes] the host can populate from
+// whatever picker it
 // wires (file_picker, image_picker, drag-and-drop, a server record…).
 // ============================================================
 

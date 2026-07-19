@@ -11,6 +11,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/usecases/numeric_logic.dart';
 import '../controllers/super_numeric_field_controller.dart';
 
@@ -22,10 +23,8 @@ class SuperNumericFormField extends StatefulWidget {
     this.initialValue,
     this.onChanged,
     this.onValidity,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
-    this.placeholder,
-    this.hint,
     this.density = FieldDensity.comfortable,
     this.disabled = false,
     this.readOnly = false,
@@ -37,11 +36,8 @@ class SuperNumericFormField extends StatefulWidget {
     this.largeStep,
     this.stepper = true,
     this.keyboardShortcuts = true,
-    this.prefix,
-    this.suffix,
     this.allowNegative = true,
     this.validators = const [],
-    this.leadingIcon,
     this.forceError = false,
     this.arabic = false,
   });
@@ -51,11 +47,12 @@ class SuperNumericFormField extends StatefulWidget {
   final ValueChanged<num?>? onChanged;
   final ValidityChanged? onValidity;
 
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  /// Use `prefixText` and `suffixText` for units and currencies.
+  final InputDecoration decoration;
+
   // ── chrome ──
-  final String? label;
   final bool required;
-  final String? placeholder;
-  final String? hint;
   final FieldDensity density;
   final bool disabled;
   final bool readOnly;
@@ -77,17 +74,10 @@ class SuperNumericFormField extends StatefulWidget {
   /// [largeStep].
   final bool keyboardShortcuts;
 
-  /// Mono unit before the number (`SAR`, `$`).
-  final String? prefix;
-
-  /// Mono unit after the number (`%`, `kg`).
-  final String? suffix;
-
   /// Allow negative values; when false, the lower bound becomes 0.
   final bool allowNegative;
 
   final List<Validator<num?>> validators;
-  final IconData? leadingIcon;
   final bool forceError;
   final bool arabic;
 
@@ -160,24 +150,52 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
       builder: (context, _) {
         final t = context.sffTheme;
         final cs = context.sffColorScheme;
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
 
+        final controlHeight = widget.density == FieldDensity.compact
+            ? SuperThemeData.of(context).tokens.fieldCompact
+            : SuperThemeData.of(context).tokens.fieldComfortable;
+        final unitStyle = SuperText.mono.copyWith(
+          color: t.fg3,
+          fontSize: 12.5,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        );
         final trailing = <Widget>[
-          if (widget.suffix != null) _unit(t, widget.suffix!),
+          ...SffDecoration.buildTrailing(
+            context,
+            widget.decoration,
+            textStyle: unitStyle,
+          ),
           if (widget.stepper && !widget.disabled) ...[
             FieldIconButton(
+              key: const ValueKey('super_numeric_decrement'),
               icon: SffIcons.minus,
               tooltip: 'Decrement',
               bordered: true,
-              size: SuperThemeData.of(context).tokens.stepperSize,
+              width: SuperThemeData.of(context).tokens.stepperSize,
+              height: controlHeight,
+              borderRadius: BorderRadius.circular(
+                SuperThemeData.of(context).tokens.radiusControl,
+              ),
               iconSize: 14,
               onPressed: widget.readOnly ? null : () => _controller.bump(-1),
             ),
             FieldIconButton(
+              key: const ValueKey('super_numeric_increment'),
               icon: SffIcons.plus,
               tooltip: 'Increment',
               bordered: true,
-              size: SuperThemeData.of(context).tokens.stepperSize,
+              width: SuperThemeData.of(context).tokens.stepperSize,
+              height: controlHeight,
+              borderRadius: BorderRadius.circular(
+                SuperThemeData.of(context).tokens.radiusControl,
+              ),
               iconSize: 14,
               onPressed: widget.readOnly ? null : () => _controller.bump(1),
             ),
@@ -185,9 +203,8 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
         ];
 
         return FieldShell(
-          label: widget.label,
+          decoration: widget.decoration,
           required: widget.required,
-          hint: widget.hint,
           hasError: error != null,
           arabic: widget.arabic,
           child: FieldBox(
@@ -195,37 +212,48 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
             error: error,
             disabled: widget.disabled,
             density: widget.density,
-            leading: widget.leadingIcon != null
-                ? Icon(widget.leadingIcon)
-                : (widget.prefix != null ? _unit(t, widget.prefix!) : null),
+            leading: SffDecoration.buildLeading(
+              context,
+              widget.decoration,
+              textStyle: unitStyle,
+            ),
             trailing: trailing,
             child: Directionality(
               textDirection: TextDirection.ltr,
-              child: TextField(
-                controller: _controller.text,
-                focusNode: _controller.focusNode,
-                enabled: !widget.disabled,
-                readOnly: widget.readOnly,
-                textAlign: TextAlign.right,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                  signed: true,
-                ),
-                cursorColor: cs.primary,
-                style: SuperText.mono.copyWith(color: t.fg1),
-                // All borders are suppressed — FieldBox owns the single border.
-                decoration: InputDecoration(
-                  hintText: widget.placeholder,
-                  hintStyle: SuperText.mono.copyWith(color: t.fg4),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  focusedErrorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  filled: false,
-
-                  contentPadding: EdgeInsets.zero,
+              child: SizedBox.expand(
+                child: TextField(
+                  controller: _controller.text,
+                  focusNode: _controller.focusNode,
+                  enabled: !widget.disabled,
+                  readOnly: widget.readOnly,
+                  textAlign: TextAlign.right,
+                  textAlignVertical: TextAlignVertical.center,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: true,
+                  ),
+                  cursorColor: cs.primary,
+                  style: SuperText.mono.copyWith(color: t.fg1),
+                  // FieldBox owns the border and the authoritative height.
+                  decoration: InputDecoration(
+                    hint: widget.decoration.hint,
+                    hintText: widget.decoration.hintText,
+                    hintStyle: SffDecoration.mergeStyle(
+                      SuperText.mono.copyWith(color: t.fg4),
+                      widget.decoration.hintStyle,
+                    ),
+                    hintTextDirection: TextDirection.ltr,
+                    hintMaxLines: widget.decoration.hintMaxLines,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    filled: false,
+                    isCollapsed: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
                 ),
               ),
             ),
@@ -234,17 +262,4 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
       },
     );
   }
-
-  Widget _unit(SuperThemeData t, String text) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 1),
-    child: Text(
-      text,
-      style: SuperText.mono.copyWith(
-        color: t.fg3,
-        fontSize: 12.5,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.2,
-      ),
-    ),
-  );
 }

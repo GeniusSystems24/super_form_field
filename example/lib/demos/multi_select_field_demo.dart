@@ -7,7 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -49,11 +50,13 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
         SectionCard(
           title: 'Tags',
           subtitle: 'Classify this entry — pick one or more',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperMultiSelectFormField<String>(
-            label: 'Entry Tags',
+            decoration: const InputDecoration(
+              labelText: 'Entry Tags',
+              hintText: 'Add tags…',
+            ),
             required: true,
-            placeholder: 'Add tags…',
             searchable: true,
             initialValue: const ['recurring'],
             options: _tags,
@@ -63,15 +66,17 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
         SectionCard(
           title: 'Role Permissions',
           subtitle: 'Grant up to three permissions for this role',
-          marker: Marker.identity,
+          marker: SuperMarker.identity,
           child: SuperMultiSelectFormField<String>(
-            label: 'Permissions',
+            decoration: const InputDecoration(
+              labelText: 'Permissions',
+              hintText: 'Select permissions…',
+              helperText: 'A role may hold at most three permissions.',
+            ),
             required: true,
-            placeholder: 'Select permissions…',
             minSelections: 1,
             maxSelections: 3,
             options: _permissions,
-            hint: 'A role may hold at most three permissions.',
             forceError: _force,
           ),
         ),

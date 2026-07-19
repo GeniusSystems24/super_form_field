@@ -8,7 +8,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -20,7 +21,7 @@ class DateFormatsExample extends StatelessWidget {
     return SectionCard(
       title: '4 · Formats',
       subtitle: 'Year-month-day · year-month · year · month-day',
-      marker: Marker.identity,
+      marker: SuperMarker.identity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -29,7 +30,9 @@ class DateFormatsExample extends StatelessWidget {
             children: [
               Expanded(
                 child: SuperDateFormField(
-                  label: 'Posting Date',
+                  decoration: const InputDecoration(
+                    labelText: 'Posting Date',
+                  ),
                   format: SuperDateFormat.yearMonthDay,
                   initialValue: DateTime(2024, 1, 31),
                 ),
@@ -37,7 +40,9 @@ class DateFormatsExample extends StatelessWidget {
               SizedBox(width: SuperThemeData.of(context).tokens.space4),
               Expanded(
                 child: SuperDateFormField(
-                  label: 'Period',
+                  decoration: const InputDecoration(
+                    labelText: 'Period',
+                  ),
                   format: SuperDateFormat.yearMonth,
                   initialValue: DateTime(2024, 3, 1),
                 ),
@@ -50,7 +55,9 @@ class DateFormatsExample extends StatelessWidget {
             children: [
               Expanded(
                 child: SuperDateFormField(
-                  label: 'Fiscal Year',
+                  decoration: const InputDecoration(
+                    labelText: 'Fiscal Year',
+                  ),
                   format: SuperDateFormat.year,
                   initialValue: DateTime(2024, 1, 1),
                 ),
@@ -58,7 +65,9 @@ class DateFormatsExample extends StatelessWidget {
               SizedBox(width: SuperThemeData.of(context).tokens.space4),
               Expanded(
                 child: SuperDateFormField(
-                  label: 'Recurring (Month-Day)',
+                  decoration: const InputDecoration(
+                    labelText: 'Recurring (Month-Day)',
+                  ),
                   format: SuperDateFormat.monthDay,
                   initialValue: DateTime(2024, 12, 25),
                 ),

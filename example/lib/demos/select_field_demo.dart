@@ -7,7 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -56,22 +57,26 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
         SectionCard(
           title: 'Classification',
           subtitle: 'Pick the account type and reporting currency',
-          marker: Marker.identity,
+          marker: SuperMarker.identity,
           child: Column(
             children: [
               BilingualRow(
                 english: SuperSelectFormField<String>(
-                  label: 'Account Type',
+                  decoration: const InputDecoration(
+                    labelText: 'Account Type',
+                    hintText: 'Choose a type…',
+                    prefixIcon: Icon(SffIcons.hash),
+                  ),
                   required: true,
-                  placeholder: 'Choose a type…',
-                  leadingIcon: SffIcons.hash,
                   options: _accountTypes,
                   forceError: _force,
                 ),
                 arabic: SuperSelectFormField<String>(
-                  label: 'نوع الحساب',
+                  decoration: const InputDecoration(
+                    labelText: 'نوع الحساب',
+                    hintText: 'اختر النوع…',
+                  ),
                   required: true,
-                  placeholder: 'اختر النوع…',
                   arabic: true,
                   options: const [
                     SuperOption(value: 'asset', label: 'أصول'),
@@ -85,9 +90,11 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
               ),
               SizedBox(height: SuperThemeData.of(context).tokens.space6),
               SuperSelectFormField<String>(
-                label: 'Reporting Currency',
+                decoration: const InputDecoration(
+                  labelText: 'Reporting Currency',
+                  hintText: 'Search currencies…',
+                ),
                 required: true,
-                placeholder: 'Search currencies…',
                 searchable: true,
                 searchHint: 'Type a code or name…',
                 clearable: true,
@@ -101,13 +108,15 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
         const SectionCard(
           title: 'Allocation',
           subtitle: 'Assign a cost center (some are locked)',
-          marker: Marker.ledger,
+          marker: SuperMarker.ledger,
           child: SuperSelectFormField<String>(
-            label: 'Cost Center',
-            placeholder: 'Optional…',
+            decoration: const InputDecoration(
+              labelText: 'Cost Center',
+              hintText: 'Optional…',
+              helperText: 'Locked centers cannot be selected.',
+            ),
             clearable: true,
             options: _costCenters,
-            hint: 'Locked centers cannot be selected.',
           ),
         ),
         Row(

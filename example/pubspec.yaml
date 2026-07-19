@@ -1,16 +1,16 @@
 name: super_form_field_example
 description: Runnable gallery for the Super Form Field Flutter package.
 publish_to: "none"
-version: 0.1.0
+version: 1.3.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.32.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  # Shared GeniusLink foundation (transitive via the package; listed for resolution).
+  # Shared GeniusLink foundation used directly by the demo scaffold.
   super_core: ">=2.1.0 <3.0.0"
   super_form_field:
     path: ../

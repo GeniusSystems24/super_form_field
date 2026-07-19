@@ -7,7 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -32,32 +33,36 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
         SectionCard(
           title: 'Amounts',
           subtitle: 'Currency and quantity with mathematical constraints',
-          marker: Marker.ledger,
+          marker: SuperMarker.ledger,
           child: Column(
             children: [
               SuperNumericFormField(
-                label: 'Debit Amount',
+                decoration: const InputDecoration(
+                  labelText: 'Debit Amount',
+                  prefixText: 'SAR',
+                  helperText: '↑/↓ step by 1 · PageUp/PageDown step by 100 · grouped while idle.',
+                ),
                 required: true,
-                prefix: 'SAR',
                 decimals: 2,
                 min: 0,
                 allowNegative: false,
                 initialValue: _amount,
                 onChanged: (v) => _amount = v,
-                hint: '↑/↓ step by 1 · PageUp/PageDown step by 100 · grouped while idle.',
                 largeStep: 100,
                 forceError: _force,
               ),
               SizedBox(height: SuperThemeData.of(context).tokens.space6),
               SuperNumericFormField(
-                label: 'Quantity',
+                decoration: const InputDecoration(
+                  labelText: 'Quantity',
+                  helperText: 'Focus and press ↑/↓ (±1) or PageUp/PageDown (±10).',
+                ),
                 required: true,
                 min: 1,
                 max: 9999,
                 step: 1,
                 largeStep: 10,
                 initialValue: 12,
-                hint: 'Focus and press ↑/↓ (±1) or PageUp/PageDown (±10).',
                 forceError: _force,
               ),
             ],
@@ -66,12 +71,14 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
         SectionCard(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
-          marker: Marker.ledger,
+          marker: SuperMarker.ledger,
           child: Column(
             children: [
               const SuperNumericFormField(
-                label: 'Exchange Rate',
-                prefix: r'$',
+                decoration: InputDecoration(
+                  labelText: 'Exchange Rate',
+                  prefixText: r'$',
+                ),
                 decimals: 4,
                 step: 0.0001,
                 min: 0,
@@ -80,8 +87,10 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
               ),
               SizedBox(height: SuperThemeData.of(context).tokens.space6),
               const SuperNumericFormField(
-                label: 'Tax Rate',
-                suffix: '%',
+                decoration: InputDecoration(
+                  labelText: 'Tax Rate',
+                  suffixText: '%',
+                ),
                 decimals: 1,
                 min: 0,
                 max: 100,

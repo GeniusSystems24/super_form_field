@@ -7,13 +7,14 @@
 // label-right slot (a count pill shows there otherwise) — never inline.
 //
 // File ACQUISITION is delegated to the host via [onBrowse] (wire file_picker /
-// image_picker there) so the package stays dependency-free. Use the controller
-// + [SuperAttachmentDropTarget]-style wiring for OS drag-and-drop.
+// image_picker there) so the package stays independent of picker plugins. Use
+// the controller hooks for OS drag-and-drop integrations.
 // ============================================================
 
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/entities/super_file.dart';
 import '../../domain/usecases/attachment_logic.dart';
 import '../controllers/super_attachment_field_controller.dart';
@@ -26,10 +27,9 @@ class SuperAttachmentFormField extends StatefulWidget {
     this.initialFiles = const [],
     this.onChanged,
     this.onValidity,
+    this.decoration = const InputDecoration(),
     this.onBrowse,
-    this.label,
     this.required = false,
-    this.hint,
     this.density = FieldDensity.comfortable,
     this.disabled = false,
     this.accept,
@@ -46,15 +46,16 @@ class SuperAttachmentFormField extends StatefulWidget {
   final ValueChanged<List<SuperFile>>? onChanged;
   final ValidityChanged? onValidity;
 
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  final InputDecoration decoration;
+
   /// Invoked when the drop zone is activated (tap / Enter). Return the picked
   /// files — wire your picker here (file_picker, image_picker, …). The package
   /// ships no picker dependency, so a null callback makes the zone inert.
   final Future<List<SuperFile>> Function()? onBrowse;
 
   // ── chrome ──
-  final String? label;
   final bool required;
-  final String? hint;
   final FieldDensity density;
   final bool disabled;
 
@@ -143,16 +144,25 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
         final n = _controller.files.length;
+        final hasDecorationCounter =
+            widget.decoration.counter != null ||
+            widget.decoration.counterText != null;
         final Widget? labelRight = error != null
             ? ErrorBadge(error: error)
-            : (n > 0 ? CountPill(label: '$n file${n > 1 ? 's' : ''}') : null);
+            : (!hasDecorationCounter && n > 0
+                  ? CountPill(label: '$n file${n > 1 ? 's' : ''}')
+                  : null);
 
         return FieldShell(
-          label: widget.label,
+          decoration: widget.decoration,
           required: widget.required,
-          hint: widget.hint,
           hasError: error != null,
           arabic: widget.arabic,
           labelRight: labelRight,
@@ -167,6 +177,8 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   disabled: widget.disabled,
                   hasError: error != null,
                   acceptHint: _acceptHint,
+                  decoration: widget.decoration,
+                  arabic: widget.arabic,
                   onTap: _browse,
                 ),
                 if (_controller.files.isNotEmpty) ...[
@@ -198,6 +210,8 @@ class _DropZone extends StatelessWidget {
     required this.disabled,
     required this.hasError,
     required this.acceptHint,
+    required this.decoration,
+    required this.arabic,
     required this.onTap,
   });
 
@@ -206,6 +220,8 @@ class _DropZone extends StatelessWidget {
   final bool disabled;
   final bool hasError;
   final String? acceptHint;
+  final InputDecoration decoration;
+  final bool arabic;
   final VoidCallback onTap;
 
   @override
@@ -252,34 +268,47 @@ class _DropZone extends StatelessWidget {
                     color: Color.alphaBlend(cs.primary.withOpacity(0.13), bg),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    SffIcons.uploadCloud,
-                    size: 21,
-                    color: cs.primary,
+                  child: IconTheme.merge(
+                    data: IconThemeData(size: 21, color: cs.primary),
+                    child: decoration.prefixIcon ??
+                        decoration.icon ??
+                        const Icon(SffIcons.uploadCloud),
                   ),
                 ),
                 SizedBox(height: SuperThemeData.of(context).tokens.space2),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Browse',
-                        style: SuperText.body.copyWith(
-                          color: cs.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13.5,
+                if (decoration.hint == null && decoration.hintText == null)
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Browse',
+                          style: SuperText.body.copyWith(
+                            color: cs.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.5,
+                          ),
                         ),
-                      ),
-                      TextSpan(
-                        text: ' or drag files here',
-                        style: SuperText.body.copyWith(
-                          color: t.fg2,
-                          fontSize: 13.5,
+                        TextSpan(
+                          text: ' or drag files here',
+                          style: SuperText.body.copyWith(
+                            color: t.fg2,
+                            fontSize: 13.5,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  )
+                else
+                  SffDecoration.buildHint(
+                    context,
+                    decoration,
+                    fallback: 'Browse or drag files here',
+                    arabic: arabic,
+                    baseStyle: SuperText.body.copyWith(
+                      color: t.fg2,
+                      fontSize: 13.5,
+                    ),
                   ),
-                ),
                 if (acceptHint != null) ...[
                   SizedBox(height: SuperThemeData.of(context).tokens.space1),
                   Text(

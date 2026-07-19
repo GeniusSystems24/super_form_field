@@ -4,11 +4,12 @@
 // EXAMPLE 1 — Basic (uncontrolled).
 // The simplest way to use SuperDateFormField: declare a label, optional bounds,
 // and read the value through onChanged. The field owns its own state; type a
-// masked YYYY-MM-DD value or pick from the calendar popover.
+// masked YYYY-MM-DD value or use the responsive calendar picker.
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -28,14 +29,16 @@ class _DateBasicExampleState extends State<DateBasicExample> {
     return SectionCard(
       title: '1 · Basic',
       subtitle: 'Uncontrolled — type a masked date or pick from the calendar',
-      marker: Marker.identity,
+      marker: SuperMarker.identity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SuperDateFormField(
-            label: 'Posting Date',
+            decoration: const InputDecoration(
+              labelText: 'Posting Date',
+              helperText: 'Click a segment and type (year→month→day), or step with ↑/↓ · ←/→ moves segments.',
+            ),
             initialValue: _value,
-            hint: 'Click a segment and type (year→month→day), or step with ↑/↓ · ←/→ moves segments.',
             onChanged: (v) => setState(() => _value = v),
           ),
           SizedBox(height: SuperThemeData.of(context).tokens.space3),

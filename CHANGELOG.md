@@ -4,6 +4,59 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] — 2026-07-19
+
+### Changed
+
+- Unified the public decoration API across all eight form fields. Each field now
+  accepts a single `InputDecoration` through `decoration` instead of separate
+  `label`, `placeholder`, `hint`, `leadingIcon`, `prefix`, `suffix`, or boolean
+  `title` parameters.
+- Added a shared decoration adapter that maps Material decoration slots onto the
+  GeniusLink `FieldShell` and `FieldBox` while retaining package-owned borders,
+  sizing, focus treatment, typography, and error-badge behavior.
+- Supported `label`/`labelText`, `helper`/`helperText`, `hint`/`hintText`, leading
+  and trailing adornments, counters, styles, icon colors/constraints, and
+  `errorText` consistently across applicable controls.
+- Kept deprecated `FieldShell.label` and `FieldShell.hint` bridges for direct
+  foundation consumers. Public form-field constructors now use `decoration` as
+  their single decoration source.
+- Updated every example to the new `InputDecoration` API.
+- Replaced the example's local `SectionCard` implementation with the component
+  exported by `super_core`, using `SuperMarker` and dynamic theme tokens.
+
+### Improved
+
+- `SuperDateFormField` now dismisses the software keyboard when the calendar
+  button is tapped.
+- Date selection opens in a modal bottom sheet on mobile. Tablet and desktop
+  continue using the anchored calendar popover with automatic above/below
+  placement. The historical leading calendar glyph remains the default and can
+  be replaced through `InputDecoration.prefixIcon`.
+- `SuperNumericFormField` now vertically centers its input text.
+- Numeric increment and decrement controls now stretch to the full field height
+  while retaining the GeniusLink stepper width, border, radius, and states.
+- `FieldIconButton` now supports optional non-square width, height, and border
+  radius values without changing its existing square default.
+
+### Tests
+
+- Added constructor coverage for the unified decoration API across all eight
+  fields.
+- Added widget regressions for decoration adaptation, mobile date keyboard
+  dismissal and bottom-sheet presentation, retained tablet popovers, and
+  full-height numeric steppers.
+
+### Documentation
+
+- Rewrote `README.md` in pub.dev style with installation, theme setup, complete
+  field examples, validation, controllers, responsive behavior, RTL guidance,
+  and a 1.3.0 migration table.
+- Updated package metadata, public library documentation, example documentation,
+  and the AI skill for the current architecture and API.
+
+---
+
 ## [1.1.0] — 2026-07-16
 
 ### Changed

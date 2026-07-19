@@ -7,7 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -50,18 +51,22 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
         SectionCard(
           title: 'Entry State',
           subtitle: 'A segmented single-pick control',
-          marker: Marker.identity,
+          marker: SuperMarker.identity,
           child: Column(
             children: [
               const SuperChoiceFormField<String>(
-                label: 'Status',
+                decoration: InputDecoration(
+                  labelText: 'Status',
+                ),
                 required: true,
                 initialValue: ['draft'],
                 options: _status,
               ),
               SizedBox(height: SuperThemeData.of(context).tokens.space6),
               SuperChoiceFormField<String>(
-                label: 'Posting Period',
+                decoration: const InputDecoration(
+                  labelText: 'Posting Period',
+                ),
                 required: true,
                 style: SuperChoiceStyle.radio,
                 options: _period,
@@ -73,15 +78,17 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
         SectionCard(
           title: 'Supporting Documents',
           subtitle: 'Attach at least one document type (multi-pick)',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperChoiceFormField<String>(
-            label: 'Document Types',
+            decoration: const InputDecoration(
+              labelText: 'Document Types',
+              helperText: 'Pick one to three document types.',
+            ),
             required: true,
             style: SuperChoiceStyle.checkbox,
             minSelections: 1,
             maxSelections: 3,
             options: _docs,
-            hint: 'Pick one to three document types.',
             forceError: _force,
           ),
         ),

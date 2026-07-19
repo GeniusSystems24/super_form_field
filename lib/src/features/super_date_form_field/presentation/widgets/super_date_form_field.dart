@@ -2,9 +2,10 @@
 // features/super_date_form_field/presentation/widgets/super_date_form_field.dart
 // ------------------------------------------------------------
 // The View for the GeniusLink date field — the same input chrome the web uses:
-// a fixed-width, zero-padded segmented buffer with a trailing calendar trigger
-// that opens a MiniCalendar popover BELOW the icon (or above it when there isn't
-// room below). A thin Flutter wrapper that builds the validator chain (domain
+// a fixed-width, zero-padded segmented buffer with a trailing calendar trigger.
+// Mobile opens MiniCalendar in a bottom sheet; tablet and desktop keep the
+// anchored popover, flipping above when there is not room below. A thin Flutter
+// wrapper that builds the validator chain (domain
 // usecase), drives a [SuperDateFieldController] (the Model), and renders the
 // FieldShell + FieldBox chrome. The buffer stays Western-digit mono and LTR even
 // in RTL. The format is configurable (year-month-day, year-month, …). Validation
@@ -15,13 +16,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/usecases/date_logic.dart';
 import '../controllers/super_date_field_controller.dart';
 import 'mini_calendar.dart';
 
 /// A themeable, validated date field on the GeniusLink field foundation. Edit by
 /// typing into the segment the cursor is on, stepping with the arrows, or
-/// picking from the calendar popover.
+/// picking from the responsive calendar surface.
 class SuperDateFormField extends StatefulWidget {
   const SuperDateFormField({
     super.key,
@@ -29,10 +31,8 @@ class SuperDateFormField extends StatefulWidget {
     this.initialValue,
     this.onChanged,
     this.onValidity,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
-    this.placeholder,
-    this.hint,
     this.format = SuperDateFormat.yearMonthDay,
     this.density = FieldDensity.comfortable,
     this.disabled = false,
@@ -42,7 +42,6 @@ class SuperDateFormField extends StatefulWidget {
     this.calendar = true,
     this.clearable = false,
     this.keyboardShortcuts = true,
-    this.leadingIcon = SffIcons.calendar,
     this.validators = const [],
     this.invalidMessage = 'Enter a valid date',
     this.forceError = false,
@@ -58,13 +57,15 @@ class SuperDateFormField extends StatefulWidget {
   final ValueChanged<DateTime?>? onChanged;
   final ValidityChanged? onValidity;
 
-  // ── chrome ──
-  final String? label;
-  final bool required;
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  ///
+  /// When `hintText` is null, the active date-format template is used. A
+  /// calendar glyph is the leading fallback; provide `prefixIcon` to replace it
+  /// or `prefixIcon: SizedBox.shrink()` to suppress it.
+  final InputDecoration decoration;
 
-  /// Placeholder. Defaults to the format template (`YYYY-MM-DD`, `MM-DD`, …).
-  final String? placeholder;
-  final String? hint;
+  // ── chrome ──
+  final bool required;
 
   /// Which segments to show, in order (full date, year-month, year, …).
   final SuperDateFormat format;
@@ -77,8 +78,8 @@ class SuperDateFormField extends StatefulWidget {
   final DateTime? minDate;
   final DateTime? maxDate;
 
-  /// Show the trailing calendar trigger + popover. Only applies when the format
-  /// includes a day segment.
+  /// Show the trailing calendar trigger and responsive picker. Only applies
+  /// when the format includes a day segment.
   final bool calendar;
 
   /// Show a × clear button while non-empty, enabled & editable.
@@ -87,9 +88,6 @@ class SuperDateFormField extends StatefulWidget {
   /// Enable arrow-key segment stepping while focused: ↑/↓ step the segment the
   /// cursor is on; ←/→ move between segments.
   final bool keyboardShortcuts;
-
-  /// Leading icon. Defaults to the calendar glyph; pass `null` to hide.
-  final IconData? leadingIcon;
 
   /// Extra custom validators, appended to the built-in chain.
   final List<Validator<DateTime?>> validators;
@@ -148,17 +146,30 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
   bool get _editable => !widget.disabled && !widget.readOnly;
   bool get _showCalendar => widget.calendar && widget.format.hasDay;
 
-  void _toggleCalendar() {
+  Future<void> _toggleCalendar() async {
     if (!_editable) return;
+
+    // The calendar action must never leave the software keyboard covering the
+    // picker. This also commits the current segment through the controller's
+    // normal focus lifecycle.
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    if (SuperDeviceMode.of(context) == SuperDeviceMode.mobile) {
+      if (_overlay.isShowing) _overlay.hide();
+      await _showMobileCalendar();
+      return;
+    }
+
     if (_overlay.isShowing) {
       _overlay.hide();
       setState(() {});
       return;
     }
-    // Decide whether to drop below the icon or flip above it.
+
+    // Desktop/tablet keep the anchored popover, flipping above when needed.
     const estHeight = 330.0;
     final box = _btnKey.currentContext?.findRenderObject() as RenderBox?;
-    final screenH = MediaQuery.of(context).size.height;
+    final screenH = MediaQuery.sizeOf(context).height;
     if (box != null) {
       final top = box.localToGlobal(Offset.zero).dy;
       final below = screenH - (top + box.size.height);
@@ -168,6 +179,55 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
     }
     _overlay.show();
     setState(() {});
+  }
+
+  Future<void> _showMobileCalendar() async {
+    final tokens = SuperThemeData.of(context).tokens;
+    await showModalBottomSheet<void>(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      builder: (sheetContext) {
+        final t = sheetContext.sffTheme;
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            tokens.space4,
+            tokens.space2,
+            tokens.space4,
+            tokens.space6 + MediaQuery.viewInsetsOf(sheetContext).bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: t.borderStrong,
+                  borderRadius: BorderRadius.circular(tokens.radiusPill),
+                ),
+              ),
+              SizedBox(height: tokens.space3),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 420),
+                child: Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: MiniCalendar(
+                    value: _controller.value,
+                    minDate: widget.minDate,
+                    maxDate: widget.maxDate,
+                    onPick: (date) {
+                      _controller.pick(date);
+                      Navigator.of(sheetContext).pop();
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _onPick(DateTime d) {
@@ -201,9 +261,24 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
       builder: (context, _) {
         final t = context.sffTheme;
         final cs = context.sffColorScheme;
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
 
+        final adornStyle = SuperText.mono.copyWith(
+          color: t.fg3,
+          fontSize: 12.5,
+          fontWeight: FontWeight.w600,
+        );
         final trailing = <Widget>[
+          ...SffDecoration.buildTrailing(
+            context,
+            widget.decoration,
+            textStyle: adornStyle,
+          ),
           if (widget.clearable && _controller.text.text.isNotEmpty && _editable)
             FieldIconButton(
               icon: SffIcons.clear,
@@ -220,7 +295,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 bordered: true,
                 size: SuperThemeData.of(context).tokens.trailingIcon,
                 iconSize: 15,
-                onPressed: _editable ? _toggleCalendar : null,
+                onPressed: _editable ? () => _toggleCalendar() : null,
               ),
             ),
         ];
@@ -269,9 +344,8 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
             );
           },
           child: FieldShell(
-            label: widget.label,
+            decoration: widget.decoration,
             required: widget.required,
-            hint: widget.hint,
             hasError: error != null,
             arabic: widget.arabic,
             child: FieldBox(
@@ -279,9 +353,12 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
               error: error,
               disabled: widget.disabled,
               density: widget.density,
-              leading: widget.leadingIcon != null
-                  ? Icon(widget.leadingIcon)
-                  : null,
+              leading: SffDecoration.buildLeading(
+                context,
+                widget.decoration,
+                fallback: const Icon(SffIcons.calendar),
+                textStyle: adornStyle,
+              ),
               trailing: trailing,
               child: Directionality(
                 textDirection: TextDirection.ltr,
@@ -295,15 +372,25 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                   inputFormatters: [LengthLimitingTextInputFormatter(10)],
                   cursorColor: cs.primary,
                   style: SuperText.mono.copyWith(color: t.fg1),
+                  textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
-                    hintText: widget.placeholder ?? widget.format.placeholder,
-                    hintStyle: SuperText.mono.copyWith(color: t.fg4),
+                    hint: widget.decoration.hint,
+                    hintText:
+                        widget.decoration.hintText ?? widget.format.placeholder,
+                    hintStyle: SffDecoration.mergeStyle(
+                      SuperText.mono.copyWith(color: t.fg4),
+                      widget.decoration.hintStyle,
+                    ),
+                    hintTextDirection: TextDirection.ltr,
+                    hintMaxLines: widget.decoration.hintMaxLines,
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
                     filled: false,
-
+                    isCollapsed: true,
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),

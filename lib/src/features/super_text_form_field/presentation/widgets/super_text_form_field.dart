@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/entities/text_field_config.dart';
 import '../../domain/usecases/build_text_validators.dart';
 import '../controllers/super_text_field_controller.dart';
@@ -27,16 +28,11 @@ class SuperTextFormField extends StatefulWidget {
     this.initialValue = '',
     this.onChanged,
     this.onValidity,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
-    this.placeholder,
-    this.hint,
     this.density = FieldDensity.comfortable,
     this.disabled = false,
     this.readOnly = false,
-    this.leadingIcon,
-    this.prefix,
-    this.suffix,
     this.clearable = false,
     this.multiline = false,
     this.rows = 3,
@@ -57,17 +53,14 @@ class SuperTextFormField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValidityChanged? onValidity;
 
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  final InputDecoration decoration;
+
   // ── chrome ──
-  final String? label;
   final bool required;
-  final String? placeholder;
-  final String? hint;
   final FieldDensity density;
   final bool disabled;
   final bool readOnly;
-  final IconData? leadingIcon;
-  final String? prefix;
-  final String? suffix;
   final bool clearable;
 
   // ── multiline ──
@@ -163,18 +156,26 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       builder: (context, _) {
         final t = context.sffTheme;
         final cs = context.sffColorScheme;
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
         final counter = (widget.showCounter && widget.maxLength != null)
             ? _Counter(length: _controller.value.length, max: widget.maxLength!)
             : null;
 
+        final hasDecorationCounter =
+            widget.decoration.counter != null ||
+            widget.decoration.counterText != null;
+
         return FieldShell(
-          label: widget.label,
+          decoration: widget.decoration,
           required: widget.required,
-          hint: widget.hint,
           hasError: error != null,
           arabic: widget.arabic,
-          labelRight: counter,
+          labelRight: hasDecorationCounter ? null : counter,
           child: widget.multiline
               ? _buildField(context, t, cs, error, multiline: true)
               : _buildField(context, t, cs, error, multiline: false),
@@ -212,8 +213,11 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     // ── Fill ──
     final fillColor = focused && !widget.disabled ? t.surface : t.inputBg;
 
+    final source = widget.decoration;
+
     // ── Suffix icon row ──
     final trailingWidgets = <Widget>[
+      if (source.suffixIcon != null) source.suffixIcon!,
       if (!multiline &&
           widget.clearable &&
           _controller.value.isNotEmpty &&
@@ -235,20 +239,43 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     Widget? suffixWidget;
     if (trailingWidgets.isNotEmpty) {
       suffixWidget = Padding(
-        padding: const EdgeInsets.only(right: 4),
-        child: Row(mainAxisSize: MainAxisSize.min, children: trailingWidgets),
+        padding: const EdgeInsetsDirectional.only(end: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: trailingWidgets,
+        ),
       );
     }
 
-    // ── Leading icon ──
-    Widget? prefixIconWidget;
-    if (widget.leadingIcon != null) {
-      prefixIconWidget = Icon(
-        widget.leadingIcon,
-        size: 18,
-        color: focused ? cs.primary : t.fg4,
-      );
-    }
+    final defaultIconColor = focused ? cs.primary : t.fg4;
+    final leadingIcons = <Widget>[
+      if (source.icon != null)
+        IconTheme.merge(
+          data: IconThemeData(color: source.iconColor ?? defaultIconColor),
+          child: source.icon!,
+        ),
+      if (source.prefixIcon != null)
+        IconTheme.merge(
+          data: IconThemeData(
+            color: source.prefixIconColor ?? defaultIconColor,
+          ),
+          child: source.prefixIcon!,
+        ),
+    ];
+    final Widget? prefixIconWidget = switch (leadingIcons.length) {
+      0 => null,
+      1 => leadingIcons.single,
+      _ => Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < leadingIcons.length; i++) ...[
+              if (i > 0)
+                SizedBox(width: SuperThemeData.of(context).tokens.space1),
+              leadingIcons[i],
+            ],
+          ],
+        ),
+    };
 
     // ── Density ──
     final minH = widget.density == FieldDensity.compact
@@ -259,32 +286,46 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     final adornStyle = SuperText.body.copyWith(color: t.fg3, fontSize: 13);
 
     final decoration = InputDecoration(
-      // Hint
-      hintText: widget.placeholder,
-      hintStyle: SuperText.body.copyWith(
-        color: t.fg4,
-        fontFamily: widget.arabic
-            ? SuperThemeData.of(context).tokens.arabicFont
-            : SuperThemeData.of(context).tokens.bodyFont,
+      // The external FieldShell owns label/helper/counter/error presentation.
+      hint: source.hint,
+      hintText: source.hintText,
+      hintStyle: SffDecoration.mergeStyle(
+        SuperText.body.copyWith(
+          color: t.fg4,
+          fontFamily: widget.arabic
+              ? SuperThemeData.of(context).tokens.arabicFont
+              : SuperThemeData.of(context).tokens.bodyFont,
+        ),
+        source.hintStyle,
       ),
-      // Leading / trailing
+      hintTextDirection: source.hintTextDirection,
+      hintMaxLines: source.hintMaxLines,
+
+      // Caller adornments are retained; package controls are appended.
+      prefix: source.prefix,
       prefixIcon: prefixIconWidget,
-      prefixIconConstraints: prefixIconWidget != null
-          ? const BoxConstraints(minWidth: 36, minHeight: 36)
-          : null,
-      prefixText: widget.prefix,
-      prefixStyle: adornStyle,
+      prefixIconColor: defaultIconColor,
+      prefixIconConstraints:
+          source.prefixIconConstraints ??
+          (prefixIconWidget != null
+              ? const BoxConstraints(minWidth: 36, minHeight: 36)
+              : null),
+      prefixText: source.prefixText,
+      prefixStyle: SffDecoration.mergeStyle(adornStyle, source.prefixStyle),
+      suffix: source.suffix,
       suffixIcon: suffixWidget,
-      suffixIconConstraints: suffixWidget != null
-          ? BoxConstraints(minHeight: minH, maxHeight: minH, minWidth: 0)
-          : null,
-      suffixText: widget.suffix,
-      suffixStyle: adornStyle,
-      // Fill
+      suffixIconColor: source.suffixIconColor ?? t.fg4,
+      suffixIconConstraints:
+          source.suffixIconConstraints ??
+          (suffixWidget != null
+              ? BoxConstraints(minHeight: minH, maxHeight: minH, minWidth: 0)
+              : null),
+      suffixText: source.suffixText,
+      suffixStyle: SffDecoration.mergeStyle(adornStyle, source.suffixStyle),
+
+      // GeniusLink owns fill, sizing, and border states.
       filled: true,
       fillColor: widget.disabled ? Colors.transparent : fillColor,
-
-      // Sizing — tight height for single-line; unconstrained for multiline
       constraints: multiline
           ? BoxConstraints(minHeight: minH)
           : BoxConstraints.tightFor(height: minH),
@@ -294,15 +335,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
             ? SuperThemeData.of(context).tokens.space1
             : SuperThemeData.of(context).tokens.space2,
       ),
-      // Borders — fully specified; overrides inputDecorationTheme
       border: border(enabledBorderColor),
       enabledBorder: border(enabledBorderColor),
       focusedBorder: border(focusedBorderColor),
       disabledBorder: border(disabledBorderColor),
       errorBorder: border(cs.error),
       focusedErrorBorder: border(cs.error),
-      // Error shadow via container — NOT via errorText (that would show inline text)
-      // No errorText: error UX is the suffix ErrorBadge + border color change only.
     );
 
     final textStyle = SuperText.body.copyWith(
@@ -336,6 +374,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       cursorColor: cs.primary,
       style: textStyle,
       textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
+      textAlignVertical: multiline ? null : TextAlignVertical.center,
       decoration: decoration,
     );
 

@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/entities/choice_field_config.dart';
 import '../../domain/usecases/choice_logic.dart';
 import '../controllers/super_choice_field_controller.dart';
@@ -25,9 +26,8 @@ class SuperChoiceFormField<T> extends StatefulWidget {
     this.initialValue,
     this.onChanged,
     this.onValidity,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
-    this.hint,
     this.style = SuperChoiceStyle.segmented,
     this.multiple = false,
     this.minSelections,
@@ -50,10 +50,11 @@ class SuperChoiceFormField<T> extends StatefulWidget {
   final ValueChanged<List<T>>? onChanged;
   final ValidityChanged? onValidity;
 
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  final InputDecoration decoration;
+
   // ── chrome ──
-  final String? label;
   final bool required;
-  final String? hint;
 
   // ── behaviour ──
   final SuperChoiceStyle style;
@@ -137,39 +138,91 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
+        final choiceGroup = switch (widget.style) {
+          SuperChoiceStyle.segmented => _Segmented<T>(
+            options: widget.options,
+            controller: _controller,
+            arabic: widget.arabic,
+            onPick: _pick,
+          ),
+          SuperChoiceStyle.radio => _OptionList<T>(
+            options: widget.options,
+            controller: _controller,
+            checkbox: false,
+            arabic: widget.arabic,
+            onPick: _pick,
+          ),
+          SuperChoiceStyle.checkbox => _OptionList<T>(
+            options: widget.options,
+            controller: _controller,
+            checkbox: true,
+            arabic: widget.arabic,
+            onPick: _pick,
+          ),
+        };
+        final hasHint =
+            widget.decoration.hint != null ||
+            widget.decoration.hintText != null;
+        final leading = SffDecoration.buildLeading(
+          context,
+          widget.decoration,
+        );
+        final trailing = SffDecoration.buildTrailing(
+          context,
+          widget.decoration,
+        );
+        final hasIntro = leading != null || hasHint || trailing.isNotEmpty;
 
         return FieldShell(
-          label: widget.label,
+          decoration: widget.decoration,
           required: widget.required,
-          hint: widget.hint,
           hasError: error != null,
           arabic: widget.arabic,
           labelRight: error != null ? ErrorBadge(error: error) : null,
           child: Opacity(
             opacity: widget.disabled ? 0.55 : 1,
-            child: switch (widget.style) {
-              SuperChoiceStyle.segmented => _Segmented<T>(
-                options: widget.options,
-                controller: _controller,
-                arabic: widget.arabic,
-                onPick: _pick,
-              ),
-              SuperChoiceStyle.radio => _OptionList<T>(
-                options: widget.options,
-                controller: _controller,
-                checkbox: false,
-                arabic: widget.arabic,
-                onPick: _pick,
-              ),
-              SuperChoiceStyle.checkbox => _OptionList<T>(
-                options: widget.options,
-                controller: _controller,
-                checkbox: true,
-                arabic: widget.arabic,
-                onPick: _pick,
-              ),
-            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (hasIntro) ...[
+                  Row(
+                    children: [
+                      if (leading != null) ...[
+                        leading,
+                        SizedBox(
+                          width: SuperThemeData.of(context).tokens.space2,
+                        ),
+                      ],
+                      if (hasHint)
+                        Expanded(
+                          child: SffDecoration.buildHint(
+                            context,
+                            widget.decoration,
+                            fallback: '',
+                            arabic: widget.arabic,
+                          ),
+                        )
+                      else
+                        const Spacer(),
+                      for (final item in trailing) ...[
+                        SizedBox(
+                          width: SuperThemeData.of(context).tokens.space1,
+                        ),
+                        item,
+                      ],
+                    ],
+                  ),
+                  SizedBox(height: SuperThemeData.of(context).tokens.space2),
+                ],
+                choiceGroup,
+              ],
+            ),
           ),
         );
       },

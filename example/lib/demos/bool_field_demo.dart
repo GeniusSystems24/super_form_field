@@ -7,7 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_form_field/super_form_field.dart'
+    hide SectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -31,18 +32,22 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
         SectionCard(
           title: 'Status Flags',
           subtitle: 'Toggle account behaviour',
-          marker: Marker.identity,
+          marker: SuperMarker.identity,
           child: Column(
             children: [
               const BilingualRow(
                 english: SuperBoolFormField(
-                  label: 'Account Status',
+                  decoration: const InputDecoration(
+                    labelText: 'Account Status',
+                  ),
                   initialValue: true,
                   enabledLabel: 'Active',
                   disabledLabel: 'Inactive',
                 ),
                 arabic: SuperBoolFormField(
-                  label: 'حالة الحساب',
+                  decoration: const InputDecoration(
+                    labelText: 'حالة الحساب',
+                  ),
                   initialValue: true,
                   arabic: true,
                   enabledLabel: 'مفعّل',
@@ -51,16 +56,20 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
               ),
               SizedBox(height: SuperThemeData.of(context).tokens.space6),
               const SuperBoolFormField(
-                label: 'Allow Manual Posting',
+                decoration: InputDecoration(
+                  labelText: 'Allow Manual Posting',
+                  helperText: 'When off, only automated integrations may post to this account.',
+                ),
                 enabledLabel: 'Manual journals allowed',
                 disabledLabel: 'System postings only',
-                hint: 'When off, only automated integrations may post to this account.',
               ),
               SizedBox(height: SuperThemeData.of(context).tokens.space6),
               const SuperBoolFormField(
-                label: 'Reconciliation Required',
+                decoration: InputDecoration(
+                  labelText: 'Reconciliation Required',
+                  hintText: 'Require monthly reconciliation for this account',
+                ),
                 style: SuperBoolStyle.checkbox,
-                title: 'Require monthly reconciliation for this account',
               ),
             ],
           ),
@@ -68,12 +77,14 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
         SectionCard(
           title: 'Compliance',
           subtitle: 'A required acknowledgement gate',
-          marker: Marker.notes,
+          marker: SuperMarker.notes,
           child: SuperBoolFormField(
-            label: 'Confirmation',
+            decoration: const InputDecoration(
+              labelText: 'Confirmation',
+              hintText: 'I confirm these account details are accurate and approved.',
+            ),
             required: true,
             style: SuperBoolStyle.checkbox,
-            title: 'I confirm these account details are accurate and approved.',
             mustBeTrue: true,
             mustBeTrueMessage: 'You must confirm before saving.',
             forceError: _force,

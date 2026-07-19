@@ -1,26 +1,18 @@
 // ============================================================
 // example/lib/demos/demo_scaffold.dart
 // ------------------------------------------------------------
-// Shared chrome for the demo pages: a GeniusLink-style centered page (eyebrow +
-// H1 + section cards with the signature 4px marker bar). Kept in the EXAMPLE,
-// not the package — super_form_field ships only the form fields themselves.
+// Shared gallery page chrome. Section surfaces come directly from super_core
+// (`SectionCard`, `SectionHeader`, and `SuperMarker`) so the example exercises
+// the same design-system components used by production applications.
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart' hide SectionCard;
+import 'package:super_core/super_core.dart';
+import 'package:super_form_field/super_form_field.dart' show SuperFieldContextX;
 
-/// The three section-marker intents.
-enum Marker { identity, ledger, notes }
+export 'package:super_core/super_core.dart' show SectionCard, SuperMarker;
 
-extension on Marker {
-  Color colorFor(BuildContext context) => switch (this) {
-        Marker.identity => Theme.of(context).colorScheme.primary,
-        Marker.ledger => SuperThemeData.of(context).tokens.success,
-        Marker.notes => SuperThemeData.of(context).tokens.warning,
-      };
-}
-
-/// A centered GeniusLink page with an eyebrow + title and a list of children.
+/// A centered GeniusLink page with an eyebrow + title and spaced sections.
 class DemoPage extends StatelessWidget {
   const DemoPage({
     super.key,
@@ -36,6 +28,7 @@ class DemoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final tokens = SuperThemeData.of(context).tokens;
     return Scaffold(
       backgroundColor: t.bg,
       appBar: AppBar(
@@ -49,91 +42,29 @@ class DemoPage extends StatelessWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 64),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 680),
+              constraints: BoxConstraints(maxWidth: tokens.contentColumn),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(eyebrow.toUpperCase(),
-                      style: SuperText.eyebrow.copyWith(color: Theme.of(context).colorScheme.primary)),
-                  SizedBox(height: SuperThemeData.of(context).tokens.space2),
+                  Text(
+                    eyebrow.toUpperCase(),
+                    style: SuperText.eyebrow.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  SizedBox(height: tokens.space2),
                   Text(title, style: SuperText.h1.copyWith(color: t.fg1)),
-                  SizedBox(height: SuperThemeData.of(context).tokens.space8),
-                  ...children,
+                  SizedBox(height: tokens.space8),
+                  for (var index = 0; index < children.length; index++) ...[
+                    children[index],
+                    if (index < children.length - 1)
+                      SizedBox(height: tokens.space8),
+                  ],
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// A GeniusLink section card: 4px marker bar + heading + subtitle + body.
-class SectionCard extends StatelessWidget {
-  const SectionCard({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.marker = Marker.identity,
-    required this.child,
-  });
-
-  final String title;
-  final String? subtitle;
-  final Marker marker;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.sffTheme;
-    return Container(
-      margin: EdgeInsets.only(bottom: SuperThemeData.of(context).tokens.space8),
-      padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 40),
-      decoration: BoxDecoration(
-        color: t.surface,
-        borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusCard),
-        border: Border.all(color: t.border),
-        boxShadow: t.brightness == Brightness.dark
-            ? const [BoxShadow(color: Color(0x40000000), blurRadius: 50, spreadRadius: -12, offset: Offset(0, 25))]
-            : const [
-                BoxShadow(color: Color(0x0F000000), blurRadius: 2, offset: Offset(0, 1)),
-                BoxShadow(color: Color(0x14000000), blurRadius: 24, offset: Offset(0, 8)),
-              ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 4,
-                height: 40,
-                margin: const EdgeInsets.only(top: 2),
-                decoration: BoxDecoration(
-                  color: marker.colorFor(context),
-                  borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusPill),
-                ),
-              ),
-              SizedBox(width: SuperThemeData.of(context).tokens.space4),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: SuperText.heading.copyWith(color: t.fg1)),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 3),
-                      Text(subtitle!, style: SuperText.caption.copyWith(color: t.fg3)),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space8),
-          child,
-        ],
       ),
     );
   }
@@ -154,7 +85,10 @@ class BilingualRow extends StatelessWidget {
         Expanded(child: english),
         SizedBox(width: SuperThemeData.of(context).tokens.space6),
         Expanded(
-          child: Directionality(textDirection: TextDirection.rtl, child: arabic),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: arabic,
+          ),
         ),
       ],
     );

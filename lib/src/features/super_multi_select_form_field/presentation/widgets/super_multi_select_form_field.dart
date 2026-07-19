@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 import '../../domain/usecases/multi_select_logic.dart';
 import '../controllers/super_multi_select_field_controller.dart';
 
@@ -25,14 +26,11 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
     this.initialValue,
     this.onChanged,
     this.onValidity,
-    this.label,
+    this.decoration = const InputDecoration(),
     this.required = false,
-    this.placeholder,
-    this.hint,
     this.density = FieldDensity.comfortable,
     this.disabled = false,
     this.readOnly = false,
-    this.leadingIcon,
     this.searchable = false,
     this.searchHint = 'Search…',
     this.minSelections,
@@ -53,15 +51,14 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
   final ValueChanged<List<T>>? onChanged;
   final ValidityChanged? onValidity;
 
+  /// Canonical source for label, helper, hint, and adornment chrome.
+  final InputDecoration decoration;
+
   // ── chrome ──
-  final String? label;
   final bool required;
-  final String? placeholder;
-  final String? hint;
   final FieldDensity density;
   final bool disabled;
   final bool readOnly;
-  final IconData? leadingIcon;
 
   // ── behaviour ──
   final bool searchable;
@@ -162,17 +159,17 @@ class _SuperMultiSelectFormFieldState<T>
   Widget _triggerContent(SuperThemeData t) {
     final chosen = _controller.selectedOptions;
     if (chosen.isEmpty) {
-      return Text(
-        widget.placeholder ?? 'Select…',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: SuperText.body.copyWith(
+      return SffDecoration.buildHint(
+        context,
+        widget.decoration,
+        fallback: 'Select…',
+        arabic: widget.arabic,
+        baseStyle: SuperText.body.copyWith(
           color: t.fg4,
           fontFamily: widget.arabic
               ? SuperThemeData.of(context).tokens.arabicFont
               : SuperThemeData.of(context).tokens.bodyFont,
         ),
-        textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
       );
     }
     return Padding(
@@ -214,13 +211,24 @@ class _SuperMultiSelectFormFieldState<T>
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
-        final error = widget.disabled ? null : _controller.visibleError;
+        final error = widget.disabled
+            ? null
+            : SffDecoration.resolveError(
+                widget.decoration,
+                _controller.visibleError,
+              );
 
-        final countPill = (widget.showCount && _controller.count > 0)
+        final hasDecorationCounter =
+            widget.decoration.counter != null ||
+            widget.decoration.counterText != null;
+        final countPill = (!hasDecorationCounter &&
+                widget.showCount &&
+                _controller.count > 0)
             ? CountPill(label: '${_controller.count} selected')
             : null;
 
         final trailing = <Widget>[
+          ...SffDecoration.buildTrailing(context, widget.decoration),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
             child: Icon(
@@ -232,9 +240,8 @@ class _SuperMultiSelectFormFieldState<T>
         ];
 
         return FieldShell(
-          label: widget.label,
+          decoration: widget.decoration,
           required: widget.required,
-          hint: widget.hint,
           hasError: error != null,
           arabic: widget.arabic,
           labelRight: countPill,
@@ -254,9 +261,10 @@ class _SuperMultiSelectFormFieldState<T>
                   error: error,
                   disabled: widget.disabled,
                   density: widget.density,
-                  leading: widget.leadingIcon != null
-                      ? Icon(widget.leadingIcon)
-                      : null,
+                  leading: SffDecoration.buildLeading(
+                    context,
+                    widget.decoration,
+                  ),
                   trailing: trailing,
                   child: _triggerContent(t),
                 ),
