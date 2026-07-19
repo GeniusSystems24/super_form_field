@@ -12,7 +12,11 @@ import 'package:super_core/super_core.dart';
 
 /// A rounded pill: [color]-tinted background behind [color] text.
 class CountPill extends StatelessWidget {
-  const CountPill({super.key, required this.label, this.color = SuperTokensData.defaultAccent});
+  const CountPill({
+    super.key,
+    required this.label,
+    this.color = const Color(0xFF4A7CFF),
+  });
 
   final String label;
   final Color color;
@@ -26,7 +30,10 @@ class CountPill extends StatelessWidget {
         color: Color.alphaBlend(color.withOpacity(0.15), t.surface),
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(label.toUpperCase(), style: SuperText.pill.copyWith(color: color)),
+      child: Text(
+        label.toUpperCase(),
+        style: SuperText.pill.copyWith(color: color),
+      ),
     );
   }
 }

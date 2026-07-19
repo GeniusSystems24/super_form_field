@@ -60,20 +60,20 @@ class FieldBox extends StatelessWidget {
     final cs = context.sffColorScheme;
     final hasError = error != null;
     final h = density == FieldDensity.compact
-        ? SuperTokensData.defaultFieldCompact
-        : SuperTokensData.defaultFieldComfortable;
+        ? SuperThemeData.of(context).tokens.fieldCompact
+        : SuperThemeData.of(context).tokens.fieldComfortable;
 
     final borderColor = hasError
         ? cs.error
         : focused
-            ? cs.primary
-            : t.borderStrong;
+        ? cs.primary
+        : t.borderStrong;
 
     final bgColor = disabled
         ? Colors.transparent
         : focused
-            ? t.surface
-            : t.inputBg;
+        ? t.surface
+        : t.inputBg;
 
     // A no-border InputDecorationTheme so any TextField child does not render
     // its own border on top of FieldBox's border.
@@ -87,30 +87,33 @@ class FieldBox extends StatelessWidget {
         disabledBorder: InputBorder.none,
         filled: false,
         contentPadding: EdgeInsets.zero,
-        
       ),
     );
 
     return Opacity(
       opacity: disabled ? 0.55 : 1.0,
       child: AnimatedContainer(
-        duration: SuperTokensData.defaultDurBase,
-        curve: SuperTokensData.defaultCurveStandard,
+        duration: SuperThemeData.of(context).tokens.durBase,
+        curve: SuperThemeData.of(context).tokens.curveStandard,
         constraints: BoxConstraints.tightFor(height: h),
-        padding: const EdgeInsetsDirectional.only(
-          start: SuperTokensData.defaultSpace3,
-          end: SuperTokensData.defaultSpace1,
+        padding: EdgeInsetsDirectional.only(
+          start: SuperThemeData.of(context).tokens.space3,
+          end: SuperThemeData.of(context).tokens.space1,
         ),
         decoration: BoxDecoration(
           color: bgColor,
           border: Border.all(color: borderColor, width: 1.4),
-          borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
+          borderRadius: BorderRadius.circular(
+            SuperThemeData.of(context).tokens.radiusControl,
+          ),
           boxShadow: hasError
-              ? [BoxShadow(
-                  color: cs.error.withOpacity(0.14),
-                  blurRadius: 0,
-                  spreadRadius: 3,
-                )]
+              ? [
+                  BoxShadow(
+                    color: cs.error.withOpacity(0.14),
+                    blurRadius: 0,
+                    spreadRadius: 3,
+                  ),
+                ]
               : null,
         ),
         child: Theme(
@@ -125,15 +128,15 @@ class FieldBox extends StatelessWidget {
                   ),
                   child: leading!,
                 ),
-                const SizedBox(width: SuperTokensData.defaultSpace2),
+                SizedBox(width: SuperThemeData.of(context).tokens.space2),
               ],
               Expanded(child: child),
               for (final w in trailing) ...[
-                const SizedBox(width: SuperTokensData.defaultSpace1),
+                SizedBox(width: SuperThemeData.of(context).tokens.space1),
                 w,
               ],
               if (hasError) ...[
-                const SizedBox(width: SuperTokensData.defaultSpace1),
+                SizedBox(width: SuperThemeData.of(context).tokens.space1),
                 ErrorBadge(error: error),
               ],
             ],

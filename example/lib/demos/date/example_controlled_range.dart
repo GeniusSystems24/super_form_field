@@ -60,7 +60,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
                   onChanged: _onStartChanged,
                 ),
               ),
-              const SizedBox(width: SuperTokensData.defaultSpace4),
+              SizedBox(width: SuperThemeData.of(context).tokens.space4),
               Expanded(
                 child: SuperDateFormField(
                   controller: _end,
@@ -72,7 +72,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
               ),
             ],
           ),
-          const SizedBox(height: SuperTokensData.defaultSpace4),
+          SizedBox(height: SuperThemeData.of(context).tokens.space4),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: OutlinedButton(
@@ -80,7 +80,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
                 foregroundColor: t.fg1,
                 side: BorderSide(color: t.borderStrong),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl)),
+                    borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
               ),
               onPressed: () {
                 final now = DateTime.now();

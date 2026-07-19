@@ -26,7 +26,9 @@ abstract final class ChoiceLogic {
             ? 'Select at least $minSelections options'
             : null,
       if (maxSelections != null)
-        (v) => v.length > maxSelections ? 'Select at most $maxSelections options' : null,
+        (v) => v.length > maxSelections
+            ? 'Select at most $maxSelections options'
+            : null,
       ...extra,
     ];
   }

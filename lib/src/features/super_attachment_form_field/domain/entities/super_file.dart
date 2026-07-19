@@ -7,7 +7,6 @@
 // wires (file_picker, image_picker, drag-and-drop, a server record…).
 // ============================================================
 
-
 import 'package:flutter/foundation.dart';
 
 @immutable
@@ -46,17 +45,20 @@ class SuperFile {
   }
 
   SuperFile copyWith({String? id}) => SuperFile(
-        id: id ?? this.id,
-        name: name,
-        size: size,
-        mimeType: mimeType,
-        path: path,
-        bytes: bytes,
-      );
+    id: id ?? this.id,
+    name: name,
+    size: size,
+    mimeType: mimeType,
+    path: path,
+    bytes: bytes,
+  );
 
   @override
   bool operator ==(Object other) =>
-      other is SuperFile && other.id == id && other.name == name && other.size == size;
+      other is SuperFile &&
+      other.id == id &&
+      other.name == name &&
+      other.size == size;
 
   @override
   int get hashCode => Object.hash(id, name, size);

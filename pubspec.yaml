@@ -8,7 +8,7 @@ description: >
 
 
 # package version
-version: 1.2.1
+version: 1.2.2
 
 # package homepage, repository, and issue tracker
 homepage: https://geniussystems24.github.io/super_form_field
@@ -30,7 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   # Shared GeniusLink design-system foundation (theme, tokens, type, sizes).
-  super_core: ">=2.0.0 <3.0.0"
+  super_core: ">=2.1.0 <3.0.0"
 
 dev_dependencies:
   flutter_test:

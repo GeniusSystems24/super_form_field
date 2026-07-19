@@ -64,7 +64,8 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
   String? get error => runValidators<T?>(_value, _validators);
 
   /// The error to actually display — gated on touched / forceError.
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
   // ── View → controller config ──
   void configure({

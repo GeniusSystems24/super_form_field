@@ -17,7 +17,7 @@ import '../../domain/usecases/multi_select_logic.dart';
 
 class SuperMultiSelectFieldController<T> extends ChangeNotifier {
   SuperMultiSelectFieldController({List<T>? initialValue})
-      : _values = [...?initialValue] {
+    : _values = [...?initialValue] {
     searchText = TextEditingController();
     searchFocus = FocusNode();
     searchText.addListener(_onQuery);
@@ -52,17 +52,20 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
   bool isSelected(T value) => _values.contains(value);
 
   /// The options after applying the current search query.
-  List<SuperOption<T>> get filtered => MultiSelectLogic.filter(_options, _query);
+  List<SuperOption<T>> get filtered =>
+      MultiSelectLogic.filter(_options, _query);
 
   /// The chosen options, in the options' declared order.
   List<SuperOption<T>> get selectedOptions =>
       _options.where((o) => _values.contains(o.value)).toList();
 
   /// True when the cap is reached and further options can't be added.
-  bool get atCapacity => _maxSelections != null && _values.length >= _maxSelections!;
+  bool get atCapacity =>
+      _maxSelections != null && _values.length >= _maxSelections!;
 
   String? get error => runValidators<List<T>>(values, _validators);
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
   // ── View → controller config ──
   void configure({

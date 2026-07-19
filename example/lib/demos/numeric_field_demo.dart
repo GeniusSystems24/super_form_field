@@ -48,7 +48,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 largeStep: 100,
                 forceError: _force,
               ),
-              const SizedBox(height: SuperTokensData.defaultSpace6),
+              SizedBox(height: SuperThemeData.of(context).tokens.space6),
               SuperNumericFormField(
                 label: 'Quantity',
                 required: true,
@@ -63,13 +63,13 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        SectionCard(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
           marker: Marker.ledger,
           child: Column(
             children: [
-              SuperNumericFormField(
+              const SuperNumericFormField(
                 label: 'Exchange Rate',
                 prefix: r'$',
                 decimals: 4,
@@ -78,8 +78,8 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 allowNegative: false,
                 initialValue: 3.7512,
               ),
-              SizedBox(height: SuperTokensData.defaultSpace6),
-              SuperNumericFormField(
+              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              const SuperNumericFormField(
                 label: 'Tax Rate',
                 suffix: '%',
                 decimals: 1,
@@ -96,12 +96,12 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            const SizedBox(width: SuperTokensData.defaultSpace3),
+            SizedBox(width: SuperThemeData.of(context).tokens.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

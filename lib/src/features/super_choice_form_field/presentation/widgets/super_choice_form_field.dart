@@ -73,7 +73,8 @@ class SuperChoiceFormField<T> extends StatefulWidget {
   final bool arabic;
 
   @override
-  State<SuperChoiceFormField<T>> createState() => _SuperChoiceFormFieldState<T>();
+  State<SuperChoiceFormField<T>> createState() =>
+      _SuperChoiceFormFieldState<T>();
 }
 
 class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
@@ -83,7 +84,9 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? SuperChoiceFieldController<T>(initialValue: widget.initialValue);
+    _controller =
+        widget.controller ??
+        SuperChoiceFieldController<T>(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -95,7 +98,9 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
       if (_ownsController) _controller.dispose();
-      _controller = widget.controller ?? SuperChoiceFieldController<T>(initialValue: widget.initialValue);
+      _controller =
+          widget.controller ??
+          SuperChoiceFieldController<T>(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
     }
   }
@@ -145,25 +150,25 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
             opacity: widget.disabled ? 0.55 : 1,
             child: switch (widget.style) {
               SuperChoiceStyle.segmented => _Segmented<T>(
-                  options: widget.options,
-                  controller: _controller,
-                  arabic: widget.arabic,
-                  onPick: _pick,
-                ),
+                options: widget.options,
+                controller: _controller,
+                arabic: widget.arabic,
+                onPick: _pick,
+              ),
               SuperChoiceStyle.radio => _OptionList<T>(
-                  options: widget.options,
-                  controller: _controller,
-                  checkbox: false,
-                  arabic: widget.arabic,
-                  onPick: _pick,
-                ),
+                options: widget.options,
+                controller: _controller,
+                checkbox: false,
+                arabic: widget.arabic,
+                onPick: _pick,
+              ),
               SuperChoiceStyle.checkbox => _OptionList<T>(
-                  options: widget.options,
-                  controller: _controller,
-                  checkbox: true,
-                  arabic: widget.arabic,
-                  onPick: _pick,
-                ),
+                options: widget.options,
+                controller: _controller,
+                checkbox: true,
+                arabic: widget.arabic,
+                onPick: _pick,
+              ),
             },
           ),
         );
@@ -189,18 +194,26 @@ class _Segmented<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = context.sffColorScheme;
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         color: t.inputBg,
         border: Border.all(color: t.borderStrong),
-        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
+        borderRadius: BorderRadius.circular(
+          SuperThemeData.of(context).tokens.radiusMd,
+        ),
       ),
       child: Row(
         children: [
           for (final o in options)
-            Expanded(child: _Segment<T>(option: o, controller: controller, arabic: arabic, onPick: onPick)),
+            Expanded(
+              child: _Segment<T>(
+                option: o,
+                controller: controller,
+                arabic: arabic,
+                onPick: onPick,
+              ),
+            ),
         ],
       ),
     );
@@ -226,16 +239,20 @@ class _Segment<T> extends StatelessWidget {
     final cs = context.sffColorScheme;
     final selected = controller.isSelected(option.value);
     return MouseRegion(
-      cursor: option.disabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
+      cursor: option.disabled
+          ? SystemMouseCursors.basic
+          : SystemMouseCursors.click,
       child: GestureDetector(
         onTap: option.disabled ? null : () => onPick(option),
         child: AnimatedContainer(
-          duration: SuperTokensData.defaultDurFast,
-          curve: SuperTokensData.defaultCurveStandard,
+          duration: SuperThemeData.of(context).tokens.durFast,
+          curve: SuperThemeData.of(context).tokens.curveStandard,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
           decoration: BoxDecoration(
             color: selected ? cs.primary : const Color(0x00000000),
-            borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
+            borderRadius: BorderRadius.circular(
+              SuperThemeData.of(context).tokens.radiusControl,
+            ),
           ),
           child: Opacity(
             opacity: option.disabled ? 0.4 : 1,
@@ -243,8 +260,12 @@ class _Segment<T> extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (option.icon != null) ...[
-                  Icon(option.icon, size: 15, color: selected ? const Color(0xFFFFFFFF) : t.fg3),
-                  const SizedBox(width: SuperTokensData.defaultSpace2),
+                  Icon(
+                    option.icon,
+                    size: 15,
+                    color: selected ? const Color(0xFFFFFFFF) : t.fg3,
+                  ),
+                  SizedBox(width: SuperThemeData.of(context).tokens.space2),
                 ],
                 Flexible(
                   child: Text(
@@ -255,7 +276,9 @@ class _Segment<T> extends StatelessWidget {
                     style: SuperText.button.copyWith(
                       color: selected ? const Color(0xFFFFFFFF) : t.fg3,
                       fontSize: 13,
-                      fontFamily: arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
+                      fontFamily: arabic
+                          ? SuperThemeData.of(context).tokens.arabicFont
+                          : SuperThemeData.of(context).tokens.bodyFont,
                     ),
                   ),
                 ),
@@ -290,7 +313,7 @@ class _OptionList<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var i = 0; i < options.length; i++) ...[
-          if (i > 0) const SizedBox(height: SuperTokensData.defaultSpace1),
+          if (i > 0) SizedBox(height: SuperThemeData.of(context).tokens.space1),
           _OptionRow<T>(
             option: options[i],
             selected: controller.isSelected(options[i].value),
@@ -333,7 +356,9 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
     final o = widget.option;
     final sel = widget.selected;
     final enabled = !o.disabled;
-    final fontFamily = widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont;
+    final fontFamily = widget.arabic
+        ? SuperThemeData.of(context).tokens.arabicFont
+        : SuperThemeData.of(context).tokens.bodyFont;
 
     return MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -344,17 +369,24 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
         child: Opacity(
           opacity: enabled ? 1 : 0.4,
           child: AnimatedContainer(
-            duration: SuperTokensData.defaultDurFast,
+            duration: SuperThemeData.of(context).tokens.durFast,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
             decoration: BoxDecoration(
-              color: sel ? t.selectionFill(0.10) : (_hover && enabled ? t.hover : t.inputBg),
-              border: Border.all(color: sel ? cs.primary : t.borderStrong, width: sel ? 1.4 : 1),
-              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
+              color: sel
+                  ? t.selectionFill(0.10)
+                  : (_hover && enabled ? t.hover : t.inputBg),
+              border: Border.all(
+                color: sel ? cs.primary : t.borderStrong,
+                width: sel ? 1.4 : 1,
+              ),
+              borderRadius: BorderRadius.circular(
+                SuperThemeData.of(context).tokens.radiusControl,
+              ),
             ),
             child: Row(
               children: [
                 widget.checkbox ? _Square(checked: sel) : _Circle(checked: sel),
-                const SizedBox(width: SuperTokensData.defaultSpace3),
+                SizedBox(width: SuperThemeData.of(context).tokens.space3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,13 +403,17 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
                         const SizedBox(height: 1),
                         Text(
                           o.description!,
-                          style: SuperText.caption.copyWith(color: t.fg4, fontFamily: fontFamily),
+                          style: SuperText.caption.copyWith(
+                            color: t.fg4,
+                            fontFamily: fontFamily,
+                          ),
                         ),
                       ],
                     ],
                   ),
                 ),
-                if (o.icon != null) Icon(o.icon, size: 16, color: sel ? cs.primary : t.fg3),
+                if (o.icon != null)
+                  Icon(o.icon, size: 16, color: sel ? cs.primary : t.fg3),
               ],
             ),
           ),
@@ -396,15 +432,20 @@ class _Square extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return AnimatedContainer(
-      duration: SuperTokensData.defaultDurFast,
+      duration: SuperThemeData.of(context).tokens.durFast,
       width: 19,
       height: 19,
       decoration: BoxDecoration(
         color: checked ? cs.primary : const Color(0x00000000),
-        border: Border.all(color: checked ? cs.primary : t.borderStrong, width: 1.5),
+        border: Border.all(
+          color: checked ? cs.primary : t.borderStrong,
+          width: 1.5,
+        ),
         borderRadius: BorderRadius.circular(5),
       ),
-      child: checked ? const Icon(SffIcons.check, size: 13, color: Color(0xFFFFFFFF)) : null,
+      child: checked
+          ? const Icon(SffIcons.check, size: 13, color: Color(0xFFFFFFFF))
+          : null,
     );
   }
 }
@@ -422,7 +463,10 @@ class _Circle extends StatelessWidget {
       height: 19,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: checked ? cs.primary : t.borderStrong, width: checked ? 5.5 : 1.5),
+        border: Border.all(
+          color: checked ? cs.primary : t.borderStrong,
+          width: checked ? 5.5 : 1.5,
+        ),
       ),
     );
   }

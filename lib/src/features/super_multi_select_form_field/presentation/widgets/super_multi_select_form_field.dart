@@ -83,10 +83,12 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
   final bool arabic;
 
   @override
-  State<SuperMultiSelectFormField<T>> createState() => _SuperMultiSelectFormFieldState<T>();
+  State<SuperMultiSelectFormField<T>> createState() =>
+      _SuperMultiSelectFormFieldState<T>();
 }
 
-class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField<T>> {
+class _SuperMultiSelectFormFieldState<T>
+    extends State<SuperMultiSelectFormField<T>> {
   late SuperMultiSelectFieldController<T> _controller;
   bool _ownsController = false;
 
@@ -94,7 +96,8 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
   void initState() {
     super.initState();
     _controller =
-        widget.controller ?? SuperMultiSelectFieldController<T>(initialValue: widget.initialValue);
+        widget.controller ??
+        SuperMultiSelectFieldController<T>(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -107,7 +110,8 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
     if (widget.controller != old.controller) {
       if (_ownsController) _controller.dispose();
       _controller =
-          widget.controller ?? SuperMultiSelectFieldController<T>(initialValue: widget.initialValue);
+          widget.controller ??
+          SuperMultiSelectFieldController<T>(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
     }
   }
@@ -145,7 +149,9 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
             checkbox: true,
             selected: _controller.isSelected(o.value),
             // Block un-selected rows once the cap is hit.
-            disabled: o.disabled || (!_controller.isSelected(o.value) && _controller.atCapacity),
+            disabled:
+                o.disabled ||
+                (!_controller.isSelected(o.value) && _controller.atCapacity),
             arabic: widget.arabic,
             onTap: () => _controller.toggle(o),
           ),
@@ -162,7 +168,9 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
         overflow: TextOverflow.ellipsis,
         style: SuperText.body.copyWith(
           color: t.fg4,
-          fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
+          fontFamily: widget.arabic
+              ? SuperThemeData.of(context).tokens.arabicFont
+              : SuperThemeData.of(context).tokens.bodyFont,
         ),
         textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
       );
@@ -170,14 +178,16 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Wrap(
-        spacing: SuperTokensData.defaultSpace1,
-        runSpacing: SuperTokensData.defaultSpace1,
+        spacing: SuperThemeData.of(context).tokens.space1,
+        runSpacing: SuperThemeData.of(context).tokens.space1,
         children: [
           for (final o in chosen)
             SuperChip(
               label: o.label,
               arabic: widget.arabic,
-              onRemove: _editable ? () => _controller.removeValue(o.value) : null,
+              onRemove: _editable
+                  ? () => _controller.removeValue(o.value)
+                  : null,
             ),
         ],
       ),
@@ -233,7 +243,9 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
             onDismiss: _controller.close,
             overlayBuilder: (context) => _menu(t),
             child: MouseRegion(
-              cursor: _editable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+              cursor: _editable
+                  ? SystemMouseCursors.click
+                  : SystemMouseCursors.basic,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _editable ? _controller.toggleMenu : null,
@@ -242,7 +254,9 @@ class _SuperMultiSelectFormFieldState<T> extends State<SuperMultiSelectFormField
                   error: error,
                   disabled: widget.disabled,
                   density: widget.density,
-                  leading: widget.leadingIcon != null ? Icon(widget.leadingIcon) : null,
+                  leading: widget.leadingIcon != null
+                      ? Icon(widget.leadingIcon)
+                      : null,
                   trailing: trailing,
                   child: _triggerContent(t),
                 ),

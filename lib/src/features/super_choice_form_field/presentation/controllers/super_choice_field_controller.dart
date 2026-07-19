@@ -13,7 +13,8 @@ import 'package:flutter/widgets.dart';
 import '../../../../core/utils/validators.dart';
 
 class SuperChoiceFieldController<T> extends ChangeNotifier {
-  SuperChoiceFieldController({List<T>? initialValue}) : _values = [...?initialValue];
+  SuperChoiceFieldController({List<T>? initialValue})
+    : _values = [...?initialValue];
 
   // ── value + interaction ──
   final List<T> _values;
@@ -37,10 +38,12 @@ class SuperChoiceFieldController<T> extends ChangeNotifier {
   /// Convenience for single-pick use — the one chosen value, or null.
   T? get single => _values.isEmpty ? null : _values.first;
 
-  bool get atCapacity => _maxSelections != null && _values.length >= _maxSelections!;
+  bool get atCapacity =>
+      _maxSelections != null && _values.length >= _maxSelections!;
 
   String? get error => runValidators<List<T>>(values, _validators);
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
   // ── View → controller config ──
   void configure({

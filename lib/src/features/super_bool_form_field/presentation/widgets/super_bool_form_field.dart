@@ -89,7 +89,9 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? SuperBoolFieldController(initialValue: widget.initialValue);
+    _controller =
+        widget.controller ??
+        SuperBoolFieldController(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -101,7 +103,9 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
       if (_ownsController) _controller.dispose();
-      _controller = widget.controller ?? SuperBoolFieldController(initialValue: widget.initialValue);
+      _controller =
+          widget.controller ??
+          SuperBoolFieldController(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
     }
   }
@@ -131,12 +135,14 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
-    final cs = context.sffColorScheme;
         final on = _controller.value;
         final error = widget.disabled ? null : _controller.visibleError;
-        final fontFamily = widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont;
+        final fontFamily = widget.arabic
+            ? SuperThemeData.of(context).tokens.arabicFont
+            : SuperThemeData.of(context).tokens.bodyFont;
 
-        final caption = widget.title ?? (on ? widget.enabledLabel : widget.disabledLabel);
+        final caption =
+            widget.title ?? (on ? widget.enabledLabel : widget.disabledLabel);
 
         final control = widget.style == SuperBoolStyle.checkbox
             ? _CheckBox(value: on, disabled: widget.disabled)
@@ -145,20 +151,22 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
         final row = Row(
           children: [
             control,
-            const SizedBox(width: SuperTokensData.defaultSpace3),
+            SizedBox(width: SuperThemeData.of(context).tokens.space3),
             Expanded(
               child: Text(
                 caption,
                 style: SuperText.body.copyWith(
                   color: on ? t.fg1 : t.fg3,
                   fontFamily: fontFamily,
-                  fontWeight: widget.title != null ? FontWeight.w400 : FontWeight.w500,
+                  fontWeight: widget.title != null
+                      ? FontWeight.w400
+                      : FontWeight.w500,
                 ),
                 textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
               ),
             ),
             if (error != null) ...[
-              const SizedBox(width: SuperTokensData.defaultSpace1),
+              SizedBox(width: SuperThemeData.of(context).tokens.space1),
               ErrorBadge(error: error),
             ],
           ],
@@ -173,12 +181,16 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
           child: Opacity(
             opacity: widget.disabled ? 0.55 : 1,
             child: MouseRegion(
-              cursor: _editable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+              cursor: _editable
+                  ? SystemMouseCursors.click
+                  : SystemMouseCursors.basic,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _editable ? _controller.toggle : null,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: SuperTokensData.defaultSpace1),
+                  padding: EdgeInsets.symmetric(
+                    vertical: SuperThemeData.of(context).tokens.space1,
+                  ),
                   child: row,
                 ),
               ),
@@ -201,20 +213,25 @@ class _Toggle extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return AnimatedContainer(
-      duration: SuperTokensData.defaultDurBase,
-      curve: SuperTokensData.defaultCurveStandard,
+      duration: SuperThemeData.of(context).tokens.durBase,
+      curve: SuperThemeData.of(context).tokens.curveStandard,
       width: 40,
       height: 23,
       padding: const EdgeInsets.all(2.5),
       decoration: BoxDecoration(
         color: value ? cs.primary : t.inputBg,
-        border: Border.all(color: value ? cs.primary : t.borderStrong, width: 1.4),
+        border: Border.all(
+          color: value ? cs.primary : t.borderStrong,
+          width: 1.4,
+        ),
         borderRadius: BorderRadius.circular(999),
       ),
       child: AnimatedAlign(
-        duration: SuperTokensData.defaultDurBase,
-        curve: SuperTokensData.defaultCurveStandard,
-        alignment: value ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
+        duration: SuperThemeData.of(context).tokens.durBase,
+        curve: SuperThemeData.of(context).tokens.curveStandard,
+        alignment: value
+            ? AlignmentDirectional.centerEnd
+            : AlignmentDirectional.centerStart,
         child: Container(
           width: 16,
           height: 16,
@@ -239,13 +256,18 @@ class _CheckBox extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return AnimatedContainer(
-      duration: SuperTokensData.defaultDurFast,
+      duration: SuperThemeData.of(context).tokens.durFast,
       width: 20,
       height: 20,
       decoration: BoxDecoration(
         color: value ? cs.primary : const Color(0x00000000),
-        border: Border.all(color: value ? cs.primary : t.borderStrong, width: 1.5),
-        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
+        border: Border.all(
+          color: value ? cs.primary : t.borderStrong,
+          width: 1.5,
+        ),
+        borderRadius: BorderRadius.circular(
+          SuperThemeData.of(context).tokens.radiusControl,
+        ),
       ),
       child: value
           ? const Icon(SffIcons.check, size: 14, color: Color(0xFFFFFFFF))

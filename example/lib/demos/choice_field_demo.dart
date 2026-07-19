@@ -59,7 +59,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
                 initialValue: ['draft'],
                 options: _status,
               ),
-              const SizedBox(height: SuperTokensData.defaultSpace6),
+              SizedBox(height: SuperThemeData.of(context).tokens.space6),
               SuperChoiceFormField<String>(
                 label: 'Posting Period',
                 required: true,
@@ -90,12 +90,12 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            const SizedBox(width: SuperTokensData.defaultSpace3),
+            SizedBox(width: SuperThemeData.of(context).tokens.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

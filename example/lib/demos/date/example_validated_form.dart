@@ -58,29 +58,29 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
               arabic: true,
             ),
           ),
-          const SizedBox(height: SuperTokensData.defaultSpace6),
+          SizedBox(height: SuperThemeData.of(context).tokens.space6),
           Row(
             children: [
               FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl)),
+                      borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
                 ),
                 onPressed: () => setState(() => _force = true),
                 child: const Text('Validate'),
               ),
-              const SizedBox(width: SuperTokensData.defaultSpace3),
+              SizedBox(width: SuperThemeData.of(context).tokens.space3),
               TextButton(
                 onPressed: () => setState(() => _force = false),
                 child: Text('Reset', style: TextStyle(color: t.fg2)),
               ),
-              const SizedBox(width: SuperTokensData.defaultSpace4),
+              SizedBox(width: SuperThemeData.of(context).tokens.space4),
               if (_force)
                 Text(
                   valid ? 'READY TO POST' : 'FIX 1 FIELD',
                   style: SuperText.label.copyWith(
-                    color: valid ? SuperTokensData.defaultSuccess : Theme.of(context).colorScheme.error,
+                    color: valid ? SuperThemeData.of(context).tokens.success : Theme.of(context).colorScheme.error,
                   ),
                 ),
             ],

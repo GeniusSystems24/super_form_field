@@ -69,7 +69,8 @@ class SuperAttachmentFormField extends StatefulWidget {
   final bool arabic;
 
   @override
-  State<SuperAttachmentFormField> createState() => _SuperAttachmentFormFieldState();
+  State<SuperAttachmentFormField> createState() =>
+      _SuperAttachmentFormFieldState();
 }
 
 class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
@@ -79,7 +80,9 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? SuperAttachmentFieldController(initial: widget.initialFiles);
+    _controller =
+        widget.controller ??
+        SuperAttachmentFieldController(initial: widget.initialFiles);
     _ownsController = widget.controller == null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -91,7 +94,9 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
       if (_ownsController) _controller.dispose();
-      _controller = widget.controller ?? SuperAttachmentFieldController(initial: widget.initialFiles);
+      _controller =
+          widget.controller ??
+          SuperAttachmentFieldController(initial: widget.initialFiles);
       _ownsController = widget.controller == null;
     }
   }
@@ -165,7 +170,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   onTap: _browse,
                 ),
                 if (_controller.files.isNotEmpty) ...[
-                  const SizedBox(height: SuperTokensData.defaultSpace2),
+                  SizedBox(height: SuperThemeData.of(context).tokens.space2),
                   for (final f in _controller.files) ...[
                     _FileCard(
                       file: f,
@@ -173,7 +178,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                       disabled: widget.disabled,
                       onRemove: () => _controller.remove(f.id),
                     ),
-                    const SizedBox(height: SuperTokensData.defaultSpace2),
+                    SizedBox(height: SuperThemeData.of(context).tokens.space2),
                   ],
                 ],
               ],
@@ -211,8 +216,8 @@ class _DropZone extends StatelessWidget {
     final border = over
         ? cs.primary
         : hasError
-            ? cs.error
-            : t.borderStrong;
+        ? cs.error
+        : t.borderStrong;
     final bg = over ? t.tintOnBg(cs.primary) : t.inputBg;
     final pad = density == FieldDensity.compact
         ? const EdgeInsets.symmetric(horizontal: 16, vertical: 16)
@@ -223,14 +228,19 @@ class _DropZone extends StatelessWidget {
       child: GestureDetector(
         onTap: disabled ? null : onTap,
         child: CustomPaint(
-          painter: _DashedRRectPainter(color: border, radius: SuperTokensData.defaultRadiusMd),
+          painter: _DashedRRectPainter(
+            color: border,
+            radius: SuperThemeData.of(context).tokens.radiusMd,
+          ),
           child: AnimatedContainer(
-            duration: SuperTokensData.defaultDurBase,
-            curve: SuperTokensData.defaultCurveStandard,
+            duration: SuperThemeData.of(context).tokens.durBase,
+            curve: SuperThemeData.of(context).tokens.curveStandard,
             padding: pad,
             decoration: BoxDecoration(
               color: bg,
-              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
+              borderRadius: BorderRadius.circular(
+                SuperThemeData.of(context).tokens.radiusMd,
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -242,9 +252,13 @@ class _DropZone extends StatelessWidget {
                     color: Color.alphaBlend(cs.primary.withOpacity(0.13), bg),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(SffIcons.uploadCloud, size: 21, color: cs.primary),
+                  child: Icon(
+                    SffIcons.uploadCloud,
+                    size: 21,
+                    color: cs.primary,
+                  ),
                 ),
-                const SizedBox(height: SuperTokensData.defaultSpace2),
+                SizedBox(height: SuperThemeData.of(context).tokens.space2),
                 Text.rich(
                   TextSpan(
                     children: [
@@ -258,14 +272,20 @@ class _DropZone extends StatelessWidget {
                       ),
                       TextSpan(
                         text: ' or drag files here',
-                        style: SuperText.body.copyWith(color: t.fg2, fontSize: 13.5),
+                        style: SuperText.body.copyWith(
+                          color: t.fg2,
+                          fontSize: 13.5,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 if (acceptHint != null) ...[
-                  const SizedBox(height: SuperTokensData.defaultSpace1),
-                  Text(acceptHint!, style: SuperText.mono.copyWith(color: t.fg4, fontSize: 11)),
+                  SizedBox(height: SuperThemeData.of(context).tokens.space1),
+                  Text(
+                    acceptHint!,
+                    style: SuperText.mono.copyWith(color: t.fg4, fontSize: 11),
+                  ),
                 ],
               ],
             ),
@@ -294,18 +314,20 @@ class _FileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
-    final g = AttachmentLogic.glyphFor(file);
+    final g = AttachmentLogic.glyphFor(context, file);
     final bad = error != null;
     final meta = bad
         ? '${SuperFormat.bytes(file.size)}  ·  ${file.extension.toUpperCase()}'
         : SuperFormat.bytes(file.size);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(11, 8, 6, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(11, 8, 6, 8),
       decoration: BoxDecoration(
         color: t.surface,
         border: Border.all(color: bad ? cs.error : t.border),
-        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
+        borderRadius: BorderRadius.circular(
+          SuperThemeData.of(context).tokens.radiusControl,
+        ),
       ),
       child: Row(
         children: [
@@ -314,11 +336,13 @@ class _FileCard extends StatelessWidget {
             height: 30,
             decoration: BoxDecoration(
               color: Color.alphaBlend(g.color.withOpacity(0.14), t.surface),
-              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
+              borderRadius: BorderRadius.circular(
+                SuperThemeData.of(context).tokens.radiusMd,
+              ),
             ),
             child: Icon(g.icon, size: 16, color: g.color),
           ),
-          const SizedBox(width: SuperTokensData.defaultSpace3),
+          SizedBox(width: SuperThemeData.of(context).tokens.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,7 +358,10 @@ class _FileCard extends StatelessWidget {
                     color: bad ? cs.error : t.fg1,
                   ),
                 ),
-                Text(meta, style: SuperText.mono.copyWith(fontSize: 11, color: t.fg4)),
+                Text(
+                  meta,
+                  style: SuperText.mono.copyWith(fontSize: 11, color: t.fg4),
+                ),
               ],
             ),
           ),
@@ -392,5 +419,6 @@ class _DashedRRectPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_DashedRRectPainter old) => old.color != color || old.radius != radius;
+  bool shouldRepaint(_DashedRRectPainter old) =>
+      old.color != color || old.radius != radius;
 }

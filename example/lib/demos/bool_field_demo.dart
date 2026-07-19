@@ -28,13 +28,13 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
       eyebrow: 'Accounts • Status & Flags',
       title: 'Super Bool Field',
       children: [
-        const SectionCard(
+        SectionCard(
           title: 'Status Flags',
           subtitle: 'Toggle account behaviour',
           marker: Marker.identity,
           child: Column(
             children: [
-              BilingualRow(
+              const BilingualRow(
                 english: SuperBoolFormField(
                   label: 'Account Status',
                   initialValue: true,
@@ -49,15 +49,15 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
                   disabledLabel: 'متوقف',
                 ),
               ),
-              SizedBox(height: SuperTokensData.defaultSpace6),
-              SuperBoolFormField(
+              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              const SuperBoolFormField(
                 label: 'Allow Manual Posting',
                 enabledLabel: 'Manual journals allowed',
                 disabledLabel: 'System postings only',
                 hint: 'When off, only automated integrations may post to this account.',
               ),
-              SizedBox(height: SuperTokensData.defaultSpace6),
-              SuperBoolFormField(
+              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              const SuperBoolFormField(
                 label: 'Reconciliation Required',
                 style: SuperBoolStyle.checkbox,
                 title: 'Require monthly reconciliation for this account',
@@ -84,12 +84,12 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            const SizedBox(width: SuperTokensData.defaultSpace3),
+            SizedBox(width: SuperThemeData.of(context).tokens.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

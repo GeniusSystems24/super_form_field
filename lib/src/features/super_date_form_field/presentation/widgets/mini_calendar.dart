@@ -17,7 +17,7 @@ import '../../domain/usecases/date_logic.dart';
 
 const _months = [
   'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December' //
+  'July', 'August', 'September', 'October', 'November', 'December', //
 ];
 const _dow = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
@@ -55,22 +55,26 @@ class _MiniCalendarState extends State<MiniCalendar> {
   }
 
   void _step(int delta) => setState(() {
-        var m = _m + delta;
-        var y = _y;
-        if (m < 0) {
-          m = 11;
-          y--;
-        } else if (m > 11) {
-          m = 0;
-          y++;
-        }
-        _m = m;
-        _y = y;
-      });
+    var m = _m + delta;
+    var y = _y;
+    if (m < 0) {
+      m = 11;
+      y--;
+    } else if (m > 11) {
+      m = 0;
+      y++;
+    }
+    _m = m;
+    _y = y;
+  });
 
   bool _outOfRange(DateTime d) {
-    final lo = widget.minDate == null ? null : DateLogic.dateOnly(widget.minDate!);
-    final hi = widget.maxDate == null ? null : DateLogic.dateOnly(widget.maxDate!);
+    final lo = widget.minDate == null
+        ? null
+        : DateLogic.dateOnly(widget.minDate!);
+    final hi = widget.maxDate == null
+        ? null
+        : DateLogic.dateOnly(widget.maxDate!);
     if (lo != null && d.isBefore(lo)) return true;
     if (hi != null && d.isAfter(hi)) return true;
     return false;
@@ -94,13 +98,20 @@ class _MiniCalendarState extends State<MiniCalendar> {
 
     return Container(
       width: 248,
-      padding: const EdgeInsets.all(SuperTokensData.defaultSpace3),
+      padding: EdgeInsets.all(SuperThemeData.of(context).tokens.space3),
       decoration: BoxDecoration(
         color: t.surface,
-        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusCard),
+        borderRadius: BorderRadius.circular(
+          SuperThemeData.of(context).tokens.radiusCard,
+        ),
         border: Border.all(color: t.borderStrong),
         boxShadow: const [
-          BoxShadow(color: Color(0x59000000), blurRadius: 24, spreadRadius: -6, offset: Offset(0, 10)),
+          BoxShadow(
+            color: Color(0x59000000),
+            blurRadius: 24,
+            spreadRadius: -6,
+            offset: Offset(0, 10),
+          ),
         ],
       ),
       child: Column(
@@ -108,13 +119,21 @@ class _MiniCalendarState extends State<MiniCalendar> {
         children: [
           // ── header: month nav ──
           Padding(
-            padding: const EdgeInsets.only(bottom: SuperTokensData.defaultSpace2),
+            padding: EdgeInsets.only(
+              bottom: SuperThemeData.of(context).tokens.space2,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _NavButton(icon: SffIcons.chevronLeft, onTap: () => _step(-1)),
-                Text('${_months[_m]} $_y',
-                    style: SuperText.body.copyWith(color: t.fg1, fontWeight: FontWeight.w700, fontSize: 13.5)),
+                Text(
+                  '${_months[_m]} $_y',
+                  style: SuperText.body.copyWith(
+                    color: t.fg1,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.5,
+                  ),
+                ),
                 _NavButton(icon: SffIcons.chevronRight, onTap: () => _step(1)),
               ],
             ),
@@ -125,13 +144,19 @@ class _MiniCalendarState extends State<MiniCalendar> {
               for (final d in _dow)
                 Expanded(
                   child: Center(
-                    child: Text(d,
-                        style: SuperText.label.copyWith(color: t.fg4, fontSize: 10, letterSpacing: 0.2)),
+                    child: Text(
+                      d,
+                      style: SuperText.label.copyWith(
+                        color: t.fg4,
+                        fontSize: 10,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: SuperTokensData.defaultSpace1),
+          SizedBox(height: SuperThemeData.of(context).tokens.space1),
           // ── day grid ──
           GridView.count(
             crossAxisCount: 7,
@@ -148,14 +173,17 @@ class _MiniCalendarState extends State<MiniCalendar> {
                   _DayCell(
                     day: d,
                     date: DateTime(_y, _m + 1, d),
-                    selected: DateLogic.sameDay(widget.value, DateTime(_y, _m + 1, d)),
+                    selected: DateLogic.sameDay(
+                      widget.value,
+                      DateTime(_y, _m + 1, d),
+                    ),
                     isToday: DateLogic.sameDay(today, DateTime(_y, _m + 1, d)),
                     disabled: _outOfRange(DateTime(_y, _m + 1, d)),
                     onTap: widget.onPick,
                   ),
             ],
           ),
-          const SizedBox(height: SuperTokensData.defaultSpace1),
+          SizedBox(height: SuperThemeData.of(context).tokens.space1),
           // ── Today shortcut ──
           Align(
             alignment: AlignmentDirectional.centerEnd,
@@ -166,8 +194,13 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Text('Today',
-                  style: SuperText.caption.copyWith(color: cs.primary, fontWeight: FontWeight.w600)),
+              child: Text(
+                'Today',
+                style: SuperText.caption.copyWith(
+                  color: cs.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],
@@ -184,10 +217,11 @@ class _NavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final cs = context.sffColorScheme;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
+      borderRadius: BorderRadius.circular(
+        SuperThemeData.of(context).tokens.radiusMd,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(4),
         child: Icon(icon, size: 18, color: t.fg2),
@@ -230,25 +264,31 @@ class _DayCellState extends State<_DayCell> {
     final Color fg = widget.disabled
         ? t.fg4
         : widget.selected
-            ? const Color(0xFFFFFFFF)
-            : t.fg1;
+        ? const Color(0xFFFFFFFF)
+        : t.fg1;
     final border = widget.isToday && !widget.selected
         ? Border.all(color: t.borderStrong)
         : Border.all(color: const Color(0x00000000));
 
     return MouseRegion(
-      cursor: widget.disabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
+      cursor: widget.disabled
+          ? SystemMouseCursors.basic
+          : SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
-        onTap: widget.disabled ? null : () => widget.onTap(DateLogic.dateOnly(widget.date)),
+        onTap: widget.disabled
+            ? null
+            : () => widget.onTap(DateLogic.dateOnly(widget.date)),
         child: Opacity(
           opacity: widget.disabled ? 0.35 : 1,
           child: Container(
             decoration: BoxDecoration(
               color: bg,
               border: border,
-              borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusMd),
+              borderRadius: BorderRadius.circular(
+                SuperThemeData.of(context).tokens.radiusMd,
+              ),
             ),
             alignment: Alignment.center,
             child: Text(

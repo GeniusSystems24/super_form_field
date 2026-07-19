@@ -97,7 +97,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ??
+    _controller =
+        widget.controller ??
         SuperTextFieldController(
           initialValue: widget.initialValue,
           obscured: widget.type == SuperTextType.password,
@@ -119,7 +120,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       } else {
         _controller.text.removeListener(_emitChange);
       }
-      _controller = widget.controller ??
+      _controller =
+          widget.controller ??
           SuperTextFieldController(
             initialValue: widget.initialValue,
             obscured: widget.type == SuperTextType.password,
@@ -139,14 +141,14 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
   }
 
   List<Validator<String>> _buildValidators() => buildTextValidators(
-        required: widget.required,
-        minLength: widget.minLength,
-        maxLength: widget.maxLength,
-        type: widget.type,
-        pattern: widget.pattern,
-        patternMessage: widget.patternMessage,
-        extra: widget.validators,
-      );
+    required: widget.required,
+    minLength: widget.minLength,
+    maxLength: widget.maxLength,
+    type: widget.type,
+    pattern: widget.pattern,
+    patternMessage: widget.patternMessage,
+    extra: widget.validators,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -195,13 +197,15 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     final focused = _controller.focused;
 
     // ── Border states ──
-    final enabledBorderColor  = hasError ? cs.error : t.borderStrong;
-    final focusedBorderColor  = hasError ? cs.error : cs.primary;
+    final enabledBorderColor = hasError ? cs.error : t.borderStrong;
+    final focusedBorderColor = hasError ? cs.error : cs.primary;
     final disabledBorderColor = t.border;
 
     OutlineInputBorder border(Color color, {double width = 1.4}) =>
         OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusControl),
+          borderRadius: BorderRadius.circular(
+            SuperThemeData.of(context).tokens.radiusControl,
+          ),
           borderSide: BorderSide(color: color, width: width),
         );
 
@@ -210,7 +214,10 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     // ── Suffix icon row ──
     final trailingWidgets = <Widget>[
-      if (!multiline && widget.clearable && _controller.value.isNotEmpty && editable)
+      if (!multiline &&
+          widget.clearable &&
+          _controller.value.isNotEmpty &&
+          editable)
         FieldIconButton(
           icon: SffIcons.clear,
           tooltip: 'Clear',
@@ -245,8 +252,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     // ── Density ──
     final minH = widget.density == FieldDensity.compact
-        ? SuperTokensData.defaultFieldCompact
-        : SuperTokensData.defaultFieldComfortable;
+        ? SuperThemeData.of(context).tokens.fieldCompact
+        : SuperThemeData.of(context).tokens.fieldComfortable;
 
     // ── Prefix / suffix text adornments ──
     final adornStyle = SuperText.body.copyWith(color: t.fg3, fontSize: 13);
@@ -256,7 +263,9 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       hintText: widget.placeholder,
       hintStyle: SuperText.body.copyWith(
         color: t.fg4,
-        fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
+        fontFamily: widget.arabic
+            ? SuperThemeData.of(context).tokens.arabicFont
+            : SuperThemeData.of(context).tokens.bodyFont,
       ),
       // Leading / trailing
       prefixIcon: prefixIconWidget,
@@ -274,16 +283,16 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       // Fill
       filled: true,
       fillColor: widget.disabled ? Colors.transparent : fillColor,
+
       // Sizing — tight height for single-line; unconstrained for multiline
-      
       constraints: multiline
           ? BoxConstraints(minHeight: minH)
           : BoxConstraints.tightFor(height: minH),
       contentPadding: EdgeInsets.symmetric(
-        horizontal: SuperTokensData.defaultSpace3,
+        horizontal: SuperThemeData.of(context).tokens.space3,
         vertical: widget.density == FieldDensity.compact
-            ? SuperTokensData.defaultSpace1
-            : SuperTokensData.defaultSpace2,
+            ? SuperThemeData.of(context).tokens.space1
+            : SuperThemeData.of(context).tokens.space2,
       ),
       // Borders — fully specified; overrides inputDecorationTheme
       border: border(enabledBorderColor),
@@ -298,7 +307,9 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     final textStyle = SuperText.body.copyWith(
       color: t.fg1,
-      fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
+      fontFamily: widget.arabic
+          ? SuperThemeData.of(context).tokens.arabicFont
+          : SuperThemeData.of(context).tokens.bodyFont,
     );
 
     final field = TextField(
@@ -307,19 +318,21 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       enabled: !widget.disabled,
       readOnly: widget.readOnly,
       autofocus: widget.autofocus,
-      obscureText: widget.type == SuperTextType.password && _controller.obscured,
+      obscureText:
+          widget.type == SuperTextType.password && _controller.obscured,
       maxLines: multiline ? widget.rows : 1,
       minLines: multiline ? widget.rows : 1,
       maxLength: widget.maxLength,
       maxLengthEnforcement: widget.maxLength != null
           ? MaxLengthEnforcement.enforced
           : MaxLengthEnforcement.none,
-      buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
+      buildCounter:
+          (_, {required currentLength, required isFocused, maxLength}) => null,
       keyboardType: multiline
           ? TextInputType.multiline
           : widget.type == SuperTextType.email
-              ? TextInputType.emailAddress
-              : TextInputType.text,
+          ? TextInputType.emailAddress
+          : TextInputType.text,
       cursorColor: cs.primary,
       style: textStyle,
       textAlign: widget.arabic ? TextAlign.right : TextAlign.left,

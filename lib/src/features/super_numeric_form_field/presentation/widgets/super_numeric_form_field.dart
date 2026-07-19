@@ -102,7 +102,9 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? SuperNumericFieldController(initialValue: widget.initialValue);
+    _controller =
+        widget.controller ??
+        SuperNumericFieldController(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -114,7 +116,9 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
       if (_ownsController) _controller.dispose();
-      _controller = widget.controller ?? SuperNumericFieldController(initialValue: widget.initialValue);
+      _controller =
+          widget.controller ??
+          SuperNumericFieldController(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
     }
   }
@@ -155,7 +159,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
-    final cs = context.sffColorScheme;
+        final cs = context.sffColorScheme;
         final error = widget.disabled ? null : _controller.visibleError;
 
         final trailing = <Widget>[
@@ -165,7 +169,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
               icon: SffIcons.minus,
               tooltip: 'Decrement',
               bordered: true,
-              size: SuperTokensData.defaultStepperSize,
+              size: SuperThemeData.of(context).tokens.stepperSize,
               iconSize: 14,
               onPressed: widget.readOnly ? null : () => _controller.bump(-1),
             ),
@@ -173,7 +177,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
               icon: SffIcons.plus,
               tooltip: 'Increment',
               bordered: true,
-              size: SuperTokensData.defaultStepperSize,
+              size: SuperThemeData.of(context).tokens.stepperSize,
               iconSize: 14,
               onPressed: widget.readOnly ? null : () => _controller.bump(1),
             ),
@@ -203,7 +207,10 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 enabled: !widget.disabled,
                 readOnly: widget.readOnly,
                 textAlign: TextAlign.right,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                  signed: true,
+                ),
                 cursorColor: cs.primary,
                 style: SuperText.mono.copyWith(color: t.fg1),
                 // All borders are suppressed — FieldBox owns the single border.
@@ -217,7 +224,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                   focusedErrorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
                   filled: false,
-                  
+
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -229,15 +236,15 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
   }
 
   Widget _unit(SuperThemeData t, String text) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 1),
-        child: Text(
-          text,
-          style: SuperText.mono.copyWith(
-            color: t.fg3,
-            fontSize: 12.5,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.2,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 1),
+    child: Text(
+      text,
+      style: SuperText.mono.copyWith(
+        color: t.fg3,
+        fontSize: 12.5,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.2,
+      ),
+    ),
+  );
 }

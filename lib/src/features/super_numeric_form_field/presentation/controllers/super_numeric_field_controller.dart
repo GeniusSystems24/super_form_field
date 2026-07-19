@@ -53,12 +53,15 @@ class SuperNumericFieldController extends ChangeNotifier {
   num? get value => _value;
   bool get touched => _touched;
   bool get focused => focusNode.hasFocus;
-  num? get lowerBound => NumericLogic.lowerBound(min: _min, allowNegative: _allowNegative);
+  num? get lowerBound =>
+      NumericLogic.lowerBound(min: _min, allowNegative: _allowNegative);
 
   String? get error => runValidators(_value, _validators);
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
-  String _formatted() => SuperFormat.number(_value, decimals: _decimals, grouping: _grouping);
+  String _formatted() =>
+      SuperFormat.number(_value, decimals: _decimals, grouping: _grouping);
 
   // ── View → controller config ──
   void configure({
@@ -105,7 +108,10 @@ class SuperNumericFieldController extends ChangeNotifier {
 
   void _writeText(String s) {
     _syncing = true;
-    text.value = TextEditingValue(text: s, selection: TextSelection.collapsed(offset: s.length));
+    text.value = TextEditingValue(
+      text: s,
+      selection: TextSelection.collapsed(offset: s.length),
+    );
     _syncing = false;
   }
 
@@ -147,7 +153,9 @@ class SuperNumericFieldController extends ChangeNotifier {
   /// field. No-op when read-only or keyboard stepping is disabled.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (!_keyboardEnabled || _readOnly) return KeyEventResult.ignored;
-    if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
     final k = event.logicalKey;
     if (k == LogicalKeyboardKey.arrowUp) {
       bump(1);
@@ -171,7 +179,10 @@ class SuperNumericFieldController extends ChangeNotifier {
   void _onTextChanged() {
     if (_syncing) return;
     // Live editing: sanitise + parse.
-    final sanitized = NumericLogic.sanitize(text.text, allowNegative: _allowNegative);
+    final sanitized = NumericLogic.sanitize(
+      text.text,
+      allowNegative: _allowNegative,
+    );
     if (sanitized != text.text) {
       _writeText(sanitized);
     }
@@ -187,7 +198,12 @@ class SuperNumericFieldController extends ChangeNotifier {
     } else {
       _touched = true;
       if (_value != null) {
-        _value = NumericLogic.clampRound(_value!, min: lowerBound, max: _max, decimals: _decimals);
+        _value = NumericLogic.clampRound(
+          _value!,
+          min: lowerBound,
+          max: _max,
+          decimals: _decimals,
+        );
         _emit();
       }
       _writeText(_formatted());

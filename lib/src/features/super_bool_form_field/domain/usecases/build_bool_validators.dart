@@ -14,8 +14,5 @@ List<Validator<bool>> buildBoolValidators({
   List<Validator<bool>> extra = const [],
   String mustBeTrueMessage = 'This must be enabled to continue',
 }) {
-  return [
-    if (mustBeTrue) (v) => v ? null : mustBeTrueMessage,
-    ...extra,
-  ];
+  return [if (mustBeTrue) (v) => v ? null : mustBeTrueMessage, ...extra];
 }

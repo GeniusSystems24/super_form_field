@@ -28,13 +28,20 @@ List<Validator<String>> buildTextValidators({
   return [
     if (required) (v) => v.trim().isEmpty ? requiredMessage : null,
     if (minLength != null)
-      (v) => v.isNotEmpty && v.length < minLength ? 'Must be at least $minLength characters' : null,
+      (v) => v.isNotEmpty && v.length < minLength
+          ? 'Must be at least $minLength characters'
+          : null,
     if (maxLength != null)
-      (v) => v.length > maxLength ? 'Must be at most $maxLength characters' : null,
+      (v) =>
+          v.length > maxLength ? 'Must be at most $maxLength characters' : null,
     if (type == SuperTextType.email)
-      (v) => v.isNotEmpty && !kEmailRe.hasMatch(v) ? 'Enter a valid email address' : null,
+      (v) => v.isNotEmpty && !kEmailRe.hasMatch(v)
+          ? 'Enter a valid email address'
+          : null,
     if (pattern != null)
-      (v) => v.isNotEmpty && !pattern.hasMatch(v) ? (patternMessage ?? 'Invalid format') : null,
+      (v) => v.isNotEmpty && !pattern.hasMatch(v)
+          ? (patternMessage ?? 'Invalid format')
+          : null,
     ...extra,
   ];
 }

@@ -13,13 +13,18 @@ import '../../../../core/utils/validators.dart';
 /// Multi-select business rules, grouped as a stateless helper.
 abstract final class MultiSelectLogic {
   /// Filters [options] by a case-insensitive [query] over label + description.
-  static List<SuperOption<T>> filter<T>(List<SuperOption<T>> options, String query) {
+  static List<SuperOption<T>> filter<T>(
+    List<SuperOption<T>> options,
+    String query,
+  ) {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return options;
     return options
-        .where((o) =>
-            o.label.toLowerCase().contains(q) ||
-            (o.description?.toLowerCase().contains(q) ?? false))
+        .where(
+          (o) =>
+              o.label.toLowerCase().contains(q) ||
+              (o.description?.toLowerCase().contains(q) ?? false),
+        )
         .toList();
   }
 
@@ -39,7 +44,9 @@ abstract final class MultiSelectLogic {
             ? 'Select at least $minSelections options'
             : null,
       if (maxSelections != null)
-        (v) => v.length > maxSelections ? 'Select at most $maxSelections options' : null,
+        (v) => v.length > maxSelections
+            ? 'Select at most $maxSelections options'
+            : null,
       ...extra,
     ];
   }

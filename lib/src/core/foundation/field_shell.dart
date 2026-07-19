@@ -53,7 +53,9 @@ class FieldShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final fontFamily = arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont;
+    final fontFamily = arabic
+        ? SuperThemeData.of(context).tokens.arabicFont
+        : SuperThemeData.of(context).tokens.bodyFont;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,19 +65,27 @@ class FieldShell extends StatelessWidget {
           Row(
             children: [
               if (label != null)
-                _Label(text: label!, required: required, color: t.fg2, fontFamily: fontFamily),
+                _Label(
+                  text: label!,
+                  required: required,
+                  color: t.fg2,
+                  fontFamily: fontFamily,
+                ),
               const Spacer(),
               if (labelRight != null) labelRight!,
             ],
           ),
-          const SizedBox(height: SuperTokensData.defaultSpace2),
+          SizedBox(height: SuperThemeData.of(context).tokens.space2),
         ],
         child,
         if (hint != null && !hasError) ...[
-          const SizedBox(height: SuperTokensData.defaultSpace2),
+          SizedBox(height: SuperThemeData.of(context).tokens.space2),
           Text(
             hint!,
-            style: SuperText.caption.copyWith(color: t.fg4, fontFamily: fontFamily),
+            style: SuperText.caption.copyWith(
+              color: t.fg4,
+              fontFamily: fontFamily,
+            ),
           ),
         ],
       ],
@@ -98,14 +108,20 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = SuperText.label.copyWith(color: color, fontFamily: fontFamily);
+    final style = SuperText.label.copyWith(
+      color: color,
+      fontFamily: fontFamily,
+    );
     if (!required) return Text(text.toUpperCase(), style: style);
     return Text.rich(
       TextSpan(
         text: text.toUpperCase(),
         style: style,
         children: [
-          TextSpan(text: ' *', style: style.copyWith(color: Theme.of(context).colorScheme.error)),
+          TextSpan(
+            text: ' *',
+            style: style.copyWith(color: Theme.of(context).colorScheme.error),
+          ),
         ],
       ),
     );

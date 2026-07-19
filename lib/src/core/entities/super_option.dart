@@ -43,8 +43,10 @@ class SuperOption<T> {
   final String? group;
 
   /// Convenience to build a list of options from `value → label` pairs.
-  static List<SuperOption<V>> fromMap<V>(Map<V, String> entries) =>
-      entries.entries.map((e) => SuperOption<V>(value: e.key, label: e.value)).toList();
+  static List<SuperOption<V>> fromMap<V>(Map<V, String> entries) => entries
+      .entries
+      .map((e) => SuperOption<V>(value: e.key, label: e.value))
+      .toList();
 
   @override
   bool operator ==(Object other) =>

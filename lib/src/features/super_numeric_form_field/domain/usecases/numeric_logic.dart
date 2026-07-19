@@ -37,7 +37,10 @@ abstract final class NumericLogic {
   /// Parses a sanitised string to a number, or null when incomplete (`''`,
   /// `'-'`, `'.'`, `'-.'`).
   static num? parse(String sanitized) {
-    if (sanitized.isEmpty || sanitized == '-' || sanitized == '.' || sanitized == '-.') {
+    if (sanitized.isEmpty ||
+        sanitized == '-' ||
+        sanitized == '.' ||
+        sanitized == '-.') {
       return null;
     }
     return double.tryParse(sanitized);
@@ -77,7 +80,9 @@ abstract final class NumericLogic {
       if (required) (v) => v == null ? requiredMessage : null,
       if (lo != null)
         (v) => v != null && v < lo
-            ? (lo == 0 ? 'Cannot be negative' : 'Must be at least ${SuperFormat.number(lo, decimals: decimals, grouping: grouping)}')
+            ? (lo == 0
+                  ? 'Cannot be negative'
+                  : 'Must be at least ${SuperFormat.number(lo, decimals: decimals, grouping: grouping)}')
             : null,
       if (max != null)
         (v) => v != null && v > max

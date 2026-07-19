@@ -13,13 +13,18 @@ import '../../../../core/utils/validators.dart';
 abstract final class SelectLogic {
   /// Filters [options] by a case-insensitive [query] over label + description.
   /// An empty/blank query returns the list unchanged.
-  static List<SuperOption<T>> filter<T>(List<SuperOption<T>> options, String query) {
+  static List<SuperOption<T>> filter<T>(
+    List<SuperOption<T>> options,
+    String query,
+  ) {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return options;
     return options
-        .where((o) =>
-            o.label.toLowerCase().contains(q) ||
-            (o.description?.toLowerCase().contains(q) ?? false))
+        .where(
+          (o) =>
+              o.label.toLowerCase().contains(q) ||
+              (o.description?.toLowerCase().contains(q) ?? false),
+        )
         .toList();
   }
 
@@ -29,9 +34,6 @@ abstract final class SelectLogic {
     List<Validator<T?>> extra = const [],
     String requiredMessage = 'This field is required',
   }) {
-    return [
-      if (required) (v) => v == null ? requiredMessage : null,
-      ...extra,
-    ];
+    return [if (required) (v) => v == null ? requiredMessage : null, ...extra];
   }
 }

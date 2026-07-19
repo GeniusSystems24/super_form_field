@@ -16,7 +16,7 @@ import '../../domain/usecases/attachment_logic.dart';
 
 class SuperAttachmentFieldController extends ChangeNotifier {
   SuperAttachmentFieldController({List<SuperFile>? initial})
-      : _files = List<SuperFile>.from(initial ?? const []);
+    : _files = List<SuperFile>.from(initial ?? const []);
 
   List<SuperFile> _files;
   bool _touched = false;
@@ -37,16 +37,22 @@ class SuperAttachmentFieldController extends ChangeNotifier {
   List<SuperFile> get files => List.unmodifiable(_files);
   bool get touched => _touched;
   bool get dragOver => _dragOver;
-  int? get maxBytes => _maxSizeMB != null ? (_maxSizeMB! * 1024 * 1024).round() : null;
+  int? get maxBytes =>
+      _maxSizeMB != null ? (_maxSizeMB! * 1024 * 1024).round() : null;
   String? get accept => _accept;
   double? get maxSizeMB => _maxSizeMB;
 
   String? get error => runValidators(_files, _validators);
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
   /// Per-file error for the card-level red state.
-  String? errorForFile(SuperFile f) =>
-      AttachmentLogic.fileError(f, maxBytes: maxBytes, accept: _accept, maxSizeMB: _maxSizeMB);
+  String? errorForFile(SuperFile f) => AttachmentLogic.fileError(
+    f,
+    maxBytes: maxBytes,
+    accept: _accept,
+    maxSizeMB: _maxSizeMB,
+  );
 
   // ── View → controller config ──
   void configure({
@@ -80,7 +86,9 @@ class SuperAttachmentFieldController extends ChangeNotifier {
   /// Add files (from a host picker or OS drop). Assigns stable ids, dedupes by
   /// (name,size), and honors the single-file constraint when `multiple` is off.
   void add(Iterable<SuperFile> incoming) {
-    final stamped = incoming.map((f) => f.copyWith(id: 'sff-${_seq++}')).toList();
+    final stamped = incoming
+        .map((f) => f.copyWith(id: 'sff-${_seq++}'))
+        .toList();
     if (!_multiple) {
       _files = stamped.isEmpty ? _files : [stamped.last];
     } else {

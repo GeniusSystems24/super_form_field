@@ -29,17 +29,33 @@ abstract final class AttachmentLogic {
   static final RegExp _sheet = RegExp(r'(xlsx?|csv)$');
 
   /// The glyph + color for a file, by extension then MIME.
-  static FileGlyph glyphFor(SuperFile f) {
+  static FileGlyph glyphFor(BuildContext context, SuperFile f) {
     final e = f.extension;
     final type = (f.mimeType ?? '').toLowerCase();
     if (_image.hasMatch(e) || type.startsWith('image/')) {
-      return const FileGlyph(SffIcons.image, SuperTokensData.defaultSuccess);
+      return FileGlyph(
+        SffIcons.image,
+        SuperThemeData.of(context).tokens.success,
+      );
     }
     if (e == 'pdf' || type.contains('pdf')) {
-      return const FileGlyph(SffIcons.fileText, SuperTokensData.defaultDanger);
+      return FileGlyph(
+        SffIcons.fileText,
+        SuperThemeData.of(context).tokens.danger,
+      );
     }
-    if (_doc.hasMatch(e)) return const FileGlyph(SffIcons.fileText, SuperTokensData.defaultAccent);
-    if (_sheet.hasMatch(e)) return const FileGlyph(SffIcons.sheet, SuperTokensData.defaultSuccess);
+    if (_doc.hasMatch(e)) {
+      return FileGlyph(
+        SffIcons.fileText,
+        SuperThemeData.of(context).tokens.accent,
+      );
+    }
+    if (_sheet.hasMatch(e)) {
+      return FileGlyph(
+        SffIcons.sheet,
+        SuperThemeData.of(context).tokens.success,
+      );
+    }
     return const FileGlyph(SffIcons.file, Color(0xFF8D90A0)); // neutral fg-3
   }
 
@@ -47,7 +63,10 @@ abstract final class AttachmentLogic {
   /// exact MIME). Null/empty accept allows everything.
   static bool matchesAccept(SuperFile f, String? accept) {
     if (accept == null || accept.trim().isEmpty) return true;
-    final tokens = accept.split(',').map((s) => s.trim().toLowerCase()).where((s) => s.isNotEmpty);
+    final tokens = accept
+        .split(',')
+        .map((s) => s.trim().toLowerCase())
+        .where((s) => s.isNotEmpty);
     final ext = '.${f.extension}';
     final type = (f.mimeType ?? '').toLowerCase();
     for (final tok in tokens) {
@@ -63,7 +82,12 @@ abstract final class AttachmentLogic {
   }
 
   /// The per-file error (size then type), or null when the file is acceptable.
-  static String? fileError(SuperFile f, {int? maxBytes, String? accept, double? maxSizeMB}) {
+  static String? fileError(
+    SuperFile f, {
+    int? maxBytes,
+    String? accept,
+    double? maxSizeMB,
+  }) {
     if (maxBytes != null && f.size > maxBytes) {
       return '“${f.name}” exceeds ${maxSizeMB?.toStringAsFixed(maxSizeMB.truncateToDouble() == maxSizeMB ? 0 : 1)} MB';
     }
@@ -82,14 +106,23 @@ abstract final class AttachmentLogic {
     List<Validator<List<SuperFile>>> extra = const [],
     String requiredMessage = 'At least one file is required',
   }) {
-    final maxBytes = maxSizeMB != null ? (maxSizeMB * 1024 * 1024).round() : null;
+    final maxBytes = maxSizeMB != null
+        ? (maxSizeMB * 1024 * 1024).round()
+        : null;
     return [
       if (required) (v) => v.isEmpty ? requiredMessage : null,
       if (maxFiles != null)
-        (v) => v.length > maxFiles ? 'Attach at most $maxFiles file${maxFiles > 1 ? 's' : ''}' : null,
+        (v) => v.length > maxFiles
+            ? 'Attach at most $maxFiles file${maxFiles > 1 ? 's' : ''}'
+            : null,
       (v) {
         for (final f in v) {
-          final e = fileError(f, maxBytes: maxBytes, accept: accept, maxSizeMB: maxSizeMB);
+          final e = fileError(
+            f,
+            maxBytes: maxBytes,
+            accept: accept,
+            maxSizeMB: maxSizeMB,
+          );
           if (e != null) return e;
         }
         return null;

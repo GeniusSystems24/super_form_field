@@ -19,7 +19,7 @@ import '../../domain/usecases/date_logic.dart';
 
 class SuperDateFieldController extends ChangeNotifier {
   SuperDateFieldController({DateTime? initialValue})
-      : _value = initialValue == null ? null : DateLogic.dateOnly(initialValue) {
+    : _value = initialValue == null ? null : DateLogic.dateOnly(initialValue) {
     _dispFromValue();
     text = TextEditingController(text: _composeString().text);
     _lastComposed = text.text;
@@ -81,7 +81,8 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// The error shown to the user — gated on first blur ([touched]) or
   /// [_forceError]. Errors surface via the suffix badge, never inline.
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
   // ── View → controller config ──
   void configure({
@@ -264,7 +265,9 @@ class SuperDateFieldController extends ChangeNotifier {
     }
     if (_value != null) {
       for (final k in _order) {
-        final v = k == 0 ? _value!.year : (k == 1 ? _value!.month : _value!.day);
+        final v = k == 0
+            ? _value!.year
+            : (k == 1 ? _value!.month : _value!.day);
         _disp[k] = v.toString().padLeft(_width(k), '0');
         _committed[k] = true;
       }
@@ -288,7 +291,9 @@ class SuperDateFieldController extends ChangeNotifier {
     _committed[kind] = false;
     final n = int.parse(_buf);
     final full = _buf.length >= w;
-    final early = (kind == 1 && _buf.length == 1 && n > 1) || (kind == 2 && _buf.length == 1 && n > 3);
+    final early =
+        (kind == 1 && _buf.length == 1 && n > 1) ||
+        (kind == 2 && _buf.length == 1 && n > 3);
     if (full || early) _finalizeAndAdvance();
     _commit();
   }
@@ -299,7 +304,9 @@ class SuperDateFieldController extends ChangeNotifier {
     var n = int.parse(_buf);
     if (kind == 1) n = n.clamp(1, 12);
     if (kind == 2) n = n.clamp(1, 31);
-    _disp[kind] = kind == 0 ? _buf.padLeft(4, '0') : n.toString().padLeft(2, '0');
+    _disp[kind] = kind == 0
+        ? _buf.padLeft(4, '0')
+        : n.toString().padLeft(2, '0');
     _committed[kind] = true;
   }
 
@@ -418,17 +425,25 @@ class SuperDateFieldController extends ChangeNotifier {
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (_readOnly) return KeyEventResult.ignored;
-    if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
     final hw = HardwareKeyboard.instance;
     // Let OS / app shortcuts (copy, paste, select-all, …) through.
-    if (hw.isControlPressed || hw.isMetaPressed || hw.isAltPressed) return KeyEventResult.ignored;
+    if (hw.isControlPressed || hw.isMetaPressed || hw.isAltPressed) {
+      return KeyEventResult.ignored;
+    }
     final k = event.logicalKey;
 
-    if (k == LogicalKeyboardKey.arrowUp && _keyboardEnabled && !hw.isShiftPressed) {
+    if (k == LogicalKeyboardKey.arrowUp &&
+        _keyboardEnabled &&
+        !hw.isShiftPressed) {
       stepAtCursor(1);
       return KeyEventResult.handled;
     }
-    if (k == LogicalKeyboardKey.arrowDown && _keyboardEnabled && !hw.isShiftPressed) {
+    if (k == LogicalKeyboardKey.arrowDown &&
+        _keyboardEnabled &&
+        !hw.isShiftPressed) {
       stepAtCursor(-1);
       return KeyEventResult.handled;
     }

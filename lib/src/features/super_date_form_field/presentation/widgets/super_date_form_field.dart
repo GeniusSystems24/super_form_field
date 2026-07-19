@@ -118,7 +118,9 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? SuperDateFieldController(initialValue: widget.initialValue);
+    _controller =
+        widget.controller ??
+        SuperDateFieldController(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -130,7 +132,9 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
       if (_ownsController) _controller.dispose();
-      _controller = widget.controller ?? SuperDateFieldController(initialValue: widget.initialValue);
+      _controller =
+          widget.controller ??
+          SuperDateFieldController(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
     }
   }
@@ -196,7 +200,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
       listenable: _controller,
       builder: (context, _) {
         final t = context.sffTheme;
-    final cs = context.sffColorScheme;
+        final cs = context.sffColorScheme;
         final error = widget.disabled ? null : _controller.visibleError;
 
         final trailing = <Widget>[
@@ -214,7 +218,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 icon: SffIcons.calendarDays,
                 tooltip: 'Open calendar',
                 bordered: true,
-                size: SuperTokensData.defaultTrailingIcon,
+                size: SuperThemeData.of(context).tokens.trailingIcon,
                 iconSize: 15,
                 onPressed: _editable ? _toggleCalendar : null,
               ),
@@ -224,7 +228,8 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
         return OverlayPortal(
           controller: _overlay,
           overlayChildBuilder: (context) {
-            final alignEnd = !rtl; // LTR: icon at end (right) → align right edges
+            final alignEnd =
+                !rtl; // LTR: icon at end (right) → align right edges
             return Stack(
               children: [
                 Positioned.fill(
@@ -241,9 +246,13 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                   showWhenUnlinked: false,
                   targetAnchor: _above
                       ? (alignEnd ? Alignment.topRight : Alignment.topLeft)
-                      : (alignEnd ? Alignment.bottomRight : Alignment.bottomLeft),
+                      : (alignEnd
+                            ? Alignment.bottomRight
+                            : Alignment.bottomLeft),
                   followerAnchor: _above
-                      ? (alignEnd ? Alignment.bottomRight : Alignment.bottomLeft)
+                      ? (alignEnd
+                            ? Alignment.bottomRight
+                            : Alignment.bottomLeft)
                       : (alignEnd ? Alignment.topRight : Alignment.topLeft),
                   offset: Offset(0, _above ? -6 : 6),
                   child: Directionality(
@@ -270,7 +279,9 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
               error: error,
               disabled: widget.disabled,
               density: widget.density,
-              leading: widget.leadingIcon != null ? Icon(widget.leadingIcon) : null,
+              leading: widget.leadingIcon != null
+                  ? Icon(widget.leadingIcon)
+                  : null,
               trailing: trailing,
               child: Directionality(
                 textDirection: TextDirection.ltr,
@@ -292,7 +303,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                     focusedBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
                     filled: false,
-                    
+
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),

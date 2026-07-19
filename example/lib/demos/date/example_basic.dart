@@ -38,7 +38,7 @@ class _DateBasicExampleState extends State<DateBasicExample> {
             hint: 'Click a segment and type (year→month→day), or step with ↑/↓ · ←/→ moves segments.',
             onChanged: (v) => setState(() => _value = v),
           ),
-          const SizedBox(height: SuperTokensData.defaultSpace3),
+          SizedBox(height: SuperThemeData.of(context).tokens.space3),
           Text(
             'VALUE  ${DateLogic.format(_value).isEmpty ? '—' : DateLogic.format(_value)}',
             style: SuperText.mono.copyWith(color: t.fg3, fontSize: 12),

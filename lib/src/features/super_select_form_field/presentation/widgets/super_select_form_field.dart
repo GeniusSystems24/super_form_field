@@ -82,7 +82,8 @@ class SuperSelectFormField<T> extends StatefulWidget {
   final bool arabic;
 
   @override
-  State<SuperSelectFormField<T>> createState() => _SuperSelectFormFieldState<T>();
+  State<SuperSelectFormField<T>> createState() =>
+      _SuperSelectFormFieldState<T>();
 }
 
 class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
@@ -92,7 +93,9 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? SuperSelectFieldController<T>(initialValue: widget.initialValue);
+    _controller =
+        widget.controller ??
+        SuperSelectFieldController<T>(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -104,7 +107,9 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
       if (_ownsController) _controller.dispose();
-      _controller = widget.controller ?? SuperSelectFieldController<T>(initialValue: widget.initialValue);
+      _controller =
+          widget.controller ??
+          SuperSelectFieldController<T>(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
     }
   }
@@ -196,7 +201,9 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
             onDismiss: _controller.close,
             overlayBuilder: (context) => _menu(t),
             child: MouseRegion(
-              cursor: _editable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+              cursor: _editable
+                  ? SystemMouseCursors.click
+                  : SystemMouseCursors.basic,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _editable ? _controller.toggle : null,
@@ -215,7 +222,9 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                     overflow: TextOverflow.ellipsis,
                     style: SuperText.body.copyWith(
                       color: selected != null ? t.fg1 : t.fg4,
-                      fontFamily: widget.arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
+                      fontFamily: widget.arabic
+                          ? SuperThemeData.of(context).tokens.arabicFont
+                          : SuperThemeData.of(context).tokens.bodyFont,
                     ),
                     textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
                   ),

@@ -30,7 +30,8 @@ class SuperBoolFieldController extends ChangeNotifier {
   bool get touched => _touched;
 
   String? get error => runValidators<bool>(_value, _validators);
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
   // ── View → controller config ──
   void configure({

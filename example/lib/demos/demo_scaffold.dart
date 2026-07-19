@@ -15,8 +15,8 @@ enum Marker { identity, ledger, notes }
 extension on Marker {
   Color colorFor(BuildContext context) => switch (this) {
         Marker.identity => Theme.of(context).colorScheme.primary,
-        Marker.ledger => SuperTokensData.defaultSuccess,
-        Marker.notes => SuperTokensData.defaultWarning,
+        Marker.ledger => SuperThemeData.of(context).tokens.success,
+        Marker.notes => SuperThemeData.of(context).tokens.warning,
       };
 }
 
@@ -47,7 +47,7 @@ class DemoPage extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 64),
+            padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 64),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 680),
               child: Column(
@@ -55,9 +55,9 @@ class DemoPage extends StatelessWidget {
                 children: [
                   Text(eyebrow.toUpperCase(),
                       style: SuperText.eyebrow.copyWith(color: Theme.of(context).colorScheme.primary)),
-                  const SizedBox(height: SuperTokensData.defaultSpace2),
+                  SizedBox(height: SuperThemeData.of(context).tokens.space2),
                   Text(title, style: SuperText.h1.copyWith(color: t.fg1)),
-                  const SizedBox(height: SuperTokensData.defaultSpace8),
+                  SizedBox(height: SuperThemeData.of(context).tokens.space8),
                   ...children,
                 ],
               ),
@@ -88,11 +88,11 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     return Container(
-      margin: const EdgeInsets.only(bottom: SuperTokensData.defaultSpace8),
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+      margin: EdgeInsets.only(bottom: SuperThemeData.of(context).tokens.space8),
+      padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 40),
       decoration: BoxDecoration(
         color: t.surface,
-        borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusCard),
+        borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusCard),
         border: Border.all(color: t.border),
         boxShadow: t.brightness == Brightness.dark
             ? const [BoxShadow(color: Color(0x40000000), blurRadius: 50, spreadRadius: -12, offset: Offset(0, 25))]
@@ -113,10 +113,10 @@ class SectionCard extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 2),
                 decoration: BoxDecoration(
                   color: marker.colorFor(context),
-                  borderRadius: BorderRadius.circular(SuperTokensData.defaultRadiusPill),
+                  borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusPill),
                 ),
               ),
-              const SizedBox(width: SuperTokensData.defaultSpace4),
+              SizedBox(width: SuperThemeData.of(context).tokens.space4),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +131,7 @@ class SectionCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: SuperTokensData.defaultSpace8),
+          SizedBox(height: SuperThemeData.of(context).tokens.space8),
           child,
         ],
       ),
@@ -152,7 +152,7 @@ class BilingualRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: english),
-        const SizedBox(width: SuperTokensData.defaultSpace6),
+        SizedBox(width: SuperThemeData.of(context).tokens.space6),
         Expanded(
           child: Directionality(textDirection: TextDirection.rtl, child: arabic),
         ),

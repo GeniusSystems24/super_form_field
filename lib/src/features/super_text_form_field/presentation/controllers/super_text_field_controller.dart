@@ -14,11 +14,9 @@ import 'package:flutter/widgets.dart';
 import '../../../../core/utils/validators.dart';
 
 class SuperTextFieldController extends ChangeNotifier {
-  SuperTextFieldController({
-    String initialValue = '',
-    bool obscured = false,
-  })  : text = TextEditingController(text: initialValue),
-        _obscured = obscured {
+  SuperTextFieldController({String initialValue = '', bool obscured = false})
+    : text = TextEditingController(text: initialValue),
+      _obscured = obscured {
     focusNode = FocusNode();
     text.addListener(_onTextChanged);
     focusNode.addListener(_onFocusChanged);
@@ -50,7 +48,8 @@ class SuperTextFieldController extends ChangeNotifier {
   String? get error => runValidators(value, _validators);
 
   /// The error to actually display — gated on touched / forceError.
-  String? get visibleError => (_touched || _forceError) && error != null ? error : null;
+  String? get visibleError =>
+      (_touched || _forceError) && error != null ? error : null;
 
   // ── View → controller config ──
   /// Re-points the validator chain / force flag / validity callback. Called by
@@ -72,7 +71,10 @@ class SuperTextFieldController extends ChangeNotifier {
   /// Programmatically set the text (e.g. external reset).
   void setValue(String v) {
     if (text.text == v) return;
-    text.value = TextEditingValue(text: v, selection: TextSelection.collapsed(offset: v.length));
+    text.value = TextEditingValue(
+      text: v,
+      selection: TextSelection.collapsed(offset: v.length),
+    );
   }
 
   /// Clear the field (the × affordance).

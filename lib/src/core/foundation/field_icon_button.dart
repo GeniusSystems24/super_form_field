@@ -19,7 +19,7 @@ class FieldIconButton extends StatefulWidget {
     required this.icon,
     required this.onPressed,
     this.tooltip,
-    this.size = SuperTokensData.defaultTrailingIcon,
+    this.size = 26, // trailingIcon token default
     this.iconSize = 16,
     this.bordered = false,
     this.danger = false,
@@ -49,7 +49,9 @@ class _FieldIconButtonState extends State<FieldIconButton> {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     final enabled = widget.onPressed != null;
-    final fg = (_hover && widget.danger) ? cs.error : (widget.bordered ? t.fg2 : t.fg4);
+    final fg = (_hover && widget.danger)
+        ? cs.error
+        : (widget.bordered ? t.fg2 : t.fg4);
 
     Widget btn = MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -58,20 +60,26 @@ class _FieldIconButtonState extends State<FieldIconButton> {
       child: GestureDetector(
         onTap: widget.onPressed,
         child: AnimatedContainer(
-          duration: SuperTokensData.defaultDurFast,
+          duration: SuperThemeData.of(context).tokens.durFast,
           width: widget.size,
           height: widget.size,
           decoration: BoxDecoration(
-            color: widget.bordered ? t.inputBg : (_hover ? t.hover : const Color(0x00000000)),
+            color: widget.bordered
+                ? t.inputBg
+                : (_hover ? t.hover : const Color(0x00000000)),
             border: widget.bordered ? Border.all(color: t.borderStrong) : null,
-            borderRadius: BorderRadius.circular(widget.bordered ? 5 : SuperTokensData.defaultRadiusMd),
+            borderRadius: BorderRadius.circular(
+              widget.bordered ? 5 : SuperThemeData.of(context).tokens.radiusMd,
+            ),
           ),
           child: Icon(widget.icon, size: widget.iconSize, color: fg),
         ),
       ),
     );
 
-    if (widget.tooltip != null) btn = Tooltip(message: widget.tooltip!, child: btn);
+    if (widget.tooltip != null) {
+      btn = Tooltip(message: widget.tooltip!, child: btn);
+    }
     return Opacity(opacity: enabled ? 1 : 0.4, child: btn);
   }
 }

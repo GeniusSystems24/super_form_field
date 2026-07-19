@@ -34,11 +34,11 @@ class MenuSearchField extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        SuperTokensData.defaultSpace3,
-        SuperTokensData.defaultSpace1,
-        SuperTokensData.defaultSpace2,
-        SuperTokensData.defaultSpace1,
+      padding: EdgeInsetsDirectional.fromSTEB(
+        SuperThemeData.of(context).tokens.space3,
+        SuperThemeData.of(context).tokens.space1,
+        SuperThemeData.of(context).tokens.space2,
+        SuperThemeData.of(context).tokens.space1,
       ),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: t.border)),
@@ -46,7 +46,7 @@ class MenuSearchField extends StatelessWidget {
       child: Row(
         children: [
           Icon(SffIcons.search, size: 16, color: t.fg4),
-          const SizedBox(width: SuperTokensData.defaultSpace2),
+          SizedBox(width: SuperThemeData.of(context).tokens.space2),
           Expanded(
             child: TextField(
               controller: controller,
@@ -57,7 +57,9 @@ class MenuSearchField extends StatelessWidget {
               style: SuperText.body.copyWith(
                 color: t.fg1,
                 fontSize: 13.5,
-                fontFamily: arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
+                fontFamily: arabic
+                    ? SuperThemeData.of(context).tokens.arabicFont
+                    : SuperThemeData.of(context).tokens.bodyFont,
               ),
               textAlign: arabic ? TextAlign.right : TextAlign.left,
               decoration: InputDecoration(
@@ -65,14 +67,16 @@ class MenuSearchField extends StatelessWidget {
                 hintStyle: SuperText.body.copyWith(
                   color: t.fg4,
                   fontSize: 13.5,
-                  fontFamily: arabic ? SuperTokensData.defaultArabicFont : SuperTokensData.defaultBodyFont,
+                  fontFamily: arabic
+                      ? SuperThemeData.of(context).tokens.arabicFont
+                      : SuperThemeData.of(context).tokens.bodyFont,
                 ),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
                 filled: false,
-                
+
                 contentPadding: EdgeInsets.zero,
               ),
             ),

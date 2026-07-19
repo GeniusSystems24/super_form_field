@@ -24,7 +24,9 @@ abstract final class DateLogic {
     final digits = d.length > 8 ? d.substring(0, 8) : d;
     var out = digits.length > 4 ? digits.substring(0, 4) : digits;
     if (digits.length > 4) {
-      final mm = digits.length > 6 ? digits.substring(4, 6) : digits.substring(4);
+      final mm = digits.length > 6
+          ? digits.substring(4, 6)
+          : digits.substring(4);
       out += '-$mm';
     }
     if (digits.length > 6) {
@@ -59,11 +61,16 @@ abstract final class DateLogic {
   }
 
   /// Strips the time component, returning a midnight-anchored date-only value.
-  static DateTime dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
+  static DateTime dateOnly(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
 
   /// True when [a] and [b] fall on the same calendar day.
   static bool sameDay(DateTime? a, DateTime? b) =>
-      a != null && b != null && a.year == b.year && a.month == b.month && a.day == b.day;
+      a != null &&
+      b != null &&
+      a.year == b.year &&
+      a.month == b.month &&
+      a.day == b.day;
 
   /// Builds the validator chain for a date field (required ▸ min ▸ max ▸
   /// custom). The first failing message wins. Operates on the parsed
@@ -81,9 +88,13 @@ abstract final class DateLogic {
     return [
       if (required) (v) => v == null ? requiredMessage : null,
       if (lo != null)
-        (v) => v != null && v.isBefore(lo) ? 'Must be on or after ${format(lo)}' : null,
+        (v) => v != null && v.isBefore(lo)
+            ? 'Must be on or after ${format(lo)}'
+            : null,
       if (hi != null)
-        (v) => v != null && v.isAfter(hi) ? 'Must be on or before ${format(hi)}' : null,
+        (v) => v != null && v.isAfter(hi)
+            ? 'Must be on or before ${format(hi)}'
+            : null,
       ...extra,
     ];
   }
@@ -129,13 +140,13 @@ enum SuperDateFormat {
 extension SuperDateFormatX on SuperDateFormat {
   /// The present segment kinds, in display order.
   List<int> get segments => switch (this) {
-        SuperDateFormat.yearMonthDay => const [0, 1, 2],
-        SuperDateFormat.yearMonth => const [0, 1],
-        SuperDateFormat.year => const [0],
-        SuperDateFormat.monthDay => const [1, 2],
-        SuperDateFormat.month => const [1],
-        SuperDateFormat.day => const [2],
-      };
+    SuperDateFormat.yearMonthDay => const [0, 1, 2],
+    SuperDateFormat.yearMonth => const [0, 1],
+    SuperDateFormat.year => const [0],
+    SuperDateFormat.monthDay => const [1, 2],
+    SuperDateFormat.month => const [1],
+    SuperDateFormat.day => const [2],
+  };
 
   bool get hasYear => segments.contains(0);
   bool get hasMonth => segments.contains(1);
