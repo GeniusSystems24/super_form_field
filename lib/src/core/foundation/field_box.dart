@@ -24,9 +24,11 @@ import 'field_shell.dart';
 /// error badge) outside of Material's InputDecoration. Owns the border,
 /// background, error halo and disabled opacity.
 ///
-/// Wrap the inner [TextField] with `InputDecoration.collapsed` or explicit
-/// `border: InputBorder.none` — FieldBox neutralises the theme's borders
-/// automatically via a [Theme] override so no double border appears.
+/// Give an inner [TextField] an explicit borderless [InputDecoration]. A
+/// collapsed decoration shrinks to the editor's actual line height, so center
+/// that editor in this box instead of forcing it to expand and then compensating
+/// with padding or transforms. FieldBox neutralises themed borders
+/// automatically, preventing a double border.
 class FieldBox extends StatelessWidget {
   const FieldBox({
     super.key,
@@ -37,6 +39,7 @@ class FieldBox extends StatelessWidget {
     this.density = FieldDensity.comfortable,
     this.leading,
     this.trailing = const [],
+    this.flushTrailing = false,
   });
 
   final Widget child;
@@ -53,6 +56,12 @@ class FieldBox extends StatelessWidget {
   /// Trailing adornments (stepper / unit). The [ErrorBadge] is appended
   /// automatically after these.
   final List<Widget> trailing;
+
+  /// Whether the trailing edge of the content should meet the field boundary.
+  ///
+  /// This is intended for full-height trailing controls such as the numeric
+  /// stepper. Regular icons and badges retain the standard design-system inset.
+  final bool flushTrailing;
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +107,7 @@ class FieldBox extends StatelessWidget {
         constraints: BoxConstraints.tightFor(height: h),
         padding: EdgeInsetsDirectional.only(
           start: SuperThemeData.of(context).tokens.space3,
-          end: SuperThemeData.of(context).tokens.space1,
+          end: flushTrailing ? 0 : SuperThemeData.of(context).tokens.space1,
         ),
         decoration: BoxDecoration(
           color: bgColor,

@@ -6,6 +6,10 @@
 // a Su–Sa day-of-week row, a 7-column day grid (today outlined, selection filled
 // accent, hover tint), and a "Today" shortcut. Mono day numerals, themed via
 // SuperThemeData. Out-of-range days (min/max) render disabled.
+//
+// The same calendar widget now supports two density profiles:
+// - compact: anchored desktop/tablet popover
+// - expanded: mobile bottom sheet presentation
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -30,6 +34,7 @@ class MiniCalendar extends StatefulWidget {
     required this.onPick,
     this.minDate,
     this.maxDate,
+    this.expanded = false,
   });
 
   /// The currently-selected date (highlighted), or null.
@@ -37,6 +42,9 @@ class MiniCalendar extends StatefulWidget {
   final ValueChanged<DateTime> onPick;
   final DateTime? minDate;
   final DateTime? maxDate;
+
+  /// Uses the larger bottom-sheet presentation metrics.
+  final bool expanded;
 
   @override
   State<MiniCalendar> createState() => _MiniCalendarState();
@@ -84,9 +92,20 @@ class _MiniCalendarState extends State<MiniCalendar> {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
+    final tokens = SuperThemeData.of(context).tokens;
     final daysInMonth = DateTime(_y, _m + 2, 0).day;
     final startDow = DateTime(_y, _m + 1, 1).weekday % 7; // Sun=0
     final today = DateLogic.dateOnly(DateTime.now());
+    final expanded = widget.expanded;
+
+    final outerPadding = expanded ? tokens.space2 : tokens.space3;
+    final headerFontSize = expanded ? 16.0 : 13.5;
+    final dowFontSize = expanded ? 11.0 : 10.0;
+    final dayFontSize = expanded ? 14.0 : 12.5;
+    final cellRadius = expanded ? tokens.radiusCard : tokens.radiusMd;
+    final cellMinHeight = expanded ? 40.0 : 28.0;
+    final gridSpacing = expanded ? 6.0 : 2.0;
+    final calendarWidth = expanded ? double.infinity : 248.0;
 
     final cells = <int?>[];
     for (var i = 0; i < startDow; i++) {
@@ -97,22 +116,24 @@ class _MiniCalendarState extends State<MiniCalendar> {
     }
 
     return Container(
-      width: 248,
-      padding: EdgeInsets.all(SuperThemeData.of(context).tokens.space3),
+      width: calendarWidth,
+      padding: EdgeInsets.all(outerPadding),
       decoration: BoxDecoration(
         color: t.surface,
         borderRadius: BorderRadius.circular(
-          SuperThemeData.of(context).tokens.radiusCard,
+          expanded ? tokens.radiusCard + 4 : tokens.radiusCard,
         ),
-        border: Border.all(color: t.borderStrong),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x59000000),
-            blurRadius: 24,
-            spreadRadius: -6,
-            offset: Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: expanded ? t.border : t.borderStrong),
+        boxShadow: expanded
+            ? const []
+            : const [
+                BoxShadow(
+                  color: Color(0x59000000),
+                  blurRadius: 24,
+                  spreadRadius: -6,
+                  offset: Offset(0, 10),
+                ),
+              ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -120,21 +141,29 @@ class _MiniCalendarState extends State<MiniCalendar> {
           // ── header: month nav ──
           Padding(
             padding: EdgeInsets.only(
-              bottom: SuperThemeData.of(context).tokens.space2,
+              bottom: expanded ? tokens.space3 : tokens.space2,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _NavButton(icon: SffIcons.chevronLeft, onTap: () => _step(-1)),
+                _NavButton(
+                  icon: SffIcons.chevronLeft,
+                  expanded: expanded,
+                  onTap: () => _step(-1),
+                ),
                 Text(
                   '${_months[_m]} $_y',
                   style: SuperText.body.copyWith(
                     color: t.fg1,
                     fontWeight: FontWeight.w700,
-                    fontSize: 13.5,
+                    fontSize: headerFontSize,
                   ),
                 ),
-                _NavButton(icon: SffIcons.chevronRight, onTap: () => _step(1)),
+                _NavButton(
+                  icon: SffIcons.chevronRight,
+                  expanded: expanded,
+                  onTap: () => _step(1),
+                ),
               ],
             ),
           ),
@@ -143,28 +172,31 @@ class _MiniCalendarState extends State<MiniCalendar> {
             children: [
               for (final d in _dow)
                 Expanded(
-                  child: Center(
-                    child: Text(
-                      d,
-                      style: SuperText.label.copyWith(
-                        color: t.fg4,
-                        fontSize: 10,
-                        letterSpacing: 0.2,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: expanded ? 2 : 0),
+                    child: Center(
+                      child: Text(
+                        d,
+                        style: SuperText.label.copyWith(
+                          color: t.fg4,
+                          fontSize: dowFontSize,
+                          letterSpacing: 0.2,
+                        ),
                       ),
                     ),
                   ),
                 ),
             ],
           ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space1),
+          SizedBox(height: expanded ? tokens.space2 : tokens.space1),
           // ── day grid ──
           GridView.count(
             crossAxisCount: 7,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 2,
-            crossAxisSpacing: 2,
-            childAspectRatio: 1.05,
+            mainAxisSpacing: gridSpacing,
+            crossAxisSpacing: gridSpacing,
+            childAspectRatio: expanded ? 1.0 : 1.05,
             children: [
               for (final d in cells)
                 if (d == null)
@@ -179,26 +211,37 @@ class _MiniCalendarState extends State<MiniCalendar> {
                     ),
                     isToday: DateLogic.sameDay(today, DateTime(_y, _m + 1, d)),
                     disabled: _outOfRange(DateTime(_y, _m + 1, d)),
+                    expanded: expanded,
+                    minHeight: cellMinHeight,
+                    radius: cellRadius,
+                    fontSize: dayFontSize,
                     onTap: widget.onPick,
                   ),
             ],
           ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space1),
+          SizedBox(height: expanded ? tokens.space2 : tokens.space1),
           // ── Today shortcut ──
           Align(
             alignment: AlignmentDirectional.centerEnd,
             child: TextButton(
               onPressed: _outOfRange(today) ? null : () => widget.onPick(today),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(
+                  horizontal: expanded ? 12 : 8,
+                  vertical: expanded ? 8 : 4,
+                ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(tokens.radiusMd),
+                ),
               ),
               child: Text(
                 'Today',
                 style: SuperText.caption.copyWith(
                   color: cs.primary,
                   fontWeight: FontWeight.w600,
+                  fontSize: expanded ? 13 : null,
                 ),
               ),
             ),
@@ -210,21 +253,29 @@ class _MiniCalendarState extends State<MiniCalendar> {
 }
 
 class _NavButton extends StatelessWidget {
-  const _NavButton({required this.icon, required this.onTap});
+  const _NavButton({
+    required this.icon,
+    required this.onTap,
+    required this.expanded,
+  });
+
   final IconData icon;
   final VoidCallback onTap;
+  final bool expanded;
 
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(
-        SuperThemeData.of(context).tokens.radiusMd,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Icon(icon, size: 18, color: t.fg2),
+    final tokens = SuperThemeData.of(context).tokens;
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(tokens.radiusMd),
+        child: Padding(
+          padding: EdgeInsets.all(expanded ? 8 : 4),
+          child: Icon(icon, size: expanded ? 20 : 18, color: t.fg2),
+        ),
       ),
     );
   }
@@ -238,6 +289,10 @@ class _DayCell extends StatefulWidget {
     required this.isToday,
     required this.disabled,
     required this.onTap,
+    required this.expanded,
+    required this.minHeight,
+    required this.radius,
+    required this.fontSize,
   });
 
   final int day;
@@ -245,6 +300,10 @@ class _DayCell extends StatefulWidget {
   final bool selected;
   final bool isToday;
   final bool disabled;
+  final bool expanded;
+  final double minHeight;
+  final double radius;
+  final double fontSize;
   final ValueChanged<DateTime> onTap;
 
   @override
@@ -264,8 +323,8 @@ class _DayCellState extends State<_DayCell> {
     final Color fg = widget.disabled
         ? t.fg4
         : widget.selected
-        ? const Color(0xFFFFFFFF)
-        : t.fg1;
+            ? const Color(0xFFFFFFFF)
+            : t.fg1;
     final border = widget.isToday && !widget.selected
         ? Border.all(color: t.borderStrong)
         : Border.all(color: const Color(0x00000000));
@@ -276,24 +335,33 @@ class _DayCellState extends State<_DayCell> {
           : SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
-      child: GestureDetector(
-        onTap: widget.disabled
-            ? null
-            : () => widget.onTap(DateLogic.dateOnly(widget.date)),
-        child: Opacity(
-          opacity: widget.disabled ? 0.35 : 1,
-          child: Container(
-            decoration: BoxDecoration(
-              color: bg,
-              border: border,
-              borderRadius: BorderRadius.circular(
-                SuperThemeData.of(context).tokens.radiusMd,
+      child: Opacity(
+        opacity: widget.disabled ? 0.35 : 1,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.disabled
+                ? null
+                : () => widget.onTap(DateLogic.dateOnly(widget.date)),
+            borderRadius: BorderRadius.circular(widget.radius),
+            child: Ink(
+              decoration: BoxDecoration(
+                color: bg,
+                border: border,
+                borderRadius: BorderRadius.circular(widget.radius),
               ),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              '${widget.day}',
-              style: SuperText.mono.copyWith(color: fg, fontSize: 12.5),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: widget.minHeight),
+                child: Center(
+                  child: Text(
+                    '${widget.day}',
+                    style: SuperText.mono.copyWith(
+                      color: fg,
+                      fontSize: widget.fontSize,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),

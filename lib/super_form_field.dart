@@ -4,11 +4,12 @@
 /// `InputDecoration` contract:
 ///
 /// * [SuperTextFormField] — text, email, password, and multiline input.
-/// * [SuperNumericFormField] — formatted numeric input with a full-height
-///   increment/decrement stepper.
+/// * [SuperNumericFormField] — vertically centered numeric input with a
+///   contiguous square increment/decrement stepper.
 /// * [SuperAttachmentFormField] — picker-agnostic drop zone and typed file list.
-/// * [SuperDateFormField] — segmented date input with a mobile bottom sheet and
-///   tablet/desktop anchored calendar.
+/// * [SuperDateFormField] — responsive segmented date entry with mobile
+///   software-keyboard handling, a bottom-sheet picker, and tablet/desktop
+///   hardware-key navigation with an anchored calendar.
 /// * [SuperSelectFormField] — searchable typed single-select.
 /// * [SuperMultiSelectFormField] — typed multi-select with removable chips.
 /// * [SuperBoolFormField] — toggle or checkbox with optional true-value gate.

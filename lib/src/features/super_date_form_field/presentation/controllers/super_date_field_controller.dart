@@ -11,15 +11,42 @@
 // `←`/`→` move between segments. Never imports a widget.
 // ============================================================
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../../core/utils/validators.dart';
+import '../../domain/usecases/date_input_intent.dart';
 import '../../domain/usecases/date_logic.dart';
+import '../../domain/usecases/desktop_date_input_use_case.dart';
+import '../../domain/usecases/mobile_date_input_use_case.dart';
 
+/// Owns the shared segmented date state and delegates device-specific input
+/// interpretation to injectable desktop and mobile use cases.
+///
+/// Parsing, validation, calendar values, and segment composition stay shared;
+/// only the interaction policy changes with [DateInputInteractionMode].
 class SuperDateFieldController extends ChangeNotifier {
-  SuperDateFieldController({DateTime? initialValue})
-    : _value = initialValue == null ? null : DateLogic.dateOnly(initialValue) {
+  /// Creates a date-field controller.
+  ///
+  /// Custom [desktopInputUseCase] and [mobileInputUseCase] implementations can
+  /// be injected for testing or specialized host interaction without changing
+  /// the field widget or duplicating date rules.
+  SuperDateFieldController({
+    DateTime? initialValue,
+    DateInputInteractionMode interactionMode =
+        DateInputInteractionMode.desktop,
+    DateInputUseCase<DesktopDateInputRequest> desktopInputUseCase =
+        const DesktopDateInputUseCase(),
+    DateInputUseCase<MobileDateEditRequest> mobileInputUseCase =
+        const MobileDateInputUseCase(),
+  }) : _value = initialValue == null
+           ? null
+           : DateLogic.dateOnly(initialValue),
+       _interactionMode = interactionMode,
+       _desktopInputUseCase = desktopInputUseCase,
+       _mobileInputUseCase = mobileInputUseCase {
     _dispFromValue();
     text = TextEditingController(text: _composeString().text);
     _lastComposed = text.text;
@@ -35,6 +62,8 @@ class SuperDateFieldController extends ChangeNotifier {
   DateTime? _value;
   bool _touched = false;
   bool _syncing = false; // guards programmatic text writes from re-entrancy
+  bool _pendingMobileEdit = false;
+  bool _disposed = false;
 
   // ── segmented editing state ──
   // Segment kinds: 0 = year, 1 = month, 2 = day. _order is the present kinds in
@@ -60,6 +89,9 @@ class SuperDateFieldController extends ChangeNotifier {
   // ── stepping config (set by the View) ──
   bool _keyboardEnabled = true;
   bool _readOnly = false;
+  DateInputInteractionMode _interactionMode;
+  final DateInputUseCase<DesktopDateInputRequest> _desktopInputUseCase;
+  final DateInputUseCase<MobileDateEditRequest> _mobileInputUseCase;
 
   // ── reads ──
   DateTime? get value => _value;
@@ -92,6 +124,8 @@ class SuperDateFieldController extends ChangeNotifier {
     String malformedMessage = 'Enter a valid date',
     bool keyboardEnabled = true,
     bool readOnly = false,
+    DateInputInteractionMode interactionMode =
+        DateInputInteractionMode.desktop,
     ValidityChanged? onValidity,
     ValueChanged<DateTime?>? onChanged,
   }) {
@@ -100,6 +134,8 @@ class SuperDateFieldController extends ChangeNotifier {
     _malformedMessage = malformedMessage;
     _keyboardEnabled = keyboardEnabled;
     _readOnly = readOnly;
+    final interactionModeChanged = _interactionMode != interactionMode;
+    _interactionMode = interactionMode;
     _onValidity = onValidity;
     _onChanged = onChanged;
 
@@ -112,7 +148,12 @@ class SuperDateFieldController extends ChangeNotifier {
       // Re-render after the frame so we don't mutate the editing controller
       // mid-build of a mounted field.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _render();
+        if (!_disposed) _render();
+      });
+    } else if (interactionModeChanged) {
+      // Swap only the selection policy. Date value and segment state stay intact.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_disposed) _render();
       });
     }
   }
@@ -276,26 +317,32 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// Shift a digit into the active segment from the right (always zero-padded to
   /// width), auto-advancing when the segment fills (or can't take a 2nd digit).
-  void _typeDigit(String d) {
+  void _typeDigit(String digit) {
     if (_readOnly) return;
+    _applyDigit(digit);
+    _commit();
+  }
+
+  void _applyDigit(String digit) {
     final kind = _order[_ai];
-    final w = _width(kind);
+    final width = _width(kind);
     if (_fresh) {
-      _buf = d;
+      _buf = digit;
       _fresh = false;
     } else {
-      _buf = _buf + d;
-      if (_buf.length > w) _buf = _buf.substring(_buf.length - w);
+      _buf = '$_buf$digit';
+      if (_buf.length > width) {
+        _buf = _buf.substring(_buf.length - width);
+      }
     }
-    _disp[kind] = _buf.padLeft(w, '0');
+    _disp[kind] = _buf.padLeft(width, '0');
     _committed[kind] = false;
-    final n = int.parse(_buf);
-    final full = _buf.length >= w;
+    final number = int.parse(_buf);
+    final full = _buf.length >= width;
     final early =
-        (kind == 1 && _buf.length == 1 && n > 1) ||
-        (kind == 2 && _buf.length == 1 && n > 3);
+        (kind == 1 && _buf.length == 1 && number > 1) ||
+        (kind == 2 && _buf.length == 1 && number > 3);
     if (full || early) _finalizeAndAdvance();
-    _commit();
   }
 
   void _commitActive() {
@@ -360,6 +407,169 @@ class SuperDateFieldController extends ChangeNotifier {
     _commit();
   }
 
+  /// Applies a software-keyboard edit through the mobile interaction policy.
+  ///
+  /// This method is consumed by the presentation input formatter. It mutates
+  /// the segmented state and returns the canonical editing value that Flutter
+  /// should commit, without routing the raw IME string through the desktop
+  /// paste fallback.
+  TextEditingValue formatMobileEdit(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (_readOnly || _interactionMode != DateInputInteractionMode.mobile) {
+      return newValue;
+    }
+
+    final intent = _mobileInputUseCase.execute(
+      MobileDateEditRequest(
+        oldText: oldValue.text,
+        newText: newValue.text,
+        oldSelectionStart: oldValue.selection.start,
+        oldSelectionEnd: oldValue.selection.end,
+      ),
+    );
+    if (intent == null) return newValue;
+
+    final offset = intent.offset;
+    if (offset != null) {
+      _activateAtOffset(oldValue.text, offset);
+    }
+    _applyMobileIntent(intent);
+    _recomputeValue();
+
+    final composed = _composeString(
+      interactionMode: DateInputInteractionMode.mobile,
+    );
+    final result = TextEditingValue(
+      text: composed.text,
+      selection: TextSelection.collapsed(offset: composed.selEnd),
+      composing: TextRange.empty,
+    );
+    _lastComposed = composed.text;
+
+    // TextEditingController notifies synchronously when EditableText applies
+    // a changed formatter result. If zero-padding makes the canonical value
+    // identical to the old value, there will be no controller notification, so
+    // publish the internal segment-state change here instead.
+    if (result != oldValue) {
+      _pendingMobileEdit = true;
+    } else {
+      scheduleMicrotask(() {
+        if (_disposed) return;
+        _emit();
+        notifyListeners();
+      });
+    }
+    return result;
+  }
+
+  void _activateAtOffset(String sourceText, int offset) {
+    final nextIndex = _indexForOffsetIn(sourceText, offset);
+    if (nextIndex == _ai) return;
+    if (_buf.isNotEmpty) _commitActive();
+    _ai = nextIndex;
+    _buf = '';
+    _fresh = true;
+  }
+
+  void _applyMobileIntent(DateInputIntent intent) {
+    switch (intent.type) {
+      case DateInputIntentType.insertDigits:
+        for (final codeUnit in intent.text.codeUnits) {
+          final digit = String.fromCharCode(codeUnit);
+          if (codeUnit >= 48 && codeUnit <= 57) _applyDigit(digit);
+        }
+        break;
+      case DateInputIntentType.backspace:
+        _mobileBackspace();
+        break;
+      case DateInputIntentType.clearSegment:
+        _clearActiveSegment();
+        break;
+      case DateInputIntentType.nextSegment:
+        if (_buf.isNotEmpty) _commitActive();
+        if (_ai < _order.length - 1) _ai++;
+        _buf = '';
+        _fresh = true;
+        break;
+      case DateInputIntentType.previousSegment:
+        if (_buf.isNotEmpty) _commitActive();
+        if (_ai > 0) _ai--;
+        _buf = '';
+        _fresh = true;
+        break;
+      case DateInputIntentType.replaceText:
+        _replaceFromRawText(intent.text);
+        break;
+      case DateInputIntentType.stepUp:
+      case DateInputIntentType.stepDown:
+        // Mobile software-keyboard deltas never emit step intents.
+        break;
+    }
+  }
+
+  void _mobileBackspace() {
+    final kind = _order[_ai];
+    final width = _width(kind);
+    if (_buf.isNotEmpty) {
+      _buf = _buf.substring(0, _buf.length - 1);
+      _disp[kind] = _buf.isEmpty ? '' : _buf.padLeft(width, '0');
+      _committed[kind] = false;
+      _fresh = _buf.isEmpty;
+      return;
+    }
+
+    if (_disp[kind].isNotEmpty) {
+      _clearActiveSegment();
+      return;
+    }
+
+    if (_ai > 0) {
+      _ai--;
+      _clearActiveSegment();
+    }
+  }
+
+  void _clearActiveSegment() {
+    final kind = _order[_ai];
+    _disp[kind] = '';
+    _committed[kind] = false;
+    _buf = '';
+    _fresh = true;
+  }
+
+  void _replaceFromRawText(String rawText) {
+    final digits = rawText.replaceAll(RegExp(r'[^0-9]'), '');
+    var position = 0;
+    var lastTouchedIndex = 0;
+    for (var index = 0; index < _order.length; index++) {
+      final kind = _order[index];
+      final width = _width(kind);
+      if (position >= digits.length) {
+        _disp[kind] = '';
+        _committed[kind] = false;
+        continue;
+      }
+      final candidateEnd = position + width;
+      final end = candidateEnd < digits.length ? candidateEnd : digits.length;
+      final chunk = digits.substring(position, end);
+      position += chunk.length;
+      lastTouchedIndex = index;
+      var number = int.parse(chunk);
+      if (kind == 1 && chunk.length == width) number = number.clamp(1, 12);
+      if (kind == 2 && chunk.length == width) number = number.clamp(1, 31);
+      _disp[kind] = kind == 0
+          ? chunk.padLeft(4, '0')
+          : number.toString().padLeft(2, '0');
+      _committed[kind] = chunk.length == width;
+    }
+    _ai = lastTouchedIndex;
+    _buf = '';
+    _fresh = true;
+    _clampDayToMonth();
+  }
+
   // ── value + render ──────────────────────────────────────────────────────
 
   void _commit() {
@@ -380,24 +590,33 @@ class SuperDateFieldController extends ChangeNotifier {
     _value = DateLogic.compose(year: y, month: m, day: dd);
   }
 
-  ({String text, int selStart, int selEnd}) _composeString() {
+  ({String text, int selStart, int selEnd}) _composeString({
+    DateInputInteractionMode? interactionMode,
+  }) {
+    final mode = interactionMode ?? _interactionMode;
     var maxShown = _ai;
     for (var i = 0; i < _order.length; i++) {
       if (_disp[_order[i]].isNotEmpty && i > maxShown) maxShown = i;
     }
-    final buf = StringBuffer();
-    var selStart = 0;
-    var selEnd = 0;
+    final buffer = StringBuffer();
+    var selectionStart = 0;
+    var selectionEnd = 0;
     for (var i = 0; i <= maxShown; i++) {
-      if (i > 0) buf.write('-');
-      final start = buf.length;
-      buf.write(_disp[_order[i]]);
+      if (i > 0) buffer.write('-');
+      final segmentStart = buffer.length;
+      buffer.write(_disp[_order[i]]);
       if (i == _ai) {
-        selStart = start;
-        selEnd = buf.length;
+        selectionEnd = buffer.length;
+        selectionStart = mode == DateInputInteractionMode.mobile
+            ? selectionEnd
+            : segmentStart;
       }
     }
-    return (text: buf.toString(), selStart: selStart, selEnd: selEnd);
+    return (
+      text: buffer.toString(),
+      selStart: selectionStart,
+      selEnd: selectionEnd,
+    );
   }
 
   void _render() {
@@ -413,100 +632,105 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// The active [_order] index for a cursor [offset] — the count of separators
   /// before it (works for any format width).
-  int _indexForOffset(int offset) {
-    final t = text.text;
-    if (t.isEmpty) return 0;
-    var idx = 0;
-    for (var i = 0; i < offset && i < t.length; i++) {
-      if (t[i] == '-') idx++;
+  int _indexForOffset(int offset) => _indexForOffsetIn(text.text, offset);
+
+  int _indexForOffsetIn(String sourceText, int offset) {
+    if (sourceText.isEmpty) return 0;
+    var index = 0;
+    final limit = offset < sourceText.length ? offset : sourceText.length;
+    for (var i = 0; i < limit; i++) {
+      if (sourceText[i] == '-') index++;
     }
-    return idx.clamp(0, _order.length - 1);
+    if (index < 0) return 0;
+    if (index >= _order.length) return _order.length - 1;
+    return index;
   }
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
-    if (_readOnly) return KeyEventResult.ignored;
+    if (_readOnly || _interactionMode == DateInputInteractionMode.mobile) {
+      return KeyEventResult.ignored;
+    }
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
     }
-    final hw = HardwareKeyboard.instance;
-    // Let OS / app shortcuts (copy, paste, select-all, …) through.
-    if (hw.isControlPressed || hw.isMetaPressed || hw.isAltPressed) {
-      return KeyEventResult.ignored;
-    }
-    final k = event.logicalKey;
 
-    if (k == LogicalKeyboardKey.arrowUp &&
-        _keyboardEnabled &&
-        !hw.isShiftPressed) {
-      stepAtCursor(1);
-      return KeyEventResult.handled;
+    final hardware = HardwareKeyboard.instance;
+    final key = event.logicalKey;
+    final desktopKey = switch (key) {
+      LogicalKeyboardKey.arrowUp => DesktopDateInputKey.arrowUp,
+      LogicalKeyboardKey.arrowDown => DesktopDateInputKey.arrowDown,
+      LogicalKeyboardKey.arrowLeft => DesktopDateInputKey.arrowLeft,
+      LogicalKeyboardKey.arrowRight => DesktopDateInputKey.arrowRight,
+      LogicalKeyboardKey.backspace => DesktopDateInputKey.backspace,
+      _ => event.character == null
+          ? DesktopDateInputKey.other
+          : DesktopDateInputKey.character,
+    };
+    final intent = _desktopInputUseCase.execute(
+      DesktopDateInputRequest(
+        key: desktopKey,
+        character: event.character,
+        hasModifier: hardware.isControlPressed ||
+            hardware.isMetaPressed ||
+            hardware.isAltPressed,
+        shiftPressed: hardware.isShiftPressed,
+        keyboardShortcutsEnabled: _keyboardEnabled,
+      ),
+    );
+    if (intent == null) return KeyEventResult.ignored;
+
+    switch (intent.type) {
+      case DateInputIntentType.insertDigits:
+        _typeDigit(intent.text);
+        break;
+      case DateInputIntentType.backspace:
+        _backspace();
+        break;
+      case DateInputIntentType.nextSegment:
+        _moveActive(1);
+        break;
+      case DateInputIntentType.previousSegment:
+        _moveActive(-1);
+        break;
+      case DateInputIntentType.stepUp:
+        stepAtCursor(1);
+        break;
+      case DateInputIntentType.stepDown:
+        stepAtCursor(-1);
+        break;
+      case DateInputIntentType.clearSegment:
+      case DateInputIntentType.replaceText:
+        return KeyEventResult.ignored;
     }
-    if (k == LogicalKeyboardKey.arrowDown &&
-        _keyboardEnabled &&
-        !hw.isShiftPressed) {
-      stepAtCursor(-1);
-      return KeyEventResult.handled;
-    }
-    if (k == LogicalKeyboardKey.arrowLeft && !hw.isShiftPressed) {
-      _moveActive(-1);
-      return KeyEventResult.handled;
-    }
-    if (k == LogicalKeyboardKey.arrowRight && !hw.isShiftPressed) {
-      _moveActive(1);
-      return KeyEventResult.handled;
-    }
-    if (k == LogicalKeyboardKey.backspace) {
-      _backspace();
-      return KeyEventResult.handled;
-    }
-    final ch = event.character;
-    if (ch != null && ch.length == 1) {
-      if (RegExp(r'[0-9]').hasMatch(ch)) {
-        _typeDigit(ch);
-        return KeyEventResult.handled;
-      }
-      if ('-/.: '.contains(ch)) {
-        _jumpSeparator();
-        return KeyEventResult.handled;
-      }
-    }
-    return KeyEventResult.ignored;
+    return KeyEventResult.handled;
   }
 
   // Fires for paste / IME text changes AND selection-only changes (clicks).
   void _onTextChanged() {
     if (_syncing) return;
+
+    if (_pendingMobileEdit) {
+      _pendingMobileEdit = false;
+      _emit();
+      notifyListeners();
+      return;
+    }
+
     if (text.text == _lastComposed) {
-      final off = text.selection.baseOffset;
-      if (off >= 0) {
+      final offset = text.selection.baseOffset;
+      if (offset >= 0) {
         if (_buf.isNotEmpty) _commitActive();
-        _ai = _indexForOffset(off);
+        _ai = _indexForOffset(offset);
         _buf = '';
         _fresh = true;
       }
       return;
     }
-    // Paste / IME fallback: take the digits, fill segments left-to-right.
-    final digits = text.text.replaceAll(RegExp(r'[^0-9]'), '');
-    var pos = 0;
-    for (final k in _order) {
-      final w = _width(k);
-      if (pos >= digits.length) {
-        _disp[k] = '';
-        _committed[k] = false;
-        continue;
-      }
-      final chunk = digits.substring(pos, (pos + w).clamp(0, digits.length));
-      pos += chunk.length;
-      var n = int.parse(chunk);
-      if (k == 1) n = n.clamp(1, 12);
-      if (k == 2) n = n.clamp(1, 31);
-      _disp[k] = k == 0 ? chunk.padLeft(4, '0') : n.toString().padLeft(2, '0');
-      _committed[k] = chunk.length == w;
-    }
-    _ai = _order.length - 1;
-    _buf = '';
-    _fresh = true;
+
+    // Desktop paste and programmatic raw text changes retain the historical
+    // left-to-right normalization fallback. Mobile typing is intercepted by
+    // [formatMobileEdit] before it reaches this branch.
+    _replaceFromRawText(text.text);
     _recomputeValue();
     _render();
     _emit();
@@ -544,6 +768,7 @@ class SuperDateFieldController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     text.removeListener(_onTextChanged);
     focusNode.removeListener(_onFocusChanged);
     text.dispose();

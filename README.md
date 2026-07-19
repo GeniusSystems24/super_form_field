@@ -13,10 +13,11 @@ boolean, and choice inputs.
 - GeniusLink styling remains authoritative for field borders, spacing, type,
   focus states, disabled states, and error badges.
 - Validation stays quiet until a field is touched, unless `forceError` is set.
-- Mobile-first date picking with a bottom sheet; anchored calendar popovers on
-  tablet and desktop.
-- Formatted numeric input with keyboard stepping and full-height increment and
-  decrement controls.
+- Responsive date interaction: software-keyboard-safe segmented entry and a
+  bottom-sheet calendar on mobile; hardware-key navigation and anchored calendar
+  popovers on tablet and desktop.
+- Formatted numeric input with keyboard stepping and contiguous square
+  increment/decrement controls that match the active field height.
 - Light/dark and English/Arabic LTR/RTL parity.
 - Picker-agnostic attachments with no platform picker plugin included.
 
@@ -125,8 +126,11 @@ Useful options include `type`, `multiline`, `rows`, `minLength`, `maxLength`,
 
 `SuperNumericFormField` formats grouped values while idle and exposes raw input
 while editing. It clamps and rounds on blur, supports min/max validation, and
-keeps Western digits in LTR order. Input text is vertically centered and the
-stepper buttons fill the field height.
+keeps Western digits in LTR order. The single-line editor keeps its natural
+measured height and is centered by layout inside the authoritative `FieldBox`;
+it is no longer forced to fill the control and then corrected with visual
+offsets or hard-coded padding. The stepper buttons are contiguous squares
+whose size follows the active responsive field-height token.
 
 ```dart
 SuperNumericFormField(
@@ -193,10 +197,27 @@ SuperDateFormField(
 
 Tapping the calendar button dismisses the keyboard. On mobile, the calendar is
 shown in a modal bottom sheet; tablet and desktop retain the anchored popover
-that flips above the field when required. The default leading calendar glyph is
-kept when no leading decoration is supplied. Override it with `prefixIcon`, or
-suppress it with `prefixIcon: SizedBox.shrink()`. The available formats are
-`yearMonthDay`, `yearMonth`, `year`, `monthDay`, `month`, and `day`.
+that flips above the field when required.
+
+The default leading calendar glyph is kept when no leading decoration is
+supplied. Override it with `prefixIcon`, or suppress it with
+`prefixIcon: SizedBox.shrink()`. The available formats are `yearMonthDay`,
+`yearMonth`, `year`, `monthDay`, `month`, and `day`.
+
+Date entry also adapts to the active `SuperDeviceMode`:
+
+- **Mobile:** software-keyboard deltas are translated by
+  `MobileDateInputUseCase`. The caret stays collapsed, and typed digits replace
+  the active segment without showing persistent selection handles or allowing
+  the raw IME value to corrupt the date mask.
+- **Tablet and desktop:** `DesktopDateInputUseCase` preserves segment selection,
+  arrow-key stepping, left/right navigation, and separator shortcuts.
+
+Both policies emit the same platform-neutral `DateInputIntent` operations and
+share one controller, parser, validator chain, calendar logic, and date value.
+Advanced integrations can inject custom `DateInputUseCase<Request>`
+implementations through the `SuperDateFieldController` constructor without
+changing the widget API.
 
 ### Select
 
@@ -382,8 +403,16 @@ lib/src/features/<feature>/
 │   └── usecases/
 └── presentation/
     ├── controllers/
+    ├── formatters/
     └── widgets/
 ```
+
+The date feature keeps desktop and mobile interaction policies in separate,
+pure use cases behind `DateInputUseCase<Request>`. The controller coordinates
+the shared segmented state, while the mobile formatter is only a Flutter adapter
+from `TextEditingValue` to a platform-neutral request. This keeps Flutter IME and
+hardware-key details out of the interaction policies and avoids duplicating date
+business rules.
 
 Shared chrome, validation primitives, options, formatters, and the decoration
 adapter live under `lib/src/core`. Application code should import only

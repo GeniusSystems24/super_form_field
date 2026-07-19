@@ -6,6 +6,7 @@
 // is exactly what the Clean Architecture split makes cheap to test.
 // ============================================================
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:super_form_field/super_form_field.dart';
 
@@ -161,6 +162,109 @@ void main() {
       expect(SuperDateFormat.yearMonthDay.placeholder, 'YYYY-MM-DD');
       expect(SuperDateFormat.monthDay.placeholder, 'MM-DD');
       expect(SuperDateFormat.year.placeholder, 'YYYY');
+    });
+  });
+
+  group('responsive date input use cases', () {
+    const mobile = MobileDateInputUseCase();
+    const desktop = DesktopDateInputUseCase();
+
+    test('mobile replacement identifies the selected segment and digit', () {
+      final intent = mobile.execute(
+        const MobileDateEditRequest(
+          oldText: '2024-01-01',
+          newText: '2-01-01',
+          oldSelectionStart: 0,
+          oldSelectionEnd: 4,
+        ),
+      );
+
+      expect(intent?.type, DateInputIntentType.insertDigits);
+      expect(intent?.text, '2');
+      expect(intent?.offset, 0);
+    });
+
+    test('mobile deletion of a selected segment clears that segment', () {
+      final intent = mobile.execute(
+        const MobileDateEditRequest(
+          oldText: '2024-01-01',
+          newText: '2024--01',
+          oldSelectionStart: 5,
+          oldSelectionEnd: 7,
+        ),
+      );
+
+      expect(intent?.type, DateInputIntentType.clearSegment);
+      expect(intent?.offset, 5);
+    });
+
+    test('desktop policy preserves arrow and digit semantics', () {
+      expect(
+        desktop
+            .execute(
+              const DesktopDateInputRequest(
+                key: DesktopDateInputKey.arrowUp,
+              ),
+            )
+            ?.type,
+        DateInputIntentType.stepUp,
+      );
+      final digit = desktop.execute(
+        const DesktopDateInputRequest(
+          key: DesktopDateInputKey.character,
+          character: '7',
+        ),
+      );
+      expect(digit?.type, DateInputIntentType.insertDigits);
+      expect(digit?.text, '7');
+    });
+  });
+
+  group('SuperDateFieldController mobile editing', () {
+    test('soft-keyboard digits replace segments without corrupting the date', () {
+      final controller = SuperDateFieldController(
+        initialValue: DateTime(2024, 1, 1),
+        interactionMode: DateInputInteractionMode.mobile,
+      );
+
+      void enterDigit(String digit) {
+        final oldValue = controller.text.value;
+        final selection = oldValue.selection;
+        final start = selection.start < 0
+            ? oldValue.text.length
+            : selection.start;
+        final end = selection.end < 0 ? start : selection.end;
+        final rawText = oldValue.text.replaceRange(start, end, digit);
+        final rawValue = TextEditingValue(
+          text: rawText,
+          selection: TextSelection.collapsed(offset: start + 1),
+        );
+        controller.text.value = controller.formatMobileEdit(
+          oldValue,
+          rawValue,
+        );
+      }
+
+      expect(controller.text.selection.isCollapsed, isTrue);
+
+      for (final digit in '2025'.split('')) {
+        enterDigit(digit);
+        expect(controller.text.selection.isCollapsed, isTrue);
+      }
+      expect(controller.text.text, '2025-01-01');
+      expect(controller.value, DateTime(2025, 1, 1));
+
+      for (final digit in '12'.split('')) {
+        enterDigit(digit);
+      }
+      for (final digit in '31'.split('')) {
+        enterDigit(digit);
+      }
+
+      expect(controller.text.text, '2025-12-31');
+      expect(controller.value, DateTime(2025, 12, 31));
+      expect(controller.text.selection.isCollapsed, isTrue);
+      controller.dispose();
     });
   });
 

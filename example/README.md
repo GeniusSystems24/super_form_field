@@ -3,7 +3,8 @@
 A runnable gallery for `super_form_field` 1.3.0.
 
 The app demonstrates all eight fields with the unified `InputDecoration` API,
-GeniusLink `super_core` section components, light/dark themes, LTR/RTL layouts,
+GeniusLink `super_core` section components and `SuperAppBar`, light/dark themes,
+LTR/RTL layouts,
 validation submit sweeps, numeric stepping, mobile/desktop date interactions,
 and ERP-oriented sample data.
 

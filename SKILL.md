@@ -88,7 +88,9 @@ Value: `num?`. Controller: `SuperNumericFieldController`.
 Use `min`, `max`, `decimals`, `grouping`, `step`, `largeStep`, `stepper`,
 `keyboardShortcuts`, and `allowNegative`. Units belong in
 `decoration.prefixText` and `decoration.suffixText`. Numbers remain Western,
-mono, and LTR. Text is vertically centered; stepper buttons fill field height.
+mono, and LTR. Its natural single-line editor is centered by layout inside the
+authoritative field height. Stepper buttons are gap-free squares sized from the
+active compact/comfortable field-height token.
 
 ### SuperAttachmentFormField
 
@@ -109,6 +111,18 @@ The calendar button dismisses the keyboard. Mobile uses a modal bottom sheet;
 tablet and desktop use the anchored popover. The field supplies its historical
 leading calendar glyph when no leading decoration is provided. Override it with
 `prefixIcon`, or suppress it with `prefixIcon: SizedBox.shrink()`.
+
+Responsive typing uses two pure interaction policies over one shared controller:
+
+- `MobileDateInputUseCase` translates software-keyboard editing deltas, keeps
+  the caret collapsed, and prevents the IME from bypassing the segmented mask.
+- `DesktopDateInputUseCase` preserves segment selection, arrow stepping,
+  left/right movement, and separator shortcuts for tablet/desktop layouts.
+
+Both implement `DateInputUseCase<Request>` and produce `DateInputIntent` values.
+Do not duplicate parsing, validation, bounds, or segment state between device
+modes; those responsibilities remain shared in `SuperDateFieldController` and
+`DateLogic`.
 
 ### SuperSelectFormField<T>
 
@@ -180,13 +194,16 @@ lib/src/features/<feature>/
 │   └── usecases/
 └── presentation/
     ├── controllers/
+    ├── formatters/
     └── widgets/
 ```
 
 Keep validation, parsing, filtering, and formatting in feature use cases. Keep
-state in controllers and composition in widgets. Shared visual behavior belongs
-under `lib/src/core/foundation`; decoration mapping belongs in
-`field_decoration.dart`.
+state in controllers and composition in widgets. Platform adapters such as the
+mobile date `TextInputFormatter` belong in `presentation/formatters` and must
+translate Flutter values into pure use-case requests rather than owning date
+rules. Shared visual behavior belongs under `lib/src/core/foundation`;
+decoration mapping belongs in `field_decoration.dart`.
 
 ## Review checklist
 
@@ -194,6 +211,10 @@ under `lib/src/core/foundation`; decoration mapping belongs in
 - No public field reintroduces duplicated decoration parameters.
 - Package theme tokens are resolved from the ambient `SuperThemeData`.
 - Mobile date changes do not alter tablet/desktop popover behavior.
-- Numeric steppers match the active compact/comfortable field height.
+- Numeric text keeps a natural-height, borderless single-line editor centered
+  by layout inside `FieldBox`; do not simulate centering with padding or
+  transforms.
+- Numeric steppers are contiguous squares matching the active
+  compact/comfortable field height.
 - Error display remains badge-based.
 - Application imports do not reach into `lib/src`.

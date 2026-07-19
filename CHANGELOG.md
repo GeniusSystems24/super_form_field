@@ -33,11 +33,27 @@ to [Semantic Versioning](https://semver.org/).
   continue using the anchored calendar popover with automatic above/below
   placement. The historical leading calendar glyph remains the default and can
   be replaced through `InputDecoration.prefixIcon`.
-- `SuperNumericFormField` now vertically centers its input text.
-- Numeric increment and decrement controls now stretch to the full field height
-  while retaining the GeniusLink stepper width, border, radius, and states.
-- `FieldIconButton` now supports optional non-square width, height, and border
-  radius values without changing its existing square default.
+- Refined the mobile calendar bottom sheet with a dedicated mobile sheet
+  surface, responsive spacing, integrated header/close affordance, stronger
+  visual hierarchy, and an expanded calendar layout better suited to touch
+  screens.
+- Fixed mobile software-keyboard date entry at the interaction layer. Mobile
+  edits now pass through `MobileDateInputUseCase` and an IME formatter that
+  preserves segment state, keeps the caret collapsed, and prevents repeated
+  selection handles or corrupted values. Desktop hardware-key behavior remains
+  isolated in `DesktopDateInputUseCase` and is unchanged.
+- Fixed `SuperNumericFormField` vertical text alignment at its root cause. The
+  collapsed single-line editor is no longer forced to expand to the full
+  `FieldBox`; its actual measured render box is centered by layout instead, with
+  no visual offsets or hard-coded padding.
+- Numeric increment and decrement controls are now contiguous squares. Their
+  width and height both resolve from the active compact/comfortable field-height
+  token, the shared seam avoids a double border or inter-button gap, and the
+  group sits flush with the field's trailing edge without an extra inset.
+- `FieldIconButton` now supports optional width, height, border, and border-radius
+  overrides while preserving its existing square default.
+- The example gallery now uses `SuperAppBar` from `super_core` instead of the
+  Material `AppBar`.
 
 ### Tests
 
@@ -45,7 +61,11 @@ to [Semantic Versioning](https://semver.org/).
   fields.
 - Added widget regressions for decoration adaptation, mobile date keyboard
   dismissal and bottom-sheet presentation, retained tablet popovers, and
-  full-height numeric steppers.
+  measured numeric-editor centering, square full-height steppers, and a
+  gap-free stepper seam.
+- Added unit coverage for desktop/mobile date interaction use cases and a
+  regression that enters a complete date through the mobile formatter while
+  verifying stable segments and a collapsed caret.
 
 ### Documentation
 

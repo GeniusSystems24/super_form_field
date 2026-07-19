@@ -17,9 +17,12 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../domain/usecases/date_input_intent.dart';
 import '../../domain/usecases/date_logic.dart';
 import '../controllers/super_date_field_controller.dart';
+import '../formatters/mobile_date_input_formatter.dart';
 import 'mini_calendar.dart';
+import 'mobile_calendar_bottom_sheet.dart';
 
 /// A themeable, validated date field on the GeniusLink field foundation. Edit by
 /// typing into the segment the cursor is on, stepping with the arrows, or
@@ -182,49 +185,20 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
   }
 
   Future<void> _showMobileCalendar() async {
-    final tokens = SuperThemeData.of(context).tokens;
     await showModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (sheetContext) {
-        final t = sheetContext.sffTheme;
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            tokens.space4,
-            tokens.space2,
-            tokens.space4,
-            tokens.space6 + MediaQuery.viewInsetsOf(sheetContext).bottom,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: t.borderStrong,
-                  borderRadius: BorderRadius.circular(tokens.radiusPill),
-                ),
-              ),
-              SizedBox(height: tokens.space3),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 420),
-                child: Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: MiniCalendar(
-                    value: _controller.value,
-                    minDate: widget.minDate,
-                    maxDate: widget.maxDate,
-                    onPick: (date) {
-                      _controller.pick(date);
-                      Navigator.of(sheetContext).pop();
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
+        return MobileCalendarBottomSheet(
+          value: _controller.value,
+          minDate: widget.minDate,
+          maxDate: widget.maxDate,
+          onPick: (date) {
+            _controller.pick(date);
+            Navigator.of(sheetContext).pop();
+          },
         );
       },
     );
@@ -238,6 +212,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = SuperDeviceMode.of(context).isMobile;
     _controller.configure(
       validators: DateLogic.buildValidators(
         required: widget.required,
@@ -250,6 +225,9 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
       malformedMessage: widget.invalidMessage,
       keyboardEnabled: widget.keyboardShortcuts,
       readOnly: widget.readOnly,
+      interactionMode: isMobile
+          ? DateInputInteractionMode.mobile
+          : DateInputInteractionMode.desktop,
       onValidity: widget.onValidity,
       onChanged: widget.onChanged,
     );
@@ -368,8 +346,16 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                   enabled: !widget.disabled,
                   readOnly: widget.readOnly,
                   textAlign: TextAlign.left,
-                  keyboardType: TextInputType.datetime,
-                  inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                  keyboardType: isMobile
+                      ? TextInputType.number
+                      : TextInputType.datetime,
+                  inputFormatters: isMobile
+                      ? [MobileDateInputFormatter(_controller)]
+                      : [LengthLimitingTextInputFormatter(10)],
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  smartDashesType: SmartDashesType.disabled,
+                  smartQuotesType: SmartQuotesType.disabled,
                   cursorColor: cs.primary,
                   style: SuperText.mono.copyWith(color: t.fg1),
                   textAlignVertical: TextAlignVertical.center,

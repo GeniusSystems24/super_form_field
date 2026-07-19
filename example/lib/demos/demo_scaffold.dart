@@ -1,9 +1,10 @@
 // ============================================================
 // example/lib/demos/demo_scaffold.dart
 // ------------------------------------------------------------
-// Shared gallery page chrome. Section surfaces come directly from super_core
-// (`SectionCard`, `SectionHeader`, and `SuperMarker`) so the example exercises
-// the same design-system components used by production applications.
+// Shared gallery page chrome. The app bar and section surfaces come directly
+// from super_core (`SuperAppBar`, `SectionCard`, `SectionHeader`, and
+// `SuperMarker`) so the example exercises the same design-system components
+// used by production applications.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -30,13 +31,7 @@ class DemoPage extends StatelessWidget {
     final t = context.sffTheme;
     final tokens = SuperThemeData.of(context).tokens;
     return Scaffold(
-      backgroundColor: t.bg,
-      appBar: AppBar(
-        backgroundColor: t.bg,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(color: t.fg2),
-      ),
+      appBar: SuperAppBar(),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

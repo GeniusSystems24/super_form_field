@@ -23,6 +23,7 @@ class FieldIconButton extends StatefulWidget {
     this.width,
     this.height,
     this.iconSize = 16,
+    this.border,
     this.borderRadius,
     this.bordered = false,
     this.danger = false,
@@ -38,6 +39,12 @@ class FieldIconButton extends StatefulWidget {
   final double? height;
 
   final double iconSize;
+
+  /// Optional border override. This is useful for contiguous button groups,
+  /// where adjacent controls share a single seam instead of painting two
+  /// overlapping borders.
+  final BoxBorder? border;
+
   final BorderRadiusGeometry? borderRadius;
 
   /// Draw a hairline border + input fill (the numeric stepper look).
@@ -76,7 +83,9 @@ class _FieldIconButtonState extends State<FieldIconButton> {
             color: widget.bordered
                 ? t.inputBg
                 : (_hover ? t.hover : const Color(0x00000000)),
-            border: widget.bordered ? Border.all(color: t.borderStrong) : null,
+            border:
+                widget.border ??
+                (widget.bordered ? Border.all(color: t.borderStrong) : null),
             borderRadius:
                 widget.borderRadius ??
                 BorderRadius.circular(
