@@ -1,9 +1,7 @@
 // ============================================================
-// core/theme/sff_text_styles.dart — facade over `super_core`.
+// core/theme/sff_text_styles.dart
 // ------------------------------------------------------------
-// The GeniusLink type ramp now lives in `super_core` so the whole Super toolkit
-// shares one set of text styles. Re-exported here so the kit's existing
-// `SuperText.*` call sites keep working unchanged.
+// `SuperText` (the static text-style class) was removed in super_core 2.4.0.
+// All call sites in this package now read from context.sffTheme.textTheme.*
+// instead. This file is kept as a placeholder to preserve the file history.
 // ============================================================
-
-export 'package:super_core/super_core.dart' show SuperText;

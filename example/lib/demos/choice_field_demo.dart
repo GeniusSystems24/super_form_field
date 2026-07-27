@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -48,7 +48,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
       eyebrow: 'Journal • Entry Options',
       title: 'Super Choice Field',
       children: [
-        SectionCard(
+        SuperSectionCard(
           title: 'Entry State',
           subtitle: 'A segmented single-pick control',
           marker: SuperMarker.identity,
@@ -62,7 +62,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
                 initialValue: ['draft'],
                 options: _status,
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               SuperChoiceFormField<String>(
                 decoration: const InputDecoration(
                   labelText: 'Posting Period',
@@ -75,7 +75,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        SuperSectionCard(
           title: 'Supporting Documents',
           subtitle: 'Attach at least one document type (multi-pick)',
           marker: SuperMarker.notes,
@@ -97,12 +97,12 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -38,7 +38,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final valid = _error == null;
-    return SectionCard(
+    return SuperSectionCard(
       title: '3 · Validated',
       subtitle: 'Required + min bound + custom rule, silent until blur or submit',
       marker: SuperMarker.notes,
@@ -63,28 +63,28 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
               arabic: true,
             ),
           ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space6),
+          SizedBox(height: SuperThemeData.of(context).spacing.space6),
           Row(
             children: [
               FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                      borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
                 ),
                 onPressed: () => setState(() => _force = true),
                 child: const Text('Validate'),
               ),
-              SizedBox(width: SuperThemeData.of(context).tokens.space3),
+              SizedBox(width: SuperThemeData.of(context).spacing.space3),
               TextButton(
                 onPressed: () => setState(() => _force = false),
                 child: Text('Reset', style: TextStyle(color: t.fg2)),
               ),
-              SizedBox(width: SuperThemeData.of(context).tokens.space4),
+              SizedBox(width: SuperThemeData.of(context).spacing.space4),
               if (_force)
                 Text(
                   valid ? 'READY TO POST' : 'FIX 1 FIELD',
-                  style: SuperText.label.copyWith(
+                  style: t.textTheme.label.copyWith(
                     color: valid ? SuperThemeData.of(context).tokens.success : Theme.of(context).colorScheme.error,
                   ),
                 ),

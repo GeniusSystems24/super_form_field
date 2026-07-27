@@ -196,7 +196,7 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
                       if (leading != null) ...[
                         leading,
                         SizedBox(
-                          width: SuperThemeData.of(context).tokens.space2,
+                          width: SuperThemeData.of(context).spacing.space2,
                         ),
                       ],
                       if (hasHint)
@@ -212,13 +212,13 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
                         const Spacer(),
                       for (final item in trailing) ...[
                         SizedBox(
-                          width: SuperThemeData.of(context).tokens.space1,
+                          width: SuperThemeData.of(context).spacing.space1,
                         ),
                         item,
                       ],
                     ],
                   ),
-                  SizedBox(height: SuperThemeData.of(context).tokens.space2),
+                  SizedBox(height: SuperThemeData.of(context).spacing.space2),
                 ],
                 choiceGroup,
               ],
@@ -253,7 +253,7 @@ class _Segmented<T> extends StatelessWidget {
         color: t.inputBg,
         border: Border.all(color: t.borderStrong),
         borderRadius: BorderRadius.circular(
-          SuperThemeData.of(context).tokens.radiusMd,
+          SuperThemeData.of(context).spacing.radiusMd,
         ),
       ),
       child: Row(
@@ -304,7 +304,7 @@ class _Segment<T> extends StatelessWidget {
           decoration: BoxDecoration(
             color: selected ? cs.primary : const Color(0x00000000),
             borderRadius: BorderRadius.circular(
-              SuperThemeData.of(context).tokens.radiusControl,
+              SuperThemeData.of(context).spacing.radiusControl,
             ),
           ),
           child: Opacity(
@@ -318,7 +318,7 @@ class _Segment<T> extends StatelessWidget {
                     size: 15,
                     color: selected ? const Color(0xFFFFFFFF) : t.fg3,
                   ),
-                  SizedBox(width: SuperThemeData.of(context).tokens.space2),
+                  SizedBox(width: SuperThemeData.of(context).spacing.space2),
                 ],
                 Flexible(
                   child: Text(
@@ -326,7 +326,7 @@ class _Segment<T> extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: SuperText.button.copyWith(
+                    style: t.textTheme.button.copyWith(
                       color: selected ? const Color(0xFFFFFFFF) : t.fg3,
                       fontSize: 13,
                       fontFamily: arabic
@@ -366,7 +366,7 @@ class _OptionList<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var i = 0; i < options.length; i++) ...[
-          if (i > 0) SizedBox(height: SuperThemeData.of(context).tokens.space1),
+          if (i > 0) SizedBox(height: SuperThemeData.of(context).spacing.space1),
           _OptionRow<T>(
             option: options[i],
             selected: controller.isSelected(options[i].value),
@@ -433,20 +433,20 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
                 width: sel ? 1.4 : 1,
               ),
               borderRadius: BorderRadius.circular(
-                SuperThemeData.of(context).tokens.radiusControl,
+                SuperThemeData.of(context).spacing.radiusControl,
               ),
             ),
             child: Row(
               children: [
                 widget.checkbox ? _Square(checked: sel) : _Circle(checked: sel),
-                SizedBox(width: SuperThemeData.of(context).tokens.space3),
+                SizedBox(width: SuperThemeData.of(context).spacing.space3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         o.label,
-                        style: SuperText.body.copyWith(
+                        style: t.textTheme.body.copyWith(
                           color: t.fg1,
                           fontWeight: sel ? FontWeight.w600 : FontWeight.w400,
                           fontFamily: fontFamily,
@@ -456,7 +456,7 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
                         const SizedBox(height: 1),
                         Text(
                           o.description!,
-                          style: SuperText.caption.copyWith(
+                          style: t.textTheme.caption.copyWith(
                             color: t.fg4,
                             fontFamily: fontFamily,
                           ),

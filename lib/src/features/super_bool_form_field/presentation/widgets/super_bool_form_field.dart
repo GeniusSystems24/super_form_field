@@ -142,7 +142,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
             widget.decoration.hint != null ||
             widget.decoration.hintText != null;
         final captionStyle = SffDecoration.mergeStyle(
-          SuperText.body.copyWith(
+          t.textTheme.body.copyWith(
             color: on ? t.fg1 : t.fg3,
             fontFamily: fontFamily,
             fontWeight: hasCustomCaption ? FontWeight.w400 : FontWeight.w500,
@@ -177,17 +177,17 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
           children: [
             if (leading != null) ...[
               leading,
-              SizedBox(width: SuperThemeData.of(context).tokens.space2),
+              SizedBox(width: SuperThemeData.of(context).spacing.space2),
             ],
             control,
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             Expanded(child: caption),
             for (final item in trailing) ...[
-              SizedBox(width: SuperThemeData.of(context).tokens.space1),
+              SizedBox(width: SuperThemeData.of(context).spacing.space1),
               item,
             ],
             if (error != null) ...[
-              SizedBox(width: SuperThemeData.of(context).tokens.space1),
+              SizedBox(width: SuperThemeData.of(context).spacing.space1),
               ErrorBadge(error: error),
             ],
           ],
@@ -209,7 +209,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
                 onTap: _editable ? _controller.toggle : null,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                    vertical: SuperThemeData.of(context).tokens.space1,
+                    vertical: SuperThemeData.of(context).spacing.space1,
                   ),
                   child: row,
                 ),
@@ -286,7 +286,7 @@ class _CheckBox extends StatelessWidget {
           width: 1.5,
         ),
         borderRadius: BorderRadius.circular(
-          SuperThemeData.of(context).tokens.radiusControl,
+          SuperThemeData.of(context).spacing.radiusControl,
         ),
       ),
       child: value

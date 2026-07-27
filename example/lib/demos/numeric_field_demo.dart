@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -30,7 +30,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
       eyebrow: 'Ledger • Opening Journal Entry',
       title: 'Super Numeric Field',
       children: [
-        SectionCard(
+        SuperSectionCard(
           title: 'Amounts',
           subtitle: 'Currency and quantity with mathematical constraints',
           marker: SuperMarker.ledger,
@@ -51,7 +51,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 largeStep: 100,
                 forceError: _force,
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               SuperNumericFormField(
                 decoration: const InputDecoration(
                   labelText: 'Quantity',
@@ -68,7 +68,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        SuperSectionCard(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
           marker: SuperMarker.ledger,
@@ -85,7 +85,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 allowNegative: false,
                 initialValue: 3.7512,
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               const SuperNumericFormField(
                 decoration: InputDecoration(
                   labelText: 'Tax Rate',
@@ -105,12 +105,12 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

@@ -72,20 +72,20 @@ class _OptionTileState extends State<OptionTile> {
           child: AnimatedContainer(
             duration: SuperThemeData.of(context).tokens.durFast,
             padding: EdgeInsets.symmetric(
-              horizontal: SuperThemeData.of(context).tokens.space2,
-              vertical: SuperThemeData.of(context).tokens.space2,
+              horizontal: SuperThemeData.of(context).spacing.space2,
+              vertical: SuperThemeData.of(context).spacing.space2,
             ),
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(
-                SuperThemeData.of(context).tokens.radiusControl,
+                SuperThemeData.of(context).spacing.radiusControl,
               ),
             ),
             child: Row(
               children: [
                 if (widget.checkbox) ...[
                   _CheckSquare(checked: widget.selected),
-                  SizedBox(width: SuperThemeData.of(context).tokens.space2),
+                  SizedBox(width: SuperThemeData.of(context).spacing.space2),
                 ],
                 if (widget.icon != null) ...[
                   Icon(
@@ -93,7 +93,7 @@ class _OptionTileState extends State<OptionTile> {
                     size: 16,
                     color: widget.selected ? cs.primary : t.fg3,
                   ),
-                  SizedBox(width: SuperThemeData.of(context).tokens.space2),
+                  SizedBox(width: SuperThemeData.of(context).spacing.space2),
                 ],
                 Expanded(
                   child: Column(
@@ -103,7 +103,7 @@ class _OptionTileState extends State<OptionTile> {
                         widget.label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: SuperText.body.copyWith(
+                        style: t.textTheme.body.copyWith(
                           color: widget.selected ? t.fg1 : t.fg2,
                           fontFamily: fontFamily,
                           fontWeight: widget.selected
@@ -118,7 +118,7 @@ class _OptionTileState extends State<OptionTile> {
                           widget.description!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: SuperText.caption.copyWith(
+                          style: t.textTheme.caption.copyWith(
                             color: t.fg4,
                             fontFamily: fontFamily,
                           ),
@@ -128,7 +128,7 @@ class _OptionTileState extends State<OptionTile> {
                   ),
                 ),
                 if (!widget.checkbox && widget.selected) ...[
-                  SizedBox(width: SuperThemeData.of(context).tokens.space2),
+                  SizedBox(width: SuperThemeData.of(context).spacing.space2),
                   Icon(SffIcons.check, size: 16, color: cs.primary),
                 ],
               ],
@@ -183,14 +183,14 @@ class OptionGroupHeader extends StatelessWidget {
     final t = context.sffTheme;
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(
-        SuperThemeData.of(context).tokens.space2,
-        SuperThemeData.of(context).tokens.space2,
-        SuperThemeData.of(context).tokens.space2,
-        SuperThemeData.of(context).tokens.space1,
+        SuperThemeData.of(context).spacing.space2,
+        SuperThemeData.of(context).spacing.space2,
+        SuperThemeData.of(context).spacing.space2,
+        SuperThemeData.of(context).spacing.space1,
       ),
       child: Text(
         label.toUpperCase(),
-        style: SuperText.label.copyWith(
+        style: t.textTheme.label.copyWith(
           color: t.fg4,
           fontFamily: arabic
               ? SuperThemeData.of(context).tokens.arabicFont

@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/foundation/sff_icon.dart';
-import 'package:super_core/super_core.dart';
 import '../../domain/usecases/date_logic.dart';
 
 const _months = [
@@ -92,17 +91,17 @@ class _MiniCalendarState extends State<MiniCalendar> {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
-    final tokens = SuperThemeData.of(context).tokens;
+    final spacing = t.spacing;
     final daysInMonth = DateTime(_y, _m + 2, 0).day;
     final startDow = DateTime(_y, _m + 1, 1).weekday % 7; // Sun=0
     final today = DateLogic.dateOnly(DateTime.now());
     final expanded = widget.expanded;
 
-    final outerPadding = expanded ? tokens.space2 : tokens.space3;
+    final outerPadding = expanded ? spacing.space2 : spacing.space3;
     final headerFontSize = expanded ? 16.0 : 13.5;
     final dowFontSize = expanded ? 11.0 : 10.0;
     final dayFontSize = expanded ? 14.0 : 12.5;
-    final cellRadius = expanded ? tokens.radiusCard : tokens.radiusMd;
+    final cellRadius = expanded ? spacing.radiusCard : spacing.radiusMd;
     final cellMinHeight = expanded ? 40.0 : 28.0;
     final gridSpacing = expanded ? 6.0 : 2.0;
     final calendarWidth = expanded ? double.infinity : 248.0;
@@ -121,7 +120,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
       decoration: BoxDecoration(
         color: t.surface,
         borderRadius: BorderRadius.circular(
-          expanded ? tokens.radiusCard + 4 : tokens.radiusCard,
+          expanded ? spacing.radiusCard + 4 : spacing.radiusCard,
         ),
         border: Border.all(color: expanded ? t.border : t.borderStrong),
         boxShadow: expanded
@@ -141,7 +140,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
           // ── header: month nav ──
           Padding(
             padding: EdgeInsets.only(
-              bottom: expanded ? tokens.space3 : tokens.space2,
+              bottom: expanded ? spacing.space3 : spacing.space2,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,7 +152,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 ),
                 Text(
                   '${_months[_m]} $_y',
-                  style: SuperText.body.copyWith(
+                  style: t.textTheme.body.copyWith(
                     color: t.fg1,
                     fontWeight: FontWeight.w700,
                     fontSize: headerFontSize,
@@ -177,7 +176,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                     child: Center(
                       child: Text(
                         d,
-                        style: SuperText.label.copyWith(
+                        style: t.textTheme.label.copyWith(
                           color: t.fg4,
                           fontSize: dowFontSize,
                           letterSpacing: 0.2,
@@ -188,7 +187,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 ),
             ],
           ),
-          SizedBox(height: expanded ? tokens.space2 : tokens.space1),
+          SizedBox(height: expanded ? spacing.space2 : spacing.space1),
           // ── day grid ──
           GridView.count(
             crossAxisCount: 7,
@@ -219,7 +218,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                   ),
             ],
           ),
-          SizedBox(height: expanded ? tokens.space2 : tokens.space1),
+          SizedBox(height: expanded ? spacing.space2 : spacing.space1),
           // ── Today shortcut ──
           Align(
             alignment: AlignmentDirectional.centerEnd,
@@ -233,12 +232,12 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(tokens.radiusMd),
+                  borderRadius: BorderRadius.circular(spacing.radiusMd),
                 ),
               ),
               child: Text(
                 'Today',
-                style: SuperText.caption.copyWith(
+                style: t.textTheme.caption.copyWith(
                   color: cs.primary,
                   fontWeight: FontWeight.w600,
                   fontSize: expanded ? 13 : null,
@@ -266,12 +265,12 @@ class _NavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final tokens = SuperThemeData.of(context).tokens;
+    final spacing = t.spacing;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(tokens.radiusMd),
+        borderRadius: BorderRadius.circular(spacing.radiusMd),
         child: Padding(
           padding: EdgeInsets.all(expanded ? 8 : 4),
           child: Icon(icon, size: expanded ? 20 : 18, color: t.fg2),
@@ -355,7 +354,7 @@ class _DayCellState extends State<_DayCell> {
                 child: Center(
                   child: Text(
                     '${widget.day}',
-                    style: SuperText.mono.copyWith(
+                    style: t.textTheme.mono.copyWith(
                       color: fg,
                       fontSize: widget.fontSize,
                     ),

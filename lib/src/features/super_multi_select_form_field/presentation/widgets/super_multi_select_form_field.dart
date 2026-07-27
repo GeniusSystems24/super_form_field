@@ -135,7 +135,7 @@ class _SuperMultiSelectFormFieldState<T>
       empty: Text(
         widget.emptyLabel,
         textAlign: TextAlign.center,
-        style: SuperText.caption.copyWith(color: t.fg4),
+        style: t.textTheme.caption.copyWith(color: t.fg4),
       ),
       children: [
         for (final o in filtered)
@@ -164,7 +164,7 @@ class _SuperMultiSelectFormFieldState<T>
         widget.decoration,
         fallback: 'Select…',
         arabic: widget.arabic,
-        baseStyle: SuperText.body.copyWith(
+        baseStyle: t.textTheme.body.copyWith(
           color: t.fg4,
           fontFamily: widget.arabic
               ? SuperThemeData.of(context).tokens.arabicFont
@@ -175,8 +175,8 @@ class _SuperMultiSelectFormFieldState<T>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Wrap(
-        spacing: SuperThemeData.of(context).tokens.space1,
-        runSpacing: SuperThemeData.of(context).tokens.space1,
+        spacing: SuperThemeData.of(context).spacing.space1,
+        runSpacing: SuperThemeData.of(context).spacing.space1,
         children: [
           for (final o in chosen)
             SuperChip(

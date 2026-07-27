@@ -182,7 +182,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   onTap: _browse,
                 ),
                 if (_controller.files.isNotEmpty) ...[
-                  SizedBox(height: SuperThemeData.of(context).tokens.space2),
+                  SizedBox(height: SuperThemeData.of(context).spacing.space2),
                   for (final f in _controller.files) ...[
                     _FileCard(
                       file: f,
@@ -190,7 +190,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                       disabled: widget.disabled,
                       onRemove: () => _controller.remove(f.id),
                     ),
-                    SizedBox(height: SuperThemeData.of(context).tokens.space2),
+                    SizedBox(height: SuperThemeData.of(context).spacing.space2),
                   ],
                 ],
               ],
@@ -246,7 +246,7 @@ class _DropZone extends StatelessWidget {
         child: CustomPaint(
           painter: _DashedRRectPainter(
             color: border,
-            radius: SuperThemeData.of(context).tokens.radiusMd,
+            radius: SuperThemeData.of(context).spacing.radiusMd,
           ),
           child: AnimatedContainer(
             duration: SuperThemeData.of(context).tokens.durBase,
@@ -255,7 +255,7 @@ class _DropZone extends StatelessWidget {
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(
-                SuperThemeData.of(context).tokens.radiusMd,
+                SuperThemeData.of(context).spacing.radiusMd,
               ),
             ),
             child: Column(
@@ -275,14 +275,14 @@ class _DropZone extends StatelessWidget {
                         const Icon(SffIcons.uploadCloud),
                   ),
                 ),
-                SizedBox(height: SuperThemeData.of(context).tokens.space2),
+                SizedBox(height: SuperThemeData.of(context).spacing.space2),
                 if (decoration.hint == null && decoration.hintText == null)
                   Text.rich(
                     TextSpan(
                       children: [
                         TextSpan(
                           text: 'Browse',
-                          style: SuperText.body.copyWith(
+                          style: t.textTheme.body.copyWith(
                             color: cs.primary,
                             fontWeight: FontWeight.w600,
                             fontSize: 13.5,
@@ -290,7 +290,7 @@ class _DropZone extends StatelessWidget {
                         ),
                         TextSpan(
                           text: ' or drag files here',
-                          style: SuperText.body.copyWith(
+                          style: t.textTheme.body.copyWith(
                             color: t.fg2,
                             fontSize: 13.5,
                           ),
@@ -304,16 +304,16 @@ class _DropZone extends StatelessWidget {
                     decoration,
                     fallback: 'Browse or drag files here',
                     arabic: arabic,
-                    baseStyle: SuperText.body.copyWith(
+                    baseStyle: t.textTheme.body.copyWith(
                       color: t.fg2,
                       fontSize: 13.5,
                     ),
                   ),
                 if (acceptHint != null) ...[
-                  SizedBox(height: SuperThemeData.of(context).tokens.space1),
+                  SizedBox(height: SuperThemeData.of(context).spacing.space1),
                   Text(
                     acceptHint!,
-                    style: SuperText.mono.copyWith(color: t.fg4, fontSize: 11),
+                    style: t.textTheme.mono.copyWith(color: t.fg4, fontSize: 11),
                   ),
                 ],
               ],
@@ -355,7 +355,7 @@ class _FileCard extends StatelessWidget {
         color: t.surface,
         border: Border.all(color: bad ? cs.error : t.border),
         borderRadius: BorderRadius.circular(
-          SuperThemeData.of(context).tokens.radiusControl,
+          SuperThemeData.of(context).spacing.radiusControl,
         ),
       ),
       child: Row(
@@ -366,12 +366,12 @@ class _FileCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Color.alphaBlend(g.color.withOpacity(0.14), t.surface),
               borderRadius: BorderRadius.circular(
-                SuperThemeData.of(context).tokens.radiusMd,
+                SuperThemeData.of(context).spacing.radiusMd,
               ),
             ),
             child: Icon(g.icon, size: 16, color: g.color),
           ),
-          SizedBox(width: SuperThemeData.of(context).tokens.space3),
+          SizedBox(width: SuperThemeData.of(context).spacing.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,7 +381,7 @@ class _FileCard extends StatelessWidget {
                   file.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: SuperText.body.copyWith(
+                  style: t.textTheme.body.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: bad ? cs.error : t.fg1,
@@ -389,7 +389,7 @@ class _FileCard extends StatelessWidget {
                 ),
                 Text(
                   meta,
-                  style: SuperText.mono.copyWith(fontSize: 11, color: t.fg4),
+                  style: t.textTheme.mono.copyWith(fontSize: 11, color: t.fg4),
                 ),
               ],
             ),

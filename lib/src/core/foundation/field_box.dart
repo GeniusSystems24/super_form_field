@@ -69,8 +69,8 @@ class FieldBox extends StatelessWidget {
     final cs = context.sffColorScheme;
     final hasError = error != null;
     final h = density == FieldDensity.compact
-        ? SuperThemeData.of(context).tokens.fieldCompact
-        : SuperThemeData.of(context).tokens.fieldComfortable;
+        ? SuperThemeData.of(context).sizing.fieldCompact
+        : SuperThemeData.of(context).sizing.fieldComfortable;
 
     final borderColor = hasError
         ? cs.error
@@ -106,14 +106,14 @@ class FieldBox extends StatelessWidget {
         curve: SuperThemeData.of(context).tokens.curveStandard,
         constraints: BoxConstraints.tightFor(height: h),
         padding: EdgeInsetsDirectional.only(
-          start: SuperThemeData.of(context).tokens.space3,
-          end: flushTrailing ? 0 : SuperThemeData.of(context).tokens.space1,
+          start: SuperThemeData.of(context).spacing.space3,
+          end: flushTrailing ? 0 : SuperThemeData.of(context).spacing.space1,
         ),
         decoration: BoxDecoration(
           color: bgColor,
           border: Border.all(color: borderColor, width: 1.4),
           borderRadius: BorderRadius.circular(
-            SuperThemeData.of(context).tokens.radiusControl,
+            SuperThemeData.of(context).spacing.radiusControl,
           ),
           boxShadow: hasError
               ? [
@@ -137,15 +137,15 @@ class FieldBox extends StatelessWidget {
                   ),
                   child: leading!,
                 ),
-                SizedBox(width: SuperThemeData.of(context).tokens.space2),
+                SizedBox(width: SuperThemeData.of(context).spacing.space2),
               ],
               Expanded(child: child),
               for (final w in trailing) ...[
-                SizedBox(width: SuperThemeData.of(context).tokens.space1),
+                SizedBox(width: SuperThemeData.of(context).spacing.space1),
                 w,
               ],
               if (hasError) ...[
-                SizedBox(width: SuperThemeData.of(context).tokens.space1),
+                SizedBox(width: SuperThemeData.of(context).spacing.space1),
                 ErrorBadge(error: error),
               ],
             ],

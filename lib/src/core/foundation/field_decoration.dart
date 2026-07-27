@@ -30,7 +30,7 @@ abstract final class SffDecoration {
     final tokens = SuperThemeData.of(context).tokens;
     final theme = SuperThemeData.of(context);
     final style = mergeStyle(
-      SuperText.label.copyWith(
+      theme.textTheme.label.copyWith(
         color: theme.fg2,
         fontFamily: arabic ? tokens.arabicFont : tokens.bodyFont,
       ),
@@ -89,7 +89,7 @@ abstract final class SffDecoration {
     final tokens = SuperThemeData.of(context).tokens;
     final theme = SuperThemeData.of(context);
     final style = mergeStyle(
-      SuperText.caption.copyWith(
+      theme.textTheme.caption.copyWith(
         color: theme.fg4,
         fontFamily: arabic ? tokens.arabicFont : tokens.bodyFont,
       ),
@@ -123,7 +123,7 @@ abstract final class SffDecoration {
     final tokens = SuperThemeData.of(context).tokens;
     final theme = SuperThemeData.of(context);
     final style = mergeStyle(
-      SuperText.mono.copyWith(
+      theme.textTheme.mono.copyWith(
         color: theme.fg4,
         fontSize: 11,
         fontFamily: arabic ? tokens.arabicFont : tokens.monoFont,
@@ -150,7 +150,7 @@ abstract final class SffDecoration {
     final tokens = theme.tokens;
     final style = mergeStyle(
       baseStyle ??
-          SuperText.body.copyWith(
+          theme.textTheme.body.copyWith(
             color: theme.fg4,
             fontFamily: arabic ? tokens.arabicFont : tokens.bodyFont,
           ),
@@ -178,7 +178,7 @@ abstract final class SffDecoration {
     TextStyle? textStyle,
   }) {
     final theme = SuperThemeData.of(context);
-    final baseStyle = textStyle ?? SuperText.body.copyWith(color: theme.fg3);
+    final baseStyle = textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
     final hasExplicitLeading =
         decoration.icon != null ||
         decoration.prefixIcon != null ||
@@ -221,7 +221,7 @@ abstract final class SffDecoration {
     TextStyle? textStyle,
   }) {
     final theme = SuperThemeData.of(context);
-    final baseStyle = textStyle ?? SuperText.body.copyWith(color: theme.fg3);
+    final baseStyle = textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
     return <Widget>[
       if (decoration.suffix != null)
         DefaultTextStyle.merge(
@@ -276,7 +276,7 @@ abstract final class SffDecoration {
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var i = 0; i < widgets.length; i++) ...[
-          if (i > 0) SizedBox(width: SuperThemeData.of(context).tokens.space1),
+          if (i > 0) SizedBox(width: SuperThemeData.of(context).spacing.space1),
           widgets[i],
         ],
       ],

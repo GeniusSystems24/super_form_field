@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -48,7 +48,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
       eyebrow: 'Documents • Supporting Files',
       title: 'Super Attachment Field',
       children: [
-        SectionCard(
+        SuperSectionCard(
           title: 'Supporting Documents',
           subtitle: 'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
           marker: SuperMarker.notes,
@@ -65,7 +65,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
             forceError: _force,
           ),
         ),
-        SectionCard(
+        SuperSectionCard(
           title: 'Single Receipt',
           subtitle: 'Single-file mode replaces the previous attachment',
           marker: SuperMarker.notes,
@@ -84,12 +84,12 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

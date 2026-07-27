@@ -72,7 +72,7 @@ class FieldShell extends StatelessWidget {
           decoration,
           arabic: arabic,
         );
-    final tokens = SuperThemeData.of(context).tokens;
+    final spacing = SuperThemeData.of(context).spacing;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,11 +86,11 @@ class FieldShell extends StatelessWidget {
               if (effectiveRight != null) effectiveRight,
             ],
           ),
-          SizedBox(height: tokens.space2),
+          SizedBox(height: spacing.space2),
         ],
         child,
         if (helperWidget != null && !hasError) ...[
-          SizedBox(height: tokens.space2),
+          SizedBox(height: spacing.space2),
           helperWidget,
         ],
       ],

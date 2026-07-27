@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -29,7 +29,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
       eyebrow: 'Accounts • Create Account',
       title: 'Super Text Field',
       children: [
-        SectionCard(
+        SuperSectionCard(
           title: 'Identity',
           subtitle: 'Define the account name in both languages',
           marker: SuperMarker.identity,
@@ -57,7 +57,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                   forceError: _force,
                 ),
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               const SuperTextFormField(
                 decoration: InputDecoration(
                   labelText: 'Reference',
@@ -69,7 +69,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        SuperSectionCard(
           title: 'Contact & Access',
           subtitle: 'Email and password validation patterns',
           marker: SuperMarker.identity,
@@ -85,7 +85,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 required: true,
                 forceError: _force,
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               SuperTextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Password',
@@ -100,7 +100,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        const SuperSectionCard(
           title: 'Notes',
           subtitle: 'Add any notes about this account',
           marker: SuperMarker.notes,
@@ -120,12 +120,12 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

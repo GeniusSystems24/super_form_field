@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -54,7 +54,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
       eyebrow: 'Accounts • Classification',
       title: 'Super Select Field',
       children: [
-        SectionCard(
+        SuperSectionCard(
           title: 'Classification',
           subtitle: 'Pick the account type and reporting currency',
           marker: SuperMarker.identity,
@@ -88,7 +88,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
                   forceError: _force,
                 ),
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               SuperSelectFormField<String>(
                 decoration: const InputDecoration(
                   labelText: 'Reporting Currency',
@@ -105,7 +105,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             ],
           ),
         ),
-        const SectionCard(
+        const SuperSectionCard(
           title: 'Allocation',
           subtitle: 'Assign a cost center (some are locked)',
           marker: SuperMarker.ledger,
@@ -124,12 +124,12 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

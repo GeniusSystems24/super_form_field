@@ -205,7 +205,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     OutlineInputBorder border(Color color, {double width = 1.4}) =>
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            SuperThemeData.of(context).tokens.radiusControl,
+            SuperThemeData.of(context).spacing.radiusControl,
           ),
           borderSide: BorderSide(color: color, width: width),
         );
@@ -270,7 +270,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           children: [
             for (var i = 0; i < leadingIcons.length; i++) ...[
               if (i > 0)
-                SizedBox(width: SuperThemeData.of(context).tokens.space1),
+                SizedBox(width: SuperThemeData.of(context).spacing.space1),
               leadingIcons[i],
             ],
           ],
@@ -279,18 +279,18 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     // ── Density ──
     final minH = widget.density == FieldDensity.compact
-        ? SuperThemeData.of(context).tokens.fieldCompact
-        : SuperThemeData.of(context).tokens.fieldComfortable;
+        ? SuperThemeData.of(context).sizing.fieldCompact
+        : SuperThemeData.of(context).sizing.fieldComfortable;
 
     // ── Prefix / suffix text adornments ──
-    final adornStyle = SuperText.body.copyWith(color: t.fg3, fontSize: 13);
+    final adornStyle = t.textTheme.body.copyWith(color: t.fg3, fontSize: 13);
 
     final decoration = InputDecoration(
       // The external FieldShell owns label/helper/counter/error presentation.
       hint: source.hint,
       hintText: source.hintText,
       hintStyle: SffDecoration.mergeStyle(
-        SuperText.body.copyWith(
+        t.textTheme.body.copyWith(
           color: t.fg4,
           fontFamily: widget.arabic
               ? SuperThemeData.of(context).tokens.arabicFont
@@ -330,10 +330,10 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           ? BoxConstraints(minHeight: minH)
           : BoxConstraints.tightFor(height: minH),
       contentPadding: EdgeInsets.symmetric(
-        horizontal: SuperThemeData.of(context).tokens.space3,
+        horizontal: SuperThemeData.of(context).spacing.space3,
         vertical: widget.density == FieldDensity.compact
-            ? SuperThemeData.of(context).tokens.space1
-            : SuperThemeData.of(context).tokens.space2,
+            ? SuperThemeData.of(context).spacing.space1
+            : SuperThemeData.of(context).spacing.space2,
       ),
       border: border(enabledBorderColor),
       enabledBorder: border(enabledBorderColor),
@@ -343,7 +343,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       focusedErrorBorder: border(cs.error),
     );
 
-    final textStyle = SuperText.body.copyWith(
+    final textStyle = t.textTheme.body.copyWith(
       color: t.fg1,
       fontFamily: widget.arabic
           ? SuperThemeData.of(context).tokens.arabicFont
@@ -403,7 +403,7 @@ class _Counter extends StatelessWidget {
     final cs = context.sffColorScheme;
     return Text(
       '$length/$max',
-      style: SuperText.mono.copyWith(
+      style: t.textTheme.mono.copyWith(
         fontSize: 11,
         color: length > max ? cs.error : t.fg4,
       ),

@@ -41,17 +41,17 @@ class _SuperChipState extends State<SuperChip> {
     final cs = context.sffColorScheme;
     return Container(
       padding: EdgeInsetsDirectional.only(
-        start: SuperThemeData.of(context).tokens.space2,
+        start: SuperThemeData.of(context).spacing.space2,
         end: widget.onRemove != null
             ? 2
-            : SuperThemeData.of(context).tokens.space2,
+            : SuperThemeData.of(context).spacing.space2,
         top: 2,
         bottom: 2,
       ),
       decoration: BoxDecoration(
         color: t.selectionFill(0.14),
         borderRadius: BorderRadius.circular(
-          SuperThemeData.of(context).tokens.radiusMd,
+          SuperThemeData.of(context).spacing.radiusMd,
         ),
         border: Border.all(color: t.selectionFill(0.5)),
       ),
@@ -63,7 +63,7 @@ class _SuperChipState extends State<SuperChip> {
               widget.label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: SuperText.caption.copyWith(
+              style: t.textTheme.caption.copyWith(
                 color: t.fg1,
                 fontWeight: FontWeight.w500,
                 fontSize: 12.5,

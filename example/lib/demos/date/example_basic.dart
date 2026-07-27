@@ -9,7 +9,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -26,7 +26,7 @@ class _DateBasicExampleState extends State<DateBasicExample> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    return SectionCard(
+    return SuperSectionCard(
       title: '1 · Basic',
       subtitle: 'Uncontrolled — type a masked date or pick from the calendar',
       marker: SuperMarker.identity,
@@ -41,10 +41,10 @@ class _DateBasicExampleState extends State<DateBasicExample> {
             initialValue: _value,
             onChanged: (v) => setState(() => _value = v),
           ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space3),
+          SizedBox(height: SuperThemeData.of(context).spacing.space3),
           Text(
             'VALUE  ${DateLogic.format(_value).isEmpty ? '—' : DateLogic.format(_value)}',
-            style: SuperText.mono.copyWith(color: t.fg3, fontSize: 12),
+            style: t.textTheme.mono.copyWith(color: t.fg3, fontSize: 12),
           ),
         ],
       ),

@@ -8,7 +8,6 @@
 import 'package:flutter/widgets.dart';
 
 import '../extensions/context_extensions.dart';
-import 'package:super_core/super_core.dart';
 
 /// A rounded pill: [color]-tinted background behind [color] text.
 class CountPill extends StatelessWidget {
@@ -32,7 +31,7 @@ class CountPill extends StatelessWidget {
       ),
       child: Text(
         label.toUpperCase(),
-        style: SuperText.pill.copyWith(color: color),
+        style: t.textTheme.pill.copyWith(color: color),
       ),
     );
   }

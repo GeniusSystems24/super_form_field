@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -29,7 +29,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
       eyebrow: 'Accounts • Status & Flags',
       title: 'Super Bool Field',
       children: [
-        SectionCard(
+        SuperSectionCard(
           title: 'Status Flags',
           subtitle: 'Toggle account behaviour',
           marker: SuperMarker.identity,
@@ -54,7 +54,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
                   disabledLabel: 'متوقف',
                 ),
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               const SuperBoolFormField(
                 decoration: InputDecoration(
                   labelText: 'Allow Manual Posting',
@@ -63,7 +63,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
                 enabledLabel: 'Manual journals allowed',
                 disabledLabel: 'System postings only',
               ),
-              SizedBox(height: SuperThemeData.of(context).tokens.space6),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
               const SuperBoolFormField(
                 decoration: InputDecoration(
                   labelText: 'Reconciliation Required',
@@ -74,7 +74,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             ],
           ),
         ),
-        SectionCard(
+        SuperSectionCard(
           title: 'Compliance',
           subtitle: 'A required acknowledgement gate',
           marker: SuperMarker.notes,
@@ -95,12 +95,12 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

@@ -91,7 +91,7 @@ class _FieldIconButtonState extends State<FieldIconButton> {
                 BorderRadius.circular(
                   widget.bordered
                       ? 5
-                      : SuperThemeData.of(context).tokens.radiusMd,
+                      : SuperThemeData.of(context).spacing.radiusMd,
                 ),
           ),
           child: Icon(widget.icon, size: widget.iconSize, color: fg),

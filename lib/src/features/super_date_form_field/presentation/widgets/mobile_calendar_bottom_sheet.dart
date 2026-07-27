@@ -36,6 +36,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final tokens = t.tokens;
+    final spacing = t.spacing;
     final insets = MediaQuery.viewInsetsOf(context);
     final padding = MediaQuery.paddingOf(context);
 
@@ -43,10 +44,10 @@ class MobileCalendarBottomSheet extends StatelessWidget {
       duration: tokens.durBase,
       curve: tokens.curveStandard,
       padding: EdgeInsets.fromLTRB(
-        tokens.space3,
-        tokens.space3,
-        tokens.space3,
-        math.max(tokens.space3, padding.bottom) + tokens.space3 + insets.bottom,
+        spacing.space3,
+        spacing.space3,
+        spacing.space3,
+        math.max(spacing.space3, padding.bottom) + spacing.space3 + insets.bottom,
       ),
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -55,7 +56,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: t.surface,
-              borderRadius: BorderRadius.circular(tokens.radiusCard * 2),
+              borderRadius: BorderRadius.circular(spacing.radiusCard * 2),
               border: Border.all(color: t.borderStrong),
               boxShadow: const [
                 BoxShadow(
@@ -72,10 +73,10 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                 top: false,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
-                    tokens.space4,
-                    tokens.space2,
-                    tokens.space4,
-                    tokens.space4,
+                    spacing.space4,
+                    spacing.space2,
+                    spacing.space4,
+                    spacing.space4,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -85,10 +86,10 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                         height: 5,
                         decoration: BoxDecoration(
                           color: t.borderStrong,
-                          borderRadius: BorderRadius.circular(tokens.radiusPill),
+                          borderRadius: BorderRadius.circular(spacing.radiusPill),
                         ),
                       ),
-                      SizedBox(height: tokens.space3),
+                      SizedBox(height: spacing.space3),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -98,16 +99,16 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                               children: [
                                 Text(
                                   'Select date',
-                                  style: SuperText.body.copyWith(
+                                  style: t.textTheme.body.copyWith(
                                     color: t.fg1,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 16,
                                   ),
                                 ),
-                                SizedBox(height: tokens.space1),
+                                SizedBox(height: spacing.space1),
                                 Text(
                                   _selectionLabel,
-                                  style: SuperText.caption.copyWith(
+                                  style: t.textTheme.caption.copyWith(
                                     color: t.fg3,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -123,18 +124,18 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: tokens.space3),
+                      SizedBox(height: spacing.space3),
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: Color.alphaBlend(
                             Colors.white.withOpacity(0.02),
                             t.surface,
                           ),
-                          borderRadius: BorderRadius.circular(tokens.radiusCard + 4),
+                          borderRadius: BorderRadius.circular(spacing.radiusCard + 4),
                           border: Border.all(color: t.border),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(tokens.space3),
+                          padding: EdgeInsets.all(spacing.space3),
                           child: Directionality(
                             textDirection: TextDirection.ltr,
                             child: MiniCalendar(

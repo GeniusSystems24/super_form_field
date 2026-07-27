@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -42,7 +42,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    return SectionCard(
+    return SuperSectionCard(
       title: '2 · Controlled range',
       subtitle: 'Linked controllers — Start caps End, and vice-versa',
       marker: SuperMarker.ledger,
@@ -63,7 +63,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
                   onChanged: _onStartChanged,
                 ),
               ),
-              SizedBox(width: SuperThemeData.of(context).tokens.space4),
+              SizedBox(width: SuperThemeData.of(context).spacing.space4),
               Expanded(
                 child: SuperDateFormField(
                   decoration: const InputDecoration(
@@ -77,7 +77,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
               ),
             ],
           ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space4),
+          SizedBox(height: SuperThemeData.of(context).spacing.space4),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: OutlinedButton(
@@ -85,7 +85,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
                 foregroundColor: t.fg1,
                 side: BorderSide(color: t.borderStrong),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                    borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () {
                 final now = DateTime.now();

@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -47,7 +47,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
       eyebrow: 'Journal • Tagging & Access',
       title: 'Super Multi-Select Field',
       children: [
-        SectionCard(
+        SuperSectionCard(
           title: 'Tags',
           subtitle: 'Classify this entry — pick one or more',
           marker: SuperMarker.notes,
@@ -63,7 +63,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
             forceError: _force,
           ),
         ),
-        SectionCard(
+        SuperSectionCard(
           title: 'Role Permissions',
           subtitle: 'Grant up to three permissions for this role',
           marker: SuperMarker.identity,
@@ -85,12 +85,12 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).tokens.radiusControl)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),
             ),
-            SizedBox(width: SuperThemeData.of(context).tokens.space3),
+            SizedBox(width: SuperThemeData.of(context).spacing.space3),
             TextButton(
               onPressed: () => setState(() => _force = false),
               child: Text('Reset', style: TextStyle(color: t.fg2)),

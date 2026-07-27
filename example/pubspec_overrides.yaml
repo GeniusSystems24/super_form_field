@@ -1,0 +1,3 @@
+dependency_overrides:
+  super_core:
+    path: ../../super_core

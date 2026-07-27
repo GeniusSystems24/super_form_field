@@ -163,7 +163,7 @@ class _Launcher extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(SuperThemeData.of(context).tokens.space10),
+            padding: EdgeInsets.all(SuperThemeData.of(context).spacing.space10),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 680),
               child: Column(
@@ -171,19 +171,19 @@ class _Launcher extends StatelessWidget {
                 children: [
                   Text(
                     'SUPER FORM FIELD • GALLERY',
-                    style: SuperText.eyebrow.copyWith(
+                    style: t.textTheme.eyebrow.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  SizedBox(height: SuperThemeData.of(context).tokens.space2),
+                  SizedBox(height: SuperThemeData.of(context).spacing.space2),
                   Text(
                     'Form Fields حقول النماذج',
-                    style: SuperText.h1.copyWith(color: t.fg1),
+                    style: t.textTheme.h1.copyWith(color: t.fg1),
                   ),
-                  SizedBox(height: SuperThemeData.of(context).tokens.space8),
+                  SizedBox(height: SuperThemeData.of(context).spacing.space8),
                   for (final d in _demos) ...[
                     _Card(item: d),
-                    SizedBox(height: SuperThemeData.of(context).tokens.space3),
+                    SizedBox(height: SuperThemeData.of(context).spacing.space3),
                   ],
                 ],
               ),
@@ -206,17 +206,17 @@ class _Card extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(
-          SuperThemeData.of(context).tokens.radiusCard,
+          SuperThemeData.of(context).spacing.radiusCard,
         ),
         onTap: () => Navigator.of(
           context,
         ).push(MaterialPageRoute<void>(builder: item.builder)),
         child: Container(
-          padding: EdgeInsets.all(SuperThemeData.of(context).tokens.space4),
+          padding: EdgeInsets.all(SuperThemeData.of(context).spacing.space4),
           decoration: BoxDecoration(
             color: t.surface,
             borderRadius: BorderRadius.circular(
-              SuperThemeData.of(context).tokens.radiusCard,
+              SuperThemeData.of(context).spacing.radiusCard,
             ),
             border: Border.all(color: t.border),
           ),
@@ -231,7 +231,7 @@ class _Card extends StatelessWidget {
                     t.surface,
                   ),
                   borderRadius: BorderRadius.circular(
-                    SuperThemeData.of(context).tokens.radiusControl,
+                    SuperThemeData.of(context).spacing.radiusControl,
                   ),
                 ),
                 child: Icon(
@@ -240,19 +240,19 @@ class _Card extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              SizedBox(width: SuperThemeData.of(context).tokens.space4),
+              SizedBox(width: SuperThemeData.of(context).spacing.space4),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       item.title,
-                      style: SuperText.heading.copyWith(color: t.fg1),
+                      style: t.textTheme.heading.copyWith(color: t.fg1),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle,
-                      style: SuperText.caption.copyWith(color: t.fg3),
+                      style: t.textTheme.caption.copyWith(color: t.fg3),
                     ),
                   ],
                 ),

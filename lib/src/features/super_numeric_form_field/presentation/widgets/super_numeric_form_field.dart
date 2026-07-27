@@ -157,18 +157,19 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 _controller.visibleError,
               );
 
-        final tokens = SuperThemeData.of(context).tokens;
+        final sizing = SuperThemeData.of(context).sizing;
+        final spacing = SuperThemeData.of(context).spacing;
         final controlHeight = widget.density == FieldDensity.compact
-            ? tokens.fieldCompact
-            : tokens.fieldComfortable;
-        final unitStyle = SuperText.mono.copyWith(
+            ? sizing.fieldCompact
+            : sizing.fieldComfortable;
+        final unitStyle = t.textTheme.mono.copyWith(
           color: t.fg3,
           fontSize: 12.5,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.2,
         );
         final stepperBorderRadius = BorderRadius.circular(
-          tokens.radiusControl,
+          spacing.radiusControl,
         );
         final stepperBorderSide = BorderSide(color: t.borderStrong);
         final trailing = <Widget>[
@@ -278,7 +279,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                         signed: true,
                       ),
                       cursorColor: cs.primary,
-                      style: SuperText.mono.copyWith(color: t.fg1),
+                      style: t.textTheme.mono.copyWith(color: t.fg1),
                       // FieldBox owns the border and height. Keep this editor at
                       // its natural single-line height, then center that actual
                       // render box in the available control height.
@@ -286,7 +287,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                         hint: widget.decoration.hint,
                         hintText: widget.decoration.hintText,
                         hintStyle: SffDecoration.mergeStyle(
-                          SuperText.mono.copyWith(color: t.fg4),
+                          t.textTheme.mono.copyWith(color: t.fg4),
                           widget.decoration.hintStyle,
                         ),
                         hintTextDirection: TextDirection.ltr,

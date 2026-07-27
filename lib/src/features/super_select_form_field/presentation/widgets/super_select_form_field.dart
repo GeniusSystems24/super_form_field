@@ -133,7 +133,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
       empty: Text(
         widget.emptyLabel,
         textAlign: TextAlign.center,
-        style: SuperText.caption.copyWith(color: t.fg4),
+        style: t.textTheme.caption.copyWith(color: t.fg4),
       ),
       children: [
         for (final o in filtered)
@@ -227,7 +227,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                           selected.label,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: SuperText.body.copyWith(
+                          style: t.textTheme.body.copyWith(
                             color: t.fg1,
                             fontFamily: widget.arabic
                                 ? SuperThemeData.of(context).tokens.arabicFont
@@ -242,7 +242,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                           widget.decoration,
                           fallback: 'Select…',
                           arabic: widget.arabic,
-                          baseStyle: SuperText.body.copyWith(
+                          baseStyle: t.textTheme.body.copyWith(
                             color: t.fg4,
                             fontFamily: widget.arabic
                                 ? SuperThemeData.of(context).tokens.arabicFont

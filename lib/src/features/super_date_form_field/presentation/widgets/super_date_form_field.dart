@@ -246,7 +246,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 _controller.visibleError,
               );
 
-        final adornStyle = SuperText.mono.copyWith(
+        final adornStyle = t.textTheme.mono.copyWith(
           color: t.fg3,
           fontSize: 12.5,
           fontWeight: FontWeight.w600,
@@ -271,7 +271,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 icon: SffIcons.calendarDays,
                 tooltip: 'Open calendar',
                 bordered: true,
-                size: SuperThemeData.of(context).tokens.trailingIcon,
+                size: SuperThemeData.of(context).sizing.iconButton,
                 iconSize: 15,
                 onPressed: _editable ? () => _toggleCalendar() : null,
               ),
@@ -357,14 +357,14 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                   smartDashesType: SmartDashesType.disabled,
                   smartQuotesType: SmartQuotesType.disabled,
                   cursorColor: cs.primary,
-                  style: SuperText.mono.copyWith(color: t.fg1),
+                  style: t.textTheme.mono.copyWith(color: t.fg1),
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     hint: widget.decoration.hint,
                     hintText:
                         widget.decoration.hintText ?? widget.format.placeholder,
                     hintStyle: SffDecoration.mergeStyle(
-                      SuperText.mono.copyWith(color: t.fg4),
+                      t.textTheme.mono.copyWith(color: t.fg4),
                       widget.decoration.hintStyle,
                     ),
                     hintTextDirection: TextDirection.ltr,

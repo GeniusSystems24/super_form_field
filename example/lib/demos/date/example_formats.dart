@@ -9,7 +9,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SectionCard, SuperMarker;
+    hide SuperSectionCard, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -18,7 +18,7 @@ class DateFormatsExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SectionCard(
+    return SuperSectionCard(
       title: '4 · Formats',
       subtitle: 'Year-month-day · year-month · year · month-day',
       marker: SuperMarker.identity,
@@ -37,7 +37,7 @@ class DateFormatsExample extends StatelessWidget {
                   initialValue: DateTime(2024, 1, 31),
                 ),
               ),
-              SizedBox(width: SuperThemeData.of(context).tokens.space4),
+              SizedBox(width: SuperThemeData.of(context).spacing.space4),
               Expanded(
                 child: SuperDateFormField(
                   decoration: const InputDecoration(
@@ -49,7 +49,7 @@ class DateFormatsExample extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: SuperThemeData.of(context).tokens.space6),
+          SizedBox(height: SuperThemeData.of(context).spacing.space6),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -62,7 +62,7 @@ class DateFormatsExample extends StatelessWidget {
                   initialValue: DateTime(2024, 1, 1),
                 ),
               ),
-              SizedBox(width: SuperThemeData.of(context).tokens.space4),
+              SizedBox(width: SuperThemeData.of(context).spacing.space4),
               Expanded(
                 child: SuperDateFormField(
                   decoration: const InputDecoration(

@@ -2,16 +2,16 @@
 // example/lib/demos/demo_scaffold.dart
 // ------------------------------------------------------------
 // Shared gallery page chrome. The app bar and section surfaces come directly
-// from super_core (`SuperAppBar`, `SectionCard`, `SectionHeader`, and
-// `SuperMarker`) so the example exercises the same design-system components
-// used by production applications.
+// from super_core (`SuperAppBar`, `SuperSectionCard`, and `SuperMarker`) so
+// the example exercises the same design-system components used by production
+// applications.
 // ============================================================
 
 import 'package:flutter/material.dart';
 import 'package:super_core/super_core.dart';
 import 'package:super_form_field/super_form_field.dart' show SuperFieldContextX;
 
-export 'package:super_core/super_core.dart' show SectionCard, SuperMarker;
+export 'package:super_core/super_core.dart' show SuperSectionCard, SuperMarker;
 
 /// A centered GeniusLink page with an eyebrow + title and spaced sections.
 class DemoPage extends StatelessWidget {
@@ -29,7 +29,6 @@ class DemoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    final tokens = SuperThemeData.of(context).tokens;
     return Scaffold(
       appBar: SuperAppBar(),
       body: SafeArea(
@@ -37,23 +36,23 @@ class DemoPage extends StatelessWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 64),
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: tokens.contentColumn),
+              constraints: BoxConstraints(maxWidth: SuperThemeData.of(context).sizing.contentColumn),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     eyebrow.toUpperCase(),
-                    style: SuperText.eyebrow.copyWith(
+                    style: t.textTheme.eyebrow.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  SizedBox(height: tokens.space2),
-                  Text(title, style: SuperText.h1.copyWith(color: t.fg1)),
-                  SizedBox(height: tokens.space8),
+                  SizedBox(height: SuperThemeData.of(context).spacing.space2),
+                  Text(title, style: t.textTheme.h1.copyWith(color: t.fg1)),
+                  SizedBox(height: SuperThemeData.of(context).spacing.space8),
                   for (var index = 0; index < children.length; index++) ...[
                     children[index],
                     if (index < children.length - 1)
-                      SizedBox(height: tokens.space8),
+                      SizedBox(height: SuperThemeData.of(context).spacing.space8),
                   ],
                 ],
               ),
@@ -78,7 +77,7 @@ class BilingualRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: english),
-        SizedBox(width: SuperThemeData.of(context).tokens.space6),
+        SizedBox(width: SuperThemeData.of(context).spacing.space6),
         Expanded(
           child: Directionality(
             textDirection: TextDirection.rtl,

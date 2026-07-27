@@ -35,15 +35,12 @@ class SuperDateFieldController extends ChangeNotifier {
   /// the field widget or duplicating date rules.
   SuperDateFieldController({
     DateTime? initialValue,
-    DateInputInteractionMode interactionMode =
-        DateInputInteractionMode.desktop,
+    DateInputInteractionMode interactionMode = DateInputInteractionMode.desktop,
     DateInputUseCase<DesktopDateInputRequest> desktopInputUseCase =
         const DesktopDateInputUseCase(),
     DateInputUseCase<MobileDateEditRequest> mobileInputUseCase =
         const MobileDateInputUseCase(),
-  }) : _value = initialValue == null
-           ? null
-           : DateLogic.dateOnly(initialValue),
+  }) : _value = initialValue == null ? null : DateLogic.dateOnly(initialValue),
        _interactionMode = interactionMode,
        _desktopInputUseCase = desktopInputUseCase,
        _mobileInputUseCase = mobileInputUseCase {
@@ -124,8 +121,7 @@ class SuperDateFieldController extends ChangeNotifier {
     String malformedMessage = 'Enter a valid date',
     bool keyboardEnabled = true,
     bool readOnly = false,
-    DateInputInteractionMode interactionMode =
-        DateInputInteractionMode.desktop,
+    DateInputInteractionMode interactionMode = DateInputInteractionMode.desktop,
     ValidityChanged? onValidity,
     ValueChanged<DateTime?>? onChanged,
   }) {
@@ -379,19 +375,6 @@ class SuperDateFieldController extends ChangeNotifier {
       _buf = _disp[pk].isEmpty ? '' : int.parse(_disp[pk]).toString();
       _committed[pk] = false;
       _fresh = false;
-    }
-    _commit();
-  }
-
-  /// A separator key (`-` `/` `.` `:` space) commits the active segment and
-  /// jumps to the next one.
-  void _jumpSeparator() {
-    if (_readOnly) return;
-    if (_buf.isNotEmpty) _commitActive();
-    if (_ai < _order.length - 1) {
-      _ai++;
-      _buf = '';
-      _fresh = true;
     }
     _commit();
   }
@@ -662,15 +645,17 @@ class SuperDateFieldController extends ChangeNotifier {
       LogicalKeyboardKey.arrowLeft => DesktopDateInputKey.arrowLeft,
       LogicalKeyboardKey.arrowRight => DesktopDateInputKey.arrowRight,
       LogicalKeyboardKey.backspace => DesktopDateInputKey.backspace,
-      _ => event.character == null
-          ? DesktopDateInputKey.other
-          : DesktopDateInputKey.character,
+      _ =>
+        event.character == null
+            ? DesktopDateInputKey.other
+            : DesktopDateInputKey.character,
     };
     final intent = _desktopInputUseCase.execute(
       DesktopDateInputRequest(
         key: desktopKey,
         character: event.character,
-        hasModifier: hardware.isControlPressed ||
+        hasModifier:
+            hardware.isControlPressed ||
             hardware.isMetaPressed ||
             hardware.isAltPressed,
         shiftPressed: hardware.isShiftPressed,

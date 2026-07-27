@@ -33,27 +33,27 @@ class ErrorBadge extends StatelessWidget {
       preferBelow: false,
       waitDuration: const Duration(milliseconds: 120),
       padding: EdgeInsets.symmetric(
-        horizontal: SuperThemeData.of(context).tokens.space3,
-        vertical: SuperThemeData.of(context).tokens.space2,
+        horizontal: SuperThemeData.of(context).spacing.space3,
+        vertical: SuperThemeData.of(context).spacing.space2,
       ),
       margin: EdgeInsets.symmetric(
-        horizontal: SuperThemeData.of(context).tokens.space4,
+        horizontal: SuperThemeData.of(context).spacing.space4,
       ),
       decoration: BoxDecoration(
         color: cs.error,
         borderRadius: BorderRadius.circular(
-          SuperThemeData.of(context).tokens.radiusMd,
+          SuperThemeData.of(context).spacing.radiusMd,
         ),
         boxShadow: SuperThemeData.popShadow,
       ),
-      textStyle: SuperText.caption.copyWith(
+      textStyle: SuperThemeData.of(context).textTheme.caption.copyWith(
         color: const Color(0xFFFFFFFF),
         fontWeight: FontWeight.w500,
         height: 1.45,
       ),
       child: SizedBox(
-        width: SuperThemeData.of(context).tokens.trailingIcon,
-        height: SuperThemeData.of(context).tokens.trailingIcon,
+        width: SuperThemeData.of(context).sizing.iconButton,
+        height: SuperThemeData.of(context).sizing.iconButton,
         child: Icon(SffIcons.alertCircle, size: size, color: cs.error),
       ),
     );

@@ -35,10 +35,10 @@ class MenuSearchField extends StatelessWidget {
     final cs = context.sffColorScheme;
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(
-        SuperThemeData.of(context).tokens.space3,
-        SuperThemeData.of(context).tokens.space1,
-        SuperThemeData.of(context).tokens.space2,
-        SuperThemeData.of(context).tokens.space1,
+        SuperThemeData.of(context).spacing.space3,
+        SuperThemeData.of(context).spacing.space1,
+        SuperThemeData.of(context).spacing.space2,
+        SuperThemeData.of(context).spacing.space1,
       ),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: t.border)),
@@ -46,7 +46,7 @@ class MenuSearchField extends StatelessWidget {
       child: Row(
         children: [
           Icon(SffIcons.search, size: 16, color: t.fg4),
-          SizedBox(width: SuperThemeData.of(context).tokens.space2),
+          SizedBox(width: SuperThemeData.of(context).spacing.space2),
           Expanded(
             child: TextField(
               controller: controller,
@@ -54,7 +54,7 @@ class MenuSearchField extends StatelessWidget {
               autofocus: true,
               onChanged: onChanged,
               cursorColor: cs.primary,
-              style: SuperText.body.copyWith(
+              style: t.textTheme.body.copyWith(
                 color: t.fg1,
                 fontSize: 13.5,
                 fontFamily: arabic
@@ -64,7 +64,7 @@ class MenuSearchField extends StatelessWidget {
               textAlign: arabic ? TextAlign.right : TextAlign.left,
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: SuperText.body.copyWith(
+                hintStyle: t.textTheme.body.copyWith(
                   color: t.fg4,
                   fontSize: 13.5,
                   fontFamily: arabic
