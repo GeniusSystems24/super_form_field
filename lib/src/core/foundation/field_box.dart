@@ -65,12 +65,13 @@ class FieldBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final superTheme = SuperThemeData.of(context);
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     final hasError = error != null;
     final h = density == FieldDensity.compact
-        ? SuperThemeData.of(context).sizing.fieldCompact
-        : SuperThemeData.of(context).sizing.fieldComfortable;
+        ? superTheme.sizing.fieldCompact
+        : superTheme.sizing.fieldComfortable;
 
     final borderColor = hasError
         ? cs.error
@@ -102,19 +103,17 @@ class FieldBox extends StatelessWidget {
     return Opacity(
       opacity: disabled ? 0.55 : 1.0,
       child: AnimatedContainer(
-        duration: SuperThemeData.of(context).tokens.durBase,
-        curve: SuperThemeData.of(context).tokens.curveStandard,
+        duration: superTheme.tokens.durBase,
+        curve: superTheme.tokens.curveStandard,
         constraints: BoxConstraints.tightFor(height: h),
         padding: EdgeInsetsDirectional.only(
-          start: SuperThemeData.of(context).spacing.space3,
-          end: flushTrailing ? 0 : SuperThemeData.of(context).spacing.space1,
+          start: superTheme.spacing.space3,
+          end: flushTrailing ? 0 : superTheme.spacing.space1,
         ),
         decoration: BoxDecoration(
           color: bgColor,
           border: Border.all(color: borderColor, width: 1.4),
-          borderRadius: BorderRadius.circular(
-            SuperThemeData.of(context).spacing.radiusControl,
-          ),
+          borderRadius: BorderRadius.circular(superTheme.spacing.radiusControl),
           boxShadow: hasError
               ? [
                   BoxShadow(
@@ -137,15 +136,15 @@ class FieldBox extends StatelessWidget {
                   ),
                   child: leading!,
                 ),
-                SizedBox(width: SuperThemeData.of(context).spacing.space2),
+                SizedBox(width: superTheme.spacing.space2),
               ],
               Expanded(child: child),
               for (final w in trailing) ...[
-                SizedBox(width: SuperThemeData.of(context).spacing.space1),
+                SizedBox(width: superTheme.spacing.space1),
                 w,
               ],
               if (hasError) ...[
-                SizedBox(width: SuperThemeData.of(context).spacing.space1),
+                SizedBox(width: superTheme.spacing.space1),
                 ErrorBadge(error: error),
               ],
             ],

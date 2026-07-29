@@ -42,7 +42,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
     return AnimatedPadding(
       duration: tokens.durBase,
       curve: tokens.curveStandard,
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         spacing.space3,
         spacing.space3,
         spacing.space3,
@@ -57,7 +57,9 @@ class MobileCalendarBottomSheet extends StatelessWidget {
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: t.surface,
-              borderRadius: BorderRadius.circular(spacing.radiusCard * 2),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(spacing.radiusCard * 2),
+              ),
               border: Border.all(color: t.borderStrong),
               boxShadow: const [
                 BoxShadow(
@@ -128,29 +130,14 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: spacing.space3),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Color.alphaBlend(
-                            Colors.white.withValues(alpha: 0.02),
-                            t.surface,
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            spacing.radiusCard + 4,
-                          ),
-                          border: Border.all(color: t.border),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(spacing.space3),
-                          child: Directionality(
-                            textDirection: TextDirection.ltr,
-                            child: MiniCalendar(
-                              value: value,
-                              minDate: minDate,
-                              maxDate: maxDate,
-                              expanded: true,
-                              onPick: onPick,
-                            ),
-                          ),
+                      Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: MiniCalendar(
+                          value: value,
+                          minDate: minDate,
+                          maxDate: maxDate,
+                          expanded: true,
+                          onPick: onPick,
                         ),
                       ),
                     ],

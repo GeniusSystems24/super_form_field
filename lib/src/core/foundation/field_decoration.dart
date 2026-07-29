@@ -161,7 +161,8 @@ abstract final class SffDecoration {
       decoration.hintText ?? fallback,
       maxLines: maxLines,
       overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
-      textAlign: arabic ? TextAlign.right : TextAlign.left,
+      textAlign: TextAlign.start,
+      textDirection: Directionality.of(context),
       style: style,
     );
   }

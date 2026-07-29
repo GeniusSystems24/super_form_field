@@ -221,6 +221,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     final source = widget.decoration;
     final l10n = SuperFormTranslation.of(context);
+    final textDirection = Directionality.of(context);
 
     // ── Suffix icon row ──
     final trailingWidgets = <Widget>[
@@ -302,7 +303,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
         ),
         source.hintStyle,
       ),
-      hintTextDirection: source.hintTextDirection,
+      hintTextDirection: source.hintTextDirection ?? textDirection,
       hintMaxLines: source.hintMaxLines,
 
       // Caller adornments are retained; package controls are appended.
@@ -377,7 +378,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           : TextInputType.text,
       cursorColor: cs.primary,
       style: textStyle,
-      textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
+      textAlign: TextAlign.start,
+      textDirection: textDirection,
       textAlignVertical: multiline ? null : TextAlignVertical.center,
       decoration: decoration,
     );

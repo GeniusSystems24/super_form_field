@@ -210,7 +210,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           tooltip: l10n.decrement,
                           bordered: true,
                           size: controlHeight,
-                          border: const Border(),
+                          border: Border.all(color: Colors.transparent),
                           borderRadius: BorderRadius.zero,
                           iconSize: 14,
                           onPressed: widget.readOnly
@@ -223,7 +223,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           tooltip: l10n.increment,
                           bordered: true,
                           size: controlHeight,
-                          border: const Border(),
+                          border: Border.all(color: Colors.transparent),
                           borderRadius: BorderRadius.zero,
                           iconSize: 14,
                           onPressed: widget.readOnly

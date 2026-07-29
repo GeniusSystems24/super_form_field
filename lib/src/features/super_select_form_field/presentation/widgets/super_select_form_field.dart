@@ -239,9 +239,8 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                                 ? SuperThemeData.of(context).tokens.arabicFont
                                 : SuperThemeData.of(context).tokens.bodyFont,
                           ),
-                          textAlign: widget.arabic
-                              ? TextAlign.right
-                              : TextAlign.left,
+                          textAlign: TextAlign.start,
+                          textDirection: Directionality.of(context),
                         )
                       : SffDecoration.buildHint(
                           context,

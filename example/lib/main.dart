@@ -77,22 +77,22 @@ class _ExampleAppState extends State<ExampleApp> {
     return ListenableBuilder(
       listenable: Listenable.merge([_themeMode, _textDir]),
       builder: (context, child) {
-        final _mode = _themeMode.value;
-        final _dir = _textDir.value;
+        final mode = _themeMode.value;
+        final dir = _textDir.value;
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Super Form Field',
-          themeMode: _mode,
+          themeMode: mode,
           theme: SuperMaterialThemeData.light(),
           darkTheme: SuperMaterialThemeData.dark(),
-          locale: _dir == TextDirection.rtl
+          locale: dir == TextDirection.rtl
               ? const Locale('ar')
               : const Locale('en'),
           localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
           supportedLocales: SuperFormLocalizations.supportedLocales,
           builder: (context, child) =>
-              Directionality(textDirection: _dir, child: child!),
-          home: _Launcher(mode: _mode, dir: _dir),
+              Directionality(textDirection: dir, child: child!),
+          home: _Launcher(mode: mode, dir: dir),
         );
       },
     );

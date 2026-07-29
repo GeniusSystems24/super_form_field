@@ -61,7 +61,7 @@ class MenuSearchField extends StatelessWidget {
                     ? SuperThemeData.of(context).tokens.arabicFont
                     : SuperThemeData.of(context).tokens.bodyFont,
               ),
-              textAlign: arabic ? TextAlign.right : TextAlign.left,
+              textAlign: TextAlign.start,
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: t.textTheme.body.copyWith(

@@ -169,7 +169,8 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
                               ? l10n.disabled
                               : widget.disabledLabel)),
                 style: captionStyle,
-                textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
+                textAlign: TextAlign.start,
+                textDirection: Directionality.of(context),
               );
 
         final control = widget.style == SuperBoolStyle.checkbox

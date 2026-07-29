@@ -277,8 +277,9 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 key: _btnKey,
                 icon: SffIcons.calendarDays,
                 tooltip: l10n.openCalendar,
-                bordered: true,
+                bordered: false,
                 size: SuperThemeData.of(context).sizing.iconButton,
+                borderRadius: BorderRadius.circular(0),
                 iconSize: 15,
                 onPressed: _editable ? () => _toggleCalendar() : null,
               ),
@@ -338,6 +339,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
               error: error,
               disabled: widget.disabled,
               density: widget.density,
+              flushTrailing: _showCalendar && error == null,
               leading: SffDecoration.buildLeading(
                 context,
                 widget.decoration,
