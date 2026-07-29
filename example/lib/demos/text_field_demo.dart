@@ -105,7 +105,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
           subtitle: 'Add any notes about this account',
           marker: SuperMarker.notes,
           child: SuperTextFormField(
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Description',
               hintText: 'Add internal notes about this account…',
             ),
@@ -120,7 +120,11 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusControl,
+                  ),
+                ),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

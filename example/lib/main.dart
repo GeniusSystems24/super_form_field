@@ -18,6 +18,50 @@ import 'demos/numeric_field_demo.dart';
 import 'demos/select_field_demo.dart';
 import 'demos/text_field_demo.dart';
 
+final ValueNotifier<ThemeMode> _themeMode = ValueNotifier(ThemeMode.dark);
+final ValueNotifier<TextDirection> _textDir = ValueNotifier(TextDirection.ltr);
+SuperAppBar appBarBuild(BuildContext context, {Widget? title}) => SuperAppBar(
+  title: title,
+  actions: [
+    ValueListenableBuilder(
+      valueListenable: _themeMode,
+      builder: (context, mode, child) {
+        return IconButton(
+          tooltip: mode == ThemeMode.dark ? 'Light Theme' : 'Dark Theme',
+          icon: Icon(
+            mode == ThemeMode.dark
+                ? Icons.light_mode_rounded
+                : Icons.dark_mode_rounded,
+          ),
+          onPressed: () {
+            _themeMode.value = _themeMode.value == ThemeMode.dark
+                ? ThemeMode.light
+                : ThemeMode.dark;
+          },
+        );
+      },
+    ),
+    ValueListenableBuilder(
+      valueListenable: _textDir,
+      builder: (context, dir, child) {
+        return IconButton(
+          tooltip: dir == TextDirection.ltr ? 'Switch to RTL' : 'Switch to LTR',
+          icon: Icon(
+            dir == TextDirection.ltr
+                ? Icons.format_textdirection_r_to_l_rounded
+                : Icons.format_textdirection_l_to_r_rounded,
+          ),
+          onPressed: () {
+            _textDir.value = _textDir.value == TextDirection.ltr
+                ? TextDirection.rtl
+                : TextDirection.ltr;
+          },
+        );
+      },
+    ),
+  ],
+);
+
 void main() => runApp(const ExampleApp());
 
 class ExampleApp extends StatefulWidget {
@@ -28,33 +72,29 @@ class ExampleApp extends StatefulWidget {
 }
 
 class _ExampleAppState extends State<ExampleApp> {
-  ThemeMode _mode = ThemeMode.dark;
-  TextDirection _dir = TextDirection.ltr;
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Super Form Field',
-      themeMode: _mode,
-      theme: SuperMaterialThemeData.light(),
-      darkTheme: SuperMaterialThemeData.dark(),
-      builder: (context, child) =>
-          Directionality(textDirection: _dir, child: child!),
-      home: _Launcher(
-        mode: _mode,
-        dir: _dir,
-        onToggleTheme: () => setState(
-          () => _mode = _mode == ThemeMode.dark
-              ? ThemeMode.light
-              : ThemeMode.dark,
-        ),
-        onToggleDir: () => setState(
-          () => _dir = _dir == TextDirection.ltr
-              ? TextDirection.rtl
-              : TextDirection.ltr,
-        ),
-      ),
+    return ListenableBuilder(
+      listenable: Listenable.merge([_themeMode, _textDir]),
+      builder: (context, child) {
+        final _mode = _themeMode.value;
+        final _dir = _textDir.value;
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Super Form Field',
+          themeMode: _mode,
+          theme: SuperMaterialThemeData.light(),
+          darkTheme: SuperMaterialThemeData.dark(),
+          locale: _dir == TextDirection.rtl
+              ? const Locale('ar')
+              : const Locale('en'),
+          localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+          supportedLocales: SuperFormLocalizations.supportedLocales,
+          builder: (context, child) =>
+              Directionality(textDirection: _dir, child: child!),
+          home: _Launcher(mode: _mode, dir: _dir),
+        );
+      },
     );
   }
 }
@@ -68,17 +108,10 @@ class _DemoItem {
 }
 
 class _Launcher extends StatelessWidget {
-  const _Launcher({
-    required this.mode,
-    required this.dir,
-    required this.onToggleTheme,
-    required this.onToggleDir,
-  });
+  const _Launcher({required this.mode, required this.dir});
 
   final ThemeMode mode;
   final TextDirection dir;
-  final VoidCallback onToggleTheme;
-  final VoidCallback onToggleDir;
 
   static final _demos = <_DemoItem>[
     _DemoItem(
@@ -135,31 +168,7 @@ class _Launcher extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     return Scaffold(
-      appBar: SuperAppBar(
-        title: const Text('Super Form Field'),
-        actions: [
-          IconButton(
-            tooltip: mode == ThemeMode.dark ? 'Light Theme' : 'Dark Theme',
-            icon: Icon(
-              mode == ThemeMode.dark
-                  ? Icons.light_mode_rounded
-                  : Icons.dark_mode_rounded,
-            ),
-            onPressed: onToggleTheme,
-          ),
-          IconButton(
-            tooltip: dir == TextDirection.ltr
-                ? 'Switch to RTL'
-                : 'Switch to LTR',
-            icon: Icon(
-              dir == TextDirection.ltr
-                  ? Icons.format_textdirection_r_to_l_rounded
-                  : Icons.format_textdirection_l_to_r_rounded,
-            ),
-            onPressed: onToggleDir,
-          ),
-        ],
-      ),
+      appBar: appBarBuild(context, title: const Text('Super Form Field')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -227,7 +236,9 @@ class _Card extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: Color.alphaBlend(
-                    Theme.of(context).colorScheme.primary.withOpacity(0.14),
+                    Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.14),
                     t.surface,
                   ),
                   borderRadius: BorderRadius.circular(

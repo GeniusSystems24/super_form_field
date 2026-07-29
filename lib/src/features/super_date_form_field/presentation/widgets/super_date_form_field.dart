@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/usecases/date_input_intent.dart';
 import '../../domain/usecases/date_logic.dart';
 import '../controllers/super_date_field_controller.dart';
@@ -212,6 +213,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = SuperFormTranslation.of(context);
     final isMobile = SuperDeviceMode.of(context).isMobile;
     _controller.configure(
       validators: DateLogic.buildValidators(
@@ -219,10 +221,15 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
         minDate: widget.minDate,
         maxDate: widget.maxDate,
         extra: widget.validators,
+        requiredMessage: l10n.requiredMessage,
+        minDateMessage: l10n.minDate,
+        maxDateMessage: l10n.maxDate,
       ),
       forceError: widget.forceError,
       segments: widget.format.segments,
-      malformedMessage: widget.invalidMessage,
+      malformedMessage: widget.invalidMessage == 'Enter a valid date'
+          ? l10n.validDate
+          : widget.invalidMessage,
       keyboardEnabled: widget.keyboardShortcuts,
       readOnly: widget.readOnly,
       interactionMode: isMobile
@@ -260,7 +267,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
           if (widget.clearable && _controller.text.text.isNotEmpty && _editable)
             FieldIconButton(
               icon: SffIcons.clear,
-              tooltip: 'Clear',
+              tooltip: l10n.clear,
               onPressed: _controller.clear,
             ),
           if (_showCalendar)
@@ -269,7 +276,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
               child: FieldIconButton(
                 key: _btnKey,
                 icon: SffIcons.calendarDays,
-                tooltip: 'Open calendar',
+                tooltip: l10n.openCalendar,
                 bordered: true,
                 size: SuperThemeData.of(context).sizing.iconButton,
                 iconSize: 15,

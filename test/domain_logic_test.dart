@@ -43,13 +43,21 @@ void main() {
     });
 
     test('clampRound clamps and rounds', () {
-      expect(NumericLogic.clampRound(12.345, min: 0, max: 100, decimals: 2), 12.35);
+      expect(
+        NumericLogic.clampRound(12.345, min: 0, max: 100, decimals: 2),
+        12.35,
+      );
       expect(NumericLogic.clampRound(-5, min: 0, max: 100, decimals: 0), 0);
       expect(NumericLogic.clampRound(150, min: 0, max: 100, decimals: 0), 100);
     });
 
     test('validators honor min/max and allowNegative', () {
-      final v = NumericLogic.buildValidators(required: true, min: 0, max: 10, allowNegative: false);
+      final v = NumericLogic.buildValidators(
+        required: true,
+        min: 0,
+        max: 10,
+        allowNegative: false,
+      );
       expect(runValidators<num?>(null, v), isNotNull);
       expect(runValidators<num?>(-1, v), 'Cannot be negative');
       expect(runValidators<num?>(11, v), isNotNull);
@@ -58,8 +66,18 @@ void main() {
   });
 
   group('AttachmentLogic', () {
-    const pdf = SuperFile(id: '1', name: 'a.pdf', size: 1000, mimeType: 'application/pdf');
-    const png = SuperFile(id: '2', name: 'b.png', size: 2000, mimeType: 'image/png');
+    const pdf = SuperFile(
+      id: '1',
+      name: 'a.pdf',
+      size: 1000,
+      mimeType: 'application/pdf',
+    );
+    const png = SuperFile(
+      id: '2',
+      name: 'b.png',
+      size: 2000,
+      mimeType: 'image/png',
+    );
 
     test('matchesAccept by extension and wildcard', () {
       expect(AttachmentLogic.matchesAccept(pdf, '.pdf,.docx'), isTrue);
@@ -68,12 +86,21 @@ void main() {
     });
 
     test('field validators enforce required + maxFiles + per-file', () {
-      final v = AttachmentLogic.buildValidators(required: true, maxFiles: 1, accept: '.pdf', maxSizeMB: 1);
+      final v = AttachmentLogic.buildValidators(
+        required: true,
+        maxFiles: 1,
+        accept: '.pdf',
+        maxSizeMB: 1,
+      );
       expect(runValidators<List<SuperFile>>(const [], v), isNotNull);
-      expect(runValidators<List<SuperFile>>(const [pdf, png], v),
-          isNotNull); // > maxFiles
-      expect(runValidators<List<SuperFile>>(const [png], v),
-          isNotNull); // wrong type
+      expect(
+        runValidators<List<SuperFile>>(const [pdf, png], v),
+        isNotNull,
+      ); // > maxFiles
+      expect(
+        runValidators<List<SuperFile>>(const [png], v),
+        isNotNull,
+      ); // wrong type
     });
   });
 
@@ -115,7 +142,10 @@ void main() {
       expect(DateLogic.mask('20240131'), '2024-01-31');
       expect(DateLogic.mask('2024'), '2024');
       expect(DateLogic.mask('202401'), '2024-01');
-      expect(DateLogic.mask('a2024/01-31xx'), '2024-01-31'); // strips junk + caps at 8
+      expect(
+        DateLogic.mask('a2024/01-31xx'),
+        '2024-01-31',
+      ); // strips junk + caps at 8
     });
 
     test('parse accepts valid ISO, rejects incomplete + impossible dates', () {
@@ -138,15 +168,24 @@ void main() {
         maxDate: DateTime(2024, 12, 31),
       );
       expect(runValidators<DateTime?>(null, v), isNotNull);
-      expect(runValidators<DateTime?>(DateTime(2023, 12, 31), v), isNotNull); // before min
-      expect(runValidators<DateTime?>(DateTime(2025, 1, 1), v), isNotNull); // after max
+      expect(
+        runValidators<DateTime?>(DateTime(2023, 12, 31), v),
+        isNotNull,
+      ); // before min
+      expect(
+        runValidators<DateTime?>(DateTime(2025, 1, 1), v),
+        isNotNull,
+      ); // after max
       expect(runValidators<DateTime?>(DateTime(2024, 6, 15), v), isNull);
     });
   });
 
   group('DateLogic.compose + formats', () {
     test('compose fills absent parts with defaults', () {
-      expect(DateLogic.compose(year: 2024, month: 3, day: 9), DateTime(2024, 3, 9));
+      expect(
+        DateLogic.compose(year: 2024, month: 3, day: 9),
+        DateTime(2024, 3, 9),
+      );
       // absent day → 1, absent month → 1
       expect(DateLogic.compose(year: 2024, month: 6), DateTime(2024, 6, 1));
       expect(DateLogic.compose(year: 2024), DateTime(2024, 1, 1));
@@ -202,9 +241,7 @@ void main() {
       expect(
         desktop
             .execute(
-              const DesktopDateInputRequest(
-                key: DesktopDateInputKey.arrowUp,
-              ),
+              const DesktopDateInputRequest(key: DesktopDateInputKey.arrowUp),
             )
             ?.type,
         DateInputIntentType.stepUp,
@@ -221,51 +258,54 @@ void main() {
   });
 
   group('SuperDateFieldController mobile editing', () {
-    test('soft-keyboard digits replace segments without corrupting the date', () {
-      final controller = SuperDateFieldController(
-        initialValue: DateTime(2024, 1, 1),
-        interactionMode: DateInputInteractionMode.mobile,
-      );
-
-      void enterDigit(String digit) {
-        final oldValue = controller.text.value;
-        final selection = oldValue.selection;
-        final start = selection.start < 0
-            ? oldValue.text.length
-            : selection.start;
-        final end = selection.end < 0 ? start : selection.end;
-        final rawText = oldValue.text.replaceRange(start, end, digit);
-        final rawValue = TextEditingValue(
-          text: rawText,
-          selection: TextSelection.collapsed(offset: start + 1),
+    test(
+      'soft-keyboard digits replace segments without corrupting the date',
+      () {
+        final controller = SuperDateFieldController(
+          initialValue: DateTime(2024, 1, 1),
+          interactionMode: DateInputInteractionMode.mobile,
         );
-        controller.text.value = controller.formatMobileEdit(
-          oldValue,
-          rawValue,
-        );
-      }
 
-      expect(controller.text.selection.isCollapsed, isTrue);
+        void enterDigit(String digit) {
+          final oldValue = controller.text.value;
+          final selection = oldValue.selection;
+          final start = selection.start < 0
+              ? oldValue.text.length
+              : selection.start;
+          final end = selection.end < 0 ? start : selection.end;
+          final rawText = oldValue.text.replaceRange(start, end, digit);
+          final rawValue = TextEditingValue(
+            text: rawText,
+            selection: TextSelection.collapsed(offset: start + 1),
+          );
+          controller.text.value = controller.formatMobileEdit(
+            oldValue,
+            rawValue,
+          );
+        }
 
-      for (final digit in '2025'.split('')) {
-        enterDigit(digit);
         expect(controller.text.selection.isCollapsed, isTrue);
-      }
-      expect(controller.text.text, '2025-01-01');
-      expect(controller.value, DateTime(2025, 1, 1));
 
-      for (final digit in '12'.split('')) {
-        enterDigit(digit);
-      }
-      for (final digit in '31'.split('')) {
-        enterDigit(digit);
-      }
+        for (final digit in '2025'.split('')) {
+          enterDigit(digit);
+          expect(controller.text.selection.isCollapsed, isTrue);
+        }
+        expect(controller.text.text, '2025-01-01');
+        expect(controller.value, DateTime(2025, 1, 1));
 
-      expect(controller.text.text, '2025-12-31');
-      expect(controller.value, DateTime(2025, 12, 31));
-      expect(controller.text.selection.isCollapsed, isTrue);
-      controller.dispose();
-    });
+        for (final digit in '12'.split('')) {
+          enterDigit(digit);
+        }
+        for (final digit in '31'.split('')) {
+          enterDigit(digit);
+        }
+
+        expect(controller.text.text, '2025-12-31');
+        expect(controller.value, DateTime(2025, 12, 31));
+        expect(controller.text.selection.isCollapsed, isTrue);
+        controller.dispose();
+      },
+    );
   });
 
   group('SuperDateFieldController stepping', () {
@@ -278,14 +318,20 @@ void main() {
       expect(SuperDateFieldController.segmentForOffset(10), 2);
     });
 
-    test('stepSegment changes the right unit and clamps day to month length', () {
-      final c = SuperDateFieldController(initialValue: DateTime(2024, 1, 31));
-      c.stepSegment(0, 1); // year +1
-      expect(c.value, DateTime(2025, 1, 31));
-      c.stepSegment(1, 1); // month +1 → Feb, day clamps 31 → 28 (2025 not leap)
-      expect(c.value, DateTime(2025, 2, 28));
-      c.dispose();
-    });
+    test(
+      'stepSegment changes the right unit and clamps day to month length',
+      () {
+        final c = SuperDateFieldController(initialValue: DateTime(2024, 1, 31));
+        c.stepSegment(0, 1); // year +1
+        expect(c.value, DateTime(2025, 1, 31));
+        c.stepSegment(
+          1,
+          1,
+        ); // month +1 → Feb, day clamps 31 → 28 (2025 not leap)
+        expect(c.value, DateTime(2025, 2, 28));
+        c.dispose();
+      },
+    );
 
     test('stepSegment wraps within the segment (no cross-segment roll)', () {
       final c = SuperDateFieldController(initialValue: DateTime(2025, 12, 28));
@@ -308,7 +354,10 @@ void main() {
     test('filter matches label and description, blank returns all', () {
       expect(SelectLogic.filter(opts, '').length, 3);
       expect(SelectLogic.filter(opts, 'lia').single.value, 'liability');
-      expect(SelectLogic.filter(opts, 'cc-1').single.value, 'asset'); // description
+      expect(
+        SelectLogic.filter(opts, 'cc-1').single.value,
+        'asset',
+      ); // description
       expect(SelectLogic.filter(opts, 'zzz'), isEmpty);
     });
 
@@ -322,17 +371,26 @@ void main() {
   group('MultiSelectLogic', () {
     test('validators honor required + min + max', () {
       final v = MultiSelectLogic.buildValidators<String>(
-          required: true, minSelections: 2, maxSelections: 3);
+        required: true,
+        minSelections: 2,
+        maxSelections: 3,
+      );
       expect(runValidators<List<String>>(const [], v), isNotNull); // required
       expect(runValidators<List<String>>(const ['a'], v), isNotNull); // < min
-      expect(runValidators<List<String>>(const ['a', 'b', 'c', 'd'], v), isNotNull); // > max
+      expect(
+        runValidators<List<String>>(const ['a', 'b', 'c', 'd'], v),
+        isNotNull,
+      ); // > max
       expect(runValidators<List<String>>(const ['a', 'b'], v), isNull);
     });
   });
 
   group('ChoiceLogic', () {
     test('validators honor required + min + max', () {
-      final v = ChoiceLogic.buildValidators<String>(required: true, maxSelections: 2);
+      final v = ChoiceLogic.buildValidators<String>(
+        required: true,
+        maxSelections: 2,
+      );
       expect(runValidators<List<String>>(const [], v), isNotNull);
       expect(runValidators<List<String>>(const ['a', 'b', 'c'], v), isNotNull);
       expect(runValidators<List<String>>(const ['a'], v), isNull);
@@ -405,7 +463,11 @@ void main() {
   group('SuperChoiceFieldController', () {
     test('single mode replaces, multiple mode toggles', () {
       final single = SuperChoiceFieldController<String>();
-      single.configure(multiple: false, validators: const [], forceError: false);
+      single.configure(
+        multiple: false,
+        validators: const [],
+        forceError: false,
+      );
       single.pick('a');
       single.pick('b');
       expect(single.values, ['b']); // replaced
@@ -421,20 +483,23 @@ void main() {
   });
 
   group('SuperBoolFieldController', () {
-    test('toggle flips value and marks touched; visibleError gates on touched', () {
-      final c = SuperBoolFieldController(initialValue: false);
-      c.configure(
-        validators: buildBoolValidators(mustBeTrue: true),
-        forceError: false,
-      );
-      expect(c.visibleError, isNull); // untouched
-      c.toggle();
-      expect(c.value, isTrue);
-      expect(c.visibleError, isNull); // true → valid
-      c.toggle();
-      expect(c.value, isFalse);
-      expect(c.visibleError, isNotNull); // touched + invalid
-      c.dispose();
-    });
+    test(
+      'toggle flips value and marks touched; visibleError gates on touched',
+      () {
+        final c = SuperBoolFieldController(initialValue: false);
+        c.configure(
+          validators: buildBoolValidators(mustBeTrue: true),
+          forceError: false,
+        );
+        expect(c.visibleError, isNull); // untouched
+        c.toggle();
+        expect(c.value, isTrue);
+        expect(c.visibleError, isNull); // true → valid
+        c.toggle();
+        expect(c.value, isFalse);
+        expect(c.visibleError, isNotNull); // touched + invalid
+        c.dispose();
+      },
+    );
   });
 }

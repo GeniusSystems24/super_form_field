@@ -18,7 +18,8 @@ class DateValidatedFormExample extends StatefulWidget {
   const DateValidatedFormExample({super.key});
 
   @override
-  State<DateValidatedFormExample> createState() => _DateValidatedFormExampleState();
+  State<DateValidatedFormExample> createState() =>
+      _DateValidatedFormExampleState();
 }
 
 class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
@@ -40,16 +41,15 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
     final valid = _error == null;
     return SuperSectionCard(
       title: '3 · Validated',
-      subtitle: 'Required + min bound + custom rule, silent until blur or submit',
+      subtitle:
+          'Required + min bound + custom rule, silent until blur or submit',
       marker: SuperMarker.notes,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           BilingualRow(
             english: SuperDateFormField(
-              decoration: const InputDecoration(
-                labelText: 'Value Date',
-              ),
+              decoration: const InputDecoration(labelText: 'Value Date'),
               required: true,
               minDate: DateTime(2024, 1, 1),
               validators: [_noWeekend],
@@ -57,9 +57,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
               onValidity: (e) => setState(() => _error = e),
             ),
             arabic: const SuperDateFormField(
-              decoration: InputDecoration(
-                labelText: 'تاريخ القيمة',
-              ),
+              decoration: InputDecoration(labelText: 'تاريخ القيمة'),
               arabic: true,
             ),
           ),
@@ -70,7 +68,10 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
                 style: FilledButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                    borderRadius: BorderRadius.circular(
+                      SuperThemeData.of(context).spacing.radiusControl,
+                    ),
+                  ),
                 ),
                 onPressed: () => setState(() => _force = true),
                 child: const Text('Validate'),
@@ -85,7 +86,9 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
                 Text(
                   valid ? 'READY TO POST' : 'FIX 1 FIELD',
                   style: t.textTheme.label.copyWith(
-                    color: valid ? SuperThemeData.of(context).tokens.success : Theme.of(context).colorScheme.error,
+                    color: valid
+                        ? SuperThemeData.of(context).tokens.success
+                        : Theme.of(context).colorScheme.error,
                   ),
                 ),
             ],

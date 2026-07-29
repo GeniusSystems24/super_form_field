@@ -1,0 +1,180 @@
+{
+    "@@locale": "ar",
+    "requiredMessage": "هذا الحقل مطلوب",
+    "minCharacters": "يجب ألا يقل عن {count} أحرف",
+    "@minCharacters": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "maxCharacters": "يجب ألا يزيد عن {count} أحرف",
+    "@maxCharacters": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "validEmail": "أدخل بريدًا إلكترونيًا صحيحًا",
+    "invalidFormat": "تنسيق غير صحيح",
+    "cannotBeNegative": "لا يمكن أن تكون القيمة سالبة",
+    "minNumber": "يجب ألا يقل عن {value}",
+    "@minNumber": {
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "maxNumber": "يجب ألا يزيد عن {value}",
+    "@maxNumber": {
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "validDate": "أدخل تاريخًا صحيحًا",
+    "minDate": "يجب أن يكون في أو بعد {value}",
+    "@minDate": {
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "maxDate": "يجب أن يكون في أو قبل {value}",
+    "@maxDate": {
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "search": "بحث...",
+    "noMatches": "لا توجد نتائج",
+    "selectPlaceholder": "اختر...",
+    "clear": "مسح",
+    "show": "إظهار",
+    "hide": "إخفاء",
+    "increment": "زيادة",
+    "decrement": "إنقاص",
+    "openCalendar": "فتح التقويم",
+    "close": "إغلاق",
+    "selectDate": "اختر التاريخ",
+    "pickDateFromCalendar": "اختر تاريخًا من التقويم",
+    "today": "اليوم",
+    "enabled": "مفعّل",
+    "disabled": "معطّل",
+    "mustBeEnabled": "يجب تفعيل هذا الخيار للمتابعة",
+    "selectOption": "اختر خيارًا",
+    "selectAtLeastOneOption": "اختر خيارًا واحدًا على الأقل",
+    "selectAtLeastOptions": "اختر {count} خيارات على الأقل",
+    "@selectAtLeastOptions": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "selectAtMostOptions": "اختر {count} خيارات على الأكثر",
+    "@selectAtMostOptions": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "selectedCount": "{count} محدد",
+    "@selectedCount": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "fileCount": "{count} ملف",
+    "@fileCount": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "browse": "استعراض",
+    "dragFilesHere": " أو اسحب الملفات هنا",
+    "browseOrDragFilesHere": "استعرض أو اسحب الملفات هنا",
+    "upToMegabytes": "حتى {size} م.ب",
+    "@upToMegabytes": {
+        "placeholders": {
+            "size": {
+                "type": "double"
+            }
+        }
+    },
+    "maxFiles": "حد أقصى {count}",
+    "@maxFiles": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "atLeastOneFileRequired": "مطلوب ملف واحد على الأقل",
+    "attachAtMostFiles": "أرفق {count} ملفات على الأكثر",
+    "@attachAtMostFiles": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    },
+    "fileTooLarge": "\"{name}\" يتجاوز {size} م.ب",
+    "@fileTooLarge": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "size": {
+                "type": "double"
+            }
+        }
+    },
+    "fileNotAccepted": "\"{name}\" ليس من نوع مقبول",
+    "@fileNotAccepted": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "removeFile": "إزالة {name}",
+    "@removeFile": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "january": "يناير",
+    "february": "فبراير",
+    "march": "مارس",
+    "april": "أبريل",
+    "may": "مايو",
+    "june": "يونيو",
+    "july": "يوليو",
+    "august": "أغسطس",
+    "september": "سبتمبر",
+    "october": "أكتوبر",
+    "november": "نوفمبر",
+    "december": "ديسمبر",
+    "weekdaySundayNarrow": "ح",
+    "weekdayMondayNarrow": "ن",
+    "weekdayTuesdayNarrow": "ث",
+    "weekdayWednesdayNarrow": "ر",
+    "weekdayThursdayNarrow": "خ",
+    "weekdayFridayNarrow": "ج",
+    "weekdaySaturdayNarrow": "س"
+}

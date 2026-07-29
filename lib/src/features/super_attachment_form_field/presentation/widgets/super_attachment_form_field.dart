@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/entities/super_file.dart';
 import '../../domain/usecases/attachment_logic.dart';
 import '../controllers/super_attachment_field_controller.dart';
@@ -114,17 +115,18 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
     if (picked.isNotEmpty) _controller.add(picked);
   }
 
-  String? get _acceptHint {
+  String? _acceptHint(SuperFormTranslation l10n) {
     final parts = <String>[
       if (widget.accept != null) widget.accept!.replaceAll(',', ', '),
-      if (widget.maxSizeMB != null) 'up to ${widget.maxSizeMB} MB',
-      if (widget.maxFiles != null) 'max ${widget.maxFiles}',
+      if (widget.maxSizeMB != null) l10n.upToMegabytes(widget.maxSizeMB!),
+      if (widget.maxFiles != null) l10n.maxFiles(widget.maxFiles!),
     ];
     return parts.isEmpty ? null : parts.join('  ·  ');
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       multiple: widget.multiple,
       accept: widget.accept,
@@ -135,6 +137,11 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
         accept: widget.accept,
         maxSizeMB: widget.maxSizeMB,
         extra: widget.validators,
+        requiredMessage: l10n.atLeastOneFileRequired,
+        maxFilesMessage: l10n.attachAtMostFiles,
+        fileTooLargeMessage: (name, maxSizeMB) =>
+            l10n.fileTooLarge(name, maxSizeMB ?? 0),
+        fileNotAcceptedMessage: l10n.fileNotAccepted,
       ),
       forceError: widget.forceError,
       onValidity: widget.onValidity,
@@ -157,7 +164,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
         final Widget? labelRight = error != null
             ? ErrorBadge(error: error)
             : (!hasDecorationCounter && n > 0
-                  ? CountPill(label: '$n file${n > 1 ? 's' : ''}')
+                  ? CountPill(label: l10n.fileCount(n))
                   : null);
 
         return FieldShell(
@@ -176,9 +183,10 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   density: widget.density,
                   disabled: widget.disabled,
                   hasError: error != null,
-                  acceptHint: _acceptHint,
+                  acceptHint: _acceptHint(l10n),
                   decoration: widget.decoration,
                   arabic: widget.arabic,
+                  translations: l10n,
                   onTap: _browse,
                 ),
                 if (_controller.files.isNotEmpty) ...[
@@ -188,6 +196,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                       file: f,
                       error: _controller.errorForFile(f),
                       disabled: widget.disabled,
+                      translations: l10n,
                       onRemove: () => _controller.remove(f.id),
                     ),
                     SizedBox(height: SuperThemeData.of(context).spacing.space2),
@@ -212,6 +221,7 @@ class _DropZone extends StatelessWidget {
     required this.acceptHint,
     required this.decoration,
     required this.arabic,
+    required this.translations,
     required this.onTap,
   });
 
@@ -222,6 +232,7 @@ class _DropZone extends StatelessWidget {
   final String? acceptHint;
   final InputDecoration decoration;
   final bool arabic;
+  final SuperFormTranslation translations;
   final VoidCallback onTap;
 
   @override
@@ -265,12 +276,16 @@ class _DropZone extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Color.alphaBlend(cs.primary.withOpacity(0.13), bg),
+                    color: Color.alphaBlend(
+                      cs.primary.withValues(alpha: 0.13),
+                      bg,
+                    ),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: IconTheme.merge(
                     data: IconThemeData(size: 21, color: cs.primary),
-                    child: decoration.prefixIcon ??
+                    child:
+                        decoration.prefixIcon ??
                         decoration.icon ??
                         const Icon(SffIcons.uploadCloud),
                   ),
@@ -281,7 +296,7 @@ class _DropZone extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: 'Browse',
+                          text: translations.browse,
                           style: t.textTheme.body.copyWith(
                             color: cs.primary,
                             fontWeight: FontWeight.w600,
@@ -289,7 +304,7 @@ class _DropZone extends StatelessWidget {
                           ),
                         ),
                         TextSpan(
-                          text: ' or drag files here',
+                          text: translations.dragFilesHere,
                           style: t.textTheme.body.copyWith(
                             color: t.fg2,
                             fontSize: 13.5,
@@ -302,7 +317,7 @@ class _DropZone extends StatelessWidget {
                   SffDecoration.buildHint(
                     context,
                     decoration,
-                    fallback: 'Browse or drag files here',
+                    fallback: translations.browseOrDragFilesHere,
                     arabic: arabic,
                     baseStyle: t.textTheme.body.copyWith(
                       color: t.fg2,
@@ -313,7 +328,10 @@ class _DropZone extends StatelessWidget {
                   SizedBox(height: SuperThemeData.of(context).spacing.space1),
                   Text(
                     acceptHint!,
-                    style: t.textTheme.mono.copyWith(color: t.fg4, fontSize: 11),
+                    style: t.textTheme.mono.copyWith(
+                      color: t.fg4,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ],
@@ -331,12 +349,14 @@ class _FileCard extends StatelessWidget {
     required this.file,
     required this.error,
     required this.disabled,
+    required this.translations,
     required this.onRemove,
   });
 
   final SuperFile file;
   final String? error;
   final bool disabled;
+  final SuperFormTranslation translations;
   final VoidCallback onRemove;
 
   @override
@@ -364,7 +384,10 @@ class _FileCard extends StatelessWidget {
             width: 30,
             height: 30,
             decoration: BoxDecoration(
-              color: Color.alphaBlend(g.color.withOpacity(0.14), t.surface),
+              color: Color.alphaBlend(
+                g.color.withValues(alpha: 0.14),
+                t.surface,
+              ),
               borderRadius: BorderRadius.circular(
                 SuperThemeData.of(context).spacing.radiusMd,
               ),
@@ -408,7 +431,7 @@ class _FileCard extends StatelessWidget {
               iconSize: 15,
               size: 28,
               danger: true,
-              tooltip: 'Remove ${file.name}',
+              tooltip: translations.removeFile(file.name),
               onPressed: onRemove,
             ),
         ],

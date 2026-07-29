@@ -33,11 +33,31 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
   ];
 
   static const _permissions = [
-    SuperOption(value: 'post', label: 'Post entries', description: 'Create & submit journals'),
-    SuperOption(value: 'approve', label: 'Approve', description: 'Approve pending entries'),
-    SuperOption(value: 'reverse', label: 'Reverse', description: 'Reverse posted entries'),
-    SuperOption(value: 'export', label: 'Export', description: 'Download ledgers'),
-    SuperOption(value: 'admin', label: 'Administer', description: 'Manage the chart of accounts'),
+    SuperOption(
+      value: 'post',
+      label: 'Post entries',
+      description: 'Create & submit journals',
+    ),
+    SuperOption(
+      value: 'approve',
+      label: 'Approve',
+      description: 'Approve pending entries',
+    ),
+    SuperOption(
+      value: 'reverse',
+      label: 'Reverse',
+      description: 'Reverse posted entries',
+    ),
+    SuperOption(
+      value: 'export',
+      label: 'Export',
+      description: 'Download ledgers',
+    ),
+    SuperOption(
+      value: 'admin',
+      label: 'Administer',
+      description: 'Manage the chart of accounts',
+    ),
   ];
 
   @override
@@ -85,7 +105,11 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusControl,
+                  ),
+                ),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

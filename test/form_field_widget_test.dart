@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:super_form_field/super_form_field.dart';
 
@@ -178,7 +177,9 @@ void main() {
     expect(controller.value, DateTime(2025, 12, 31));
   });
 
-  testWidgets('date leading calendar fallback can be suppressed', (tester) async {
+  testWidgets('date leading calendar fallback can be suppressed', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: SuperMaterialThemeData.light(),
@@ -197,7 +198,9 @@ void main() {
     expect(find.byIcon(SffIcons.calendarDays), findsOneWidget);
   });
 
-  testWidgets('tablet date action retains the anchored calendar', (tester) async {
+  testWidgets('tablet date action retains the anchored calendar', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -275,8 +278,8 @@ void main() {
         .whereType<RenderEditable>()
         .toSet()
         .single;
-    final editableRect = renderEditable.localToGlobal(Offset.zero) &
-        renderEditable.size;
+    final editableRect =
+        renderEditable.localToGlobal(Offset.zero) & renderEditable.size;
 
     expect(
       editableRect.center.dy,

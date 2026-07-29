@@ -33,9 +33,7 @@ class DesktopDateInputUseCase
         return const DateInputIntent(type: DateInputIntentType.stepDown);
       case DesktopDateInputKey.arrowLeft:
         if (request.shiftPressed) return null;
-        return const DateInputIntent(
-          type: DateInputIntentType.previousSegment,
-        );
+        return const DateInputIntent(type: DateInputIntentType.previousSegment);
       case DesktopDateInputKey.arrowRight:
         if (request.shiftPressed) return null;
         return const DateInputIntent(type: DateInputIntentType.nextSegment);
@@ -51,9 +49,7 @@ class DesktopDateInputUseCase
           );
         }
         if (_separators.contains(character)) {
-          return const DateInputIntent(
-            type: DateInputIntentType.nextSegment,
-          );
+          return const DateInputIntent(type: DateInputIntentType.nextSegment);
         }
         return null;
       case DesktopDateInputKey.other:

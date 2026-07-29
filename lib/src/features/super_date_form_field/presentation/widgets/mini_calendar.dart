@@ -16,13 +16,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/foundation/sff_icon.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/usecases/date_logic.dart';
-
-const _months = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December', //
-];
-const _dow = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 /// A compact month calendar. Calls [onPick] with a midnight-anchored date when a
 /// day (or "Today") is tapped.
@@ -91,6 +86,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
+    final l10n = SuperFormTranslation.of(context);
     final spacing = t.spacing;
     final daysInMonth = DateTime(_y, _m + 2, 0).day;
     final startDow = DateTime(_y, _m + 1, 1).weekday % 7; // Sun=0
@@ -151,7 +147,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                   onTap: () => _step(-1),
                 ),
                 Text(
-                  '${_months[_m]} $_y',
+                  '${l10n.monthNames[_m]} $_y',
                   style: t.textTheme.body.copyWith(
                     color: t.fg1,
                     fontWeight: FontWeight.w700,
@@ -169,7 +165,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
           // ── day-of-week labels ──
           Row(
             children: [
-              for (final d in _dow)
+              for (final d in l10n.narrowWeekdays)
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: expanded ? 2 : 0),
@@ -236,7 +232,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 ),
               ),
               child: Text(
-                'Today',
+                l10n.today,
                 style: t.textTheme.caption.copyWith(
                   color: cs.primary,
                   fontWeight: FontWeight.w600,
@@ -322,8 +318,8 @@ class _DayCellState extends State<_DayCell> {
     final Color fg = widget.disabled
         ? t.fg4
         : widget.selected
-            ? const Color(0xFFFFFFFF)
-            : t.fg1;
+        ? const Color(0xFFFFFFFF)
+        : t.fg1;
     final border = widget.isToday && !widget.selected
         ? Border.all(color: t.borderStrong)
         : Border.all(color: const Color(0x00000000));

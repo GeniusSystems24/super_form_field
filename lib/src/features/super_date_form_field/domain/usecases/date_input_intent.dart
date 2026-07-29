@@ -24,11 +24,7 @@ enum DateInputIntentType {
 
 /// A platform-neutral date-input operation.
 class DateInputIntent {
-  const DateInputIntent({
-    required this.type,
-    this.text = '',
-    this.offset,
-  });
+  const DateInputIntent({required this.type, this.text = '', this.offset});
 
   final DateInputIntentType type;
 

@@ -24,23 +24,28 @@ List<Validator<String>> buildTextValidators({
   String? patternMessage,
   List<Validator<String>> extra = const [],
   String requiredMessage = 'This field is required',
+  String Function(int count)? minLengthMessage,
+  String Function(int count)? maxLengthMessage,
+  String emailMessage = 'Enter a valid email address',
+  String invalidFormatMessage = 'Invalid format',
 }) {
   return [
     if (required) (v) => v.trim().isEmpty ? requiredMessage : null,
     if (minLength != null)
       (v) => v.isNotEmpty && v.length < minLength
-          ? 'Must be at least $minLength characters'
+          ? (minLengthMessage?.call(minLength) ??
+                'Must be at least $minLength characters')
           : null,
     if (maxLength != null)
-      (v) =>
-          v.length > maxLength ? 'Must be at most $maxLength characters' : null,
-    if (type == SuperTextType.email)
-      (v) => v.isNotEmpty && !kEmailRe.hasMatch(v)
-          ? 'Enter a valid email address'
+      (v) => v.length > maxLength
+          ? (maxLengthMessage?.call(maxLength) ??
+                'Must be at most $maxLength characters')
           : null,
+    if (type == SuperTextType.email)
+      (v) => v.isNotEmpty && !kEmailRe.hasMatch(v) ? emailMessage : null,
     if (pattern != null)
       (v) => v.isNotEmpty && !pattern.hasMatch(v)
-          ? (patternMessage ?? 'Invalid format')
+          ? (patternMessage ?? invalidFormatMessage)
           : null,
     ...extra,
   ];

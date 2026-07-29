@@ -37,17 +37,13 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             children: [
               const BilingualRow(
                 english: SuperBoolFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Account Status',
-                  ),
+                  decoration: InputDecoration(labelText: 'Account Status'),
                   initialValue: true,
                   enabledLabel: 'Active',
                   disabledLabel: 'Inactive',
                 ),
                 arabic: SuperBoolFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'حالة الحساب',
-                  ),
+                  decoration: InputDecoration(labelText: 'حالة الحساب'),
                   initialValue: true,
                   arabic: true,
                   enabledLabel: 'مفعّل',
@@ -58,7 +54,8 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
               const SuperBoolFormField(
                 decoration: InputDecoration(
                   labelText: 'Allow Manual Posting',
-                  helperText: 'When off, only automated integrations may post to this account.',
+                  helperText:
+                      'When off, only automated integrations may post to this account.',
                 ),
                 enabledLabel: 'Manual journals allowed',
                 disabledLabel: 'System postings only',
@@ -81,7 +78,8 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
           child: SuperBoolFormField(
             decoration: const InputDecoration(
               labelText: 'Confirmation',
-              hintText: 'I confirm these account details are accurate and approved.',
+              hintText:
+                  'I confirm these account details are accurate and approved.',
             ),
             required: true,
             style: SuperBoolStyle.checkbox,
@@ -95,7 +93,11 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusControl,
+                  ),
+                ),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

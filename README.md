@@ -27,7 +27,7 @@ Add the package to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.3.0
+  super_form_field: ^1.5.0
 ```
 
 Then import the public library:
@@ -49,6 +49,8 @@ MaterialApp(
   darkTheme: SuperMaterialThemeData.dark(
     palette: SuperPalette.bluePalette,
   ),
+  localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+  supportedLocales: SuperFormLocalizations.supportedLocales,
   home: const MyFormPage(),
 );
 ```
@@ -355,6 +357,33 @@ methods, and `markTouched`, while widgets remain the public presentation entry
 point.
 
 ## Internationalization and directionality
+
+Version 1.5.0 ships package-owned strings for English and Arabic using Flutter
+localizations. Register the delegates once in the host app:
+
+```dart
+MaterialApp(
+  localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+  supportedLocales: SuperFormLocalizations.supportedLocales,
+  locale: const Locale('ar'),
+  theme: SuperMaterialThemeData.light(),
+  darkTheme: SuperMaterialThemeData.dark(),
+  home: const MyFormPage(),
+);
+```
+
+The exported delegates include:
+
+- `SuperFormTranslation.delegate`
+- `GlobalMaterialLocalizations.delegate`
+- `GlobalCupertinoLocalizations.delegate`
+- `GlobalWidgetsLocalizations.delegate`
+
+Built-in field strings such as validation messages, search placeholders, empty
+states, attachment actions, boolean state labels, numeric steppers, and calendar
+labels resolve from the active locale. Caller-supplied strings in
+`InputDecoration`, `SuperOption`, validators, or custom field properties remain
+owned by the application.
 
 Wrap Arabic content in `Directionality` and set `arabic: true` on the field:
 

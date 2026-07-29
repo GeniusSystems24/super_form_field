@@ -74,6 +74,9 @@ abstract final class NumericLogic {
     bool allowNegative = true,
     List<Validator<num?>> extra = const [],
     String requiredMessage = 'This field is required',
+    String cannotBeNegativeMessage = 'Cannot be negative',
+    String Function(String value)? minMessage,
+    String Function(String value)? maxMessage,
   }) {
     final lo = lowerBound(min: min, allowNegative: allowNegative);
     return [
@@ -81,12 +84,26 @@ abstract final class NumericLogic {
       if (lo != null)
         (v) => v != null && v < lo
             ? (lo == 0
-                  ? 'Cannot be negative'
-                  : 'Must be at least ${SuperFormat.number(lo, decimals: decimals, grouping: grouping)}')
+                  ? cannotBeNegativeMessage
+                  : (minMessage?.call(
+                          SuperFormat.number(
+                            lo,
+                            decimals: decimals,
+                            grouping: grouping,
+                          ),
+                        ) ??
+                        'Must be at least ${SuperFormat.number(lo, decimals: decimals, grouping: grouping)}'))
             : null,
       if (max != null)
         (v) => v != null && v > max
-            ? 'Must be at most ${SuperFormat.number(max, decimals: decimals, grouping: grouping)}'
+            ? (maxMessage?.call(
+                    SuperFormat.number(
+                      max,
+                      decimals: decimals,
+                      grouping: grouping,
+                    ),
+                  ) ??
+                  'Must be at most ${SuperFormat.number(max, decimals: decimals, grouping: grouping)}')
             : null,
       ...extra,
     ];

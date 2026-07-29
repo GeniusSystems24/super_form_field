@@ -118,7 +118,7 @@ class FieldBox extends StatelessWidget {
           boxShadow: hasError
               ? [
                   BoxShadow(
-                    color: cs.error.withOpacity(0.14),
+                    color: cs.error.withValues(alpha: 0.14),
                     blurRadius: 0,
                     spreadRadius: 3,
                   ),

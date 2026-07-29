@@ -30,9 +30,7 @@ class DateFormatsExample extends StatelessWidget {
             children: [
               Expanded(
                 child: SuperDateFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Posting Date',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Posting Date'),
                   format: SuperDateFormat.yearMonthDay,
                   initialValue: DateTime(2024, 1, 31),
                 ),
@@ -40,9 +38,7 @@ class DateFormatsExample extends StatelessWidget {
               SizedBox(width: SuperThemeData.of(context).spacing.space4),
               Expanded(
                 child: SuperDateFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Period',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Period'),
                   format: SuperDateFormat.yearMonth,
                   initialValue: DateTime(2024, 3, 1),
                 ),
@@ -55,9 +51,7 @@ class DateFormatsExample extends StatelessWidget {
             children: [
               Expanded(
                 child: SuperDateFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fiscal Year',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Fiscal Year'),
                   format: SuperDateFormat.year,
                   initialValue: DateTime(2024, 1, 1),
                 ),

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/usecases/numeric_logic.dart';
 import '../controllers/super_numeric_field_controller.dart';
 
@@ -121,6 +122,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       min: widget.min,
       max: widget.max,
@@ -139,6 +141,10 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
         grouping: widget.grouping,
         allowNegative: widget.allowNegative,
         extra: widget.validators,
+        requiredMessage: l10n.requiredMessage,
+        cannotBeNegativeMessage: l10n.cannotBeNegative,
+        minMessage: l10n.minNumber,
+        maxMessage: l10n.maxNumber,
       ),
       forceError: widget.forceError,
       onValidity: widget.onValidity,
@@ -201,7 +207,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                         FieldIconButton(
                           key: const ValueKey('super_numeric_decrement'),
                           icon: SffIcons.minus,
-                          tooltip: 'Decrement',
+                          tooltip: l10n.decrement,
                           bordered: true,
                           size: controlHeight,
                           border: const Border(),
@@ -214,7 +220,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                         FieldIconButton(
                           key: const ValueKey('super_numeric_increment'),
                           icon: SffIcons.plus,
-                          tooltip: 'Increment',
+                          tooltip: l10n.increment,
                           bordered: true,
                           size: controlHeight,
                           border: const Border(),
@@ -249,8 +255,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
             error: error,
             disabled: widget.disabled,
             density: widget.density,
-            flushTrailing:
-                widget.stepper && !widget.disabled && error == null,
+            flushTrailing: widget.stepper && !widget.disabled && error == null,
             leading: SffDecoration.buildLeading(
               context,
               widget.decoration,

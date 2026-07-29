@@ -40,7 +40,8 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
                 decoration: const InputDecoration(
                   labelText: 'Debit Amount',
                   prefixText: 'SAR',
-                  helperText: '↑/↓ step by 1 · PageUp/PageDown step by 100 · grouped while idle.',
+                  helperText:
+                      '↑/↓ step by 1 · PageUp/PageDown step by 100 · grouped while idle.',
                 ),
                 required: true,
                 decimals: 2,
@@ -55,7 +56,8 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
               SuperNumericFormField(
                 decoration: const InputDecoration(
                   labelText: 'Quantity',
-                  helperText: 'Focus and press ↑/↓ (±1) or PageUp/PageDown (±10).',
+                  helperText:
+                      'Focus and press ↑/↓ (±1) or PageUp/PageDown (±10).',
                 ),
                 required: true,
                 min: 1,
@@ -105,7 +107,11 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusControl,
+                  ),
+                ),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

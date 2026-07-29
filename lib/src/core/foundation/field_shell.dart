@@ -66,12 +66,9 @@ class FieldShell extends StatelessWidget {
       arabic: arabic,
       legacyHint: hint,
     );
-    final effectiveRight = labelRight ??
-        SffDecoration.buildCounter(
-          context,
-          decoration,
-          arabic: arabic,
-        );
+    final effectiveRight =
+        labelRight ??
+        SffDecoration.buildCounter(context, decoration, arabic: arabic);
     final spacing = SuperThemeData.of(context).spacing;
 
     return Column(

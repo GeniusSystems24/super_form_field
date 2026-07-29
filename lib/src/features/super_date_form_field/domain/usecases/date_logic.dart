@@ -82,6 +82,8 @@ abstract final class DateLogic {
     DateTime? maxDate,
     List<Validator<DateTime?>> extra = const [],
     String requiredMessage = 'This field is required',
+    String Function(String value)? minDateMessage,
+    String Function(String value)? maxDateMessage,
   }) {
     final lo = minDate == null ? null : dateOnly(minDate);
     final hi = maxDate == null ? null : dateOnly(maxDate);
@@ -89,11 +91,13 @@ abstract final class DateLogic {
       if (required) (v) => v == null ? requiredMessage : null,
       if (lo != null)
         (v) => v != null && v.isBefore(lo)
-            ? 'Must be on or after ${format(lo)}'
+            ? (minDateMessage?.call(format(lo)) ??
+                  'Must be on or after ${format(lo)}')
             : null,
       if (hi != null)
         (v) => v != null && v.isAfter(hi)
-            ? 'Must be on or before ${format(hi)}'
+            ? (maxDateMessage?.call(format(hi)) ??
+                  'Must be on or before ${format(hi)}')
             : null,
       ...extra,
     ];

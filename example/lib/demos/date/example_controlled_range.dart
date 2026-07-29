@@ -18,10 +18,12 @@ class DateControlledRangeExample extends StatefulWidget {
   const DateControlledRangeExample({super.key});
 
   @override
-  State<DateControlledRangeExample> createState() => _DateControlledRangeExampleState();
+  State<DateControlledRangeExample> createState() =>
+      _DateControlledRangeExampleState();
 }
 
-class _DateControlledRangeExampleState extends State<DateControlledRangeExample> {
+class _DateControlledRangeExampleState
+    extends State<DateControlledRangeExample> {
   final _start = SuperDateFieldController(initialValue: DateTime(2024, 1, 1));
   final _end = SuperDateFieldController(initialValue: DateTime(2024, 3, 31));
 
@@ -54,9 +56,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
             children: [
               Expanded(
                 child: SuperDateFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Period Start',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Period Start'),
                   controller: _start,
                   required: true,
                   maxDate: _end.value,
@@ -66,9 +66,7 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
               SizedBox(width: SuperThemeData.of(context).spacing.space4),
               Expanded(
                 child: SuperDateFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Period End',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Period End'),
                   controller: _end,
                   required: true,
                   minDate: _start.value,
@@ -85,7 +83,10 @@ class _DateControlledRangeExampleState extends State<DateControlledRangeExample>
                 foregroundColor: t.fg1,
                 side: BorderSide(color: t.borderStrong),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusControl,
+                  ),
+                ),
               ),
               onPressed: () {
                 final now = DateTime.now();

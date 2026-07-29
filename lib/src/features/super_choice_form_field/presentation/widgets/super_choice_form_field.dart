@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/entities/choice_field_config.dart';
 import '../../domain/usecases/choice_logic.dart';
 import '../controllers/super_choice_field_controller.dart';
@@ -121,6 +122,7 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       multiple: widget.multiple || widget.style == SuperChoiceStyle.checkbox,
       maxSelections: widget.maxSelections,
@@ -129,6 +131,9 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
         minSelections: widget.minSelections,
         maxSelections: widget.maxSelections,
         extra: widget.validators,
+        requiredMessage: l10n.selectOption,
+        minSelectionsMessage: l10n.selectAtLeastOptions,
+        maxSelectionsMessage: l10n.selectAtMostOptions,
       ),
       forceError: widget.forceError,
       onValidity: widget.onValidity,
@@ -169,10 +174,7 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
         final hasHint =
             widget.decoration.hint != null ||
             widget.decoration.hintText != null;
-        final leading = SffDecoration.buildLeading(
-          context,
-          widget.decoration,
-        );
+        final leading = SffDecoration.buildLeading(context, widget.decoration);
         final trailing = SffDecoration.buildTrailing(
           context,
           widget.decoration,
@@ -366,7 +368,8 @@ class _OptionList<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var i = 0; i < options.length; i++) ...[
-          if (i > 0) SizedBox(height: SuperThemeData.of(context).spacing.space1),
+          if (i > 0)
+            SizedBox(height: SuperThemeData.of(context).spacing.space1),
           _OptionRow<T>(
             option: options[i],
             selected: controller.isSelected(options[i].value),

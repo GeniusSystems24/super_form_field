@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/usecases/multi_select_logic.dart';
 import '../controllers/super_multi_select_field_controller.dart';
 
@@ -122,18 +123,21 @@ class _SuperMultiSelectFormFieldState<T>
   bool get _editable => !widget.disabled && !widget.readOnly;
 
   Widget _menu(SuperThemeData t) {
+    final l10n = SuperFormTranslation.of(context);
     final filtered = _controller.filtered;
     return OptionMenu(
       header: widget.searchable
           ? MenuSearchField(
               controller: _controller.searchText,
               focusNode: _controller.searchFocus,
-              hintText: widget.searchHint,
+              hintText: widget.searchHint == 'Search…'
+                  ? l10n.search
+                  : widget.searchHint,
               arabic: widget.arabic,
             )
           : null,
       empty: Text(
-        widget.emptyLabel,
+        widget.emptyLabel == 'No matches' ? l10n.noMatches : widget.emptyLabel,
         textAlign: TextAlign.center,
         style: t.textTheme.caption.copyWith(color: t.fg4),
       ),
@@ -157,12 +161,13 @@ class _SuperMultiSelectFormFieldState<T>
   }
 
   Widget _triggerContent(SuperThemeData t) {
+    final l10n = SuperFormTranslation.of(context);
     final chosen = _controller.selectedOptions;
     if (chosen.isEmpty) {
       return SffDecoration.buildHint(
         context,
         widget.decoration,
-        fallback: 'Select…',
+        fallback: l10n.selectPlaceholder,
         arabic: widget.arabic,
         baseStyle: t.textTheme.body.copyWith(
           color: t.fg4,
@@ -193,6 +198,7 @@ class _SuperMultiSelectFormFieldState<T>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       options: widget.options,
       maxSelections: widget.maxSelections,
@@ -201,6 +207,9 @@ class _SuperMultiSelectFormFieldState<T>
         minSelections: widget.minSelections,
         maxSelections: widget.maxSelections,
         extra: widget.validators,
+        requiredMessage: l10n.selectAtLeastOneOption,
+        minSelectionsMessage: l10n.selectAtLeastOptions,
+        maxSelectionsMessage: l10n.selectAtMostOptions,
       ),
       forceError: widget.forceError,
       onValidity: widget.onValidity,
@@ -221,10 +230,9 @@ class _SuperMultiSelectFormFieldState<T>
         final hasDecorationCounter =
             widget.decoration.counter != null ||
             widget.decoration.counterText != null;
-        final countPill = (!hasDecorationCounter &&
-                widget.showCount &&
-                _controller.count > 0)
-            ? CountPill(label: '${_controller.count} selected')
+        final countPill =
+            (!hasDecorationCounter && widget.showCount && _controller.count > 0)
+            ? CountPill(label: l10n.selectedCount(_controller.count))
             : null;
 
         final trailing = <Widget>[

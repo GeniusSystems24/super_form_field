@@ -35,6 +35,7 @@ library super_form_field;
 
 // Core foundation.
 export 'src/core/core.dart';
+export 'localization/super_form_localizations.dart';
 
 // Features.
 export 'src/features/super_text_form_field/super_text_form_field.dart';

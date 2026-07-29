@@ -47,9 +47,7 @@ abstract final class SffDecoration {
           if (required)
             Text(
               ' *',
-              style: style.copyWith(
-                color: Theme.of(context).colorScheme.error,
-              ),
+              style: style.copyWith(color: Theme.of(context).colorScheme.error),
             ),
         ],
       );
@@ -66,9 +64,7 @@ abstract final class SffDecoration {
         children: [
           TextSpan(
             text: ' *',
-            style: style.copyWith(
-              color: Theme.of(context).colorScheme.error,
-            ),
+            style: style.copyWith(color: Theme.of(context).colorScheme.error),
           ),
         ],
       ),
@@ -178,7 +174,8 @@ abstract final class SffDecoration {
     TextStyle? textStyle,
   }) {
     final theme = SuperThemeData.of(context);
-    final baseStyle = textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
+    final baseStyle =
+        textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
     final hasExplicitLeading =
         decoration.icon != null ||
         decoration.prefixIcon != null ||
@@ -186,10 +183,7 @@ abstract final class SffDecoration {
         decoration.prefixText != null;
     final widgets = <Widget>[
       if (decoration.icon != null && !_suppressesSlot(decoration.icon!))
-        _iconSlot(
-          decoration.icon!,
-          color: decoration.iconColor ?? theme.fg4,
-        ),
+        _iconSlot(decoration.icon!, color: decoration.iconColor ?? theme.fg4),
       if (decoration.prefixIcon != null &&
           !_suppressesSlot(decoration.prefixIcon!))
         _iconSlot(
@@ -221,7 +215,8 @@ abstract final class SffDecoration {
     TextStyle? textStyle,
   }) {
     final theme = SuperThemeData.of(context);
-    final baseStyle = textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
+    final baseStyle =
+        textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
     return <Widget>[
       if (decoration.suffix != null)
         DefaultTextStyle.merge(

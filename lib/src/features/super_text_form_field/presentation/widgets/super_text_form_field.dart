@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/entities/text_field_config.dart';
 import '../../domain/usecases/build_text_validators.dart';
 import '../controllers/super_text_field_controller.dart';
@@ -141,6 +142,11 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     pattern: widget.pattern,
     patternMessage: widget.patternMessage,
     extra: widget.validators,
+    requiredMessage: SuperFormTranslation.of(context).requiredMessage,
+    minLengthMessage: SuperFormTranslation.of(context).minCharacters,
+    maxLengthMessage: SuperFormTranslation.of(context).maxCharacters,
+    emailMessage: SuperFormTranslation.of(context).validEmail,
+    invalidFormatMessage: SuperFormTranslation.of(context).invalidFormat,
   );
 
   @override
@@ -214,6 +220,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     final fillColor = focused && !widget.disabled ? t.surface : t.inputBg;
 
     final source = widget.decoration;
+    final l10n = SuperFormTranslation.of(context);
 
     // ── Suffix icon row ──
     final trailingWidgets = <Widget>[
@@ -224,13 +231,13 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           editable)
         FieldIconButton(
           icon: SffIcons.clear,
-          tooltip: 'Clear',
+          tooltip: l10n.clear,
           onPressed: _controller.clear,
         ),
       if (widget.type == SuperTextType.password && !widget.disabled)
         FieldIconButton(
           icon: _controller.obscured ? SffIcons.eye : SffIcons.eyeOff,
-          tooltip: _controller.obscured ? 'Show' : 'Hide',
+          tooltip: _controller.obscured ? l10n.show : l10n.hide,
           onPressed: _controller.toggleObscure,
         ),
       if (hasError) ErrorBadge(error: error),
@@ -240,10 +247,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     if (trailingWidgets.isNotEmpty) {
       suffixWidget = Padding(
         padding: const EdgeInsetsDirectional.only(end: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: trailingWidgets,
-        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: trailingWidgets),
       );
     }
 
@@ -266,15 +270,15 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       0 => null,
       1 => leadingIcons.single,
       _ => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < leadingIcons.length; i++) ...[
-              if (i > 0)
-                SizedBox(width: SuperThemeData.of(context).spacing.space1),
-              leadingIcons[i],
-            ],
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < leadingIcons.length; i++) ...[
+            if (i > 0)
+              SizedBox(width: SuperThemeData.of(context).spacing.space1),
+            leadingIcons[i],
           ],
-        ),
+        ],
+      ),
     };
 
     // ── Density ──

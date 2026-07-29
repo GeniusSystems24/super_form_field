@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:super_core/super_core.dart';
 import 'package:super_form_field/super_form_field.dart' show SuperFieldContextX;
+import 'package:super_form_field_example/main.dart';
 
 export 'package:super_core/super_core.dart' show SuperSectionCard, SuperMarker;
 
@@ -30,13 +31,15 @@ class DemoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     return Scaffold(
-      appBar: SuperAppBar(),
+      appBar: appBarBuild(context),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 64),
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: SuperThemeData.of(context).sizing.contentColumn),
+              constraints: BoxConstraints(
+                maxWidth: SuperThemeData.of(context).sizing.contentColumn,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -52,7 +55,9 @@ class DemoPage extends StatelessWidget {
                   for (var index = 0; index < children.length; index++) ...[
                     children[index],
                     if (index < children.length - 1)
-                      SizedBox(height: SuperThemeData.of(context).spacing.space8),
+                      SizedBox(
+                        height: SuperThemeData.of(context).spacing.space8,
+                      ),
                   ],
                 ],
               ),

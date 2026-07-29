@@ -29,16 +29,44 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
   ];
 
   static const _period = [
-    SuperOption(value: 'current', label: 'Current period', description: 'Jun 2026 — open'),
-    SuperOption(value: 'prior', label: 'Prior period', description: 'May 2026 — open'),
-    SuperOption(value: 'adjust', label: 'Adjustment period', description: 'Year-end only'),
+    SuperOption(
+      value: 'current',
+      label: 'Current period',
+      description: 'Jun 2026 — open',
+    ),
+    SuperOption(
+      value: 'prior',
+      label: 'Prior period',
+      description: 'May 2026 — open',
+    ),
+    SuperOption(
+      value: 'adjust',
+      label: 'Adjustment period',
+      description: 'Year-end only',
+    ),
   ];
 
   static const _docs = [
-    SuperOption(value: 'invoice', label: 'Invoice', description: 'Supplier or customer invoice'),
-    SuperOption(value: 'receipt', label: 'Receipt', description: 'Proof of payment'),
-    SuperOption(value: 'contract', label: 'Contract', description: 'Signed agreement'),
-    SuperOption(value: 'memo', label: 'Internal memo', description: 'Approval note'),
+    SuperOption(
+      value: 'invoice',
+      label: 'Invoice',
+      description: 'Supplier or customer invoice',
+    ),
+    SuperOption(
+      value: 'receipt',
+      label: 'Receipt',
+      description: 'Proof of payment',
+    ),
+    SuperOption(
+      value: 'contract',
+      label: 'Contract',
+      description: 'Signed agreement',
+    ),
+    SuperOption(
+      value: 'memo',
+      label: 'Internal memo',
+      description: 'Approval note',
+    ),
   ];
 
   @override
@@ -55,18 +83,14 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
           child: Column(
             children: [
               const SuperChoiceFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Status',
-                ),
+                decoration: InputDecoration(labelText: 'Status'),
                 required: true,
                 initialValue: ['draft'],
                 options: _status,
               ),
               SizedBox(height: SuperThemeData.of(context).spacing.space6),
               SuperChoiceFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Posting Period',
-                ),
+                decoration: const InputDecoration(labelText: 'Posting Period'),
                 required: true,
                 style: SuperChoiceStyle.radio,
                 options: _period,
@@ -97,7 +121,11 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusControl,
+                  ),
+                ),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

@@ -36,7 +36,8 @@ class _DateBasicExampleState extends State<DateBasicExample> {
           SuperDateFormField(
             decoration: const InputDecoration(
               labelText: 'Posting Date',
-              helperText: 'Click a segment and type (year→month→day), or step with ↑/↓ · ←/→ moves segments.',
+              helperText:
+                  'Click a segment and type (year→month→day), or step with ↑/↓ · ←/→ moves segments.',
             ),
             initialValue: _value,
             onChanged: (v) => setState(() => _value = v),

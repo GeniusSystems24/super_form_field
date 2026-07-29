@@ -26,7 +26,7 @@ class CountPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
       decoration: BoxDecoration(
-        color: Color.alphaBlend(color.withOpacity(0.15), t.surface),
+        color: Color.alphaBlend(color.withValues(alpha: 0.15), t.surface),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(

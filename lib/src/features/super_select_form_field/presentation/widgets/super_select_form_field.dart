@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/usecases/select_logic.dart';
 import '../controllers/super_select_field_controller.dart';
 
@@ -120,18 +121,21 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
   bool get _editable => !widget.disabled && !widget.readOnly;
 
   Widget _menu(SuperThemeData t) {
+    final l10n = SuperFormTranslation.of(context);
     final filtered = _controller.filtered;
     return OptionMenu(
       header: widget.searchable
           ? MenuSearchField(
               controller: _controller.searchText,
               focusNode: _controller.searchFocus,
-              hintText: widget.searchHint,
+              hintText: widget.searchHint == 'Search…'
+                  ? l10n.search
+                  : widget.searchHint,
               arabic: widget.arabic,
             )
           : null,
       empty: Text(
-        widget.emptyLabel,
+        widget.emptyLabel == 'No matches' ? l10n.noMatches : widget.emptyLabel,
         textAlign: TextAlign.center,
         style: t.textTheme.caption.copyWith(color: t.fg4),
       ),
@@ -152,11 +156,13 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       options: widget.options,
       validators: SelectLogic.buildValidators<T>(
         required: widget.required,
         extra: widget.validators,
+        requiredMessage: l10n.selectOption,
       ),
       forceError: widget.forceError,
       onValidity: widget.onValidity,
@@ -180,7 +186,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
           if (widget.clearable && selected != null && _editable)
             FieldIconButton(
               icon: SffIcons.clear,
-              tooltip: 'Clear',
+              tooltip: l10n.clear,
               onPressed: _controller.clear,
             ),
           Padding(
@@ -240,7 +246,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                       : SffDecoration.buildHint(
                           context,
                           widget.decoration,
-                          fallback: 'Select…',
+                          fallback: l10n.selectPlaceholder,
                           arabic: widget.arabic,
                           baseStyle: t.textTheme.body.copyWith(
                             color: t.fg4,

@@ -1,0 +1,180 @@
+{
+  "@@locale": "en",
+  "requiredMessage": "This field is required",
+  "minCharacters": "Must be at least {count} characters",
+  "@minCharacters": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "maxCharacters": "Must be at most {count} characters",
+  "@maxCharacters": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "validEmail": "Enter a valid email address",
+  "invalidFormat": "Invalid format",
+  "cannotBeNegative": "Cannot be negative",
+  "minNumber": "Must be at least {value}",
+  "@minNumber": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "maxNumber": "Must be at most {value}",
+  "@maxNumber": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "validDate": "Enter a valid date",
+  "minDate": "Must be on or after {value}",
+  "@minDate": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "maxDate": "Must be on or before {value}",
+  "@maxDate": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "search": "Search...",
+  "noMatches": "No matches",
+  "selectPlaceholder": "Select...",
+  "clear": "Clear",
+  "show": "Show",
+  "hide": "Hide",
+  "increment": "Increment",
+  "decrement": "Decrement",
+  "openCalendar": "Open calendar",
+  "close": "Close",
+  "selectDate": "Select date",
+  "pickDateFromCalendar": "Pick a date from the calendar",
+  "today": "Today",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "mustBeEnabled": "This must be enabled to continue",
+  "selectOption": "Select an option",
+  "selectAtLeastOneOption": "Select at least one option",
+  "selectAtLeastOptions": "Select at least {count} options",
+  "@selectAtLeastOptions": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "selectAtMostOptions": "Select at most {count} options",
+  "@selectAtMostOptions": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "selectedCount": "{count} selected",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "fileCount": "{count, plural, =1{1 file} other{{count} files}}",
+  "@fileCount": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "browse": "Browse",
+  "dragFilesHere": " or drag files here",
+  "browseOrDragFilesHere": "Browse or drag files here",
+  "upToMegabytes": "up to {size} MB",
+  "@upToMegabytes": {
+    "placeholders": {
+      "size": {
+        "type": "double"
+      }
+    }
+  },
+  "maxFiles": "max {count}",
+  "@maxFiles": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "atLeastOneFileRequired": "At least one file is required",
+  "attachAtMostFiles": "{count, plural, =1{Attach at most 1 file} other{Attach at most {count} files}}",
+  "@attachAtMostFiles": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "fileTooLarge": "\"{name}\" exceeds {size} MB",
+  "@fileTooLarge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "size": {
+        "type": "double"
+      }
+    }
+  },
+  "fileNotAccepted": "\"{name}\" is not an accepted type",
+  "@fileNotAccepted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removeFile": "Remove {name}",
+  "@removeFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December",
+  "weekdaySundayNarrow": "Su",
+  "weekdayMondayNarrow": "Mo",
+  "weekdayTuesdayNarrow": "Tu",
+  "weekdayWednesdayNarrow": "We",
+  "weekdayThursdayNarrow": "Th",
+  "weekdayFridayNarrow": "Fr",
+  "weekdaySaturdayNarrow": "Sa"
+}

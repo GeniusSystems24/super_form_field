@@ -18,16 +18,20 @@ abstract final class ChoiceLogic {
     int? maxSelections,
     List<Validator<List<T>>> extra = const [],
     String requiredMessage = 'Select an option',
+    String Function(int count)? minSelectionsMessage,
+    String Function(int count)? maxSelectionsMessage,
   }) {
     return [
       if (required) (v) => v.isEmpty ? requiredMessage : null,
       if (minSelections != null)
         (v) => v.isNotEmpty && v.length < minSelections
-            ? 'Select at least $minSelections options'
+            ? (minSelectionsMessage?.call(minSelections) ??
+                  'Select at least $minSelections options')
             : null,
       if (maxSelections != null)
         (v) => v.length > maxSelections
-            ? 'Select at most $maxSelections options'
+            ? (maxSelectionsMessage?.call(maxSelections) ??
+                  'Select at most $maxSelections options')
             : null,
       ...extra,
     ];

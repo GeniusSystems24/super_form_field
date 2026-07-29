@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/entities/bool_field_config.dart';
 import '../../domain/usecases/build_bool_validators.dart';
 import '../controllers/super_bool_field_controller.dart';
@@ -112,10 +113,14 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       validators: buildBoolValidators(
         mustBeTrue: widget.mustBeTrue,
-        mustBeTrueMessage: widget.mustBeTrueMessage,
+        mustBeTrueMessage:
+            widget.mustBeTrueMessage == 'This must be enabled to continue'
+            ? l10n.mustBeEnabled
+            : widget.mustBeTrueMessage,
         extra: widget.validators,
       ),
       forceError: widget.forceError,
@@ -156,7 +161,13 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
               )
             : Text(
                 widget.decoration.hintText ??
-                    (on ? widget.enabledLabel : widget.disabledLabel),
+                    (on
+                        ? (widget.enabledLabel == 'Enabled'
+                              ? l10n.enabled
+                              : widget.enabledLabel)
+                        : (widget.disabledLabel == 'Disabled'
+                              ? l10n.disabled
+                              : widget.disabledLabel)),
                 style: captionStyle,
                 textAlign: widget.arabic ? TextAlign.right : TextAlign.left,
               );
@@ -164,10 +175,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
         final control = widget.style == SuperBoolStyle.checkbox
             ? _CheckBox(value: on, disabled: widget.disabled)
             : _Toggle(value: on, disabled: widget.disabled);
-        final leading = SffDecoration.buildLeading(
-          context,
-          widget.decoration,
-        );
+        final leading = SffDecoration.buildLeading(context, widget.decoration);
         final trailing = SffDecoration.buildTrailing(
           context,
           widget.decoration,

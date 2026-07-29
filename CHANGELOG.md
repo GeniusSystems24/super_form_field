@@ -4,6 +4,23 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.5.0] — 2026-07-29
+
+### Added
+
+- Added Flutter-localizations support for package-owned English and Arabic
+  strings through `SuperFormTranslation.localizationsDelegates` and
+  `SuperFormTranslation.supportedLocales`.
+- Localized built-in validation messages, select search and empty states,
+  placeholders, attachment actions and file errors, boolean default captions,
+  numeric stepper tooltips, and date calendar labels.
+
+### Changed
+
+- Updated the example gallery to register the package localization delegates and
+  switch locale when toggling LTR/RTL.
+- Updated `README.md` and the package skill for the 1.5.0 localization setup.
+
 ## [1.3.0] — 2026-07-19
 
 ### Changed

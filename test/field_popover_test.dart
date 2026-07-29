@@ -3,8 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:super_form_field/super_form_field.dart';
 
 void main() {
-  testWidgets('FieldPopover defers closing outside the build frame',
-      (tester) async {
+  testWidgets('FieldPopover defers closing outside the build frame', (
+    tester,
+  ) async {
     var open = false;
     late StateSetter updateOpen;
 

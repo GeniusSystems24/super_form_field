@@ -36,15 +36,28 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
     SuperOption(value: 'EUR', label: 'EUR — Euro', description: '€'),
     SuperOption(value: 'GBP', label: 'GBP — British Pound', description: '£'),
     SuperOption(value: 'AED', label: 'AED — UAE Dirham', description: 'د.إ'),
-    SuperOption(value: 'EGP', label: 'EGP — Egyptian Pound', description: 'ج.م'),
+    SuperOption(
+      value: 'EGP',
+      label: 'EGP — Egyptian Pound',
+      description: 'ج.م',
+    ),
     SuperOption(value: 'JPY', label: 'JPY — Japanese Yen', description: '¥'),
   ];
 
   static const _costCenters = [
     SuperOption(value: 'cc-100', label: 'Operations', description: 'CC-100'),
-    SuperOption(value: 'cc-200', label: 'Sales & Marketing', description: 'CC-200'),
+    SuperOption(
+      value: 'cc-200',
+      label: 'Sales & Marketing',
+      description: 'CC-200',
+    ),
     SuperOption(value: 'cc-300', label: 'Research', description: 'CC-300'),
-    SuperOption(value: 'cc-900', label: 'Archived (locked)', description: 'CC-900', disabled: true),
+    SuperOption(
+      value: 'cc-900',
+      label: 'Archived (locked)',
+      description: 'CC-900',
+      disabled: true,
+    ),
   ];
 
   @override
@@ -110,7 +123,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
           subtitle: 'Assign a cost center (some are locked)',
           marker: SuperMarker.ledger,
           child: SuperSelectFormField<String>(
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Cost Center',
               hintText: 'Optional…',
               helperText: 'Locked centers cannot be selected.',
@@ -124,7 +137,11 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(SuperThemeData.of(context).spacing.radiusControl)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusControl,
+                  ),
+                ),
               ),
               onPressed: () => setState(() => _force = true),
               child: const Text('Validate'),

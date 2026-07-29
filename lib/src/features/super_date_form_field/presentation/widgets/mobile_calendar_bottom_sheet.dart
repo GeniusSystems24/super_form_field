@@ -3,9 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
-import '../../../../core/extensions/context_extensions.dart';
-import '../../../../core/foundation/field_icon_button.dart';
-import '../../../../core/foundation/sff_icon.dart';
+import '../../../../../localization/super_form_localizations.dart';
 import '../../domain/usecases/date_logic.dart';
 import 'mini_calendar.dart';
 
@@ -29,16 +27,17 @@ class MobileCalendarBottomSheet extends StatelessWidget {
   final DateTime? maxDate;
   final ValueChanged<DateTime> onPick;
 
-  String get _selectionLabel =>
-      value == null ? 'Pick a date from the calendar' : DateLogic.format(value);
-
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
+    final l10n = SuperFormTranslation.of(context);
     final tokens = t.tokens;
     final spacing = t.spacing;
     final insets = MediaQuery.viewInsetsOf(context);
     final padding = MediaQuery.paddingOf(context);
+    final selectionLabel = value == null
+        ? l10n.pickDateFromCalendar
+        : DateLogic.format(value);
 
     return AnimatedPadding(
       duration: tokens.durBase,
@@ -47,7 +46,9 @@ class MobileCalendarBottomSheet extends StatelessWidget {
         spacing.space3,
         spacing.space3,
         spacing.space3,
-        math.max(spacing.space3, padding.bottom) + spacing.space3 + insets.bottom,
+        math.max(spacing.space3, padding.bottom) +
+            spacing.space3 +
+            insets.bottom,
       ),
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -86,7 +87,9 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                         height: 5,
                         decoration: BoxDecoration(
                           color: t.borderStrong,
-                          borderRadius: BorderRadius.circular(spacing.radiusPill),
+                          borderRadius: BorderRadius.circular(
+                            spacing.radiusPill,
+                          ),
                         ),
                       ),
                       SizedBox(height: spacing.space3),
@@ -98,7 +101,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Select date',
+                                  l10n.selectDate,
                                   style: t.textTheme.body.copyWith(
                                     color: t.fg1,
                                     fontWeight: FontWeight.w700,
@@ -107,7 +110,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                                 ),
                                 SizedBox(height: spacing.space1),
                                 Text(
-                                  _selectionLabel,
+                                  selectionLabel,
                                   style: t.textTheme.caption.copyWith(
                                     color: t.fg3,
                                     fontWeight: FontWeight.w500,
@@ -118,7 +121,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                           ),
                           FieldIconButton(
                             icon: SffIcons.clear,
-                            tooltip: 'Close',
+                            tooltip: l10n.close,
                             bordered: true,
                             onPressed: () => Navigator.of(context).maybePop(),
                           ),
@@ -128,10 +131,12 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: Color.alphaBlend(
-                            Colors.white.withOpacity(0.02),
+                            Colors.white.withValues(alpha: 0.02),
                             t.surface,
                           ),
-                          borderRadius: BorderRadius.circular(spacing.radiusCard + 4),
+                          borderRadius: BorderRadius.circular(
+                            spacing.radiusCard + 4,
+                          ),
                           border: Border.all(color: t.border),
                         ),
                         child: Padding(
