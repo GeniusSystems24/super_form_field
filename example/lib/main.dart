@@ -15,6 +15,7 @@ import 'demos/choice_field_demo.dart';
 import 'demos/date_field_demo.dart';
 import 'demos/multi_select_field_demo.dart';
 import 'demos/numeric_field_demo.dart';
+import 'demos/otp_field_demo.dart';
 import 'demos/phone_field_demo.dart';
 import 'demos/select_field_demo.dart';
 import 'demos/text_field_demo.dart';
@@ -126,6 +127,12 @@ class _Launcher extends StatelessWidget {
       'International · country rules · formatters · Form save',
       Icons.phone_android_rounded,
       (_) => const PhoneFieldDemo(),
+    ),
+    _DemoItem(
+      'Super OTP Field',
+      'SMS autofill · paste · secure PIN · completion',
+      Icons.password_rounded,
+      (_) => const OTPFieldDemo(),
     ),
     _DemoItem(
       'Super Numeric Field',

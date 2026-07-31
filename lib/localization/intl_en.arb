@@ -176,5 +176,13 @@
   "weekdayWednesdayNarrow": "We",
   "weekdayThursdayNarrow": "Th",
   "weekdayFridayNarrow": "Fr",
-  "weekdaySaturdayNarrow": "Sa"
+  "weekdaySaturdayNarrow": "Sa",
+  "otpLength": "Enter the complete {count}-character code",
+  "@otpLength": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  }
 }

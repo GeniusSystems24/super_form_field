@@ -54,6 +54,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(size) => "up to ${size} MB";
 
+  static String m16(count) => "Enter the complete ${count}-character code";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "april": MessageLookupByLibrary.simpleMessage("April"),
@@ -103,6 +105,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noMatches": MessageLookupByLibrary.simpleMessage("No matches"),
     "november": MessageLookupByLibrary.simpleMessage("November"),
     "october": MessageLookupByLibrary.simpleMessage("October"),
+    "otpLength": m16,
     "openCalendar": MessageLookupByLibrary.simpleMessage("Open calendar"),
     "pickDateFromCalendar": MessageLookupByLibrary.simpleMessage(
       "Pick a date from the calendar",

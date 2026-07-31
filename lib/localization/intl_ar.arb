@@ -176,5 +176,13 @@
     "weekdayWednesdayNarrow": "ر",
     "weekdayThursdayNarrow": "خ",
     "weekdayFridayNarrow": "ج",
-    "weekdaySaturdayNarrow": "س"
+    "weekdaySaturdayNarrow": "س",
+    "otpLength": "أدخل الرمز الكامل المكوّن من {count} خانات",
+    "@otpLength": {
+        "placeholders": {
+            "count": {
+                "type": "num"
+            }
+        }
+    }
 }

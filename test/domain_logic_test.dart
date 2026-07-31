@@ -35,6 +35,36 @@ void main() {
     });
   });
 
+  group('buildOTPValidators', () {
+    test('requires an exact code length', () {
+      final validators = buildOTPValidators(
+        required: true,
+        length: 6,
+        extra: const [],
+        requiredMessage: 'Required',
+        lengthMessage: 'Incomplete',
+      );
+
+      expect(runValidators('', validators), 'Required');
+      expect(runValidators('123', validators), 'Incomplete');
+      expect(runValidators('123456', validators), isNull);
+    });
+
+    test('allows an empty optional code but rejects a partial code', () {
+      final validators = buildOTPValidators(
+        required: false,
+        length: 4,
+        extra: const [],
+        requiredMessage: 'Required',
+        lengthMessage: 'Incomplete',
+      );
+
+      expect(runValidators('', validators), isNull);
+      expect(runValidators('12', validators), 'Incomplete');
+      expect(runValidators('1234', validators), isNull);
+    });
+  });
+
   group('NumericLogic', () {
     test('sanitize strips junk, keeps one dot + leading minus', () {
       expect(NumericLogic.sanitize('1a2.3.4', allowNegative: true), '12.34');

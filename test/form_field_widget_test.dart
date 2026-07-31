@@ -21,6 +21,7 @@ void main() {
 
     final fields = <Widget>[
       const SuperTextFormField(decoration: decoration),
+      const SuperOTPFormField(decoration: decoration),
       const SuperNumericFormField(decoration: decoration),
       const SuperAttachmentFormField(decoration: decoration),
       const SuperDateFormField(decoration: decoration),
@@ -39,7 +40,7 @@ void main() {
       ),
     ];
 
-    expect(fields, hasLength(8));
+    expect(fields, hasLength(9));
   });
 
   testWidgets('phone text type uses the phone keyboard by default', (
@@ -328,6 +329,20 @@ void main() {
         onSaved: (_) {},
         keyboardAppearance: Brightness.dark,
       ),
+      SuperOTPFormField(
+        keyboardType: TextInputType.number,
+        inputFormatters: [formatter],
+        textDirection: TextDirection.ltr,
+        textInputAction: TextInputAction.done,
+        obscuringCharacter: '*',
+        onFieldSubmitted: (_) {},
+        onTap: () {},
+        onTapOutside: _noopPointerDown,
+        onTapUpOutside: _noopPointerUp,
+        onEditingComplete: () {},
+        onSaved: (_) {},
+        keyboardAppearance: Brightness.dark,
+      ),
       SuperNumericFormField(
         keyboardType: TextInputType.number,
         inputFormatters: [formatter],
@@ -398,12 +413,13 @@ void main() {
       ),
     ];
 
-    expect(fields, hasLength(5));
+    expect(fields, hasLength(6));
   });
 
   testWidgets('typed field values participate in FormState.save', (tester) async {
     final formKey = GlobalKey<FormState>();
     String? savedText;
+    String? savedOTP;
     num? savedNumber;
     DateTime? savedDate;
     int? savedSelection;
@@ -412,6 +428,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: SuperMaterialThemeData.light(),
+        localizationsDelegates:
+            SuperFormLocalizations.localizationsDelegates,
+        supportedLocales: SuperFormLocalizations.supportedLocales,
         home: Scaffold(
           body: Form(
             key: formKey,
@@ -420,6 +439,10 @@ void main() {
                 SuperTextFormField(
                   initialValue: 'memo',
                   onSaved: (value) => savedText = value,
+                ),
+                SuperOTPFormField(
+                  initialValue: '654321',
+                  onSaved: (value) => savedOTP = value,
                 ),
                 SuperNumericFormField(
                   initialValue: 42,
@@ -451,6 +474,7 @@ void main() {
     formKey.currentState!.save();
 
     expect(savedText, 'memo');
+    expect(savedOTP, '654321');
     expect(savedNumber, 42);
     expect(savedDate, DateTime(2026, 7, 31));
     expect(savedSelection, 1);

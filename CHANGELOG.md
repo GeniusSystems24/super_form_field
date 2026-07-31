@@ -4,6 +4,29 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.7.0] — 2026-08-01
+
+### Added
+
+- Added `SuperOTPFormField` with segmented code cells backed by one Material
+  editor for reliable paste, SMS one-time-code autofill, keyboard input, and
+  accessibility semantics.
+- Added `SuperOTPFieldController`, exact-length validation, localized English
+  and Arabic OTP messages, `onCompleted`, secure display, numeric and
+  alphanumeric modes, responsive cells, and typed `Form` save/reset support.
+- Added Material-style keyboard, formatter, submission, outside-tap, autofill,
+  context-menu, restoration, IME, max-length enforcement, cursor, and cell
+  customization options.
+- Added a dedicated `OTPFieldDemo` gallery screen covering SMS codes, secure
+  transaction PINs, alphanumeric backup codes, completion, and form saving.
+- Added widget coverage for filtering, length limiting, completion, validation,
+  reset, secure rendering, public exports, and gallery navigation.
+
+### Changed
+
+- Updated the public library, package documentation, example application, and
+  AI skill to include the ninth form-field component.
+
 ## [1.6.2] — 2026-08-01
 
 ### Added

@@ -8,6 +8,7 @@ and Arabic layouts.
 The package includes:
 
 - `SuperTextFormField`
+- `SuperOTPFormField`
 - `SuperNumericFormField`
 - `SuperAttachmentFormField`
 - `SuperDateFormField`
@@ -21,6 +22,7 @@ The package includes:
 - One `InputDecoration` contract across all fields.
 - Typed values and dedicated controllers for every field.
 - Built-in required, range, length, format, and selection validation.
+- Segmented OTP/PIN input with paste, SMS autofill, and completion callbacks.
 - Custom validators with first-error-wins behavior.
 - Validation errors displayed through compact error badges and tooltips.
 - Responsive date input for mobile, tablet, and desktop.
@@ -50,7 +52,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.6.2
+  super_form_field: ^1.7.0
 ```
 
 Import the public library:
@@ -218,20 +220,25 @@ requires a message for its tooltip.
 
 ## Material-compatible input behavior
 
-The text, numeric, date, select, and multi-select fields expose the useful
-editing controls normally expected from Material `TextFormField`:
+The text, OTP, numeric, date, select, and multi-select fields expose the useful
+Material editing controls that apply to their input model:
 
 - `keyboardType`, `inputFormatters`, `textDirection`, `textInputAction`,
   `textCapitalization`, and `keyboardAppearance`.
 - `onFieldSubmitted`, `onEditingComplete`, `onTap`, `onTapOutside`, and
   `onTapUpOutside`.
-- `autocorrect`, `enableSuggestions`, smart dashes/quotes, cursor and selection
-  controls, scrolling, autofill, mouse cursor, context menu, restoration, IME
-  learning, focus requests, and clipping.
+- Autofill, cursor/selection behavior, context menus, restoration, IME learning,
+  focus requests, and clipping where applicable.
 - `onSaved` for Material naming, plus `onSave` as a compatibility alias. Supply
   only one of them.
 - `autovalidateMode` and typed participation in `FormState.validate()` and
   `FormState.save()`.
+
+Text, numeric, date, select, and multi-select retain their broader
+editor-specific options such as autocorrect, suggestions, smart punctuation,
+and scrolling. OTP input intentionally disables autocorrect, suggestions,
+and smart punctuation. Caller formatters run first, followed by the optional
+digits-only restriction and the package exact-length limiter.
 
 For `SuperSelectFormField` and `SuperMultiSelectFormField`, keyboard and editing
 properties configure the menu search editor and therefore take effect when
@@ -287,6 +294,53 @@ Common options:
 - `minLength`, `maxLength`, `pattern`, and `patternMessage`.
 - `showCounter`, `clearable`, and `autofocus`.
 - `disabled`, `readOnly`, `arabic`, and `forceError`.
+
+### OTP field
+
+`SuperOTPFormField` renders a verification code as separate cells while using
+one real editor internally. This preserves paste, SMS one-time-code autofill,
+desktop keyboard input, and predictable `Form` behavior.
+
+```dart
+final otpController = SuperOTPFieldController();
+
+SuperOTPFormField(
+  controller: otpController,
+  decoration: const InputDecoration(
+    labelText: 'Verification code',
+    hintText: 'Enter the code sent by SMS',
+    helperText: 'The code expires in five minutes.',
+    prefixIcon: Icon(Icons.sms_outlined),
+  ),
+  length: 6,
+  required: true,
+  autofillHints: const [AutofillHints.oneTimeCode],
+  onCompleted: (code) {
+    // Verify the completed code through the application layer.
+  },
+  onSaved: (code) {
+    // Receives the code from FormState.save().
+  },
+);
+```
+
+OTP behavior:
+
+- `length` sets the exact accepted code length and the number of visual cells.
+- `digitsOnly` defaults to `true`, adding a numeric keyboard and digits-only
+  formatter. Set it to `false` for alphanumeric backup codes.
+- `obscureText` masks a PIN without changing the saved value.
+- `onCompleted` runs once for each newly completed value, including pasted and
+  autofilled codes.
+- Caller `inputFormatters` run first, followed by the optional digits-only
+  restriction and the package length limiter. Use `maxLengthEnforcement`
+  when composition behavior must differ from the enforced default.
+- `boxWidth`, `boxHeight`, `spacing`, `borderRadius`, and `textStyle` customize
+  the cells without replacing package focus and validation states.
+- `showCounter`, `disabled`, `readOnly`, `autofocus`, `forceError`,
+  `onFieldSubmitted`, outside-tap callbacks, and typed Form saving are supported.
+- OTP content remains LTR by default, including inside an RTL application. Set
+  `textDirection` explicitly only when the product requires another order.
 
 ### Numeric field
 
@@ -560,8 +614,9 @@ Built-in validators run before custom validators, and the first error wins.
 Errors remain visually quiet until the field is touched, unless `forceError` is
 true. `onValidity` reports the current raw error whenever it changes.
 
-`SuperTextFormField`, `SuperNumericFormField`, `SuperDateFormField`,
-`SuperSelectFormField`, and `SuperMultiSelectFormField` also participate in an
+`SuperTextFormField`, `SuperOTPFormField`, `SuperNumericFormField`,
+`SuperDateFormField`, `SuperSelectFormField`, and
+`SuperMultiSelectFormField` also participate in an
 ancestor `Form`. `FormState.validate()` uses their existing typed validator
 chains, and `FormState.save()` invokes `onSaved` (or the `onSave` compatibility
 alias) with the typed value. The attachment, bool, and choice fields retain the
@@ -575,6 +630,7 @@ controller when imperative access is required.
 | Field | Controller | Value |
 |---|---|---|
 | `SuperTextFormField` | `SuperTextFieldController` | `String` |
+| `SuperOTPFormField` | `SuperOTPFieldController` | `String` |
 | `SuperNumericFormField` | `SuperNumericFieldController` | `num?` |
 | `SuperAttachmentFormField` | `SuperAttachmentFieldController` | `List<SuperFile>` |
 | `SuperDateFormField` | `SuperDateFieldController` | `DateTime?` |
@@ -629,6 +685,7 @@ Common imperative operations include:
 | Controller | Common operations |
 |---|---|
 | `SuperTextFieldController` | `setValue`, `clear`, `markTouched`, `toggleObscure` |
+| `SuperOTPFieldController` | `setValue`, `clear`, `requestFocus`, `markTouched`, `resetTouched` |
 | `SuperNumericFieldController` | `setValue`, `bump`, `bumpLarge` |
 | `SuperAttachmentFieldController` | `add`, `remove`, `clear`, `setDragOver` |
 | `SuperDateFieldController` | `setValue`, `pick`, `clear`, `markTouched` |
@@ -640,8 +697,8 @@ Common imperative operations include:
 ## Localization and RTL
 
 The package includes English and Arabic strings for built-in validation
-messages, search and empty states, attachment actions, numeric controls,
-boolean captions, and calendar content.
+messages, OTP length errors, search and empty states, attachment actions,
+numeric controls, boolean captions, and calendar content.
 
 Register the delegates once:
 
@@ -674,8 +731,8 @@ Directionality(
 ```
 
 Application-owned labels, option text, helper text, and custom validation
-messages are not translated automatically. Numeric and segmented date editing
-retain Western digits and LTR editing behavior inside RTL layouts.
+messages are not translated automatically. Numeric, OTP, and segmented date
+editing retain Western digits and LTR behavior inside RTL layouts by default.
 
 ## Responsive behavior
 
@@ -694,7 +751,7 @@ comfortable control layout.
 ## Advanced public API
 
 The main barrel also exports lower-level building blocks for custom controls.
-Prefer the eight form-field widgets for normal application screens.
+Prefer the nine form-field widgets for normal application screens.
 
 ### Shared values and helpers
 
@@ -728,7 +785,8 @@ Prefer the eight form-field widgets for normal application screens.
 
 ### Pure logic and date interaction
 
-The package exports pure logic helpers such as `DateLogic`, `NumericLogic`,
+The package exports pure logic helpers such as `buildOTPValidators`,
+`DateLogic`, `NumericLogic`,
 `SelectLogic`, `MultiSelectLogic`, `ChoiceLogic`, and `AttachmentLogic` for unit
 testing or advanced integrations. It also exports `DateInputIntent`,
 `DesktopDateInputUseCase`, `MobileDateInputUseCase`, and `MiniCalendar` for
@@ -744,11 +802,11 @@ flutter pub get
 flutter run
 ```
 
-The gallery demonstrates all eight fields, including a dedicated phone-input
-screen with international characters, country-specific formatting and
-validation, Autofill, submission, and `FormState.save()` behavior. It also
-covers controller-driven values, validation flows, date formats, linked ranges,
-light and dark themes, and LTR and RTL layouts.
+The gallery demonstrates all nine fields, including dedicated phone-input and
+OTP-input screens. It covers international phone formatting, OTP paste and
+one-time-code autofill, secure PIN display, controller-driven values,
+validation flows, typed `FormState.save()`, date formats, linked ranges, light
+and dark themes, and LTR and RTL layouts.
 
 ## Additional information
 

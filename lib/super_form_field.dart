@@ -1,9 +1,11 @@
 /// GeniusLink design-system form fields for Flutter.
 ///
-/// The package provides eight ERP-oriented inputs with one shared
+/// The package provides nine ERP-oriented inputs with one shared
 /// `InputDecoration` contract:
 ///
 /// * [SuperTextFormField] — text, email, phone, password, and multiline input.
+/// * [SuperOTPFormField] — segmented verification-code input with paste,
+///   one-time-code autofill, secure display, and completion callbacks.
 /// * [SuperNumericFormField] — vertically centered numeric input with a
 ///   contiguous square increment/decrement stepper.
 /// * [SuperAttachmentFormField] — picker-agnostic drop zone and typed file list.
@@ -21,9 +23,10 @@
 /// control geometry, focus treatment, typography, and error badges.
 ///
 /// Validation errors are quiet until touch/blur unless `forceError` is enabled.
-/// Text, numeric, date, select, and multi-select fields expose Material keyboard
-/// and editing callbacks and participate in `FormState.validate()` / `save()`
-/// with typed values. All fields support light/dark themes and LTR/RTL layouts.
+/// Text, OTP, numeric, date, select, and multi-select fields expose Material
+/// keyboard and editing callbacks and participate in `FormState.validate()` /
+/// `save()` with typed values. All fields support light/dark themes and
+/// LTR/RTL layouts.
 ///
 /// Use the complete `super_core` theme in the host application:
 ///
@@ -41,6 +44,7 @@ export 'localization/super_form_localizations.dart';
 
 // Features.
 export 'src/features/super_text_form_field/super_text_form_field.dart';
+export 'src/features/super_otp_form_field/super_otp_form_field.dart';
 export 'src/features/super_numeric_form_field/super_numeric_form_field.dart';
 export 'src/features/super_attachment_form_field/super_attachment_form_field.dart';
 export 'src/features/super_date_form_field/super_date_form_field.dart';

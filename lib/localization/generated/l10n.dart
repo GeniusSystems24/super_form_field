@@ -107,6 +107,16 @@ class SuperFormTranslation {
     );
   }
 
+  /// `Enter the complete {count}-character code`
+  String otpLength(num count) {
+    return Intl.message(
+      'Enter the complete $count-character code',
+      name: 'otpLength',
+      desc: '',
+      args: [count],
+    );
+  }
+
   /// `Cannot be negative`
   String get cannotBeNegative {
     return Intl.message(

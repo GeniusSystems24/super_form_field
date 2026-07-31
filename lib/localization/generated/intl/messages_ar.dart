@@ -52,6 +52,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(size) => "حتى ${size} م.ب";
 
+  static String m16(count) => "أدخل الرمز الكامل المكوّن من ${count} خانات";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "april": MessageLookupByLibrary.simpleMessage("أبريل"),
@@ -101,6 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noMatches": MessageLookupByLibrary.simpleMessage("لا توجد نتائج"),
     "november": MessageLookupByLibrary.simpleMessage("نوفمبر"),
     "october": MessageLookupByLibrary.simpleMessage("أكتوبر"),
+    "otpLength": m16,
     "openCalendar": MessageLookupByLibrary.simpleMessage("فتح التقويم"),
     "pickDateFromCalendar": MessageLookupByLibrary.simpleMessage(
       "اختر تاريخًا من التقويم",

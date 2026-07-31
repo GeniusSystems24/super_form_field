@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.6.2: text, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.7.0: text, OTP, numeric,
   attachment, date, select, multi-select, bool, and choice fields. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.6.2
+# Super Form Field 1.7.0
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -64,12 +64,14 @@ control height, spacing, focus/error states, and badge validation.
 
 ## Material-compatible input behavior
 
-For text, numeric, date, select, and multi-select fields, preserve the public
-Material-compatible editing API: `keyboardType`, `inputFormatters`,
-`textDirection`, `textInputAction`, `textCapitalization`, `keyboardAppearance`,
+For text, numeric, date, select, and multi-select fields, preserve the broad
+Material-compatible editing API: keyboard and formatter options,
 submission/editing/tap callbacks, cursor/selection controls, scrolling,
 autofill, context menus, restoration, IME learning, `autovalidateMode`, and typed
-Form saving. Prefer `onSaved`; keep `onSave` as a compatibility alias and reject
+Form saving. OTP exposes the relevant keyboard, formatter, direction, action,
+submission, outside-tap, autofill, context-menu, restoration, IME, cursor, and
+Form options while intentionally disabling autocorrect, suggestions, and smart
+punctuation. Prefer `onSaved`; keep `onSave` as a compatibility alias and reject
 supplying both.
 
 Select and multi-select keyboard/editing properties configure only the menu
@@ -109,6 +111,48 @@ call site when required.
 The example gallery includes a dedicated `PhoneFieldDemo` screen showing an
 international field and a country-specific composition using a prefix, formatter,
 pattern, autofill hints, submission, and typed form saving.
+
+### SuperOTPFormField
+
+Value: `String`. Controller: `SuperOTPFieldController`.
+
+Use `length` for the exact code length. The field uses one hidden Material
+editor and separate visual cells, so paste, SMS one-time-code autofill, desktop
+keyboard input, and `FormState.save()` remain reliable.
+
+```dart
+SuperOTPFormField(
+  decoration: const InputDecoration(
+    labelText: 'Verification code',
+    helperText: 'Enter the code sent by SMS.',
+    prefixIcon: Icon(Icons.sms_outlined),
+  ),
+  length: 6,
+  required: true,
+  onCompleted: (code) {},
+);
+```
+
+Keep these invariants:
+
+- `digitsOnly` defaults to true and supplies both the numeric keyboard and
+  digits-only formatter. Set it false for alphanumeric codes.
+- Caller `inputFormatters` run first, followed by the optional digits-only
+  restriction and the package length limiter. Preserve the enforced
+  `maxLengthEnforcement` default.
+- `onCompleted` fires once for each newly completed value, including paste and
+  autofill.
+- `obscureText` affects only the visual cells; saved/controller values remain
+  unchanged.
+- OTP cells default to LTR even inside RTL pages. Preserve explicit
+  `textDirection` overrides.
+- Responsive layout shrinks cells down to the supported minimum and then uses
+  horizontal scrolling rather than overflowing.
+- Keep badge validation, `InputDecoration` mapping, `onSaved`/`onSave`, and
+  `FormState.validate/reset` behavior consistent with the other editable fields.
+
+The gallery includes `OTPFieldDemo` with SMS, secure PIN, and alphanumeric
+backup-code examples.
 
 ### SuperNumericFormField
 
@@ -188,7 +232,7 @@ Use `style` (`segmented`, `radio`, or `checkbox`), `multiple`,
 - A `Validator<T>` returns `String?`; the first error wins.
 - Errors remain hidden until touch/blur unless `forceError` is true.
 - Errors are shown through `ErrorBadge`, never as ordinary inline error text.
-- Use `onValidity` to aggregate form validity. The text, numeric, date, select, and multi-select fields also support `FormState.validate()` and `FormState.save()`.
+- Use `onValidity` to aggregate form validity. The text, OTP, numeric, date, select, and multi-select fields also support `FormState.validate()` and `FormState.save()`.
 - On submit, set `forceError` or call each controller's `markTouched()`.
 - `InputDecoration.errorText` is treated as an external field error.
 - Do not use `InputDecoration.error`; the badge validation surface requires the string from `errorText`.
@@ -243,6 +287,7 @@ decoration mapping belongs in `field_decoration.dart`.
 ## Review checklist
 
 - Every new example uses `decoration: InputDecoration(...)`.
+- OTP changes preserve paste, autofill, exact-length validation, and completion semantics.
 - No public field reintroduces duplicated decoration parameters.
 - Package theme tokens are resolved from the ambient `SuperThemeData`.
 - Mobile date changes do not alter tablet/desktop popover behavior.
