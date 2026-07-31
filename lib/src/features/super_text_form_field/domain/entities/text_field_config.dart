@@ -13,6 +13,14 @@ enum SuperTextType {
   /// Email — auto-validated against a basic `a@b.c` pattern.
   email,
 
+  /// Phone number — uses the platform phone keyboard by default for
+  /// single-line input.
+  ///
+  /// No locale-specific validation or formatting is imposed. Use `pattern`,
+  /// `inputFormatters`, or custom validators when the accepted phone-number
+  /// format must be restricted.
+  phone,
+
   /// Password — characters obscured, with a reveal (eye) toggle.
   password,
 }

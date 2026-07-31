@@ -50,7 +50,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.6.0
+  super_form_field: ^1.6.1
 ```
 
 Import the public library:
@@ -243,8 +243,8 @@ custom `inputFormatters` so the configured date mask remains valid.
 
 ### Text field
 
-`SuperTextFormField` supports regular text, email, password, and multiline
-input.
+`SuperTextFormField` supports regular text, email, phone, password, and
+multiline input.
 
 ```dart
 SuperTextFormField(
@@ -260,9 +260,29 @@ SuperTextFormField(
 );
 ```
 
+For phone-number input, use the semantic phone type and add only the formatting
+or validation rules required by your product and locale:
+
+```dart
+SuperTextFormField(
+  decoration: const InputDecoration(
+    labelText: 'Phone number',
+    hintText: '+967 7XX XXX XXX',
+    prefixIcon: Icon(Icons.phone_outlined),
+  ),
+  type: SuperTextType.phone,
+  autofillHints: const [AutofillHints.telephoneNumber],
+);
+```
+
+`SuperTextType.phone` does not force a digits-only formatter because valid phone
+input can include a leading `+`, spaces, parentheses, or extension markers.
+
 Common options:
 
-- `type`: `text`, `email`, or `password`.
+- `type`: `text`, `email`, `phone`, or `password`. For single-line input, the
+  `phone` type selects `TextInputType.phone` unless `keyboardType` is supplied
+  explicitly.
 - `multiline` and `rows` for long-form input.
 - `minLength`, `maxLength`, `pattern`, and `patternMessage`.
 - `showCounter`, `clearable`, and `autofocus`.

@@ -3,7 +3,7 @@
 /// The package provides eight ERP-oriented inputs with one shared
 /// `InputDecoration` contract:
 ///
-/// * [SuperTextFormField] — text, email, password, and multiline input.
+/// * [SuperTextFormField] — text, email, phone, password, and multiline input.
 /// * [SuperNumericFormField] — vertically centered numeric input with a
 ///   contiguous square increment/decrement stepper.
 /// * [SuperAttachmentFormField] — picker-agnostic drop zone and typed file list.

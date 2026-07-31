@@ -42,6 +42,22 @@ void main() {
     expect(fields, hasLength(8));
   });
 
+  testWidgets('phone text type uses the phone keyboard by default', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: SuperMaterialThemeData.light(),
+        home: const Scaffold(
+          body: SuperTextFormField(type: SuperTextType.phone),
+        ),
+      ),
+    );
+
+    final textField = tester.widget<TextField>(find.byType(TextField));
+    expect(textField.keyboardType, TextInputType.phone);
+  });
+
   testWidgets('custom fields adapt label, hint, helper, and adornments', (
     tester,
   ) async {

@@ -8,7 +8,8 @@
 //
 // Validation errors surface ONLY through the suffix ErrorBadge, never inline.
 // Supports leading icon, prefix / suffix adornments, clear, password reveal,
-// character counter, multiline, email, disabled & read-only, and LTR/RTL.
+// character counter, multiline, email, phone, disabled & read-only, and
+// LTR/RTL.
 // ============================================================
 
 import 'package:flutter/gestures.dart';
@@ -498,9 +499,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
         widget.keyboardType ??
         (multiline
             ? TextInputType.multiline
-            : widget.type == SuperTextType.email
-            ? TextInputType.emailAddress
-            : TextInputType.text);
+            : switch (widget.type) {
+                SuperTextType.text => TextInputType.text,
+                SuperTextType.email => TextInputType.emailAddress,
+                SuperTextType.phone => TextInputType.phone,
+                SuperTextType.password => TextInputType.text,
+              });
     final effectiveMinLines = multiline
         ? (widget.minLines ?? widget.rows)
         : 1;

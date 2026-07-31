@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.6.0: text, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.6.1: text, numeric,
   attachment, date, select, multi-select, bool, and choice fields. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.6.0
+# Super Form Field 1.6.1
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -83,7 +83,8 @@ before the internal segmented formatter so package date invariants remain last.
 
 Value: `String`. Controller: `SuperTextFieldController`.
 
-Use `type`, `multiline`, `rows`, `minLength`, `maxLength`, `pattern`,
+Use `type` (`text`, `email`, `phone`, or `password`), `multiline`, `rows`,
+`minLength`, `maxLength`, `pattern`,
 `patternMessage`, `showCounter`, `clearable`, `disabled`, `readOnly`, and
 `autofocus`. Prefix/suffix widgets come from `decoration`.
 
@@ -98,6 +99,12 @@ SuperTextFormField(
   required: true,
 );
 ```
+
+`SuperTextType.phone` selects `TextInputType.phone` by default for single-line
+input. Do not impose a global digits-only formatter or phone regex; phone
+formats are locale- and
+product-specific. Add `inputFormatters`, `pattern`, or custom validators at the
+call site when required.
 
 ### SuperNumericFormField
 

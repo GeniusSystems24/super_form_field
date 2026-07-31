@@ -4,6 +4,17 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.6.1] — 2026-07-31
+
+### Added
+
+- Added `SuperTextType.phone` to `SuperTextFormField`. It selects
+  `TextInputType.phone` by default for single-line input while leaving
+  locale-specific validation and formatting to `pattern`, `inputFormatters`,
+  or custom validators.
+- Added package documentation, gallery coverage, and a widget regression for
+  the phone keyboard default.
+
 ## [1.6.0] — 2026-07-31
 
 ### Added

@@ -2,8 +2,8 @@
 // example/lib/demos/text_field_demo.dart
 // ------------------------------------------------------------
 // SuperTextFormField in realistic GeniusLink form context: a bilingual account
-// name row, reference + email + password, a multiline note with counter, and a
-// "Validate" sweep that force-shows every error badge.
+// name row, reference + email + phone + password, a multiline note with a
+// counter, and a "Validate" sweep that force-shows every error badge.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -71,7 +71,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
         ),
         SuperSectionCard(
           title: 'Contact & Access',
-          subtitle: 'Email and password validation patterns',
+          subtitle: 'Email, phone, and password input patterns',
           marker: SuperMarker.identity,
           child: Column(
             children: [
@@ -84,6 +84,16 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 type: SuperTextType.email,
                 required: true,
                 forceError: _force,
+              ),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
+              SuperTextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Phone',
+                  hintText: 'e.g. +967 7XX XXX XXX',
+                  prefixIcon: Icon(Icons.phone_outlined),
+                ),
+                type: SuperTextType.phone,
+                autofillHints: const [AutofillHints.telephoneNumber],
               ),
               SizedBox(height: SuperThemeData.of(context).spacing.space6),
               SuperTextFormField(
