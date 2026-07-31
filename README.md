@@ -50,7 +50,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.6.1
+  super_form_field: ^1.6.2
 ```
 
 Import the public library:
@@ -744,9 +744,11 @@ flutter pub get
 flutter run
 ```
 
-The gallery demonstrates all eight fields, controller-driven values, validation
-flows, date formats, linked ranges, light and dark themes, and LTR and RTL
-layouts.
+The gallery demonstrates all eight fields, including a dedicated phone-input
+screen with international characters, country-specific formatting and
+validation, Autofill, submission, and `FormState.save()` behavior. It also
+covers controller-driven values, validation flows, date formats, linked ranges,
+light and dark themes, and LTR and RTL layouts.
 
 ## Additional information
 

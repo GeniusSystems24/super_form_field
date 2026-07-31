@@ -4,6 +4,23 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.6.2] — 2026-08-01
+
+### Added
+
+- Added a dedicated `PhoneFieldDemo` screen to the example gallery and a
+  navigation widget regression for it.
+- Demonstrated international phone characters, phone autofill, keyboard
+  appearance, outside-tap dismissal, submission, and typed `FormState.save()`.
+- Added a country-specific composition example using a dialing-code prefix,
+  digits-only formatting, maximum length, and a product-owned validation
+  pattern without changing the package-wide phone defaults.
+
+### Changed
+
+- Added the phone example to the gallery launcher and refreshed package, skill,
+  and example documentation for version 1.6.2.
+
 ## [1.6.1] — 2026-07-31
 
 ### Added
@@ -149,6 +166,7 @@ to [Semantic Versioning](https://semver.org/).
     darkTheme: SuperMaterialThemeData.dark(mode: SuperDeviceMode.desktop),
   );
   ```
+
 - Minimum raised to `dart >=3.8.0`, `flutter >=3.32.0`.
 
 ---
@@ -240,7 +258,6 @@ Planned for future minor releases (non-breaking): `SuperPhoneFormField`
 (country code + national number), `SuperCurrencyFormField` (amount + currency
 preset), `SuperTimeFormField` / date-time, `SuperRangeFormField` (numeric / date
 ranges), `SuperColorFormField`, and masked inputs (IBAN / tax id / card).
-
 
 ## [0.2.0] — 2026-06-18
 

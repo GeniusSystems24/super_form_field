@@ -3,7 +3,7 @@
 // ------------------------------------------------------------
 // Gallery launcher for Super Form Field. Registers the SuperThemeData
 // extension (light + dark parity), exposes a global Light/Dark + LTR/RTL
-// toggle, and lists the three field demos.
+// toggle, and lists the package field demos.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -15,6 +15,7 @@ import 'demos/choice_field_demo.dart';
 import 'demos/date_field_demo.dart';
 import 'demos/multi_select_field_demo.dart';
 import 'demos/numeric_field_demo.dart';
+import 'demos/phone_field_demo.dart';
 import 'demos/select_field_demo.dart';
 import 'demos/text_field_demo.dart';
 
@@ -119,6 +120,12 @@ class _Launcher extends StatelessWidget {
       'Text · email · password · multiline · counter',
       Icons.text_fields_rounded,
       (_) => const TextFieldDemo(),
+    ),
+    _DemoItem(
+      'Phone Text Field',
+      'International · country rules · formatters · Form save',
+      Icons.phone_android_rounded,
+      (_) => const PhoneFieldDemo(),
     ),
     _DemoItem(
       'Super Numeric Field',

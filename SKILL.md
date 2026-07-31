@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.6.1: text, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.6.2: text, numeric,
   attachment, date, select, multi-select, bool, and choice fields. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.6.1
+# Super Form Field 1.6.2
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -105,6 +105,10 @@ input. Do not impose a global digits-only formatter or phone regex; phone
 formats are locale- and
 product-specific. Add `inputFormatters`, `pattern`, or custom validators at the
 call site when required.
+
+The example gallery includes a dedicated `PhoneFieldDemo` screen showing an
+international field and a country-specific composition using a prefix, formatter,
+pattern, autofill hints, submission, and typed form saving.
 
 ### SuperNumericFormField
 
