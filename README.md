@@ -50,7 +50,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.5.1
+  super_form_field: ^1.6.0
 ```
 
 Import the public library:
@@ -215,6 +215,29 @@ disabled states, and error presentation so all field types remain visually
 consistent. Use `errorText` for an external string error. The widget form of
 `InputDecoration.error` is not adapted because the package error surface
 requires a message for its tooltip.
+
+## Material-compatible input behavior
+
+The text, numeric, date, select, and multi-select fields expose the useful
+editing controls normally expected from Material `TextFormField`:
+
+- `keyboardType`, `inputFormatters`, `textDirection`, `textInputAction`,
+  `textCapitalization`, and `keyboardAppearance`.
+- `onFieldSubmitted`, `onEditingComplete`, `onTap`, `onTapOutside`, and
+  `onTapUpOutside`.
+- `autocorrect`, `enableSuggestions`, smart dashes/quotes, cursor and selection
+  controls, scrolling, autofill, mouse cursor, context menu, restoration, IME
+  learning, focus requests, and clipping.
+- `onSaved` for Material naming, plus `onSave` as a compatibility alias. Supply
+  only one of them.
+- `autovalidateMode` and typed participation in `FormState.validate()` and
+  `FormState.save()`.
+
+For `SuperSelectFormField` and `SuperMultiSelectFormField`, keyboard and editing
+properties configure the menu search editor and therefore take effect when
+`searchable` is `true`. Their tap and outside-tap callbacks belong to the
+selection trigger. Date input always applies its internal formatter after any
+custom `inputFormatters` so the configured date mask remains valid.
 
 ## Fields
 
@@ -517,10 +540,12 @@ Built-in validators run before custom validators, and the first error wins.
 Errors remain visually quiet until the field is touched, unless `forceError` is
 true. `onValidity` reports the current raw error whenever it changes.
 
-The validation API is intentionally controller- and callback-based. These
-widgets do not rely on `FormState.validate()`. Aggregate field errors in the
-screen controller, state object, Bloc, Cubit, or other presentation-state layer
-used by the application.
+`SuperTextFormField`, `SuperNumericFormField`, `SuperDateFormField`,
+`SuperSelectFormField`, and `SuperMultiSelectFormField` also participate in an
+ancestor `Form`. `FormState.validate()` uses their existing typed validator
+chains, and `FormState.save()` invokes `onSaved` (or the `onSave` compatibility
+alias) with the typed value. The attachment, bool, and choice fields retain the
+controller/callback validation workflow described above.
 
 ## Controllers
 

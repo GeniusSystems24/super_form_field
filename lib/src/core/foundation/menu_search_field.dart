@@ -7,6 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../extensions/context_extensions.dart';
 import 'package:super_core/super_core.dart' hide FieldShell, FieldDensity;
@@ -21,6 +22,41 @@ class MenuSearchField extends StatelessWidget {
     this.hintText = 'Search…',
     this.onChanged,
     this.arabic = false,
+    this.autofocus = true,
+    this.keyboardType,
+    this.inputFormatters,
+    this.textDirection,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlign = TextAlign.start,
+    this.textAlignVertical = TextAlignVertical.center,
+    this.onSubmitted,
+    this.onEditingComplete,
+    this.keyboardAppearance,
+    this.autocorrect = true,
+    this.enableSuggestions = true,
+    this.smartDashesType,
+    this.smartQuotesType,
+    this.showCursor,
+    this.enableInteractiveSelection = true,
+    this.selectionControls,
+    this.scrollPadding = const EdgeInsets.all(20),
+    this.scrollPhysics,
+    this.scrollController,
+    this.autofillHints,
+    this.mouseCursor,
+    this.contextMenuBuilder,
+    this.restorationId,
+    this.enableIMEPersonalizedLearning = true,
+    this.canRequestFocus = true,
+    this.clipBehavior = Clip.hardEdge,
+    this.cursorWidth = 2.0,
+    this.cursorHeight,
+    this.cursorRadius,
+    this.cursorColor,
+    this.cursorErrorColor,
+    this.style,
+    this.strutStyle,
   });
 
   final TextEditingController controller;
@@ -29,10 +65,50 @@ class MenuSearchField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool arabic;
 
+  /// Text-input options forwarded to the search editor.
+  final bool autofocus;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextDirection? textDirection;
+  final TextInputAction? textInputAction;
+  final TextCapitalization textCapitalization;
+  final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onEditingComplete;
+  final Brightness? keyboardAppearance;
+  final bool autocorrect;
+  final bool enableSuggestions;
+  final SmartDashesType? smartDashesType;
+  final SmartQuotesType? smartQuotesType;
+  final bool? showCursor;
+  final bool enableInteractiveSelection;
+  final TextSelectionControls? selectionControls;
+  final EdgeInsets scrollPadding;
+  final ScrollPhysics? scrollPhysics;
+  final ScrollController? scrollController;
+  final Iterable<String>? autofillHints;
+  final MouseCursor? mouseCursor;
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
+  final String? restorationId;
+  final bool enableIMEPersonalizedLearning;
+  final bool canRequestFocus;
+  final Clip clipBehavior;
+  final double cursorWidth;
+  final double? cursorHeight;
+  final Radius? cursorRadius;
+  final Color? cursorColor;
+  final Color? cursorErrorColor;
+  final TextStyle? style;
+  final StrutStyle? strutStyle;
+
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
+    final effectiveTextDirection =
+        textDirection ?? Directionality.maybeOf(context) ?? TextDirection.ltr;
+
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(
         SuperThemeData.of(context).spacing.space3,
@@ -51,17 +127,58 @@ class MenuSearchField extends StatelessWidget {
             child: TextField(
               controller: controller,
               focusNode: focusNode,
-              autofocus: true,
+              autofocus: autofocus,
+              keyboardType: keyboardType,
+              inputFormatters: inputFormatters,
+              textDirection: effectiveTextDirection,
+              textInputAction: textInputAction,
+              textCapitalization: textCapitalization,
+              textAlign: textAlign,
+              textAlignVertical: textAlignVertical,
               onChanged: onChanged,
-              cursorColor: cs.primary,
-              style: t.textTheme.body.copyWith(
-                color: t.fg1,
-                fontSize: 13.5,
-                fontFamily: arabic
-                    ? SuperThemeData.of(context).tokens.arabicFont
-                    : SuperThemeData.of(context).tokens.bodyFont,
-              ),
-              textAlign: TextAlign.start,
+              onSubmitted: onSubmitted,
+              onEditingComplete: onEditingComplete,
+              keyboardAppearance: keyboardAppearance,
+              autocorrect: autocorrect,
+              enableSuggestions: enableSuggestions,
+              smartDashesType: smartDashesType,
+              smartQuotesType: smartQuotesType,
+              showCursor: showCursor,
+              enableInteractiveSelection: enableInteractiveSelection,
+              selectionControls: selectionControls,
+              scrollPadding: scrollPadding,
+              scrollPhysics: scrollPhysics,
+              scrollController: scrollController,
+              autofillHints: autofillHints,
+              mouseCursor: mouseCursor,
+              contextMenuBuilder: contextMenuBuilder,
+              restorationId: restorationId,
+              enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
+              canRequestFocus: canRequestFocus,
+              clipBehavior: clipBehavior,
+              cursorWidth: cursorWidth,
+              cursorHeight: cursorHeight,
+              cursorRadius: cursorRadius,
+              cursorColor: cursorColor ?? cs.primary,
+              cursorErrorColor: cursorErrorColor ?? cs.error,
+              style: style == null
+                  ? t.textTheme.body.copyWith(
+                      color: t.fg1,
+                      fontSize: 13.5,
+                      fontFamily: arabic
+                          ? SuperThemeData.of(context).tokens.arabicFont
+                          : SuperThemeData.of(context).tokens.bodyFont,
+                    )
+                  : t.textTheme.body
+                        .copyWith(
+                          color: t.fg1,
+                          fontSize: 13.5,
+                          fontFamily: arabic
+                              ? SuperThemeData.of(context).tokens.arabicFont
+                              : SuperThemeData.of(context).tokens.bodyFont,
+                        )
+                        .merge(style),
+              strutStyle: strutStyle,
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: t.textTheme.body.copyWith(
@@ -71,12 +188,12 @@ class MenuSearchField extends StatelessWidget {
                       ? SuperThemeData.of(context).tokens.arabicFont
                       : SuperThemeData.of(context).tokens.bodyFont,
                 ),
+                hintTextDirection: effectiveTextDirection,
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
                 filled: false,
-
                 contentPadding: EdgeInsets.zero,
               ),
             ),

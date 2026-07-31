@@ -8,7 +8,9 @@
 // through the suffix ErrorBadge. Includes a +/- stepper and prefix/suffix units.
 // ============================================================
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
@@ -41,7 +43,52 @@ class SuperNumericFormField extends StatefulWidget {
     this.validators = const [],
     this.forceError = false,
     this.arabic = false,
-  });
+    this.autofocus = false,
+    this.keyboardType,
+    this.inputFormatters,
+    this.textDirection,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlign = TextAlign.right,
+    this.textAlignVertical = TextAlignVertical.center,
+    this.onFieldSubmitted,
+    this.onTap,
+    this.onTapAlwaysCalled = false,
+    this.onTapOutside,
+    this.onTapUpOutside,
+    this.onEditingComplete,
+    this.onSaved,
+    this.onSave,
+    this.keyboardAppearance,
+    this.autocorrect = false,
+    this.enableSuggestions = false,
+    this.smartDashesType = SmartDashesType.disabled,
+    this.smartQuotesType = SmartQuotesType.disabled,
+    this.showCursor,
+    this.enableInteractiveSelection = true,
+    this.selectionControls,
+    this.scrollPadding = const EdgeInsets.all(20),
+    this.scrollPhysics,
+    this.scrollController,
+    this.autofillHints,
+    this.mouseCursor,
+    this.contextMenuBuilder,
+    this.restorationId,
+    this.enableIMEPersonalizedLearning = true,
+    this.canRequestFocus = true,
+    this.clipBehavior = Clip.hardEdge,
+    this.cursorWidth = 2.0,
+    this.cursorHeight,
+    this.cursorRadius,
+    this.cursorColor,
+    this.cursorErrorColor,
+    this.style,
+    this.strutStyle,
+    this.autovalidateMode = AutovalidateMode.disabled,
+  }) : assert(
+         onSaved == null || onSave == null,
+         'Provide either onSaved or onSave, not both.',
+       );
 
   final SuperNumericFieldController? controller;
   final num? initialValue;
@@ -81,6 +128,55 @@ class SuperNumericFormField extends StatefulWidget {
   final List<Validator<num?>> validators;
   final bool forceError;
   final bool arabic;
+
+  // ── Material text-input behaviour ──
+  final bool autofocus;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextDirection? textDirection;
+  final TextInputAction? textInputAction;
+  final TextCapitalization textCapitalization;
+  final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
+  final ValueChanged<String>? onFieldSubmitted;
+  final GestureTapCallback? onTap;
+  final bool onTapAlwaysCalled;
+  final void Function(PointerDownEvent event)? onTapOutside;
+  final void Function(PointerUpEvent event)? onTapUpOutside;
+  final VoidCallback? onEditingComplete;
+
+  /// Called with the parsed numeric value by an ancestor [Form].
+  final FormFieldSetter<num?>? onSaved;
+
+  /// Backward-compatible alias for [onSaved].
+  final FormFieldSetter<num?>? onSave;
+
+  final Brightness? keyboardAppearance;
+  final bool autocorrect;
+  final bool enableSuggestions;
+  final SmartDashesType? smartDashesType;
+  final SmartQuotesType? smartQuotesType;
+  final bool? showCursor;
+  final bool enableInteractiveSelection;
+  final TextSelectionControls? selectionControls;
+  final EdgeInsets scrollPadding;
+  final ScrollPhysics? scrollPhysics;
+  final ScrollController? scrollController;
+  final Iterable<String>? autofillHints;
+  final MouseCursor? mouseCursor;
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
+  final String? restorationId;
+  final bool enableIMEPersonalizedLearning;
+  final bool canRequestFocus;
+  final Clip clipBehavior;
+  final double cursorWidth;
+  final double? cursorHeight;
+  final Radius? cursorRadius;
+  final Color? cursorColor;
+  final Color? cursorErrorColor;
+  final TextStyle? style;
+  final StrutStyle? strutStyle;
+  final AutovalidateMode autovalidateMode;
 
   @override
   State<SuperNumericFormField> createState() => _SuperNumericFormFieldState();
@@ -123,196 +219,260 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
   @override
   Widget build(BuildContext context) {
     final l10n = SuperFormTranslation.of(context);
-    _controller.configure(
-      min: widget.min,
-      max: widget.max,
-      decimals: widget.decimals,
-      grouping: widget.grouping,
-      allowNegative: widget.allowNegative,
-      step: widget.step,
-      largeStep: widget.largeStep,
-      readOnly: widget.readOnly,
-      keyboardEnabled: widget.keyboardShortcuts,
-      validators: NumericLogic.buildValidators(
-        required: widget.required,
-        min: widget.min,
-        max: widget.max,
-        decimals: widget.decimals,
-        grouping: widget.grouping,
-        allowNegative: widget.allowNegative,
-        extra: widget.validators,
-        requiredMessage: l10n.requiredMessage,
-        cannotBeNegativeMessage: l10n.cannotBeNegative,
-        minMessage: l10n.minNumber,
-        maxMessage: l10n.maxNumber,
-      ),
-      forceError: widget.forceError,
-      onValidity: widget.onValidity,
-      onChanged: widget.onChanged,
-    );
 
-    return ListenableBuilder(
-      listenable: _controller,
-      builder: (context, _) {
-        final t = context.sffTheme;
-        final cs = context.sffColorScheme;
-        final error = widget.disabled
-            ? null
-            : SffDecoration.resolveError(
-                widget.decoration,
-                _controller.visibleError,
-              );
-
-        final sizing = SuperThemeData.of(context).sizing;
-        final spacing = SuperThemeData.of(context).spacing;
-        final controlHeight = widget.density == FieldDensity.compact
-            ? sizing.fieldCompact
-            : sizing.fieldComfortable;
-        final unitStyle = t.textTheme.mono.copyWith(
-          color: t.fg3,
-          fontSize: 12.5,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.2,
-        );
-        final stepperBorderRadius = BorderRadius.circular(
-          spacing.radiusControl,
-        );
-        final stepperBorderSide = BorderSide(color: t.borderStrong);
-        final trailing = <Widget>[
-          ...SffDecoration.buildTrailing(
-            context,
-            widget.decoration,
-            textStyle: unitStyle,
+    return FormField<num?>(
+      key: ObjectKey(_controller),
+      initialValue: _controller.value,
+      enabled: !widget.disabled,
+      onSaved: widget.onSaved ?? widget.onSave,
+      autovalidateMode: widget.autovalidateMode,
+      validator: (_) => _controller.error,
+      builder: (formState) {
+        _controller.configure(
+          min: widget.min,
+          max: widget.max,
+          decimals: widget.decimals,
+          grouping: widget.grouping,
+          allowNegative: widget.allowNegative,
+          step: widget.step,
+          largeStep: widget.largeStep,
+          readOnly: widget.readOnly,
+          keyboardEnabled: widget.keyboardShortcuts,
+          validators: NumericLogic.buildValidators(
+            required: widget.required,
+            min: widget.min,
+            max: widget.max,
+            decimals: widget.decimals,
+            grouping: widget.grouping,
+            allowNegative: widget.allowNegative,
+            extra: widget.validators,
+            requiredMessage: l10n.requiredMessage,
+            cannotBeNegativeMessage: l10n.cannotBeNegative,
+            minMessage: l10n.minNumber,
+            maxMessage: l10n.maxNumber,
           ),
-          if (widget.stepper && !widget.disabled)
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: Container(
-                height: controlHeight,
-                decoration: BoxDecoration(
-                  color: t.inputBg,
-                  borderRadius: stepperBorderRadius,
-                ),
-                foregroundDecoration: BoxDecoration(
-                  border: Border.fromBorderSide(stepperBorderSide),
-                  borderRadius: stepperBorderRadius,
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+          forceError: widget.forceError || formState.hasError,
+          onValidity: widget.onValidity,
+          onChanged: (value) {
+            formState.didChange(value);
+            widget.onChanged?.call(value);
+          },
+        );
+
+        return ListenableBuilder(
+          listenable: _controller,
+          builder: (context, _) {
+            final t = context.sffTheme;
+            final cs = context.sffColorScheme;
+            final error = widget.disabled
+                ? null
+                : SffDecoration.resolveError(
+                    widget.decoration,
+                    _controller.visibleError,
+                  );
+
+            final sizing = SuperThemeData.of(context).sizing;
+            final spacing = SuperThemeData.of(context).spacing;
+            final controlHeight = widget.density == FieldDensity.compact
+                ? sizing.fieldCompact
+                : sizing.fieldComfortable;
+            final unitStyle = t.textTheme.mono.copyWith(
+              color: t.fg3,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            );
+            final stepperBorderRadius = BorderRadius.circular(
+              spacing.radiusControl,
+            );
+            final stepperBorderSide = BorderSide(color: t.borderStrong);
+            final trailing = <Widget>[
+              ...SffDecoration.buildTrailing(
+                context,
+                widget.decoration,
+                textStyle: unitStyle,
+              ),
+              if (widget.stepper && !widget.disabled)
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Container(
+                    height: controlHeight,
+                    decoration: BoxDecoration(
+                      color: t.inputBg,
+                      borderRadius: stepperBorderRadius,
+                    ),
+                    foregroundDecoration: BoxDecoration(
+                      border: Border.fromBorderSide(stepperBorderSide),
+                      borderRadius: stepperBorderRadius,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        FieldIconButton(
-                          key: const ValueKey('super_numeric_decrement'),
-                          icon: SffIcons.minus,
-                          tooltip: l10n.decrement,
-                          bordered: true,
-                          size: controlHeight,
-                          border: Border.all(color: Colors.transparent),
-                          borderRadius: BorderRadius.zero,
-                          iconSize: 14,
-                          onPressed: widget.readOnly
-                              ? null
-                              : () => _controller.bump(-1),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FieldIconButton(
+                              key: const ValueKey(
+                                'super_numeric_decrement',
+                              ),
+                              icon: SffIcons.minus,
+                              tooltip: l10n.decrement,
+                              bordered: true,
+                              size: controlHeight,
+                              border: Border.all(color: Colors.transparent),
+                              borderRadius: BorderRadius.zero,
+                              iconSize: 14,
+                              onPressed: widget.readOnly
+                                  ? null
+                                  : () => _controller.bump(-1),
+                            ),
+                            FieldIconButton(
+                              key: const ValueKey(
+                                'super_numeric_increment',
+                              ),
+                              icon: SffIcons.plus,
+                              tooltip: l10n.increment,
+                              bordered: true,
+                              size: controlHeight,
+                              border: Border.all(color: Colors.transparent),
+                              borderRadius: BorderRadius.zero,
+                              iconSize: 14,
+                              onPressed: widget.readOnly
+                                  ? null
+                                  : () => _controller.bump(1),
+                            ),
+                          ],
                         ),
-                        FieldIconButton(
-                          key: const ValueKey('super_numeric_increment'),
-                          icon: SffIcons.plus,
-                          tooltip: l10n.increment,
-                          bordered: true,
-                          size: controlHeight,
-                          border: Border.all(color: Colors.transparent),
-                          borderRadius: BorderRadius.zero,
-                          iconSize: 14,
-                          onPressed: widget.readOnly
-                              ? null
-                              : () => _controller.bump(1),
+                        IgnorePointer(
+                          child: SizedBox(
+                            width: stepperBorderSide.width,
+                            height: controlHeight,
+                            child: ColoredBox(
+                              color: stepperBorderSide.color,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    IgnorePointer(
-                      child: SizedBox(
-                        width: stepperBorderSide.width,
-                        height: controlHeight,
-                        child: ColoredBox(color: stepperBorderSide.color),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-        ];
+            ];
 
-        return FieldShell(
-          decoration: widget.decoration,
-          required: widget.required,
-          hasError: error != null,
-          arabic: widget.arabic,
-          child: FieldBox(
-            focused: _controller.focused,
-            error: error,
-            disabled: widget.disabled,
-            density: widget.density,
-            flushTrailing: widget.stepper && !widget.disabled && error == null,
-            leading: SffDecoration.buildLeading(
-              context,
-              widget.decoration,
-              textStyle: unitStyle,
-            ),
-            trailing: trailing,
-            child: Directionality(
-              textDirection: TextDirection.ltr,
-              child: Listener(
-                behavior: HitTestBehavior.translucent,
-                onPointerDown: widget.disabled
-                    ? null
-                    : (_) => _controller.focusNode.requestFocus(),
-                child: Center(
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: TextField(
-                      controller: _controller.text,
-                      focusNode: _controller.focusNode,
-                      enabled: !widget.disabled,
-                      readOnly: widget.readOnly,
-                      textAlign: TextAlign.right,
-                      textAlignVertical: TextAlignVertical.center,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                        signed: true,
-                      ),
-                      cursorColor: cs.primary,
-                      style: t.textTheme.mono.copyWith(color: t.fg1),
-                      // FieldBox owns the border and height. Keep this editor at
-                      // its natural single-line height, then center that actual
-                      // render box in the available control height.
-                      decoration: InputDecoration(
-                        hint: widget.decoration.hint,
-                        hintText: widget.decoration.hintText,
-                        hintStyle: SffDecoration.mergeStyle(
-                          t.textTheme.mono.copyWith(color: t.fg4),
-                          widget.decoration.hintStyle,
+            return FieldShell(
+              decoration: widget.decoration,
+              required: widget.required,
+              hasError: error != null,
+              arabic: widget.arabic,
+              child: FieldBox(
+                focused: _controller.focused,
+                error: error,
+                disabled: widget.disabled,
+                density: widget.density,
+                flushTrailing:
+                    widget.stepper && !widget.disabled && error == null,
+                leading: SffDecoration.buildLeading(
+                  context,
+                  widget.decoration,
+                  textStyle: unitStyle,
+                ),
+                trailing: trailing,
+                child: Directionality(
+                  textDirection: widget.textDirection ?? TextDirection.ltr,
+                  child: Listener(
+                    behavior: HitTestBehavior.translucent,
+                    onPointerDown: widget.disabled
+                        ? null
+                        : (_) => _controller.focusNode.requestFocus(),
+                    child: Center(
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: TextField(
+                          controller: _controller.text,
+                          focusNode: _controller.focusNode,
+                          enabled: !widget.disabled,
+                          readOnly: widget.readOnly,
+                          autofocus: widget.autofocus,
+                          keyboardType:
+                              widget.keyboardType ??
+                              TextInputType.numberWithOptions(
+                                decimal: widget.decimals > 0,
+                                signed: widget.allowNegative,
+                              ),
+                          inputFormatters: widget.inputFormatters,
+                          textDirection:
+                              widget.textDirection ?? TextDirection.ltr,
+                          textInputAction: widget.textInputAction,
+                          textCapitalization: widget.textCapitalization,
+                          textAlign: widget.textAlign,
+                          textAlignVertical: widget.textAlignVertical,
+                          onSubmitted: widget.onFieldSubmitted,
+                          onTap: widget.onTap,
+                          onTapAlwaysCalled: widget.onTapAlwaysCalled,
+                          onTapOutside: widget.onTapOutside,
+                          onTapUpOutside: widget.onTapUpOutside,
+                          onEditingComplete: widget.onEditingComplete,
+                          keyboardAppearance: widget.keyboardAppearance,
+                          autocorrect: widget.autocorrect,
+                          enableSuggestions: widget.enableSuggestions,
+                          smartDashesType: widget.smartDashesType,
+                          smartQuotesType: widget.smartQuotesType,
+                          showCursor: widget.showCursor,
+                          enableInteractiveSelection:
+                              widget.enableInteractiveSelection,
+                          selectionControls: widget.selectionControls,
+                          scrollPadding: widget.scrollPadding,
+                          scrollPhysics: widget.scrollPhysics,
+                          scrollController: widget.scrollController,
+                          autofillHints: widget.autofillHints,
+                          mouseCursor: widget.mouseCursor,
+                          contextMenuBuilder: widget.contextMenuBuilder,
+                          restorationId: widget.restorationId,
+                          enableIMEPersonalizedLearning:
+                              widget.enableIMEPersonalizedLearning,
+                          canRequestFocus: widget.canRequestFocus,
+                          clipBehavior: widget.clipBehavior,
+                          cursorWidth: widget.cursorWidth,
+                          cursorHeight: widget.cursorHeight,
+                          cursorRadius: widget.cursorRadius,
+                          cursorColor: widget.cursorColor ?? cs.primary,
+                          cursorErrorColor:
+                              widget.cursorErrorColor ?? cs.error,
+                          style: SffDecoration.mergeStyle(
+                            t.textTheme.mono.copyWith(color: t.fg1),
+                            widget.style,
+                          ),
+                          strutStyle: widget.strutStyle,
+                          // FieldBox owns border and height. The editor keeps its
+                          // natural single-line size and is centered by layout.
+                          decoration: InputDecoration(
+                            hint: widget.decoration.hint,
+                            hintText: widget.decoration.hintText,
+                            hintStyle: SffDecoration.mergeStyle(
+                              t.textTheme.mono.copyWith(color: t.fg4),
+                              widget.decoration.hintStyle,
+                            ),
+                            hintTextDirection:
+                                widget.textDirection ?? TextDirection.ltr,
+                            hintMaxLines: widget.decoration.hintMaxLines,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            focusedErrorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            filled: false,
+                            isCollapsed: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
                         ),
-                        hintTextDirection: TextDirection.ltr,
-                        hintMaxLines: widget.decoration.hintMaxLines,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        focusedErrorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        filled: false,
-                        isCollapsed: true,
-                        contentPadding: EdgeInsets.zero,
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

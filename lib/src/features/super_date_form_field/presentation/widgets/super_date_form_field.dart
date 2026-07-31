@@ -12,6 +12,7 @@
 // surfaces only through the suffix ErrorBadge.
 // ============================================================
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -50,7 +51,52 @@ class SuperDateFormField extends StatefulWidget {
     this.invalidMessage = 'Enter a valid date',
     this.forceError = false,
     this.arabic = false,
-  });
+    this.autofocus = false,
+    this.keyboardType,
+    this.inputFormatters = const [],
+    this.textDirection,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlign = TextAlign.left,
+    this.textAlignVertical = TextAlignVertical.center,
+    this.onFieldSubmitted,
+    this.onTap,
+    this.onTapAlwaysCalled = false,
+    this.onTapOutside,
+    this.onTapUpOutside,
+    this.onEditingComplete,
+    this.onSaved,
+    this.onSave,
+    this.keyboardAppearance,
+    this.autocorrect = false,
+    this.enableSuggestions = false,
+    this.smartDashesType = SmartDashesType.disabled,
+    this.smartQuotesType = SmartQuotesType.disabled,
+    this.showCursor,
+    this.enableInteractiveSelection = true,
+    this.selectionControls,
+    this.scrollPadding = const EdgeInsets.all(20),
+    this.scrollPhysics,
+    this.scrollController,
+    this.autofillHints,
+    this.mouseCursor,
+    this.contextMenuBuilder,
+    this.restorationId,
+    this.enableIMEPersonalizedLearning = true,
+    this.canRequestFocus = true,
+    this.clipBehavior = Clip.hardEdge,
+    this.cursorWidth = 2.0,
+    this.cursorHeight,
+    this.cursorRadius,
+    this.cursorColor,
+    this.cursorErrorColor,
+    this.style,
+    this.strutStyle,
+    this.autovalidateMode = AutovalidateMode.disabled,
+  }) : assert(
+         onSaved == null || onSave == null,
+         'Provide either onSaved or onSave, not both.',
+       );
 
   /// External controller — when null, the field manages its own.
   final SuperDateFieldController? controller;
@@ -103,6 +149,58 @@ class SuperDateFormField extends StatefulWidget {
   final bool forceError;
 
   final bool arabic;
+
+  // ── Material text-input behaviour ──
+  final bool autofocus;
+  final TextInputType? keyboardType;
+
+  /// Additional formatters applied after the field's date formatter.
+  final List<TextInputFormatter> inputFormatters;
+
+  final TextDirection? textDirection;
+  final TextInputAction? textInputAction;
+  final TextCapitalization textCapitalization;
+  final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
+  final ValueChanged<String>? onFieldSubmitted;
+  final GestureTapCallback? onTap;
+  final bool onTapAlwaysCalled;
+  final void Function(PointerDownEvent event)? onTapOutside;
+  final void Function(PointerUpEvent event)? onTapUpOutside;
+  final VoidCallback? onEditingComplete;
+
+  /// Called with the parsed value by an ancestor [Form].
+  final FormFieldSetter<DateTime?>? onSaved;
+
+  /// Backward-compatible alias for [onSaved].
+  final FormFieldSetter<DateTime?>? onSave;
+
+  final Brightness? keyboardAppearance;
+  final bool autocorrect;
+  final bool enableSuggestions;
+  final SmartDashesType? smartDashesType;
+  final SmartQuotesType? smartQuotesType;
+  final bool? showCursor;
+  final bool enableInteractiveSelection;
+  final TextSelectionControls? selectionControls;
+  final EdgeInsets scrollPadding;
+  final ScrollPhysics? scrollPhysics;
+  final ScrollController? scrollController;
+  final Iterable<String>? autofillHints;
+  final MouseCursor? mouseCursor;
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
+  final String? restorationId;
+  final bool enableIMEPersonalizedLearning;
+  final bool canRequestFocus;
+  final Clip clipBehavior;
+  final double cursorWidth;
+  final double? cursorHeight;
+  final Radius? cursorRadius;
+  final Color? cursorColor;
+  final Color? cursorErrorColor;
+  final TextStyle? style;
+  final StrutStyle? strutStyle;
+  final AutovalidateMode autovalidateMode;
 
   @override
   State<SuperDateFormField> createState() => _SuperDateFormFieldState();
@@ -215,183 +313,243 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
   Widget build(BuildContext context) {
     final l10n = SuperFormTranslation.of(context);
     final isMobile = SuperDeviceMode.of(context).isMobile;
-    _controller.configure(
-      validators: DateLogic.buildValidators(
-        required: widget.required,
-        minDate: widget.minDate,
-        maxDate: widget.maxDate,
-        extra: widget.validators,
-        requiredMessage: l10n.requiredMessage,
-        minDateMessage: l10n.minDate,
-        maxDateMessage: l10n.maxDate,
-      ),
-      forceError: widget.forceError,
-      segments: widget.format.segments,
-      malformedMessage: widget.invalidMessage == 'Enter a valid date'
-          ? l10n.validDate
-          : widget.invalidMessage,
-      keyboardEnabled: widget.keyboardShortcuts,
-      readOnly: widget.readOnly,
-      interactionMode: isMobile
-          ? DateInputInteractionMode.mobile
-          : DateInputInteractionMode.desktop,
-      onValidity: widget.onValidity,
-      onChanged: widget.onChanged,
-    );
 
-    final rtl = context.isRtl;
-
-    return ListenableBuilder(
-      listenable: _controller,
-      builder: (context, _) {
-        final t = context.sffTheme;
-        final cs = context.sffColorScheme;
-        final error = widget.disabled
-            ? null
-            : SffDecoration.resolveError(
-                widget.decoration,
-                _controller.visibleError,
-              );
-
-        final adornStyle = t.textTheme.mono.copyWith(
-          color: t.fg3,
-          fontSize: 12.5,
-          fontWeight: FontWeight.w600,
-        );
-        final trailing = <Widget>[
-          ...SffDecoration.buildTrailing(
-            context,
-            widget.decoration,
-            textStyle: adornStyle,
-          ),
-          if (widget.clearable && _controller.text.text.isNotEmpty && _editable)
-            FieldIconButton(
-              icon: SffIcons.clear,
-              tooltip: l10n.clear,
-              onPressed: _controller.clear,
-            ),
-          if (_showCalendar)
-            CompositedTransformTarget(
-              link: _btnLink,
-              child: FieldIconButton(
-                key: _btnKey,
-                icon: SffIcons.calendarDays,
-                tooltip: l10n.openCalendar,
-                bordered: false,
-                size: SuperThemeData.of(context).sizing.iconButton,
-                borderRadius: BorderRadius.circular(0),
-                iconSize: 15,
-                onPressed: _editable ? () => _toggleCalendar() : null,
-              ),
-            ),
-        ];
-
-        return OverlayPortal(
-          controller: _overlay,
-          overlayChildBuilder: (context) {
-            final alignEnd =
-                !rtl; // LTR: icon at end (right) → align right edges
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      _overlay.hide();
-                      setState(() {});
-                    },
-                  ),
-                ),
-                CompositedTransformFollower(
-                  link: _btnLink,
-                  showWhenUnlinked: false,
-                  targetAnchor: _above
-                      ? (alignEnd ? Alignment.topRight : Alignment.topLeft)
-                      : (alignEnd
-                            ? Alignment.bottomRight
-                            : Alignment.bottomLeft),
-                  followerAnchor: _above
-                      ? (alignEnd
-                            ? Alignment.bottomRight
-                            : Alignment.bottomLeft)
-                      : (alignEnd ? Alignment.topRight : Alignment.topLeft),
-                  offset: Offset(0, _above ? -6 : 6),
-                  child: Directionality(
-                    textDirection: TextDirection.ltr,
-                    child: MiniCalendar(
-                      value: _controller.value,
-                      minDate: widget.minDate,
-                      maxDate: widget.maxDate,
-                      onPick: _onPick,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-          child: FieldShell(
-            decoration: widget.decoration,
+    return FormField<DateTime?>(
+      key: ObjectKey(_controller),
+      initialValue: _controller.value,
+      enabled: !widget.disabled,
+      onSaved: widget.onSaved ?? widget.onSave,
+      autovalidateMode: widget.autovalidateMode,
+      validator: (_) => _controller.error,
+      builder: (formState) {
+        _controller.configure(
+          validators: DateLogic.buildValidators(
             required: widget.required,
-            hasError: error != null,
-            arabic: widget.arabic,
-            child: FieldBox(
-              focused: _controller.focused || _overlay.isShowing,
-              error: error,
-              disabled: widget.disabled,
-              density: widget.density,
-              flushTrailing: _showCalendar && error == null,
-              leading: SffDecoration.buildLeading(
+            minDate: widget.minDate,
+            maxDate: widget.maxDate,
+            extra: widget.validators,
+            requiredMessage: l10n.requiredMessage,
+            minDateMessage: l10n.minDate,
+            maxDateMessage: l10n.maxDate,
+          ),
+          forceError: widget.forceError || formState.hasError,
+          segments: widget.format.segments,
+          malformedMessage: widget.invalidMessage == 'Enter a valid date'
+              ? l10n.validDate
+              : widget.invalidMessage,
+          keyboardEnabled: widget.keyboardShortcuts,
+          readOnly: widget.readOnly,
+          interactionMode: isMobile
+              ? DateInputInteractionMode.mobile
+              : DateInputInteractionMode.desktop,
+          onValidity: widget.onValidity,
+          onChanged: (value) {
+            formState.didChange(value);
+            widget.onChanged?.call(value);
+          },
+        );
+
+        final rtl = context.isRtl;
+
+        return ListenableBuilder(
+          listenable: _controller,
+          builder: (context, _) {
+            final t = context.sffTheme;
+            final cs = context.sffColorScheme;
+            final error = widget.disabled
+                ? null
+                : SffDecoration.resolveError(
+                    widget.decoration,
+                    _controller.visibleError,
+                  );
+
+            final adornStyle = t.textTheme.mono.copyWith(
+              color: t.fg3,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+            );
+            final trailing = <Widget>[
+              ...SffDecoration.buildTrailing(
                 context,
                 widget.decoration,
-                fallback: const Icon(SffIcons.calendar),
                 textStyle: adornStyle,
               ),
-              trailing: trailing,
-              child: Directionality(
-                textDirection: TextDirection.ltr,
-                child: TextField(
-                  controller: _controller.text,
-                  focusNode: _controller.focusNode,
-                  enabled: !widget.disabled,
-                  readOnly: widget.readOnly,
-                  textAlign: TextAlign.left,
-                  keyboardType: isMobile
-                      ? TextInputType.number
-                      : TextInputType.datetime,
-                  inputFormatters: isMobile
-                      ? [MobileDateInputFormatter(_controller)]
-                      : [LengthLimitingTextInputFormatter(10)],
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  smartDashesType: SmartDashesType.disabled,
-                  smartQuotesType: SmartQuotesType.disabled,
-                  cursorColor: cs.primary,
-                  style: t.textTheme.mono.copyWith(color: t.fg1),
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    hint: widget.decoration.hint,
-                    hintText:
-                        widget.decoration.hintText ?? widget.format.placeholder,
-                    hintStyle: SffDecoration.mergeStyle(
-                      t.textTheme.mono.copyWith(color: t.fg4),
-                      widget.decoration.hintStyle,
+              if (widget.clearable &&
+                  _controller.text.text.isNotEmpty &&
+                  _editable)
+                FieldIconButton(
+                  icon: SffIcons.clear,
+                  tooltip: l10n.clear,
+                  onPressed: _controller.clear,
+                ),
+              if (_showCalendar)
+                CompositedTransformTarget(
+                  link: _btnLink,
+                  child: FieldIconButton(
+                    key: _btnKey,
+                    icon: SffIcons.calendarDays,
+                    tooltip: l10n.openCalendar,
+                    bordered: false,
+                    size: SuperThemeData.of(context).sizing.iconButton,
+                    borderRadius: BorderRadius.circular(0),
+                    iconSize: 15,
+                    onPressed: _editable ? () => _toggleCalendar() : null,
+                  ),
+                ),
+            ];
+
+            return OverlayPortal(
+              controller: _overlay,
+              overlayChildBuilder: (context) {
+                final alignEnd = !rtl;
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          _overlay.hide();
+                          setState(() {});
+                        },
+                      ),
                     ),
-                    hintTextDirection: TextDirection.ltr,
-                    hintMaxLines: widget.decoration.hintMaxLines,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    focusedErrorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    filled: false,
-                    isCollapsed: true,
-                    contentPadding: EdgeInsets.zero,
+                    CompositedTransformFollower(
+                      link: _btnLink,
+                      showWhenUnlinked: false,
+                      targetAnchor: _above
+                          ? (alignEnd ? Alignment.topRight : Alignment.topLeft)
+                          : (alignEnd
+                                ? Alignment.bottomRight
+                                : Alignment.bottomLeft),
+                      followerAnchor: _above
+                          ? (alignEnd
+                                ? Alignment.bottomRight
+                                : Alignment.bottomLeft)
+                          : (alignEnd
+                                ? Alignment.topRight
+                                : Alignment.topLeft),
+                      offset: Offset(0, _above ? -6 : 6),
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: MiniCalendar(
+                          value: _controller.value,
+                          minDate: widget.minDate,
+                          maxDate: widget.maxDate,
+                          onPick: _onPick,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+              child: FieldShell(
+                decoration: widget.decoration,
+                required: widget.required,
+                hasError: error != null,
+                arabic: widget.arabic,
+                child: FieldBox(
+                  focused: _controller.focused || _overlay.isShowing,
+                  error: error,
+                  disabled: widget.disabled,
+                  density: widget.density,
+                  flushTrailing: _showCalendar && error == null,
+                  leading: SffDecoration.buildLeading(
+                    context,
+                    widget.decoration,
+                    fallback: const Icon(SffIcons.calendar),
+                    textStyle: adornStyle,
+                  ),
+                  trailing: trailing,
+                  child: Directionality(
+                    textDirection: widget.textDirection ?? TextDirection.ltr,
+                    child: TextField(
+                      controller: _controller.text,
+                      focusNode: _controller.focusNode,
+                      enabled: !widget.disabled,
+                      readOnly: widget.readOnly,
+                      autofocus: widget.autofocus,
+                      keyboardType:
+                          widget.keyboardType ??
+                          (isMobile
+                              ? TextInputType.number
+                              : TextInputType.datetime),
+                      inputFormatters: [
+                        ...widget.inputFormatters,
+                        if (isMobile)
+                          MobileDateInputFormatter(_controller)
+                        else
+                          LengthLimitingTextInputFormatter(10),
+                      ],
+                      textDirection:
+                          widget.textDirection ?? TextDirection.ltr,
+                      textInputAction: widget.textInputAction,
+                      textCapitalization: widget.textCapitalization,
+                      textAlign: widget.textAlign,
+                      textAlignVertical: widget.textAlignVertical,
+                      onSubmitted: widget.onFieldSubmitted,
+                      onTap: widget.onTap,
+                      onTapAlwaysCalled: widget.onTapAlwaysCalled,
+                      onTapOutside: widget.onTapOutside,
+                      onTapUpOutside: widget.onTapUpOutside,
+                      onEditingComplete: widget.onEditingComplete,
+                      keyboardAppearance: widget.keyboardAppearance,
+                      autocorrect: widget.autocorrect,
+                      enableSuggestions: widget.enableSuggestions,
+                      smartDashesType: widget.smartDashesType,
+                      smartQuotesType: widget.smartQuotesType,
+                      showCursor: widget.showCursor,
+                      enableInteractiveSelection:
+                          widget.enableInteractiveSelection,
+                      selectionControls: widget.selectionControls,
+                      scrollPadding: widget.scrollPadding,
+                      scrollPhysics: widget.scrollPhysics,
+                      scrollController: widget.scrollController,
+                      autofillHints: widget.autofillHints,
+                      mouseCursor: widget.mouseCursor,
+                      contextMenuBuilder: widget.contextMenuBuilder,
+                      restorationId: widget.restorationId,
+                      enableIMEPersonalizedLearning:
+                          widget.enableIMEPersonalizedLearning,
+                      canRequestFocus: widget.canRequestFocus,
+                      clipBehavior: widget.clipBehavior,
+                      cursorWidth: widget.cursorWidth,
+                      cursorHeight: widget.cursorHeight,
+                      cursorRadius: widget.cursorRadius,
+                      cursorColor: widget.cursorColor ?? cs.primary,
+                      cursorErrorColor: widget.cursorErrorColor ?? cs.error,
+                      style: SffDecoration.mergeStyle(
+                        t.textTheme.mono.copyWith(color: t.fg1),
+                        widget.style,
+                      ),
+                      strutStyle: widget.strutStyle,
+                      decoration: InputDecoration(
+                        hint: widget.decoration.hint,
+                        hintText:
+                            widget.decoration.hintText ??
+                            widget.format.placeholder,
+                        hintStyle: SffDecoration.mergeStyle(
+                          t.textTheme.mono.copyWith(color: t.fg4),
+                          widget.decoration.hintStyle,
+                        ),
+                        hintTextDirection:
+                            widget.textDirection ?? TextDirection.ltr,
+                        hintMaxLines: widget.decoration.hintMaxLines,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        filled: false,
+                        isCollapsed: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

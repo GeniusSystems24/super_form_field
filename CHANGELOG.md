@@ -4,6 +4,34 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] — 2026-07-31
+
+### Added
+
+- Added Material-compatible text-input configuration to
+  `SuperTextFormField`, `SuperNumericFormField`, `SuperDateFormField`,
+  `SuperSelectFormField`, and `SuperMultiSelectFormField`, including keyboard
+  type/action/appearance, input formatters, text direction and capitalization,
+  submission/editing/tap callbacks, cursor and selection configuration,
+  scrolling, autofill, context menus, restoration, and IME behavior.
+- Added typed `Form` integration for the five fields through `onSaved`, the
+  requested `onSave` compatibility alias, and `autovalidateMode`.
+- Added text-field-specific styling, line, max-length-enforcement, and cursor
+  controls where they apply.
+
+### Changed
+
+- Search-related text-input properties on select and multi-select fields are
+  forwarded to their menu search editor; trigger tap and outside-tap callbacks
+  remain attached to the selection field itself.
+- Custom date input formatters now run before the package date formatter so the
+  segmented date mask remains authoritative.
+
+### Tests
+
+- Added constructor coverage for the Material-compatible properties on all five
+  fields and typed `FormState.save()` coverage, including the `onSave` alias.
+
 ## [1.5.0] — 2026-07-29
 
 ### Added

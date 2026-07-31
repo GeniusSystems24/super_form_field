@@ -11,6 +11,7 @@
 // character counter, multiline, email, disabled & read-only, and LTR/RTL.
 // ============================================================
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -47,7 +48,63 @@ class SuperTextFormField extends StatefulWidget {
     this.arabic = false,
     this.forceError = false,
     this.autofocus = false,
-  });
+    this.keyboardType,
+    this.inputFormatters,
+    this.textDirection,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.obscuringCharacter = '•',
+    this.textAlign = TextAlign.start,
+    this.textAlignVertical,
+    this.onFieldSubmitted,
+    this.onTap,
+    this.onTapAlwaysCalled = false,
+    this.onTapOutside,
+    this.onTapUpOutside,
+    this.onEditingComplete,
+    this.onSaved,
+    this.onSave,
+    this.keyboardAppearance,
+    this.autocorrect = true,
+    this.enableSuggestions = true,
+    this.smartDashesType,
+    this.smartQuotesType,
+    this.showCursor,
+    this.enableInteractiveSelection = true,
+    this.selectionControls,
+    this.scrollPadding = const EdgeInsets.all(20),
+    this.scrollPhysics,
+    this.scrollController,
+    this.autofillHints,
+    this.mouseCursor,
+    this.contextMenuBuilder,
+    this.restorationId,
+    this.enableIMEPersonalizedLearning = true,
+    this.canRequestFocus = true,
+    this.clipBehavior = Clip.hardEdge,
+    this.cursorWidth = 2.0,
+    this.cursorHeight,
+    this.cursorRadius,
+    this.cursorColor,
+    this.cursorErrorColor,
+    this.style,
+    this.strutStyle,
+    this.maxLengthEnforcement,
+    this.minLines,
+    this.maxLines,
+    this.autovalidateMode = AutovalidateMode.disabled,
+  }) : assert(
+         onSaved == null || onSave == null,
+         'Provide either onSaved or onSave, not both.',
+       ),
+       assert(obscuringCharacter.length == 1),
+       assert(rows > 0),
+       assert(minLines == null || minLines > 0),
+       assert(maxLines == null || maxLines > 0),
+       assert(
+         minLines == null || maxLines == null || minLines <= maxLines,
+         'minLines must be less than or equal to maxLines.',
+       );
 
   final SuperTextFieldController? controller;
   final String initialValue;
@@ -80,12 +137,72 @@ class SuperTextFormField extends StatefulWidget {
   final bool forceError;
   final bool autofocus;
 
+  // ── Material text-input behaviour ──
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextDirection? textDirection;
+  final TextInputAction? textInputAction;
+  final TextCapitalization textCapitalization;
+
+  /// Character used while [type] is [SuperTextType.password].
+  final String obscuringCharacter;
+
+  final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
+  final ValueChanged<String>? onFieldSubmitted;
+  final GestureTapCallback? onTap;
+  final bool onTapAlwaysCalled;
+  final void Function(PointerDownEvent event)? onTapOutside;
+  final void Function(PointerUpEvent event)? onTapUpOutside;
+  final VoidCallback? onEditingComplete;
+
+  /// Called by an ancestor [Form] when [FormState.save] is invoked.
+  final FormFieldSetter<String>? onSaved;
+
+  /// Backward-compatible alias for [onSaved].
+  final FormFieldSetter<String>? onSave;
+
+  final Brightness? keyboardAppearance;
+  final bool autocorrect;
+  final bool enableSuggestions;
+  final SmartDashesType? smartDashesType;
+  final SmartQuotesType? smartQuotesType;
+  final bool? showCursor;
+  final bool enableInteractiveSelection;
+  final TextSelectionControls? selectionControls;
+  final EdgeInsets scrollPadding;
+  final ScrollPhysics? scrollPhysics;
+  final ScrollController? scrollController;
+  final Iterable<String>? autofillHints;
+  final MouseCursor? mouseCursor;
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
+  final String? restorationId;
+  final bool enableIMEPersonalizedLearning;
+  final bool canRequestFocus;
+  final Clip clipBehavior;
+  final double cursorWidth;
+  final double? cursorHeight;
+  final Radius? cursorRadius;
+  final Color? cursorColor;
+  final Color? cursorErrorColor;
+  final TextStyle? style;
+  final StrutStyle? strutStyle;
+  final MaxLengthEnforcement? maxLengthEnforcement;
+
+  /// Overrides [rows] for multiline fields when provided.
+  final int? minLines;
+  final int? maxLines;
+
+  /// Controls when the field participates in an ancestor [Form] validation.
+  final AutovalidateMode autovalidateMode;
+
   @override
   State<SuperTextFormField> createState() => _SuperTextFormFieldState();
 }
 
 class _SuperTextFormFieldState extends State<SuperTextFormField> {
   late SuperTextFieldController _controller;
+  FormFieldState<String>? _formState;
   bool _ownsController = false;
 
   @override
@@ -108,6 +225,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
   void didUpdateWidget(SuperTextFormField old) {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
+      _formState = null;
       if (_ownsController) {
         _controller.text.removeListener(_emitChange);
         _controller.dispose();
@@ -125,10 +243,14 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     }
   }
 
-  void _emitChange() => widget.onChanged?.call(_controller.value);
+  void _emitChange() {
+    _formState?.didChange(_controller.value);
+    widget.onChanged?.call(_controller.value);
+  }
 
   @override
   void dispose() {
+    _formState = null;
     _controller.text.removeListener(_emitChange);
     if (_ownsController) _controller.dispose();
     super.dispose();
@@ -151,40 +273,54 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    _controller.configure(
-      validators: _buildValidators(),
-      forceError: widget.forceError,
-      onValidity: widget.onValidity,
-    );
+    return FormField<String>(
+      key: ObjectKey(_controller),
+      initialValue: _controller.value,
+      enabled: !widget.disabled,
+      onSaved: widget.onSaved ?? widget.onSave,
+      autovalidateMode: widget.autovalidateMode,
+      validator: (_) => _controller.error,
+      builder: (formState) {
+        _formState = formState;
+        _controller.configure(
+          validators: _buildValidators(),
+          forceError: widget.forceError || formState.hasError,
+          onValidity: widget.onValidity,
+        );
 
-    return ListenableBuilder(
-      listenable: _controller,
-      builder: (context, _) {
-        final t = context.sffTheme;
-        final cs = context.sffColorScheme;
-        final error = widget.disabled
-            ? null
-            : SffDecoration.resolveError(
-                widget.decoration,
-                _controller.visibleError,
-              );
-        final counter = (widget.showCounter && widget.maxLength != null)
-            ? _Counter(length: _controller.value.length, max: widget.maxLength!)
-            : null;
+        return ListenableBuilder(
+          listenable: _controller,
+          builder: (context, _) {
+            final t = context.sffTheme;
+            final cs = context.sffColorScheme;
+            final error = widget.disabled
+                ? null
+                : SffDecoration.resolveError(
+                    widget.decoration,
+                    _controller.visibleError,
+                  );
+            final counter = (widget.showCounter && widget.maxLength != null)
+                ? _Counter(
+                    length: _controller.value.length,
+                    max: widget.maxLength!,
+                  )
+                : null;
 
-        final hasDecorationCounter =
-            widget.decoration.counter != null ||
-            widget.decoration.counterText != null;
+            final hasDecorationCounter =
+                widget.decoration.counter != null ||
+                widget.decoration.counterText != null;
 
-        return FieldShell(
-          decoration: widget.decoration,
-          required: widget.required,
-          hasError: error != null,
-          arabic: widget.arabic,
-          labelRight: hasDecorationCounter ? null : counter,
-          child: widget.multiline
-              ? _buildField(context, t, cs, error, multiline: true)
-              : _buildField(context, t, cs, error, multiline: false),
+            return FieldShell(
+              decoration: widget.decoration,
+              required: widget.required,
+              hasError: error != null,
+              arabic: widget.arabic,
+              labelRight: hasDecorationCounter ? null : counter,
+              child: widget.multiline
+                  ? _buildField(context, t, cs, error, multiline: true)
+                  : _buildField(context, t, cs, error, multiline: false),
+            );
+          },
         );
       },
     );
@@ -221,7 +357,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     final source = widget.decoration;
     final l10n = SuperFormTranslation.of(context);
-    final textDirection = Directionality.of(context);
+    final textDirection =
+        widget.textDirection ?? Directionality.of(context);
 
     // ── Suffix icon row ──
     final trailingWidgets = <Widget>[
@@ -348,12 +485,28 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       focusedErrorBorder: border(cs.error),
     );
 
-    final textStyle = t.textTheme.body.copyWith(
-      color: t.fg1,
-      fontFamily: widget.arabic
-          ? SuperThemeData.of(context).tokens.arabicFont
-          : SuperThemeData.of(context).tokens.bodyFont,
+    final textStyle = SffDecoration.mergeStyle(
+      t.textTheme.body.copyWith(
+        color: t.fg1,
+        fontFamily: widget.arabic
+            ? SuperThemeData.of(context).tokens.arabicFont
+            : SuperThemeData.of(context).tokens.bodyFont,
+      ),
+      widget.style,
     );
+    final effectiveKeyboardType =
+        widget.keyboardType ??
+        (multiline
+            ? TextInputType.multiline
+            : widget.type == SuperTextType.email
+            ? TextInputType.emailAddress
+            : TextInputType.text);
+    final effectiveMinLines = multiline
+        ? (widget.minLines ?? widget.rows)
+        : 1;
+    final effectiveMaxLines = multiline
+        ? (widget.maxLines ?? widget.rows)
+        : 1;
 
     final field = TextField(
       controller: _controller.text,
@@ -361,26 +514,59 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       enabled: !widget.disabled,
       readOnly: widget.readOnly,
       autofocus: widget.autofocus,
+      keyboardType: effectiveKeyboardType,
+      inputFormatters: widget.inputFormatters,
+      textInputAction: widget.textInputAction,
+      textCapitalization: widget.textCapitalization,
       obscureText:
           widget.type == SuperTextType.password && _controller.obscured,
-      maxLines: multiline ? widget.rows : 1,
-      minLines: multiline ? widget.rows : 1,
+      obscuringCharacter: widget.obscuringCharacter,
+      maxLines: effectiveMaxLines,
+      minLines: effectiveMinLines,
       maxLength: widget.maxLength,
-      maxLengthEnforcement: widget.maxLength != null
-          ? MaxLengthEnforcement.enforced
-          : MaxLengthEnforcement.none,
+      maxLengthEnforcement:
+          widget.maxLengthEnforcement ??
+          (widget.maxLength != null
+              ? MaxLengthEnforcement.enforced
+              : MaxLengthEnforcement.none),
       buildCounter:
           (_, {required currentLength, required isFocused, maxLength}) => null,
-      keyboardType: multiline
-          ? TextInputType.multiline
-          : widget.type == SuperTextType.email
-          ? TextInputType.emailAddress
-          : TextInputType.text,
-      cursorColor: cs.primary,
+      onSubmitted: widget.onFieldSubmitted,
+      onTap: widget.onTap,
+      onTapAlwaysCalled: widget.onTapAlwaysCalled,
+      onTapOutside: widget.onTapOutside,
+      onTapUpOutside: widget.onTapUpOutside,
+      onEditingComplete: widget.onEditingComplete,
+      keyboardAppearance: widget.keyboardAppearance,
+      autocorrect: widget.autocorrect,
+      enableSuggestions: widget.enableSuggestions,
+      smartDashesType: widget.smartDashesType,
+      smartQuotesType: widget.smartQuotesType,
+      showCursor: widget.showCursor,
+      enableInteractiveSelection: widget.enableInteractiveSelection,
+      selectionControls: widget.selectionControls,
+      scrollPadding: widget.scrollPadding,
+      scrollPhysics: widget.scrollPhysics,
+      scrollController: widget.scrollController,
+      autofillHints: widget.autofillHints,
+      mouseCursor: widget.mouseCursor,
+      contextMenuBuilder: widget.contextMenuBuilder,
+      restorationId: widget.restorationId,
+      enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+      canRequestFocus: widget.canRequestFocus,
+      clipBehavior: widget.clipBehavior,
+      cursorWidth: widget.cursorWidth,
+      cursorHeight: widget.cursorHeight,
+      cursorRadius: widget.cursorRadius,
+      cursorColor: widget.cursorColor ?? cs.primary,
+      cursorErrorColor: widget.cursorErrorColor ?? cs.error,
       style: textStyle,
-      textAlign: TextAlign.start,
+      strutStyle: widget.strutStyle,
+      textAlign: widget.textAlign,
       textDirection: textDirection,
-      textAlignVertical: multiline ? null : TextAlignVertical.center,
+      textAlignVertical:
+          widget.textAlignVertical ??
+          (multiline ? null : TextAlignVertical.center),
       decoration: decoration,
     );
 

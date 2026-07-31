@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:super_form_field/super_form_field.dart';
 
@@ -292,4 +294,154 @@ void main() {
     expect(decrementRect.right, moreOrLessEquals(incrementRect.left));
     expect(incrementRect.right, moreOrLessEquals(fieldRect.right));
   });
+
+  test('enhanced fields accept Material text-input options', () {
+    final formatter = FilteringTextInputFormatter.digitsOnly;
+    final fields = <Widget>[
+      SuperTextFormField(
+        keyboardType: TextInputType.phone,
+        inputFormatters: [formatter],
+        textDirection: TextDirection.rtl,
+        textInputAction: TextInputAction.done,
+        obscuringCharacter: '*',
+        onFieldSubmitted: (_) {},
+        onTap: () {},
+        onTapOutside: _noopPointerDown,
+        onTapUpOutside: _noopPointerUp,
+        onEditingComplete: () {},
+        onSaved: (_) {},
+        keyboardAppearance: Brightness.dark,
+      ),
+      SuperNumericFormField(
+        keyboardType: TextInputType.number,
+        inputFormatters: [formatter],
+        textDirection: TextDirection.ltr,
+        textInputAction: TextInputAction.next,
+        onFieldSubmitted: (_) {},
+        onTap: () {},
+        onTapOutside: _noopPointerDown,
+        onTapUpOutside: _noopPointerUp,
+        onEditingComplete: () {},
+        onSaved: (_) {},
+        keyboardAppearance: Brightness.light,
+      ),
+      SuperDateFormField(
+        keyboardType: TextInputType.datetime,
+        inputFormatters: [formatter],
+        textDirection: TextDirection.ltr,
+        textInputAction: TextInputAction.done,
+        onFieldSubmitted: (_) {},
+        onTap: () {},
+        onTapOutside: _noopPointerDown,
+        onTapUpOutside: _noopPointerUp,
+        onEditingComplete: () {},
+        onSaved: (_) {},
+        keyboardAppearance: Brightness.light,
+      ),
+      SuperSelectFormField<int>(
+        options: const [SuperOption(value: 1, label: 'One')],
+        searchable: true,
+        keyboardType: TextInputType.text,
+        inputFormatters: [formatter],
+        textDirection: TextDirection.ltr,
+        textInputAction: TextInputAction.search,
+        textAlign: TextAlign.start,
+        textAlignVertical: TextAlignVertical.center,
+        cursorWidth: 1.5,
+        cursorRadius: const Radius.circular(1),
+        style: const TextStyle(fontSize: 14),
+        strutStyle: const StrutStyle(height: 1.2),
+        onFieldSubmitted: (_) {},
+        onTap: () {},
+        onTapOutside: _noopPointerDown,
+        onTapUpOutside: _noopPointerUp,
+        onEditingComplete: () {},
+        onSaved: (_) {},
+        keyboardAppearance: Brightness.light,
+      ),
+      SuperMultiSelectFormField<int>(
+        options: const [SuperOption(value: 1, label: 'One')],
+        searchable: true,
+        keyboardType: TextInputType.text,
+        inputFormatters: [formatter],
+        textDirection: TextDirection.ltr,
+        textInputAction: TextInputAction.search,
+        textAlign: TextAlign.start,
+        textAlignVertical: TextAlignVertical.center,
+        cursorWidth: 1.5,
+        cursorRadius: const Radius.circular(1),
+        style: const TextStyle(fontSize: 14),
+        strutStyle: const StrutStyle(height: 1.2),
+        onFieldSubmitted: (_) {},
+        onTap: () {},
+        onTapOutside: _noopPointerDown,
+        onTapUpOutside: _noopPointerUp,
+        onEditingComplete: () {},
+        onSaved: (_) {},
+        keyboardAppearance: Brightness.light,
+      ),
+    ];
+
+    expect(fields, hasLength(5));
+  });
+
+  testWidgets('typed field values participate in FormState.save', (tester) async {
+    final formKey = GlobalKey<FormState>();
+    String? savedText;
+    num? savedNumber;
+    DateTime? savedDate;
+    int? savedSelection;
+    List<String>? savedSelections;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: SuperMaterialThemeData.light(),
+        home: Scaffold(
+          body: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                SuperTextFormField(
+                  initialValue: 'memo',
+                  onSaved: (value) => savedText = value,
+                ),
+                SuperNumericFormField(
+                  initialValue: 42,
+                  onSaved: (value) => savedNumber = value,
+                ),
+                SuperDateFormField(
+                  initialValue: DateTime(2026, 7, 31),
+                  onSaved: (value) => savedDate = value,
+                ),
+                SuperSelectFormField<int>(
+                  initialValue: 1,
+                  options: const [SuperOption(value: 1, label: 'One')],
+                  onSaved: (value) => savedSelection = value,
+                ),
+                SuperMultiSelectFormField<String>(
+                  initialValue: const ['read'],
+                  options: const [
+                    SuperOption(value: 'read', label: 'Read'),
+                  ],
+                  onSave: (value) => savedSelections = value,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    formKey.currentState!.save();
+
+    expect(savedText, 'memo');
+    expect(savedNumber, 42);
+    expect(savedDate, DateTime(2026, 7, 31));
+    expect(savedSelection, 1);
+    expect(savedSelections, ['read']);
+  });
+
 }
+
+void _noopPointerDown(PointerDownEvent event) {}
+void _noopPointerUp(PointerUpEvent event) {}

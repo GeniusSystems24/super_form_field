@@ -140,6 +140,7 @@ abstract final class SffDecoration {
     required String fallback,
     required bool arabic,
     TextStyle? baseStyle,
+    TextDirection? textDirection,
     int maxLines = 1,
   }) {
     final theme = SuperThemeData.of(context);
@@ -162,7 +163,7 @@ abstract final class SffDecoration {
       maxLines: maxLines,
       overflow: maxLines == 1 ? TextOverflow.ellipsis : null,
       textAlign: TextAlign.start,
-      textDirection: Directionality.of(context),
+      textDirection: textDirection ?? Directionality.of(context),
       style: style,
     );
   }

@@ -21,7 +21,9 @@
 /// control geometry, focus treatment, typography, and error badges.
 ///
 /// Validation errors are quiet until touch/blur unless `forceError` is enabled.
-/// All fields support light/dark themes and LTR/RTL layouts.
+/// Text, numeric, date, select, and multi-select fields expose Material keyboard
+/// and editing callbacks and participate in `FormState.validate()` / `save()`
+/// with typed values. All fields support light/dark themes and LTR/RTL layouts.
 ///
 /// Use the complete `super_core` theme in the host application:
 ///

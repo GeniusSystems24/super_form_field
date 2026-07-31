@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.5.0: text, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.6.0: text, numeric,
   attachment, date, select, multi-select, bool, and choice fields. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.5.0
+# Super Form Field 1.6.0
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -61,6 +61,21 @@ Do not add separate `label`, `placeholder`, `hint`, `leadingIcon`, `prefix`,
 `suffix`, or boolean `title` properties back to public fields. `InputDecoration`
 is the single source of decoration content. The package still owns borders,
 control height, spacing, focus/error states, and badge validation.
+
+## Material-compatible input behavior
+
+For text, numeric, date, select, and multi-select fields, preserve the public
+Material-compatible editing API: `keyboardType`, `inputFormatters`,
+`textDirection`, `textInputAction`, `textCapitalization`, `keyboardAppearance`,
+submission/editing/tap callbacks, cursor/selection controls, scrolling,
+autofill, context menus, restoration, IME learning, `autovalidateMode`, and typed
+Form saving. Prefer `onSaved`; keep `onSave` as a compatibility alias and reject
+supplying both.
+
+Select and multi-select keyboard/editing properties configure only the menu
+search editor and are effective when `searchable` is true. Trigger tap and
+outside-tap callbacks belong to the selection field. Apply custom date formatters
+before the internal segmented formatter so package date invariants remain last.
 
 ## Fields
 
@@ -162,7 +177,7 @@ Use `style` (`segmented`, `radio`, or `checkbox`), `multiple`,
 - A `Validator<T>` returns `String?`; the first error wins.
 - Errors remain hidden until touch/blur unless `forceError` is true.
 - Errors are shown through `ErrorBadge`, never as ordinary inline error text.
-- Use `onValidity` to aggregate form validity.
+- Use `onValidity` to aggregate form validity. The text, numeric, date, select, and multi-select fields also support `FormState.validate()` and `FormState.save()`.
 - On submit, set `forceError` or call each controller's `markTouched()`.
 - `InputDecoration.errorText` is treated as an external field error.
 - Do not use `InputDecoration.error`; the badge validation surface requires the string from `errorText`.
