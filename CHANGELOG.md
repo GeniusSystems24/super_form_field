@@ -4,6 +4,20 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.8.1] — 2026-08-01
+
+### Added
+
+- Added Arabic and English localization keys for the dedicated phone-input and
+  OTP example screens, including labels, hints, helper text, result states,
+  actions, and success messages.
+- Added localized gallery titles and subtitles for the phone and OTP examples.
+
+### Changed
+
+- Updated the phone and OTP example screens to read their visible text from
+  `SuperFormTranslation` instead of embedding English-only strings.
+
 ## [1.8.0] — 2026-08-01
 
 ### Added
@@ -213,7 +227,6 @@ to [Semantic Versioning](https://semver.org/).
     darkTheme: SuperMaterialThemeData.dark(mode: SuperDeviceMode.desktop),
   );
   ```
-
 - Minimum raised to `dart >=3.8.0`, `flutter >=3.32.0`.
 
 ---
@@ -305,6 +318,7 @@ Planned for future minor releases (non-breaking): `SuperPhoneFormField`
 (country code + national number), `SuperCurrencyFormField` (amount + currency
 preset), `SuperTimeFormField` / date-time, `SuperRangeFormField` (numeric / date
 ranges), `SuperColorFormField`, and masked inputs (IBAN / tax id / card).
+
 
 ## [0.2.0] — 2026-06-18
 

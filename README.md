@@ -54,7 +54,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.8.0
+  super_form_field: ^1.8.1
 ```
 
 Import the public library:
@@ -718,7 +718,8 @@ Common imperative operations include:
 
 The package includes English and Arabic strings for built-in validation
 messages, OTP length errors, search and empty states, attachment actions,
-numeric controls, boolean captions, and calendar content.
+numeric controls, boolean captions, calendar content, and the dedicated phone
+and OTP example screens.
 
 Register the delegates once:
 

@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.8.0: text, OTP, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.8.1: text, OTP, numeric,
   attachment, date, select, multi-select, bool, and choice fields. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.8.0
+# Super Form Field 1.8.1
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -261,8 +261,9 @@ SuperTextFormField(
 Register `SuperFormLocalizations.localizationsDelegates` and
 `SuperFormLocalizations.supportedLocales` on the host `MaterialApp`. Built-in
 package strings support `en` and `ar`: validation messages, search/empty states,
-attachment actions, bool state labels, numeric stepper tooltips, and calendar
-labels. Caller-provided strings remain the application's responsibility.
+attachment actions, bool state labels, numeric stepper tooltips, calendar
+labels, and the phone/OTP gallery examples. Caller-provided strings remain the
+application's responsibility.
 
 Wrap the field in RTL `Directionality` and set `arabic: true`. Date and numeric
 editing intentionally remain LTR with Western digits. Do not reverse or localize
