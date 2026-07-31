@@ -1,7 +1,7 @@
 name: super_form_field_example
 description: Runnable gallery for the Super Form Field Flutter package.
 publish_to: "none"
-version: 1.7.0+1
+version: 1.8.0+1
 
 environment:
   sdk: ">=3.8.0 <4.0.0"

@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.7.0: text, OTP, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.8.0: text, OTP, numeric,
   attachment, date, select, multi-select, bool, and choice fields. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.7.0
+# Super Form Field 1.8.0
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -88,7 +88,8 @@ Value: `String`. Controller: `SuperTextFieldController`.
 Use `type` (`text`, `email`, `phone`, or `password`), `multiline`, `rows`,
 `minLength`, `maxLength`, `pattern`,
 `patternMessage`, `showCounter`, `clearable`, `disabled`, `readOnly`, and
-`autofocus`. Prefix/suffix widgets come from `decoration`.
+`autofocus`. Use `mask`, `maskFilter`, and `maskAutoCompletionType` for
+declarative masked input. Prefix/suffix widgets come from `decoration`.
 
 ```dart
 SuperTextFormField(
@@ -103,13 +104,18 @@ SuperTextFormField(
 ```
 
 `SuperTextType.phone` selects `TextInputType.phone` by default for single-line
-input. Do not impose a global digits-only formatter or phone regex; phone
-formats are locale- and
-product-specific. Add `inputFormatters`, `pattern`, or custom validators at the
-call site when required.
+input. Do not impose a global digits-only formatter, mask, or phone regex;
+phone formats are locale- and product-specific. Configure them at the call site
+when required.
+
+Text masks use `mask_text_input_formatter`. The built-in placeholders are `#`
+for digits, `A` for Latin letters, and `N` for alphanumeric input. Caller
+`inputFormatters` must run before the mask formatter. Keep `onChanged` and
+`onSaved` mapped to the visible value, while `onUnmaskedChanged` and
+`onUnmaskedSaved` expose the value without mask literals.
 
 The example gallery includes a dedicated `PhoneFieldDemo` screen showing an
-international field and a country-specific composition using a prefix, formatter,
+international field and a country-specific composition using a prefix, mask,
 pattern, autofill hints, submission, and typed form saving.
 
 ### SuperOTPFormField

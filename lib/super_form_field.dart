@@ -3,7 +3,8 @@
 /// The package provides nine ERP-oriented inputs with one shared
 /// `InputDecoration` contract:
 ///
-/// * [SuperTextFormField] — text, email, phone, password, and multiline input.
+/// * [SuperTextFormField] — text, email, phone, password, multiline, and
+///   declaratively masked input.
 /// * [SuperOTPFormField] — segmented verification-code input with paste,
 ///   one-time-code autofill, secure display, and completion callbacks.
 /// * [SuperNumericFormField] — vertically centered numeric input with a

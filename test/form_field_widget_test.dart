@@ -20,7 +20,7 @@ void main() {
     );
 
     final fields = <Widget>[
-      const SuperTextFormField(decoration: decoration),
+      SuperTextFormField(decoration: decoration),
       const SuperOTPFormField(decoration: decoration),
       const SuperNumericFormField(decoration: decoration),
       const SuperAttachmentFormField(decoration: decoration),
@@ -49,14 +49,61 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: SuperMaterialThemeData.light(),
-        home: const Scaffold(
-          body: SuperTextFormField(type: SuperTextType.phone),
-        ),
+        home: Scaffold(body: SuperTextFormField(type: SuperTextType.phone)),
       ),
     );
 
     final textField = tester.widget<TextField>(find.byType(TextField));
     expect(textField.keyboardType, TextInputType.phone);
+  });
+
+  testWidgets('text masks run after custom formatters', (tester) async {
+    final digitsOnly = FilteringTextInputFormatter.digitsOnly;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: SuperMaterialThemeData.light(),
+        home: Scaffold(
+          body: SuperTextFormField(
+            mask: '##-##',
+            inputFormatters: [digitsOnly],
+          ),
+        ),
+      ),
+    );
+
+    final textField = tester.widget<TextField>(find.byType(TextField));
+    expect(textField.inputFormatters, hasLength(2));
+    expect(textField.inputFormatters!.first, same(digitsOnly));
+    expect(textField.inputFormatters!.last, isA<MaskTextInputFormatter>());
+  });
+
+  testWidgets('masked text exposes its unmasked Form value', (tester) async {
+    final formKey = GlobalKey<FormState>();
+    String? savedMaskedValue;
+    String? savedUnmaskedValue;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: SuperMaterialThemeData.light(),
+        home: Scaffold(
+          body: Form(
+            key: formKey,
+            child: SuperTextFormField(
+              initialValue: '77 123 4567',
+              mask: '## ### ####',
+              onSaved: (value) => savedMaskedValue = value,
+              onUnmaskedSaved: (value) => savedUnmaskedValue = value,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    formKey.currentState!.save();
+
+    expect(savedMaskedValue, '77 123 4567');
+    expect(savedUnmaskedValue, '771234567');
   });
 
   testWidgets('custom fields adapt label, hint, helper, and adornments', (
@@ -318,6 +365,11 @@ void main() {
       SuperTextFormField(
         keyboardType: TextInputType.phone,
         inputFormatters: [formatter],
+        mask: '##-##',
+        maskFilter: {'#': RegExp(r'[0-9]')},
+        maskAutoCompletionType: MaskAutoCompletionType.eager,
+        onUnmaskedChanged: (_) {},
+        onUnmaskedSaved: (_) {},
         textDirection: TextDirection.rtl,
         textInputAction: TextInputAction.done,
         obscuringCharacter: '*',
@@ -416,7 +468,9 @@ void main() {
     expect(fields, hasLength(6));
   });
 
-  testWidgets('typed field values participate in FormState.save', (tester) async {
+  testWidgets('typed field values participate in FormState.save', (
+    tester,
+  ) async {
     final formKey = GlobalKey<FormState>();
     String? savedText;
     String? savedOTP;
@@ -428,8 +482,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: SuperMaterialThemeData.light(),
-        localizationsDelegates:
-            SuperFormLocalizations.localizationsDelegates,
+        localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
         supportedLocales: SuperFormLocalizations.supportedLocales,
         home: Scaffold(
           body: Form(
@@ -459,9 +512,7 @@ void main() {
                 ),
                 SuperMultiSelectFormField<String>(
                   initialValue: const ['read'],
-                  options: const [
-                    SuperOption(value: 'read', label: 'Read'),
-                  ],
+                  options: const [SuperOption(value: 'read', label: 'Read')],
                   onSave: (value) => savedSelections = value,
                 ),
               ],
@@ -480,7 +531,6 @@ void main() {
     expect(savedSelection, 1);
     expect(savedSelections, ['read']);
   });
-
 }
 
 void _noopPointerDown(PointerDownEvent event) {}

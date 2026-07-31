@@ -4,6 +4,30 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.8.0] — 2026-08-01
+
+### Added
+
+- Added declarative `mask`, `maskFilter`, and `maskAutoCompletionType`
+  properties to `SuperTextFormField`, powered by
+  `mask_text_input_formatter`.
+- Added default `#` digit, `A` Latin-letter, and `N` alphanumeric mask
+  placeholders while allowing product-specific placeholder rules.
+- Added `onUnmaskedChanged` and `onUnmaskedSaved` callbacks for values without
+  mask literals, while preserving the visible masked value in `onChanged`,
+  `onSaved`, and the text controller.
+- Re-exported `MaskAutoCompletionType` and `MaskTextInputFormatter` from the
+  text-field feature for advanced formatter composition.
+
+### Changed
+
+- Custom `inputFormatters` now run before an optional text mask so the mask is
+  the final formatting authority.
+- Updated the phone example to format Yemeni mobile numbers with the new mask
+  API and save the unmasked value.
+- Updated package metadata, documentation, skill guidance, and widget coverage
+  for masked input.
+
 ## [1.7.0] — 2026-08-01
 
 ### Added

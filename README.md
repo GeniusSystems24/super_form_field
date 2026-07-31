@@ -22,6 +22,7 @@ The package includes:
 - One `InputDecoration` contract across all fields.
 - Typed values and dedicated controllers for every field.
 - Built-in required, range, length, format, and selection validation.
+- Declarative text masks powered by `mask_text_input_formatter`.
 - Segmented OTP/PIN input with paste, SMS autofill, and completion callbacks.
 - Custom validators with first-error-wins behavior.
 - Validation errors displayed through compact error badges and tooltips.
@@ -39,6 +40,7 @@ The package includes:
 | Dart | `3.8.0` |
 | Flutter | `3.32.0` |
 | `super_core` | `3.0.0` |
+| `mask_text_input_formatter` | `2.9.0` |
 
 ## Installation
 
@@ -52,7 +54,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.7.0
+  super_form_field: ^1.8.0
 ```
 
 Import the public library:
@@ -268,22 +270,38 @@ SuperTextFormField(
 ```
 
 For phone-number input, use the semantic phone type and add only the formatting
-or validation rules required by your product and locale:
+or validation rules required by your product and locale. The optional `mask`
+API is powered by `mask_text_input_formatter`:
 
 ```dart
+String? rawPhone;
+
 SuperTextFormField(
   decoration: const InputDecoration(
     labelText: 'Phone number',
-    hintText: '+967 7XX XXX XXX',
+    hintText: '+967 7X XXX XXXX',
     prefixIcon: Icon(Icons.phone_outlined),
   ),
   type: SuperTextType.phone,
+  mask: '+967 ## ### ####',
   autofillHints: const [AutofillHints.telephoneNumber],
+  onUnmaskedChanged: (value) => rawPhone = value,
 );
 ```
 
-`SuperTextType.phone` does not force a digits-only formatter because valid phone
-input can include a leading `+`, spaces, parentheses, or extension markers.
+The default mask placeholders are `#` for digits, `A` for Latin letters, and
+`N` for Latin letters or digits. Override them with `maskFilter`, and select
+`MaskAutoCompletionType.lazy` or `MaskAutoCompletionType.eager` through
+`maskAutoCompletionType`.
+
+`onChanged` and `onSaved` receive the visible masked value.
+`onUnmaskedChanged` and `onUnmaskedSaved` receive only placeholder characters,
+without literals such as spaces, separators, or a fixed dialing-code prefix.
+Custom `inputFormatters` run before the mask formatter so the mask remains the
+final formatting authority.
+
+`SuperTextType.phone` still does not impose a global mask, digits-only
+formatter, or phone regex because valid formats vary by locale and product.
 
 Common options:
 
@@ -293,6 +311,8 @@ Common options:
 - `multiline` and `rows` for long-form input.
 - `minLength`, `maxLength`, `pattern`, and `patternMessage`.
 - `showCounter`, `clearable`, and `autofocus`.
+- `mask`, `maskFilter`, `maskAutoCompletionType`, `onUnmaskedChanged`, and
+  `onUnmaskedSaved` for declarative masked input.
 - `disabled`, `readOnly`, `arabic`, and `forceError`.
 
 ### OTP field

@@ -58,7 +58,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                 ),
               ),
               SizedBox(height: SuperThemeData.of(context).spacing.space6),
-              const SuperTextFormField(
+              SuperTextFormField(
                 decoration: InputDecoration(
                   labelText: 'Reference',
                   hintText: 'e.g. ACC-0042',
@@ -110,7 +110,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        const SuperSectionCard(
+        SuperSectionCard(
           title: 'Notes',
           subtitle: 'Add any notes about this account',
           marker: SuperMarker.notes,

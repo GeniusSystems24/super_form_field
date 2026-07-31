@@ -8,13 +8,14 @@
 //
 // Validation errors surface ONLY through the suffix ErrorBadge, never inline.
 // Supports leading icon, prefix / suffix adornments, clear, password reveal,
-// character counter, multiline, email, phone, disabled & read-only, and
-// LTR/RTL.
+// character counter, multiline, email, phone, declarative masks, disabled &
+// read-only, and LTR/RTL.
 // ============================================================
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
@@ -25,7 +26,7 @@ import '../controllers/super_text_field_controller.dart';
 
 /// A themeable, validated text field on the GeniusLink field foundation.
 class SuperTextFormField extends StatefulWidget {
-  const SuperTextFormField({
+  SuperTextFormField({
     super.key,
     this.controller,
     this.initialValue = '',
@@ -51,6 +52,11 @@ class SuperTextFormField extends StatefulWidget {
     this.autofocus = false,
     this.keyboardType,
     this.inputFormatters,
+    this.mask,
+    this.maskFilter,
+    this.maskAutoCompletionType = MaskAutoCompletionType.lazy,
+    this.onUnmaskedChanged,
+    this.onUnmaskedSaved,
     this.textDirection,
     this.textInputAction,
     this.textCapitalization = TextCapitalization.none,
@@ -99,6 +105,7 @@ class SuperTextFormField extends StatefulWidget {
          'Provide either onSaved or onSave, not both.',
        ),
        assert(obscuringCharacter.length == 1),
+       assert(mask == null || mask.isNotEmpty),
        assert(rows > 0),
        assert(minLines == null || minLines > 0),
        assert(maxLines == null || maxLines > 0),
@@ -141,6 +148,38 @@ class SuperTextFormField extends StatefulWidget {
   // ── Material text-input behaviour ──
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+
+  /// Optional input mask powered by `mask_text_input_formatter`.
+  ///
+  /// The default placeholders are:
+  ///
+  /// - `#` for digits.
+  /// - `A` for Latin letters.
+  /// - `N` for Latin letters or digits.
+  ///
+  /// Custom [inputFormatters] run first and the mask formatter runs last, so
+  /// the configured mask remains authoritative.
+  final String? mask;
+
+  /// Optional placeholder rules used by [mask].
+  ///
+  /// When omitted, the package uses the built-in `#`, `A`, and `N` rules
+  /// documented on [mask].
+  final Map<String, RegExp>? maskFilter;
+
+  /// Controls whether literal mask characters are inserted lazily or eagerly.
+  final MaskAutoCompletionType maskAutoCompletionType;
+
+  /// Reports the value without mask literals whenever the field changes.
+  ///
+  /// When [mask] is null, this receives the same value as [onChanged].
+  final ValueChanged<String>? onUnmaskedChanged;
+
+  /// Reports the value without mask literals when an ancestor [Form] is saved.
+  ///
+  /// When [mask] is null, this receives the same value as [onSaved].
+  final FormFieldSetter<String>? onUnmaskedSaved;
+
   final TextDirection? textDirection;
   final TextInputAction? textInputAction;
   final TextCapitalization textCapitalization;
@@ -203,6 +242,7 @@ class SuperTextFormField extends StatefulWidget {
 
 class _SuperTextFormFieldState extends State<SuperTextFormField> {
   late SuperTextFieldController _controller;
+  MaskTextInputFormatter? _maskFormatter;
   FormFieldState<String>? _formState;
   bool _ownsController = false;
 
@@ -216,6 +256,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           obscured: widget.type == SuperTextType.password,
         );
     _ownsController = widget.controller == null;
+    _configureMaskFormatter();
     _controller.text.addListener(_emitChange);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
@@ -241,12 +282,45 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           );
       _ownsController = widget.controller == null;
       _controller.text.addListener(_emitChange);
+      _configureMaskFormatter();
+    }
+
+    if (widget.mask != old.mask ||
+        widget.maskFilter != old.maskFilter ||
+        widget.maskAutoCompletionType != old.maskAutoCompletionType) {
+      _configureMaskFormatter();
     }
   }
 
   void _emitChange() {
     _formState?.didChange(_controller.value);
     widget.onChanged?.call(_controller.value);
+    widget.onUnmaskedChanged?.call(_unmaskedValue);
+  }
+
+  String get _unmaskedValue {
+    final mask = widget.mask;
+    if (mask == null) return _controller.value;
+
+    return _removeMaskLiterals(
+      value: _controller.value,
+      mask: mask,
+      filter: widget.maskFilter ?? _defaultMaskFilter(),
+    );
+  }
+
+  void _configureMaskFormatter() {
+    final mask = widget.mask;
+    if (mask == null) {
+      _maskFormatter = null;
+      return;
+    }
+
+    _maskFormatter = MaskTextInputFormatter(
+      mask: mask,
+      filter: widget.maskFilter ?? _defaultMaskFilter(),
+      type: widget.maskAutoCompletionType,
+    );
   }
 
   @override
@@ -278,7 +352,10 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       key: ObjectKey(_controller),
       initialValue: _controller.value,
       enabled: !widget.disabled,
-      onSaved: widget.onSaved ?? widget.onSave,
+      onSaved: (value) {
+        (widget.onSaved ?? widget.onSave)?.call(value);
+        widget.onUnmaskedSaved?.call(_unmaskedValue);
+      },
       autovalidateMode: widget.autovalidateMode,
       validator: (_) => _controller.error,
       builder: (formState) {
@@ -358,8 +435,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     final source = widget.decoration;
     final l10n = SuperFormTranslation.of(context);
-    final textDirection =
-        widget.textDirection ?? Directionality.of(context);
+    final textDirection = widget.textDirection ?? Directionality.of(context);
 
     // ── Suffix icon row ──
     final trailingWidgets = <Widget>[
@@ -505,12 +581,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
                 SuperTextType.phone => TextInputType.phone,
                 SuperTextType.password => TextInputType.text,
               });
-    final effectiveMinLines = multiline
-        ? (widget.minLines ?? widget.rows)
-        : 1;
-    final effectiveMaxLines = multiline
-        ? (widget.maxLines ?? widget.rows)
-        : 1;
+    final effectiveMinLines = multiline ? (widget.minLines ?? widget.rows) : 1;
+    final effectiveMaxLines = multiline ? (widget.maxLines ?? widget.rows) : 1;
+    final effectiveInputFormatters = <TextInputFormatter>[
+      ...?widget.inputFormatters,
+      if (_maskFormatter != null) _maskFormatter!,
+    ];
 
     final field = TextField(
       controller: _controller.text,
@@ -519,7 +595,9 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       readOnly: widget.readOnly,
       autofocus: widget.autofocus,
       keyboardType: effectiveKeyboardType,
-      inputFormatters: widget.inputFormatters,
+      inputFormatters: effectiveInputFormatters.isEmpty
+          ? null
+          : effectiveInputFormatters,
       textInputAction: widget.textInputAction,
       textCapitalization: widget.textCapitalization,
       obscureText:
@@ -584,6 +662,47 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     return field;
   }
+}
+
+Map<String, RegExp> _defaultMaskFilter() => <String, RegExp>{
+  '#': RegExp(r'[0-9]'),
+  'A': RegExp(r'[A-Za-z]'),
+  'N': RegExp(r'[A-Za-z0-9]'),
+};
+
+String _removeMaskLiterals({
+  required String value,
+  required String mask,
+  required Map<String, RegExp> filter,
+}) {
+  final unmasked = StringBuffer();
+  var valueIndex = 0;
+
+  for (
+    var maskIndex = 0;
+    maskIndex < mask.length && valueIndex < value.length;
+    maskIndex++
+  ) {
+    final maskCharacter = mask[maskIndex];
+    final placeholderPattern = filter[maskCharacter];
+
+    if (placeholderPattern == null) {
+      if (value[valueIndex] == maskCharacter) valueIndex++;
+      continue;
+    }
+
+    while (valueIndex < value.length &&
+        !placeholderPattern.hasMatch(value[valueIndex])) {
+      valueIndex++;
+    }
+
+    if (valueIndex < value.length) {
+      unmasked.write(value[valueIndex]);
+      valueIndex++;
+    }
+  }
+
+  return unmasked.toString();
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

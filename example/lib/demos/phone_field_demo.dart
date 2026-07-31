@@ -30,7 +30,9 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
   bool _forceError = false;
 
   static final _internationalPhoneCharacters = RegExp(r'[0-9+()\-\s]');
-  static final _yemenMobilePattern = RegExp(r'^(?:70|71|73|77|78)\d{7}$');
+  static final _yemenMobilePattern = RegExp(
+    r'^(?:70|71|73|77|78) \d{3} \d{4}$',
+  );
 
   @override
   void dispose() {
@@ -56,7 +58,7 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
 
   void _fillExamples() {
     _internationalController.setValue('+1 (415) 555-0132');
-    _localController.setValue('771234567');
+    _localController.setValue('77 123 4567');
     setState(() => _forceError = false);
   }
 
@@ -120,8 +122,7 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
               SuperSectionCard(
                 title: 'Country-specific rules',
                 subtitle:
-                    'Compose the phone type with a prefix, formatter, '
-                    'and pattern',
+                    'Compose the phone type with a prefix, mask, and pattern',
                 marker: SuperMarker.identity,
                 child: SuperTextFormField(
                   controller: _localController,
@@ -136,10 +137,9 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                   type: SuperTextType.phone,
                   required: true,
                   clearable: true,
-                  maxLength: 9,
+                  mask: '## ### ####',
                   pattern: _yemenMobilePattern,
                   patternMessage: 'Enter a valid Yemeni mobile number.',
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   autofillHints: const [
                     AutofillHints.telephoneNumberNational,
                   ],
@@ -148,7 +148,7 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                   onFieldSubmitted: (_) => _submit(),
                   onTapOutside: (_) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  onSaved: (value) => _savedYemenNumber = value == null
+                  onUnmaskedSaved: (value) => _savedYemenNumber = value == null
                       ? null
                       : '+967$value',
                   forceError: _forceError,

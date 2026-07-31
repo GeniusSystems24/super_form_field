@@ -1,12 +1,12 @@
 # Super Form Field example
 
-A runnable gallery for `super_form_field` 1.7.0.
+A runnable gallery for `super_form_field` 1.8.0.
 
 The app demonstrates all nine fields with the unified `InputDecoration` API,
 GeniusLink `super_core` section components and `SuperAppBar`, light/dark themes,
 LTR/RTL layouts,
 validation submit sweeps, numeric stepping, mobile/desktop date interactions,
-dedicated phone-input and OTP-input screens, and ERP-oriented sample data.
+dedicated masked phone-input and OTP-input screens, and ERP-oriented sample data.
 
 ## Run
 

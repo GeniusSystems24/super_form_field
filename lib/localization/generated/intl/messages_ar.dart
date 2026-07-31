@@ -42,98 +42,92 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(value) => "يجب ألا يقل عن ${value}";
 
-  static String m11(name) => "إزالة ${name}";
+  static String m11(count) => "أدخل الرمز الكامل المكوّن من ${count} خانات";
 
-  static String m12(count) => "اختر ${count} خيارات على الأقل";
+  static String m12(name) => "إزالة ${name}";
 
-  static String m13(count) => "اختر ${count} خيارات على الأكثر";
+  static String m13(count) => "اختر ${count} خيارات على الأقل";
 
-  static String m14(count) => "${count} محدد";
+  static String m14(count) => "اختر ${count} خيارات على الأكثر";
 
-  static String m15(size) => "حتى ${size} م.ب";
+  static String m15(count) => "${count} محدد";
 
-  static String m16(count) => "أدخل الرمز الكامل المكوّن من ${count} خانات";
+  static String m16(size) => "حتى ${size} م.ب";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "april": MessageLookupByLibrary.simpleMessage("أبريل"),
-    "atLeastOneFileRequired": MessageLookupByLibrary.simpleMessage(
-      "مطلوب ملف واحد على الأقل",
-    ),
-    "attachAtMostFiles": m0,
-    "august": MessageLookupByLibrary.simpleMessage("أغسطس"),
-    "browse": MessageLookupByLibrary.simpleMessage("استعراض"),
-    "browseOrDragFilesHere": MessageLookupByLibrary.simpleMessage(
-      "استعرض أو اسحب الملفات هنا",
-    ),
-    "cannotBeNegative": MessageLookupByLibrary.simpleMessage(
-      "لا يمكن أن تكون القيمة سالبة",
-    ),
-    "clear": MessageLookupByLibrary.simpleMessage("مسح"),
-    "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
-    "december": MessageLookupByLibrary.simpleMessage("ديسمبر"),
-    "decrement": MessageLookupByLibrary.simpleMessage("إنقاص"),
-    "disabled": MessageLookupByLibrary.simpleMessage("معطّل"),
-    "dragFilesHere": MessageLookupByLibrary.simpleMessage(
-      " أو اسحب الملفات هنا",
-    ),
-    "enabled": MessageLookupByLibrary.simpleMessage("مفعّل"),
-    "february": MessageLookupByLibrary.simpleMessage("فبراير"),
-    "fileCount": m1,
-    "fileNotAccepted": m2,
-    "fileTooLarge": m3,
-    "hide": MessageLookupByLibrary.simpleMessage("إخفاء"),
-    "increment": MessageLookupByLibrary.simpleMessage("زيادة"),
-    "invalidFormat": MessageLookupByLibrary.simpleMessage("تنسيق غير صحيح"),
-    "january": MessageLookupByLibrary.simpleMessage("يناير"),
-    "july": MessageLookupByLibrary.simpleMessage("يوليو"),
-    "june": MessageLookupByLibrary.simpleMessage("يونيو"),
-    "march": MessageLookupByLibrary.simpleMessage("مارس"),
-    "maxCharacters": m4,
-    "maxDate": m5,
-    "maxFiles": m6,
-    "maxNumber": m7,
-    "may": MessageLookupByLibrary.simpleMessage("مايو"),
-    "minCharacters": m8,
-    "minDate": m9,
-    "minNumber": m10,
-    "mustBeEnabled": MessageLookupByLibrary.simpleMessage(
-      "يجب تفعيل هذا الخيار للمتابعة",
-    ),
-    "noMatches": MessageLookupByLibrary.simpleMessage("لا توجد نتائج"),
-    "november": MessageLookupByLibrary.simpleMessage("نوفمبر"),
-    "october": MessageLookupByLibrary.simpleMessage("أكتوبر"),
-    "otpLength": m16,
-    "openCalendar": MessageLookupByLibrary.simpleMessage("فتح التقويم"),
-    "pickDateFromCalendar": MessageLookupByLibrary.simpleMessage(
-      "اختر تاريخًا من التقويم",
-    ),
-    "removeFile": m11,
-    "requiredMessage": MessageLookupByLibrary.simpleMessage("هذا الحقل مطلوب"),
-    "search": MessageLookupByLibrary.simpleMessage("بحث..."),
-    "selectAtLeastOneOption": MessageLookupByLibrary.simpleMessage(
-      "اختر خيارًا واحدًا على الأقل",
-    ),
-    "selectAtLeastOptions": m12,
-    "selectAtMostOptions": m13,
-    "selectDate": MessageLookupByLibrary.simpleMessage("اختر التاريخ"),
-    "selectOption": MessageLookupByLibrary.simpleMessage("اختر خيارًا"),
-    "selectPlaceholder": MessageLookupByLibrary.simpleMessage("اختر..."),
-    "selectedCount": m14,
-    "september": MessageLookupByLibrary.simpleMessage("سبتمبر"),
-    "show": MessageLookupByLibrary.simpleMessage("إظهار"),
-    "today": MessageLookupByLibrary.simpleMessage("اليوم"),
-    "upToMegabytes": m15,
-    "validDate": MessageLookupByLibrary.simpleMessage("أدخل تاريخًا صحيحًا"),
-    "validEmail": MessageLookupByLibrary.simpleMessage(
-      "أدخل بريدًا إلكترونيًا صحيحًا",
-    ),
-    "weekdayFridayNarrow": MessageLookupByLibrary.simpleMessage("ج"),
-    "weekdayMondayNarrow": MessageLookupByLibrary.simpleMessage("ن"),
-    "weekdaySaturdayNarrow": MessageLookupByLibrary.simpleMessage("س"),
-    "weekdaySundayNarrow": MessageLookupByLibrary.simpleMessage("ح"),
-    "weekdayThursdayNarrow": MessageLookupByLibrary.simpleMessage("خ"),
-    "weekdayTuesdayNarrow": MessageLookupByLibrary.simpleMessage("ث"),
-    "weekdayWednesdayNarrow": MessageLookupByLibrary.simpleMessage("ر"),
-  };
+        "april": MessageLookupByLibrary.simpleMessage("أبريل"),
+        "atLeastOneFileRequired":
+            MessageLookupByLibrary.simpleMessage("مطلوب ملف واحد على الأقل"),
+        "attachAtMostFiles": m0,
+        "august": MessageLookupByLibrary.simpleMessage("أغسطس"),
+        "browse": MessageLookupByLibrary.simpleMessage("استعراض"),
+        "browseOrDragFilesHere":
+            MessageLookupByLibrary.simpleMessage("استعرض أو اسحب الملفات هنا"),
+        "cannotBeNegative": MessageLookupByLibrary.simpleMessage(
+            "لا يمكن أن تكون القيمة سالبة"),
+        "clear": MessageLookupByLibrary.simpleMessage("مسح"),
+        "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
+        "december": MessageLookupByLibrary.simpleMessage("ديسمبر"),
+        "decrement": MessageLookupByLibrary.simpleMessage("إنقاص"),
+        "disabled": MessageLookupByLibrary.simpleMessage("معطّل"),
+        "dragFilesHere":
+            MessageLookupByLibrary.simpleMessage(" أو اسحب الملفات هنا"),
+        "enabled": MessageLookupByLibrary.simpleMessage("مفعّل"),
+        "february": MessageLookupByLibrary.simpleMessage("فبراير"),
+        "fileCount": m1,
+        "fileNotAccepted": m2,
+        "fileTooLarge": m3,
+        "hide": MessageLookupByLibrary.simpleMessage("إخفاء"),
+        "increment": MessageLookupByLibrary.simpleMessage("زيادة"),
+        "invalidFormat": MessageLookupByLibrary.simpleMessage("تنسيق غير صحيح"),
+        "january": MessageLookupByLibrary.simpleMessage("يناير"),
+        "july": MessageLookupByLibrary.simpleMessage("يوليو"),
+        "june": MessageLookupByLibrary.simpleMessage("يونيو"),
+        "march": MessageLookupByLibrary.simpleMessage("مارس"),
+        "maxCharacters": m4,
+        "maxDate": m5,
+        "maxFiles": m6,
+        "maxNumber": m7,
+        "may": MessageLookupByLibrary.simpleMessage("مايو"),
+        "minCharacters": m8,
+        "minDate": m9,
+        "minNumber": m10,
+        "mustBeEnabled": MessageLookupByLibrary.simpleMessage(
+            "يجب تفعيل هذا الخيار للمتابعة"),
+        "noMatches": MessageLookupByLibrary.simpleMessage("لا توجد نتائج"),
+        "november": MessageLookupByLibrary.simpleMessage("نوفمبر"),
+        "october": MessageLookupByLibrary.simpleMessage("أكتوبر"),
+        "openCalendar": MessageLookupByLibrary.simpleMessage("فتح التقويم"),
+        "otpLength": m11,
+        "pickDateFromCalendar":
+            MessageLookupByLibrary.simpleMessage("اختر تاريخًا من التقويم"),
+        "removeFile": m12,
+        "requiredMessage":
+            MessageLookupByLibrary.simpleMessage("هذا الحقل مطلوب"),
+        "search": MessageLookupByLibrary.simpleMessage("بحث..."),
+        "selectAtLeastOneOption": MessageLookupByLibrary.simpleMessage(
+            "اختر خيارًا واحدًا على الأقل"),
+        "selectAtLeastOptions": m13,
+        "selectAtMostOptions": m14,
+        "selectDate": MessageLookupByLibrary.simpleMessage("اختر التاريخ"),
+        "selectOption": MessageLookupByLibrary.simpleMessage("اختر خيارًا"),
+        "selectPlaceholder": MessageLookupByLibrary.simpleMessage("اختر..."),
+        "selectedCount": m15,
+        "september": MessageLookupByLibrary.simpleMessage("سبتمبر"),
+        "show": MessageLookupByLibrary.simpleMessage("إظهار"),
+        "today": MessageLookupByLibrary.simpleMessage("اليوم"),
+        "upToMegabytes": m16,
+        "validDate":
+            MessageLookupByLibrary.simpleMessage("أدخل تاريخًا صحيحًا"),
+        "validEmail": MessageLookupByLibrary.simpleMessage(
+            "أدخل بريدًا إلكترونيًا صحيحًا"),
+        "weekdayFridayNarrow": MessageLookupByLibrary.simpleMessage("ج"),
+        "weekdayMondayNarrow": MessageLookupByLibrary.simpleMessage("ن"),
+        "weekdaySaturdayNarrow": MessageLookupByLibrary.simpleMessage("س"),
+        "weekdaySundayNarrow": MessageLookupByLibrary.simpleMessage("ح"),
+        "weekdayThursdayNarrow": MessageLookupByLibrary.simpleMessage("خ"),
+        "weekdayTuesdayNarrow": MessageLookupByLibrary.simpleMessage("ث"),
+        "weekdayWednesdayNarrow": MessageLookupByLibrary.simpleMessage("ر")
+      };
 }
