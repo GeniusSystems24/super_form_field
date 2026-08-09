@@ -162,31 +162,31 @@ class MenuSearchField extends StatelessWidget {
               cursorColor: cursorColor ?? cs.primary,
               cursorErrorColor: cursorErrorColor ?? cs.error,
               style: style == null
-                  ? t.textTheme.body.copyWith(
+                  ? context.sffTextTheme.body.copyWith(
                       color: t.fg1,
                       fontSize: 13.5,
                       fontFamily: arabic
                           ? SuperThemeData.of(context).tokens.arabicFont
-                          : SuperThemeData.of(context).tokens.bodyFont,
+                          : null,
                     )
-                  : t.textTheme.body
+                  : context.sffTextTheme.body
                         .copyWith(
                           color: t.fg1,
                           fontSize: 13.5,
                           fontFamily: arabic
                               ? SuperThemeData.of(context).tokens.arabicFont
-                              : SuperThemeData.of(context).tokens.bodyFont,
+                              : null,
                         )
                         .merge(style),
               strutStyle: strutStyle,
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: t.textTheme.body.copyWith(
+                hintStyle: context.sffTextTheme.body.copyWith(
                   color: t.fg4,
                   fontSize: 13.5,
                   fontFamily: arabic
                       ? SuperThemeData.of(context).tokens.arabicFont
-                      : SuperThemeData.of(context).tokens.bodyFont,
+                      : null,
                 ),
                 hintTextDirection: effectiveTextDirection,
                 border: InputBorder.none,

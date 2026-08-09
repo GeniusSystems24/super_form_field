@@ -503,18 +503,18 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
         : SuperThemeData.of(context).sizing.fieldComfortable;
 
     // ── Prefix / suffix text adornments ──
-    final adornStyle = t.textTheme.body.copyWith(color: t.fg3, fontSize: 13);
+    final adornStyle = context.sffTextTheme.body.copyWith(color: t.fg3, fontSize: 13);
 
     final decoration = InputDecoration(
       // The external FieldShell owns label/helper/counter/error presentation.
       hint: source.hint,
       hintText: source.hintText,
       hintStyle: SffDecoration.mergeStyle(
-        t.textTheme.body.copyWith(
+        context.sffTextTheme.body.copyWith(
           color: t.fg4,
           fontFamily: widget.arabic
               ? SuperThemeData.of(context).tokens.arabicFont
-              : SuperThemeData.of(context).tokens.bodyFont,
+              : null,
         ),
         source.hintStyle,
       ),
@@ -564,11 +564,11 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     );
 
     final textStyle = SffDecoration.mergeStyle(
-      t.textTheme.body.copyWith(
+      context.sffTextTheme.body.copyWith(
         color: t.fg1,
         fontFamily: widget.arabic
             ? SuperThemeData.of(context).tokens.arabicFont
-            : SuperThemeData.of(context).tokens.bodyFont,
+            : null,
       ),
       widget.style,
     );
@@ -720,7 +720,7 @@ class _Counter extends StatelessWidget {
     final cs = context.sffColorScheme;
     return Text(
       '$length/$max',
-      style: t.textTheme.mono.copyWith(
+      style: context.sffTextTheme.mono.copyWith(
         fontSize: 11,
         color: length > max ? cs.error : t.fg4,
       ),

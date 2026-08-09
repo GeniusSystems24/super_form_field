@@ -297,7 +297,7 @@ class _DropZone extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: translations.browse,
-                          style: t.textTheme.body.copyWith(
+                          style: context.sffTextTheme.body.copyWith(
                             color: cs.primary,
                             fontWeight: FontWeight.w600,
                             fontSize: 13.5,
@@ -305,7 +305,7 @@ class _DropZone extends StatelessWidget {
                         ),
                         TextSpan(
                           text: translations.dragFilesHere,
-                          style: t.textTheme.body.copyWith(
+                          style: context.sffTextTheme.body.copyWith(
                             color: t.fg2,
                             fontSize: 13.5,
                           ),
@@ -319,7 +319,7 @@ class _DropZone extends StatelessWidget {
                     decoration,
                     fallback: translations.browseOrDragFilesHere,
                     arabic: arabic,
-                    baseStyle: t.textTheme.body.copyWith(
+                    baseStyle: context.sffTextTheme.body.copyWith(
                       color: t.fg2,
                       fontSize: 13.5,
                     ),
@@ -328,7 +328,7 @@ class _DropZone extends StatelessWidget {
                   SizedBox(height: SuperThemeData.of(context).spacing.space1),
                   Text(
                     acceptHint!,
-                    style: t.textTheme.mono.copyWith(
+                    style: context.sffTextTheme.mono.copyWith(
                       color: t.fg4,
                       fontSize: 11,
                     ),
@@ -404,7 +404,7 @@ class _FileCard extends StatelessWidget {
                   file.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: t.textTheme.body.copyWith(
+                  style: context.sffTextTheme.body.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: bad ? cs.error : t.fg1,
@@ -412,7 +412,7 @@ class _FileCard extends StatelessWidget {
                 ),
                 Text(
                   meta,
-                  style: t.textTheme.mono.copyWith(fontSize: 11, color: t.fg4),
+                  style: context.sffTextTheme.mono.copyWith(fontSize: 11, color: t.fg4),
                 ),
               ],
             ),

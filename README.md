@@ -39,7 +39,7 @@ The package includes:
 |---|---:|
 | Dart | `3.8.0` |
 | Flutter | `3.32.0` |
-| `super_core` | `3.0.0` |
+| `super_core` | `3.3.0` |
 | `mask_text_input_formatter` | `2.9.0` |
 
 ## Installation
@@ -54,7 +54,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.8.1
+  super_form_field: ^1.8.2
 ```
 
 Import the public library:
@@ -85,10 +85,17 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = SuperTextTheme();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: SuperMaterialThemeData.light(),
-      darkTheme: SuperMaterialThemeData.dark(),
+      theme: SuperMaterialThemeData.light(
+        textTheme: textTheme,
+        primaryTextTheme: textTheme,
+      ),
+      darkTheme: SuperMaterialThemeData.dark(
+        textTheme: textTheme,
+        primaryTextTheme: textTheme,
+      ),
       themeMode: ThemeMode.system,
       localizationsDelegates:
           SuperFormLocalizations.localizationsDelegates,
@@ -99,8 +106,11 @@ class App extends StatelessWidget {
 }
 ```
 
-All controls read their colors, typography, spacing, sizing, and interaction
-tokens from the active `SuperThemeData` supplied by `super_core`.
+All controls read colors, spacing, sizing, and interaction tokens from the
+active `SuperThemeData`. Typography is read separately from the required
+`SuperTextTheme` installed on `SuperMaterialThemeData` by `super_core` 3.3.0.
+Normal field styles preserve the font families carried by `SuperTextTheme`;
+they no longer overwrite them with `SuperTokensData.bodyFont` / `monoFont`.
 
 ## Quick start
 
@@ -724,19 +734,28 @@ and OTP example screens.
 Register the delegates once:
 
 ```dart
+final textTheme = SuperTextTheme(isArabic: true);
 MaterialApp(
   locale: const Locale('ar'),
   localizationsDelegates:
       SuperFormLocalizations.localizationsDelegates,
   supportedLocales: SuperFormLocalizations.supportedLocales,
-  theme: SuperMaterialThemeData.light(),
-  darkTheme: SuperMaterialThemeData.dark(),
+  theme: SuperMaterialThemeData.light(
+    textTheme: textTheme,
+    primaryTextTheme: textTheme,
+  ),
+  darkTheme: SuperMaterialThemeData.dark(
+    textTheme: textTheme,
+    primaryTextTheme: textTheme,
+  ),
   home: const ArabicFormPage(),
 );
 ```
 
-Use normal Flutter directionality and set `arabic: true` when the field should
-use the package's Arabic typography behavior:
+For app-wide Arabic typography, build the active theme with
+`SuperTextTheme(isArabic: true)`. Use normal Flutter directionality and set
+`arabic: true` only when a field needs the package's field-level Arabic-font
+fallback:
 
 ```dart
 Directionality(

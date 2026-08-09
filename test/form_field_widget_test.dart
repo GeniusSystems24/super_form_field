@@ -5,6 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:super_form_field/super_form_field.dart';
 
+SuperMaterialThemeData _testTheme() {
+  final textTheme = SuperTextTheme();
+  return SuperMaterialThemeData.light(
+    textTheme: textTheme,
+    primaryTextTheme: textTheme,
+  );
+}
+
 void main() {
   test('all public fields accept InputDecoration', () {
     const options = [
@@ -43,12 +51,32 @@ void main() {
     expect(fields, hasLength(9));
   });
 
+  testWidgets('text fields preserve SuperTextTheme font families', (tester) async {
+    final textTheme = SuperTextTheme(
+      bodyFont: const TextStyle(fontFamily: 'CustomBody'),
+      otherFont: const TextStyle(fontFamily: 'CustomDisplay'),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: SuperMaterialThemeData.light(
+          textTheme: textTheme,
+          primaryTextTheme: textTheme,
+        ),
+        home: Scaffold(body: SuperTextFormField()),
+      ),
+    );
+
+    final textField = tester.widget<TextField>(find.byType(TextField));
+    expect(textField.style?.fontFamily, 'CustomBody');
+  });
+
   testWidgets('phone text type uses the phone keyboard by default', (
     tester,
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: Scaffold(body: SuperTextFormField(type: SuperTextType.phone)),
       ),
     );
@@ -62,7 +90,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: Scaffold(
           body: SuperTextFormField(
             mask: '##-##',
@@ -85,7 +113,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: Scaffold(
           body: Form(
             key: formKey,
@@ -111,7 +139,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: const Scaffold(
           body: Padding(
             padding: EdgeInsets.all(24),
@@ -152,7 +180,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(24),
@@ -193,7 +221,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(24),
@@ -248,7 +276,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: const Scaffold(
           body: Padding(
             padding: EdgeInsets.all(24),
@@ -274,7 +302,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: const Scaffold(
           body: Padding(
             padding: EdgeInsets.all(24),
@@ -298,7 +326,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         home: const Scaffold(
           body: Padding(
             padding: EdgeInsets.all(24),
@@ -481,7 +509,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: SuperMaterialThemeData.light(),
+        theme: _testTheme(),
         localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
         supportedLocales: SuperFormLocalizations.supportedLocales,
         home: Scaffold(

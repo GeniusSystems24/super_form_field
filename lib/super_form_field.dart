@@ -32,9 +32,16 @@
 /// Use the complete `super_core` theme in the host application:
 ///
 /// ```dart
+/// final textTheme = SuperTextTheme();
 /// MaterialApp(
-///   theme: SuperMaterialThemeData.light(),
-///   darkTheme: SuperMaterialThemeData.dark(),
+///   theme: SuperMaterialThemeData.light(
+///     textTheme: textTheme,
+///     primaryTextTheme: textTheme,
+///   ),
+///   darkTheme: SuperMaterialThemeData.dark(
+///     textTheme: textTheme,
+///     primaryTextTheme: textTheme,
+///   ),
 /// );
 /// ```
 library super_form_field;

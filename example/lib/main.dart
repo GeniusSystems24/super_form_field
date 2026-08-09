@@ -81,12 +81,21 @@ class _ExampleAppState extends State<ExampleApp> {
       builder: (context, child) {
         final mode = _themeMode.value;
         final dir = _textDir.value;
+        final textTheme = SuperTextTheme(
+          isArabic: dir == TextDirection.rtl,
+        );
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Super Form Field',
           themeMode: mode,
-          theme: SuperMaterialThemeData.light(),
-          darkTheme: SuperMaterialThemeData.dark(),
+          theme: SuperMaterialThemeData.light(
+            textTheme: textTheme,
+            primaryTextTheme: textTheme,
+          ),
+          darkTheme: SuperMaterialThemeData.dark(
+            textTheme: textTheme,
+            primaryTextTheme: textTheme,
+          ),
           locale: dir == TextDirection.rtl
               ? const Locale('ar')
               : const Locale('en'),
@@ -194,14 +203,14 @@ class _Launcher extends StatelessWidget {
                 children: [
                   Text(
                     'SUPER FORM FIELD • GALLERY',
-                    style: t.textTheme.eyebrow.copyWith(
+                    style: context.superTextTheme.eyebrow.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   SizedBox(height: SuperThemeData.of(context).spacing.space2),
                   Text(
                     'Form Fields حقول النماذج',
-                    style: t.textTheme.h1.copyWith(color: t.fg1),
+                    style: context.superTextTheme.h1.copyWith(color: t.fg1),
                   ),
                   SizedBox(height: SuperThemeData.of(context).spacing.space8),
                   for (final d in _demos) ...[
@@ -272,12 +281,12 @@ class _Card extends StatelessWidget {
                   children: [
                     Text(
                       item.title,
-                      style: t.textTheme.heading.copyWith(color: t.fg1),
+                      style: context.superTextTheme.heading.copyWith(color: t.fg1),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle,
-                      style: t.textTheme.caption.copyWith(color: t.fg3),
+                      style: context.superTextTheme.caption.copyWith(color: t.fg3),
                     ),
                   ],
                 ),

@@ -221,13 +221,13 @@ class _SavedValue extends StatelessWidget {
           width: 112,
           child: Text(
             label,
-            style: theme.textTheme.caption.copyWith(color: theme.fg3),
+            style: context.superTextTheme.caption.copyWith(color: theme.fg3),
           ),
         ),
         Expanded(
           child: SelectableText(
             value?.isNotEmpty == true ? value! : 'Not saved yet',
-            style: theme.textTheme.body.copyWith(
+            style: context.superTextTheme.body.copyWith(
               color: value?.isNotEmpty == true ? theme.fg1 : theme.fg4,
             ),
           ),

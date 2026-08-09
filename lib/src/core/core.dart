@@ -2,7 +2,7 @@
 // core/core.dart — barrel for the form-field foundation.
 // ------------------------------------------------------------
 // Re-exports the shared GeniusLink foundation from `super_core` (theme tokens,
-// `SuperThemeData`, `SuperText`, `SuperFormat`, design-system widgets) so the
+// `SuperThemeData`, `SuperTextTheme`, `SuperFormat`, design-system widgets) so the
 // form fields read as one identity with the rest of the Super toolkit, plus the
 // form-field-specific utils + foundation widgets that live in this package.
 //

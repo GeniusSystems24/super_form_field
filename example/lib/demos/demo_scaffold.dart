@@ -45,12 +45,12 @@ class DemoPage extends StatelessWidget {
                 children: [
                   Text(
                     eyebrow.toUpperCase(),
-                    style: t.textTheme.eyebrow.copyWith(
+                    style: context.superTextTheme.eyebrow.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   SizedBox(height: SuperThemeData.of(context).spacing.space2),
-                  Text(title, style: t.textTheme.h1.copyWith(color: t.fg1)),
+                  Text(title, style: context.superTextTheme.h1.copyWith(color: t.fg1)),
                   SizedBox(height: SuperThemeData.of(context).spacing.space8),
                   for (var index = 0; index < children.length; index++) ...[
                     children[index],

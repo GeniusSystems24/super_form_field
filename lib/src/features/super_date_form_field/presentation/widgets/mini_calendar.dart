@@ -148,7 +148,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                 ),
                 Text(
                   '${l10n.monthNames[_m]} $_y',
-                  style: t.textTheme.body.copyWith(
+                  style: context.sffTextTheme.body.copyWith(
                     color: t.fg1,
                     fontWeight: FontWeight.w700,
                     fontSize: headerFontSize,
@@ -172,7 +172,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                     child: Center(
                       child: Text(
                         d,
-                        style: t.textTheme.label.copyWith(
+                        style: context.sffTextTheme.label.copyWith(
                           color: t.fg4,
                           fontSize: dowFontSize,
                           letterSpacing: 0.2,
@@ -233,7 +233,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
               ),
               child: Text(
                 l10n.today,
-                style: t.textTheme.caption.copyWith(
+                style: context.sffTextTheme.caption.copyWith(
                   color: cs.primary,
                   fontWeight: FontWeight.w600,
                   fontSize: expanded ? 13 : null,
@@ -350,7 +350,7 @@ class _DayCellState extends State<_DayCell> {
                 child: Center(
                   child: Text(
                     '${widget.day}',
-                    style: t.textTheme.mono.copyWith(
+                    style: context.sffTextTheme.mono.copyWith(
                       color: fg,
                       fontSize: widget.fontSize,
                     ),

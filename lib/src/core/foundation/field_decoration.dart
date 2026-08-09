@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_core/super_core.dart' hide FieldDensity, FieldShell;
+import 'package:super_form_field/src/core/extensions/context_extensions.dart';
 
 /// Internal helpers that apply [InputDecoration] consistently to custom fields.
 abstract final class SffDecoration {
@@ -30,9 +31,9 @@ abstract final class SffDecoration {
     final tokens = SuperThemeData.of(context).tokens;
     final theme = SuperThemeData.of(context);
     final style = mergeStyle(
-      theme.textTheme.label.copyWith(
+      context.sffTextTheme.label.copyWith(
         color: theme.fg2,
-        fontFamily: arabic ? tokens.arabicFont : tokens.bodyFont,
+        fontFamily: arabic ? tokens.arabicFont : null,
       ),
       decoration.labelStyle,
     );
@@ -85,9 +86,9 @@ abstract final class SffDecoration {
     final tokens = SuperThemeData.of(context).tokens;
     final theme = SuperThemeData.of(context);
     final style = mergeStyle(
-      theme.textTheme.caption.copyWith(
+      context.sffTextTheme.caption.copyWith(
         color: theme.fg4,
-        fontFamily: arabic ? tokens.arabicFont : tokens.bodyFont,
+        fontFamily: arabic ? tokens.arabicFont : null,
       ),
       decoration.helperStyle,
     );
@@ -119,10 +120,10 @@ abstract final class SffDecoration {
     final tokens = SuperThemeData.of(context).tokens;
     final theme = SuperThemeData.of(context);
     final style = mergeStyle(
-      theme.textTheme.mono.copyWith(
+      context.sffTextTheme.mono.copyWith(
         color: theme.fg4,
         fontSize: 11,
-        fontFamily: arabic ? tokens.arabicFont : tokens.monoFont,
+        fontFamily: arabic ? tokens.arabicFont : null,
       ),
       decoration.counterStyle,
     );
@@ -147,9 +148,9 @@ abstract final class SffDecoration {
     final tokens = theme.tokens;
     final style = mergeStyle(
       baseStyle ??
-          theme.textTheme.body.copyWith(
+          context.sffTextTheme.body.copyWith(
             color: theme.fg4,
-            fontFamily: arabic ? tokens.arabicFont : tokens.bodyFont,
+            fontFamily: arabic ? tokens.arabicFont : null,
           ),
       decoration.hintStyle,
     );
@@ -177,7 +178,7 @@ abstract final class SffDecoration {
   }) {
     final theme = SuperThemeData.of(context);
     final baseStyle =
-        textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
+        textStyle ?? context.sffTextTheme.body.copyWith(color: theme.fg3);
     final hasExplicitLeading =
         decoration.icon != null ||
         decoration.prefixIcon != null ||
@@ -218,7 +219,7 @@ abstract final class SffDecoration {
   }) {
     final theme = SuperThemeData.of(context);
     final baseStyle =
-        textStyle ?? theme.textTheme.body.copyWith(color: theme.fg3);
+        textStyle ?? context.sffTextTheme.body.copyWith(color: theme.fg3);
     return <Widget>[
       if (decoration.suffix != null)
         DefaultTextStyle.merge(

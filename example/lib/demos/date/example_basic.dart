@@ -45,7 +45,7 @@ class _DateBasicExampleState extends State<DateBasicExample> {
           SizedBox(height: SuperThemeData.of(context).spacing.space3),
           Text(
             'VALUE  ${DateLogic.format(_value).isEmpty ? '—' : DateLogic.format(_value)}',
-            style: t.textTheme.mono.copyWith(color: t.fg3, fontSize: 12),
+            style: context.superTextTheme.mono.copyWith(color: t.fg3, fontSize: 12),
           ),
         ],
       ),

@@ -31,7 +31,7 @@ class CountPill extends StatelessWidget {
       ),
       child: Text(
         label.toUpperCase(),
-        style: t.textTheme.pill.copyWith(color: color),
+        style: context.sffTextTheme.pill.copyWith(color: color),
       ),
     );
   }

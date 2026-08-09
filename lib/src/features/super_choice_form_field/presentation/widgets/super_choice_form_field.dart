@@ -328,12 +328,12 @@ class _Segment<T> extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: t.textTheme.button.copyWith(
+                    style: context.sffTextTheme.button.copyWith(
                       color: selected ? const Color(0xFFFFFFFF) : t.fg3,
                       fontSize: 13,
                       fontFamily: arabic
                           ? SuperThemeData.of(context).tokens.arabicFont
-                          : SuperThemeData.of(context).tokens.bodyFont,
+                          : null,
                     ),
                   ),
                 ),
@@ -414,7 +414,7 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
     final enabled = !o.disabled;
     final fontFamily = widget.arabic
         ? SuperThemeData.of(context).tokens.arabicFont
-        : SuperThemeData.of(context).tokens.bodyFont;
+        : null;
 
     return MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -449,7 +449,7 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
                     children: [
                       Text(
                         o.label,
-                        style: t.textTheme.body.copyWith(
+                        style: context.sffTextTheme.body.copyWith(
                           color: t.fg1,
                           fontWeight: sel ? FontWeight.w600 : FontWeight.w400,
                           fontFamily: fontFamily,
@@ -459,7 +459,7 @@ class _OptionRowState<T> extends State<_OptionRow<T>> {
                         const SizedBox(height: 1),
                         Text(
                           o.description!,
-                          style: t.textTheme.caption.copyWith(
+                          style: context.sffTextTheme.caption.copyWith(
                             color: t.fg4,
                             fontFamily: fontFamily,
                           ),

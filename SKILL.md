@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.8.1: text, OTP, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.8.2: text, OTP, numeric,
   attachment, date, select, multi-select, bool, and choice fields. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.8.1
+# Super Form Field 1.8.2
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -18,13 +18,42 @@ Use this skill when implementing or reviewing forms that depend on
 Prefer the complete `super_core` theme:
 
 ```dart
+final textTheme = SuperTextTheme();
 MaterialApp(
-  theme: SuperMaterialThemeData.light(),
-  darkTheme: SuperMaterialThemeData.dark(),
+  theme: SuperMaterialThemeData.light(
+    textTheme: textTheme,
+    primaryTextTheme: textTheme,
+  ),
+  darkTheme: SuperMaterialThemeData.dark(
+    textTheme: textTheme,
+    primaryTextTheme: textTheme,
+  ),
   localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
   supportedLocales: SuperFormLocalizations.supportedLocales,
 );
 ```
+
+### `super_core` 3.3.0 typography contract
+
+`SuperMaterialThemeData.light` and `SuperMaterialThemeData.dark` now require
+`textTheme` and `primaryTextTheme`, both of type `SuperTextTheme`. Typography is
+no longer stored on `SuperThemeData`.
+
+- Read package typography with `context.superTextTheme` in application/example code.
+- Form-field internals use `context.sffTextTheme`.
+- Never generate `context.sffTheme.textTheme`, `context.superTheme.textTheme`,
+  or `SuperThemeData.of(context).textTheme`; those APIs no longer exist.
+- Build Arabic typography explicitly with `SuperTextTheme(isArabic: true)`.
+- If device-specific typography is required, build `SuperTextTheme` with the
+  matching device-density arguments instead of expecting `SuperThemeData` to
+  regenerate it.
+- `fontFamily` on `SuperMaterialThemeData` is an explicit token-level override;
+  do not infer it from `SuperTextTheme` or recreate the removed `_familyOf`
+  behavior from `super_core`.
+- When deriving a field style from `context.sffTextTheme`, preserve that
+  style's font family. Do not overwrite normal text with
+  `tokens.bodyFont` or `tokens.monoFont`. A field-level `arabic: true` may
+  still opt into `tokens.arabicFont` as an explicit fallback.
 
 Import only the package barrel from application code:
 
@@ -265,9 +294,11 @@ attachment actions, bool state labels, numeric stepper tooltips, calendar
 labels, and the phone/OTP gallery examples. Caller-provided strings remain the
 application's responsibility.
 
-Wrap the field in RTL `Directionality` and set `arabic: true`. Date and numeric
-editing intentionally remain LTR with Western digits. Do not reverse or localize
-their internal buffers.
+Build app-wide Arabic typography with `SuperTextTheme(isArabic: true)`. Wrap the
+field in RTL `Directionality`; use `arabic: true` only when that field needs the
+package's explicit Arabic-font fallback. Date and numeric editing intentionally
+remain LTR with Western digits. Do not reverse or localize their internal
+buffers.
 
 ## Architecture
 
@@ -296,7 +327,9 @@ decoration mapping belongs in `field_decoration.dart`.
 - Every new example uses `decoration: InputDecoration(...)`.
 - OTP changes preserve paste, autofill, exact-length validation, and completion semantics.
 - No public field reintroduces duplicated decoration parameters.
-- Package theme tokens are resolved from the ambient `SuperThemeData`.
+- Colors, spacing, sizing, and interaction tokens are resolved from the ambient
+  `SuperThemeData`; typography is resolved separately from
+  `context.sffTextTheme` / `context.superTextTheme`.
 - Mobile date changes do not alter tablet/desktop popover behavior.
 - Numeric text keeps a natural-height, borderless single-line editor centered
   by layout inside `FieldBox`; do not simulate centering with padding or

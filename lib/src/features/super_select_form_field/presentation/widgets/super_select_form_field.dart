@@ -278,7 +278,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
       empty: Text(
         widget.emptyLabel == 'No matches' ? l10n.noMatches : widget.emptyLabel,
         textAlign: TextAlign.center,
-        style: t.textTheme.caption.copyWith(color: t.fg4),
+        style: context.sffTextTheme.caption.copyWith(color: t.fg4),
       ),
       children: [
         for (final o in filtered)
@@ -391,15 +391,13 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                                 selected.label,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: t.textTheme.body.copyWith(
+                                style: context.sffTextTheme.body.copyWith(
                                   color: t.fg1,
                                   fontFamily: widget.arabic
                                       ? SuperThemeData.of(
                                           context,
                                         ).tokens.arabicFont
-                                      : SuperThemeData.of(
-                                          context,
-                                        ).tokens.bodyFont,
+                                      : null,
                                 ),
                                 textAlign: TextAlign.start,
                                 textDirection:
@@ -412,15 +410,13 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                                 fallback: l10n.selectPlaceholder,
                                 arabic: widget.arabic,
                                 textDirection: widget.textDirection,
-                                baseStyle: t.textTheme.body.copyWith(
+                                baseStyle: context.sffTextTheme.body.copyWith(
                                   color: t.fg4,
                                   fontFamily: widget.arabic
                                       ? SuperThemeData.of(
                                           context,
                                         ).tokens.arabicFont
-                                      : SuperThemeData.of(
-                                          context,
-                                        ).tokens.bodyFont,
+                                      : null,
                                 ),
                               ),
                       ),

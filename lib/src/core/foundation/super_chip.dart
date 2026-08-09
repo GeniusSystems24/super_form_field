@@ -63,13 +63,13 @@ class _SuperChipState extends State<SuperChip> {
               widget.label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: t.textTheme.caption.copyWith(
+              style: context.sffTextTheme.caption.copyWith(
                 color: t.fg1,
                 fontWeight: FontWeight.w500,
                 fontSize: 12.5,
                 fontFamily: widget.arabic
                     ? SuperThemeData.of(context).tokens.arabicFont
-                    : SuperThemeData.of(context).tokens.bodyFont,
+                    : null,
               ),
             ),
           ),

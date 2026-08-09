@@ -276,7 +276,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
             final controlHeight = widget.density == FieldDensity.compact
                 ? sizing.fieldCompact
                 : sizing.fieldComfortable;
-            final unitStyle = t.textTheme.mono.copyWith(
+            final unitStyle = context.sffTextTheme.mono.copyWith(
               color: t.fg3,
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
@@ -439,7 +439,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           cursorErrorColor:
                               widget.cursorErrorColor ?? cs.error,
                           style: SffDecoration.mergeStyle(
-                            t.textTheme.mono.copyWith(color: t.fg1),
+                            context.sffTextTheme.mono.copyWith(color: t.fg1),
                             widget.style,
                           ),
                           strutStyle: widget.strutStyle,
@@ -449,7 +449,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                             hint: widget.decoration.hint,
                             hintText: widget.decoration.hintText,
                             hintStyle: SffDecoration.mergeStyle(
-                              t.textTheme.mono.copyWith(color: t.fg4),
+                              context.sffTextTheme.mono.copyWith(color: t.fg4),
                               widget.decoration.hintStyle,
                             ),
                             hintTextDirection:

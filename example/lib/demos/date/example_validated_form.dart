@@ -85,7 +85,7 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
               if (_force)
                 Text(
                   valid ? 'READY TO POST' : 'FIX 1 FIELD',
-                  style: t.textTheme.label.copyWith(
+                  style: context.superTextTheme.label.copyWith(
                     color: valid
                         ? SuperThemeData.of(context).tokens.success
                         : Theme.of(context).colorScheme.error,

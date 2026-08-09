@@ -104,7 +104,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                               children: [
                                 Text(
                                   l10n.selectDate,
-                                  style: t.textTheme.body.copyWith(
+                                  style: context.sffTextTheme.body.copyWith(
                                     color: t.fg1,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 16,
@@ -113,7 +113,7 @@ class MobileCalendarBottomSheet extends StatelessWidget {
                                 SizedBox(height: spacing.space1),
                                 Text(
                                   selectionLabel,
-                                  style: t.textTheme.caption.copyWith(
+                                  style: context.sffTextTheme.caption.copyWith(
                                     color: t.fg3,
                                     fontWeight: FontWeight.w500,
                                   ),

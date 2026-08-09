@@ -342,7 +342,7 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
   Widget _buildControl(BuildContext context, String? error) {
     final theme = context.sffTheme;
     final spacing = SuperThemeData.of(context).spacing;
-    final adornStyle = theme.textTheme.body.copyWith(
+    final adornStyle = context.sffTextTheme.body.copyWith(
       color: theme.fg3,
       fontSize: 13,
     );
@@ -671,7 +671,7 @@ class _OTPCell extends StatelessWidget {
         : active
         ? theme.surface
         : theme.inputBg;
-    final baseStyle = theme.textTheme.mono.copyWith(
+    final baseStyle = context.sffTextTheme.mono.copyWith(
       color: theme.fg1,
       fontSize: 18,
       fontWeight: FontWeight.w700,
@@ -735,7 +735,7 @@ class _OTPCount extends StatelessWidget {
     final theme = context.sffTheme;
     return Text(
       '$current/$length',
-      style: theme.textTheme.mono.copyWith(color: theme.fg4, fontSize: 11),
+      style: context.sffTextTheme.mono.copyWith(color: theme.fg4, fontSize: 11),
     );
   }
 }

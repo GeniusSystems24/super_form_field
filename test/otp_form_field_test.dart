@@ -5,8 +5,12 @@ import 'package:super_form_field/super_form_field.dart';
 
 void main() {
   Widget buildTestApp(Widget child) {
+    final textTheme = SuperTextTheme();
     return MaterialApp(
-      theme: SuperMaterialThemeData.light(),
+      theme: SuperMaterialThemeData.light(
+        textTheme: textTheme,
+        primaryTextTheme: textTheme,
+      ),
       localizationsDelegates:
           SuperFormLocalizations.localizationsDelegates,
       supportedLocales: SuperFormLocalizations.supportedLocales,

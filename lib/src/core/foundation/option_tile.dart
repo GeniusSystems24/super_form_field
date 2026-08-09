@@ -54,7 +54,7 @@ class _OptionTileState extends State<OptionTile> {
     final cs = context.sffColorScheme;
     final fontFamily = widget.arabic
         ? SuperThemeData.of(context).tokens.arabicFont
-        : SuperThemeData.of(context).tokens.bodyFont;
+        : null;
     final enabled = !widget.disabled && widget.onTap != null;
 
     final Color bg = widget.selected
@@ -103,7 +103,7 @@ class _OptionTileState extends State<OptionTile> {
                         widget.label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: t.textTheme.body.copyWith(
+                        style: context.sffTextTheme.body.copyWith(
                           color: widget.selected ? t.fg1 : t.fg2,
                           fontFamily: fontFamily,
                           fontWeight: widget.selected
@@ -118,7 +118,7 @@ class _OptionTileState extends State<OptionTile> {
                           widget.description!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: t.textTheme.caption.copyWith(
+                          style: context.sffTextTheme.caption.copyWith(
                             color: t.fg4,
                             fontFamily: fontFamily,
                           ),
@@ -190,11 +190,11 @@ class OptionGroupHeader extends StatelessWidget {
       ),
       child: Text(
         label.toUpperCase(),
-        style: t.textTheme.label.copyWith(
+        style: context.sffTextTheme.label.copyWith(
           color: t.fg4,
           fontFamily: arabic
               ? SuperThemeData.of(context).tokens.arabicFont
-              : SuperThemeData.of(context).tokens.bodyFont,
+              : null,
         ),
       ),
     );

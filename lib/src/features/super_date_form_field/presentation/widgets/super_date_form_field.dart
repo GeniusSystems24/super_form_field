@@ -363,7 +363,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                     _controller.visibleError,
                   );
 
-            final adornStyle = t.textTheme.mono.copyWith(
+            final adornStyle = context.sffTextTheme.mono.copyWith(
               color: t.fg3,
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
@@ -518,7 +518,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                       cursorColor: widget.cursorColor ?? cs.primary,
                       cursorErrorColor: widget.cursorErrorColor ?? cs.error,
                       style: SffDecoration.mergeStyle(
-                        t.textTheme.mono.copyWith(color: t.fg1),
+                        context.sffTextTheme.mono.copyWith(color: t.fg1),
                         widget.style,
                       ),
                       strutStyle: widget.strutStyle,
@@ -528,7 +528,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                             widget.decoration.hintText ??
                             widget.format.placeholder,
                         hintStyle: SffDecoration.mergeStyle(
-                          t.textTheme.mono.copyWith(color: t.fg4),
+                          context.sffTextTheme.mono.copyWith(color: t.fg4),
                           widget.decoration.hintStyle,
                         ),
                         hintTextDirection:

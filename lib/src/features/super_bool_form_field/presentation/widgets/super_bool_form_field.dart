@@ -141,13 +141,13 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
               );
         final fontFamily = widget.arabic
             ? SuperThemeData.of(context).tokens.arabicFont
-            : SuperThemeData.of(context).tokens.bodyFont;
+            : null;
 
         final hasCustomCaption =
             widget.decoration.hint != null ||
             widget.decoration.hintText != null;
         final captionStyle = SffDecoration.mergeStyle(
-          t.textTheme.body.copyWith(
+          context.sffTextTheme.body.copyWith(
             color: on ? t.fg1 : t.fg3,
             fontFamily: fontFamily,
             fontWeight: hasCustomCaption ? FontWeight.w400 : FontWeight.w500,

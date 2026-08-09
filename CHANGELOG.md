@@ -4,6 +4,40 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.8.2] — 2026-08-10
+
+### Changed
+
+- Updated the package for `super_core 3.3.0`, where `SuperMaterialThemeData`
+  requires explicit `SuperTextTheme` values for both `textTheme` and
+  `primaryTextTheme`.
+- Migrated all form-field typography reads away from the removed
+  `SuperThemeData.textTheme` API. Package internals now use
+  `BuildContext.sffTextTheme`, backed by the active `SuperMaterialThemeData`,
+  while examples use `context.superTextTheme`.
+- Updated the example app to rebuild `SuperTextTheme` explicitly when switching
+  between English/LTR and Arabic/RTL presentation.
+- Raised the documented and example minimum `super_core` version to `3.3.0`.
+- Updated README, package docs, tests, example documentation, and AI skill
+  guidance for the new typography ownership model.
+- Documented that `fontFamily` remains an explicit token-level override and
+  must not be inferred from `SuperTextTheme` or the removed `_familyOf` helper.
+- Stopped overriding non-Arabic text styles with `SuperTokensData.bodyFont` or
+  `monoFont`, so custom `SuperTextTheme` font families now flow through fields
+  unchanged. The explicit field-level `arabic: true` fallback remains.
+
+### Fixed
+
+- Fixed compile errors caused by references to the removed
+  `SuperThemeData.textTheme` getter and by no-argument
+  `SuperMaterialThemeData.light()` / `dark()` calls.
+
+### Tests
+
+- Added a widget regression proving that custom `SuperTextTheme` body font
+  families reach `SuperTextFormField` without being overwritten by token
+  font metadata.
+
 ## [1.8.1] — 2026-08-01
 
 ### Added
