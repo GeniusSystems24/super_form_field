@@ -26,6 +26,7 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
     super.key,
     required this.options,
     this.controller,
+    this.allowFixed = false,
     this.initialValue,
     this.onChanged,
     this.onValidity,
@@ -93,6 +94,12 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
   final List<SuperOption<T>> options;
 
   final SuperMultiSelectFieldController<T>? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
   final List<T>? initialValue;
 
   final ValueChanged<List<T>>? onChanged;
@@ -220,7 +227,7 @@ class _SuperMultiSelectFormFieldState<T>
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly;
+  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
 
   void _handleTap() {
     widget.onTap?.call();
@@ -228,6 +235,7 @@ class _SuperMultiSelectFormFieldState<T>
   }
 
   Widget _menu(SuperThemeData t) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
     final filtered = _controller.filtered;
     return OptionMenu(
@@ -343,7 +351,7 @@ class _SuperMultiSelectFormFieldState<T>
     final l10n = SuperFormTranslation.of(context);
 
     return FormField<List<T>>(
-      key: ObjectKey(_controller),
+      key: _controller.formFieldKey ?? ObjectKey(_controller),
       initialValue: _controller.values,
       enabled: !widget.disabled,
       onSaved: widget.onSaved ?? widget.onSave,
@@ -406,6 +414,8 @@ class _SuperMultiSelectFormFieldState<T>
             ];
 
             return FieldShell(
+              allowFixed: widget.allowFixed,
+              isFixed: _controller.isFixed,
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,

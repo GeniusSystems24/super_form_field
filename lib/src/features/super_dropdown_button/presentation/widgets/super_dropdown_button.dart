@@ -106,7 +106,7 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
   bool _ownsFocusNode = false;
   bool _open = false;
 
-  bool get _enabled => !widget.disabled && widget.onChanged != null;
+  bool get _enabled => !widget.disabled && !(widget.controller?.isFixed.value ?? false) && widget.onChanged != null;
 
   T? get _effectiveValue => widget.controller?.value ?? widget.value;
 
@@ -134,7 +134,8 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
       widget.controller?.addListener(_handleControllerChanged);
     }
 
-    if (oldWidget.focusNode != widget.focusNode) {
+    if (oldWidget.focusNode != widget.focusNode ||
+        oldWidget.controller?.focusNode != widget.controller?.focusNode) {
       if (_ownsFocusNode) _focusNode.dispose();
       _attachFocusNode();
     }
@@ -145,8 +146,9 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
   }
 
   void _attachFocusNode() {
-    _ownsFocusNode = widget.focusNode == null;
-    _focusNode = widget.focusNode ?? FocusNode();
+    final controllerFocus = widget.controller?.focusNode;
+    _ownsFocusNode = widget.focusNode == null && controllerFocus == null;
+    _focusNode = widget.focusNode ?? controllerFocus ?? FocusNode();
   }
 
   void _handleControllerChanged() {
@@ -229,6 +231,7 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.controller?.isHiden ?? false) return const SizedBox.shrink();
     final t = context.sffTheme;
     final tokens = SuperThemeData.of(context).tokens;
     final selected = _selected;

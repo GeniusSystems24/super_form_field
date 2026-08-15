@@ -13,18 +13,40 @@ import '../../../../core/utils/validators.dart';
 
 /// Controller for `SuperOTPFormField`.
 class SuperOTPFieldController extends ChangeNotifier {
-  SuperOTPFieldController({String initialValue = ''})
-    : text = TextEditingController(text: initialValue) {
-    focusNode = FocusNode();
+  SuperOTPFieldController({
+    String initialValue = '',
+    bool isFixed = false,
+    FocusNode? focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : text = TextEditingController(text: initialValue),
+       isFixed = ValueNotifier<bool>(isFixed),
+       focusNode = focusNode {
+    _ownsFocusNode = this.focusNode == null;
+    this.focusNode ??= FocusNode();
     text.addListener(_onTextChanged);
-    focusNode.addListener(_onFocusChanged);
+    this.focusNode?.addListener(_onFocusChanged);
+    this.isFixed.addListener(_onFixedChanged);
   }
+
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key for the inner [FormField], exposing its [FormFieldState].
+  GlobalKey<FormFieldState<String>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
+
+  late final bool _ownsFocusNode;
 
   /// Backing editor used for keyboard input, paste, and autofill.
   final TextEditingController text;
-
-  /// Focus node shared by the hidden editor and the visual OTP cells.
-  late final FocusNode focusNode;
 
   bool _touched = false;
   List<Validator<String>> _validators = const [];
@@ -39,7 +61,7 @@ class SuperOTPFieldController extends ChangeNotifier {
   bool get touched => _touched;
 
   /// Whether the underlying editor is focused.
-  bool get focused => focusNode.hasFocus;
+  bool get focused => focusNode?.hasFocus ?? false;
 
   /// Current raw validation error.
   String? get error => runValidators(value, _validators);
@@ -64,6 +86,7 @@ class SuperOTPFieldController extends ChangeNotifier {
 
   /// Replaces the current code and moves the caret to its end.
   void setValue(String value) {
+    if (isFixed.value) return;
     if (text.text == value) return;
     text.value = TextEditingValue(
       text: value,
@@ -76,12 +99,14 @@ class SuperOTPFieldController extends ChangeNotifier {
 
   /// Requests focus and places the caret at the end of the code.
   void requestFocus() {
-    focusNode.requestFocus();
+    if (isFixed.value) return;
+    focusNode?.requestFocus();
     text.selection = TextSelection.collapsed(offset: text.text.length);
   }
 
   /// Marks the field as touched so validation becomes visible.
   void markTouched() {
+    if (isFixed.value) return;
     if (_touched) return;
     _touched = true;
     notifyListeners();
@@ -89,6 +114,7 @@ class SuperOTPFieldController extends ChangeNotifier {
 
   /// Clears the touched state, primarily for [FormState.reset].
   void resetTouched() {
+    if (isFixed.value) return;
     if (!_touched) return;
     _touched = false;
     notifyListeners();
@@ -100,7 +126,11 @@ class SuperOTPFieldController extends ChangeNotifier {
   }
 
   void _onFocusChanged() {
-    if (!focusNode.hasFocus) _touched = true;
+    if (!(focusNode?.hasFocus ?? false)) _touched = true;
+    notifyListeners();
+  }
+
+  void _onFixedChanged() {
     notifyListeners();
   }
 
@@ -113,10 +143,12 @@ class SuperOTPFieldController extends ChangeNotifier {
 
   @override
   void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
     text.removeListener(_onTextChanged);
-    focusNode.removeListener(_onFocusChanged);
+    focusNode?.removeListener(_onFocusChanged);
     text.dispose();
-    focusNode.dispose();
+    if (_ownsFocusNode) focusNode?.dispose();
     super.dispose();
   }
 }

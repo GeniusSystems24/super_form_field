@@ -930,3 +930,45 @@ and dark themes, and LTR and RTL layouts.
 - [License](LICENSE)
 
 This package is licensed under the MIT License.
+
+## Controller field metadata
+
+Version 1.10.0 aligns the package's field controllers with the controller/view
+contract used by `AutoSuggestionsBox`. Controller-backed fields expose:
+
+```dart
+final ValueNotifier<bool> isFixed;
+FocusNode? focusNode;
+GlobalKey<FormFieldState<TValue>>? formFieldKey;
+bool isHiden;
+```
+
+`isFixed` is a **view/read-only lock**, not a disabled state. The field keeps
+normal contrast, user interaction is blocked, and public controller mutation
+methods no-op while the lock is active. Select/dropdown overlays close when the
+controller becomes fixed.
+
+`focusNode` lets the host associate focus with the controller. Controllers that
+need an editor focus node create one when none is supplied and only dispose
+nodes they own.
+
+`formFieldKey` is forwarded to the inner `FormField` where that component has
+one, so hosts can call APIs such as `validate()`, `save()`, and `reset()` from
+the controller relationship:
+
+```dart
+final formFieldKey = GlobalKey<FormFieldState<String>>();
+final controller = SuperTextFieldController(
+  formFieldKey: formFieldKey,
+  isFixed: false,
+);
+
+controller.isFixed.value = true;
+controller.focusNode?.requestFocus();
+controller.formFieldKey?.currentState?.validate();
+```
+
+`isHiden` intentionally preserves the existing misspelling for compatibility.
+When true, controller-backed field views render `SizedBox.shrink()`. Because it
+is a plain compatibility flag rather than a notifier, update it inside a host
+rebuild (for example, `setState`).

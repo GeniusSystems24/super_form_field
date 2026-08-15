@@ -23,9 +23,10 @@ import 'super_dropdown_button.dart';
 /// validation and saving always see the current controller value.
 class SuperDropdownButtonFormField<T> extends FormField<T> {
   SuperDropdownButtonFormField({
-    super.key,
+    Key? key,
     required List<SuperOption<T>> options,
     this.controller,
+    this.allowFixed = false,
     T? initialValue,
     ValueChanged<T?>? onChanged,
     FormFieldSetter<T>? onSaved,
@@ -45,10 +46,15 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
     bool arabic = false,
     VoidCallback? onTap,
   }) : assert(
+         !allowFixed || controller != null,
+         'allowFixed requires a SuperDropdownEditingController.',
+       ),
+       assert(
          controller == null || initialValue == null,
          'initialValue must be null when a controller is provided.',
        ),
        super(
+         key: controller?.formFieldKey ?? key,
          initialValue: controller?.value ?? initialValue,
          onSaved: onSaved,
          enabled: !disabled && onChanged != null,
@@ -58,11 +64,14 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
            return validator?.call(value);
          },
          builder: (field) {
+           if (controller?.isHiden ?? false) return const SizedBox.shrink();
            final effectiveError = SffDecoration.resolveError(
              decoration,
              field.errorText,
            );
            return FieldShell(
+             allowFixed: allowFixed,
+             isFixed: controller?.isFixed,
              decoration: decoration,
              required: required,
              hasError: effectiveError != null,
@@ -99,6 +108,12 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
   /// controller are synchronized with this field's value so `validate()`,
   /// `save()`, and `reset()` continue to behave as expected.
   final SuperDropdownEditingController<T>? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// Because this FormField does not create a dropdown controller internally,
+  /// [controller] is required when [allowFixed] is true.
+  final bool allowFixed;
 
   @override
   FormFieldState<T> createState() =>

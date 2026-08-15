@@ -23,6 +23,7 @@ class SuperNumericFormField extends StatefulWidget {
   const SuperNumericFormField({
     super.key,
     this.controller,
+    this.allowFixed = false,
     this.initialValue,
     this.onChanged,
     this.onValidity,
@@ -91,6 +92,12 @@ class SuperNumericFormField extends StatefulWidget {
        );
 
   final SuperNumericFieldController? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
   final num? initialValue;
   final ValueChanged<num?>? onChanged;
   final ValidityChanged? onValidity;
@@ -218,10 +225,11 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
 
     return FormField<num?>(
-      key: ObjectKey(_controller),
+      key: _controller.formFieldKey ?? ObjectKey(_controller),
       initialValue: _controller.value,
       enabled: !widget.disabled,
       onSaved: widget.onSaved ?? widget.onSave,
@@ -236,7 +244,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
           allowNegative: widget.allowNegative,
           step: widget.step,
           largeStep: widget.largeStep,
-          readOnly: widget.readOnly,
+          readOnly: widget.readOnly || _controller.isFixed.value,
           keyboardEnabled: widget.keyboardShortcuts,
           validators: NumericLogic.buildValidators(
             required: widget.required,
@@ -360,6 +368,8 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
             ];
 
             return FieldShell(
+              allowFixed: widget.allowFixed,
+              isFixed: _controller.isFixed,
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
@@ -383,7 +393,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: widget.disabled
                         ? null
-                        : (_) => _controller.focusNode.requestFocus(),
+                        : (_) => _controller.focusNode?.requestFocus(),
                     child: Center(
                       child: SizedBox(
                         width: double.infinity,
@@ -391,7 +401,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           controller: _controller.text,
                           focusNode: _controller.focusNode,
                           enabled: !widget.disabled,
-                          readOnly: widget.readOnly,
+                          readOnly: widget.readOnly || _controller.isFixed.value,
                           autofocus: widget.autofocus,
                           keyboardType:
                               widget.keyboardType ??

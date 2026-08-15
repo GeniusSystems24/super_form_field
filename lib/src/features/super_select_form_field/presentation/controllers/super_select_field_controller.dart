@@ -16,12 +16,34 @@ import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/select_logic.dart';
 
 class SuperSelectFieldController<T> extends ChangeNotifier {
-  SuperSelectFieldController({T? initialValue}) : _value = initialValue {
+  SuperSelectFieldController({
+    T? initialValue,
+    bool isFixed = false,
+    this.focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : isFixed = ValueNotifier<bool>(isFixed),
+       _value = initialValue {
     searchText = TextEditingController();
     searchFocus = FocusNode();
     searchText.addListener(_onQuery);
+    this.isFixed.addListener(_onFixedChanged);
   }
 
+
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key for the inner [FormField], exposing its [FormFieldState].
+  GlobalKey<FormFieldState<T?>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
   /// Backing controller for the in-menu search box.
   late final TextEditingController searchText;
 
@@ -88,6 +110,7 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
 
   // ── menu ──
   void open() {
+    if (isFixed.value) return;
     if (_open) return;
     _open = true;
     notifyListeners();
@@ -107,6 +130,7 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
   // ── selection ──
   /// Choose [option] (no-op when disabled); closes the menu.
   void select(SuperOption<T> option) {
+    if (isFixed.value) return;
     if (option.disabled) return;
     _value = option.value;
     _open = false;
@@ -118,6 +142,7 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
 
   /// Programmatically set the value (external reset / the × affordance).
   void setValue(T? v) {
+    if (isFixed.value) return;
     _value = v;
     _emit();
     notifyListeners();
@@ -128,6 +153,7 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
 
   /// Force the touched state (e.g. on a submit sweep).
   void markTouched() {
+    if (isFixed.value) return;
     if (_touched) return;
     _touched = true;
     notifyListeners();
@@ -136,6 +162,14 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
   void _onQuery() {
     if (_query == searchText.text) return;
     _query = searchText.text;
+    notifyListeners();
+  }
+
+  void _onFixedChanged() {
+    if (isFixed.value && _open) {
+      _open = false;
+      searchText.clear();
+    }
     notifyListeners();
   }
 
@@ -154,6 +188,8 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
 
   @override
   void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
     searchText.removeListener(_onQuery);
     searchText.dispose();
     searchFocus.dispose();

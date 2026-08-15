@@ -24,6 +24,7 @@ class SuperChoiceFormField<T> extends StatefulWidget {
     super.key,
     required this.options,
     this.controller,
+    this.allowFixed = false,
     this.initialValue,
     this.onChanged,
     this.onValidity,
@@ -44,6 +45,12 @@ class SuperChoiceFormField<T> extends StatefulWidget {
   final List<SuperOption<T>> options;
 
   final SuperChoiceFieldController<T>? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
 
   /// Seed selection. For single-pick use, pass a single-element list.
   final List<T>? initialValue;
@@ -113,7 +120,7 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly;
+  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
 
   void _pick(SuperOption<T> o) {
     if (!_editable || o.disabled) return;
@@ -122,6 +129,7 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       multiple: widget.multiple || widget.style == SuperChoiceStyle.checkbox,
@@ -182,6 +190,8 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
         final hasIntro = leading != null || hasHint || trailing.isNotEmpty;
 
         return FieldShell(
+          allowFixed: widget.allowFixed,
+          isFixed: _controller.isFixed,
           decoration: widget.decoration,
           required: widget.required,
           hasError: error != null,

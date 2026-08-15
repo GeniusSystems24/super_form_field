@@ -385,3 +385,24 @@ decoration mapping belongs in `field_decoration.dart`.
   compact/comfortable field height.
 - Error display remains badge-based.
 - Application imports do not reach into `lib/src`.
+
+## Controller field metadata (1.10.0)
+
+Controller-backed fields follow the same host-state pattern as
+`AutoSuggestionsBox`:
+
+- `isFixed: ValueNotifier<bool>` — lock value/user mutations while retaining
+  normal read-only contrast. Do not model this as `disabled`.
+- `focusNode: FocusNode?` — host-associated focus. Prefer the controller node
+  when the field view does not receive a more explicit widget node.
+- `formFieldKey: GlobalKey<FormFieldState<TValue>>?` — expose the real inner
+  `FormFieldState` where the component owns an inner `FormField`. Use the
+  component's actual value type, not `String` for every controller.
+- `isHiden: bool` — compatibility spelling. A true value removes the field view
+  with `SizedBox.shrink()`.
+
+Public controller mutation methods must guard on `isFixed.value`. A controller
+that owns an open menu should close the menu when it becomes fixed. Controller
+widgets must listen to the controller so a fixed-state transition immediately
+updates the view. Externally supplied `FocusNode`s remain host-owned and must
+not be disposed by the package.

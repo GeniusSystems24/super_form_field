@@ -12,6 +12,7 @@ import 'package:super_form_field/super_form_field.dart';
 import 'demos/attachment_field_demo.dart';
 import 'demos/bool_field_demo.dart';
 import 'demos/choice_field_demo.dart';
+import 'demos/controller_state_demo.dart';
 import 'demos/date_field_demo.dart';
 import 'demos/dropdown_button_demo.dart';
 import 'demos/multi_select_field_demo.dart';
@@ -127,6 +128,12 @@ class _Launcher extends StatelessWidget {
   final TextDirection dir;
 
   static final _demos = <_DemoItem>[
+    _DemoItem(
+      'Controller State',
+      'Fixed · focus node · FormField key · hidden field',
+      Icons.tune_rounded,
+      (_) => const ControllerStateDemo(),
+    ),
     _DemoItem(
       'Super Text Field',
       'Text · email · password · multiline · counter',

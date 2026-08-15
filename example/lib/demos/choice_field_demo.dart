@@ -83,6 +83,7 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
           child: Column(
             children: [
               const SuperChoiceFormField<String>(
+                allowFixed: true,
                 decoration: InputDecoration(labelText: 'Status'),
                 required: true,
                 initialValue: ['draft'],

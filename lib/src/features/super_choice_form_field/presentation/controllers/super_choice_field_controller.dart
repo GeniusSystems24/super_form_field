@@ -13,9 +13,31 @@ import 'package:flutter/widgets.dart';
 import '../../../../core/utils/validators.dart';
 
 class SuperChoiceFieldController<T> extends ChangeNotifier {
-  SuperChoiceFieldController({List<T>? initialValue})
-    : _values = [...?initialValue];
+  SuperChoiceFieldController({
+    List<T>? initialValue,
+    bool isFixed = false,
+    this.focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : isFixed = ValueNotifier<bool>(isFixed),
+       _values = [...?initialValue] {
+    this.isFixed.addListener(_onFixedChanged);
+  }
 
+
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key reserved for the field's FormField integration.
+  GlobalKey<FormFieldState<List<T>>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
   // ── value + interaction ──
   final List<T> _values;
   bool _touched = false;
@@ -67,6 +89,7 @@ class SuperChoiceFieldController<T> extends ChangeNotifier {
   /// Pick [value]. Single mode replaces the selection; multiple mode toggles it
   /// (blocked when adding past the cap).
   void pick(T value) {
+    if (isFixed.value) return;
     if (_multiple) {
       if (_values.contains(value)) {
         _values.remove(value);
@@ -86,6 +109,7 @@ class SuperChoiceFieldController<T> extends ChangeNotifier {
 
   /// Replace the whole selection (external reset).
   void setValues(List<T> vs) {
+    if (isFixed.value) return;
     _values
       ..clear()
       ..addAll(vs);
@@ -97,6 +121,7 @@ class SuperChoiceFieldController<T> extends ChangeNotifier {
   void setSingle(T? v) => setValues(v == null ? const [] : [v]);
 
   void clear() {
+    if (isFixed.value) return;
     if (_values.isEmpty) return;
     _values.clear();
     _touched = true;
@@ -105,6 +130,7 @@ class SuperChoiceFieldController<T> extends ChangeNotifier {
   }
 
   void markTouched() {
+    if (isFixed.value) return;
     if (_touched) return;
     _touched = true;
     notifyListeners();
@@ -121,5 +147,16 @@ class SuperChoiceFieldController<T> extends ChangeNotifier {
       _lastReported = e;
       _onValidity?.call(e);
     }
+  }
+
+  void _onFixedChanged() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
+    super.dispose();
   }
 }

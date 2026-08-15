@@ -93,6 +93,7 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                     'Phone keyboard with common international characters',
                 marker: SuperMarker.identity,
                 child: SuperTextFormField(
+                  allowFixed: true,
                   controller: _internationalController,
                   decoration: const InputDecoration(
                     labelText: 'Phone number',

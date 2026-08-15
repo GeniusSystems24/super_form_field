@@ -14,19 +14,42 @@ import 'package:flutter/widgets.dart';
 import '../../../../core/utils/validators.dart';
 
 class SuperTextFieldController extends ChangeNotifier {
-  SuperTextFieldController({String initialValue = '', bool obscured = false})
-    : text = TextEditingController(text: initialValue),
-      _obscured = obscured {
-    focusNode = FocusNode();
+  SuperTextFieldController({
+    String initialValue = '',
+    bool obscured = false,
+    bool isFixed = false,
+    FocusNode? focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : text = TextEditingController(text: initialValue),
+       _obscured = obscured,
+       isFixed = ValueNotifier<bool>(isFixed),
+       focusNode = focusNode {
+    _ownsFocusNode = this.focusNode == null;
+    this.focusNode ??= FocusNode();
     text.addListener(_onTextChanged);
-    focusNode.addListener(_onFocusChanged);
+    this.focusNode?.addListener(_onFocusChanged);
+    this.isFixed.addListener(_onFixedChanged);
   }
+
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key for the inner [FormField], exposing its [FormFieldState].
+  GlobalKey<FormFieldState<String>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
+
+  late final bool _ownsFocusNode;
 
   /// The backing editing controller (value + selection).
   final TextEditingController text;
-
-  /// The field's focus node (focus + blur drive `touched`).
-  late final FocusNode focusNode;
 
   // ── interaction state ──
   bool _touched = false;
@@ -41,7 +64,7 @@ class SuperTextFieldController extends ChangeNotifier {
   // ── reads ──
   String get value => text.text;
   bool get touched => _touched;
-  bool get focused => focusNode.hasFocus;
+  bool get focused => focusNode?.hasFocus ?? false;
   bool get obscured => _obscured;
 
   /// The raw validation error (independent of touched state).
@@ -70,6 +93,7 @@ class SuperTextFieldController extends ChangeNotifier {
 
   /// Programmatically set the text (e.g. external reset).
   void setValue(String v) {
+    if (isFixed.value) return;
     if (text.text == v) return;
     text.value = TextEditingValue(
       text: v,
@@ -82,12 +106,14 @@ class SuperTextFieldController extends ChangeNotifier {
 
   /// Toggle password visibility.
   void toggleObscure() {
+    if (isFixed.value) return;
     _obscured = !_obscured;
     notifyListeners();
   }
 
   /// Force the touched state (e.g. on a submit sweep).
   void markTouched() {
+    if (isFixed.value) return;
     if (_touched) return;
     _touched = true;
     notifyListeners();
@@ -99,7 +125,11 @@ class SuperTextFieldController extends ChangeNotifier {
   }
 
   void _onFocusChanged() {
-    if (!focusNode.hasFocus) _touched = true;
+    if (!(focusNode?.hasFocus ?? false)) _touched = true;
+    notifyListeners();
+  }
+
+  void _onFixedChanged() {
     notifyListeners();
   }
 
@@ -113,10 +143,12 @@ class SuperTextFieldController extends ChangeNotifier {
 
   @override
   void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
     text.removeListener(_onTextChanged);
-    focusNode.removeListener(_onFocusChanged);
+    focusNode?.removeListener(_onFocusChanged);
     text.dispose();
-    focusNode.dispose();
+    if (_ownsFocusNode) focusNode?.dispose();
     super.dispose();
   }
 }

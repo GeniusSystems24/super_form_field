@@ -94,6 +94,7 @@ class _OTPFieldDemoState extends State<OTPFieldDemo> {
                   subtitle: 'Paste and one-time-code autofill with completion',
                   marker: SuperMarker.identity,
                   child: SuperOTPFormField(
+                    allowFixed: true,
                     controller: _smsController,
                     decoration: const InputDecoration(
                       labelText: 'Verification code',

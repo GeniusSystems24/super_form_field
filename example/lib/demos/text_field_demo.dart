@@ -37,6 +37,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             children: [
               BilingualRow(
                 english: SuperTextFormField(
+                  allowFixed: true,
                   decoration: const InputDecoration(
                     labelText: 'Name English',
                     hintText: 'e.g. Current Assets',
@@ -48,6 +49,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                   forceError: _force,
                 ),
                 arabic: SuperTextFormField(
+                  allowFixed: true,
                   decoration: const InputDecoration(
                     labelText: 'الاسم بالعربية',
                     hintText: 'مثال: الأصول المتداولة',

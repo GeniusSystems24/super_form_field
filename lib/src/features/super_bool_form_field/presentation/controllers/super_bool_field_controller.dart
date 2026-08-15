@@ -12,8 +12,31 @@ import 'package:flutter/widgets.dart';
 import '../../../../core/utils/validators.dart';
 
 class SuperBoolFieldController extends ChangeNotifier {
-  SuperBoolFieldController({bool initialValue = false}) : _value = initialValue;
+  SuperBoolFieldController({
+    bool initialValue = false,
+    bool isFixed = false,
+    this.focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : isFixed = ValueNotifier<bool>(isFixed),
+       _value = initialValue {
+    this.isFixed.addListener(_onFixedChanged);
+  }
 
+
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key reserved for the field's FormField integration.
+  GlobalKey<FormFieldState<bool>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
   // ── value + interaction ──
   bool _value;
   bool _touched = false;
@@ -50,6 +73,7 @@ class SuperBoolFieldController extends ChangeNotifier {
 
   /// Set the value (marks touched). Used by user interaction.
   void set(bool v) {
+    if (isFixed.value) return;
     if (_value == v) return;
     _value = v;
     _touched = true;
@@ -62,12 +86,14 @@ class SuperBoolFieldController extends ChangeNotifier {
 
   /// Programmatically set the value WITHOUT marking touched (external reset).
   void setValue(bool v) {
+    if (isFixed.value) return;
     _value = v;
     _emit();
     notifyListeners();
   }
 
   void markTouched() {
+    if (isFixed.value) return;
     if (_touched) return;
     _touched = true;
     notifyListeners();
@@ -84,5 +110,16 @@ class SuperBoolFieldController extends ChangeNotifier {
       _lastReported = e;
       _onValidity?.call(e);
     }
+  }
+
+  void _onFixedChanged() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
+    super.dispose();
   }
 }

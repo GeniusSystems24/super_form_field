@@ -40,20 +40,44 @@ class SuperDateFieldController extends ChangeNotifier {
         const DesktopDateInputUseCase(),
     DateInputUseCase<MobileDateEditRequest> mobileInputUseCase =
         const MobileDateInputUseCase(),
+    bool isFixed = false,
+    FocusNode? focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
   }) : _value = initialValue == null ? null : DateLogic.dateOnly(initialValue),
        _interactionMode = interactionMode,
        _desktopInputUseCase = desktopInputUseCase,
-       _mobileInputUseCase = mobileInputUseCase {
+       _mobileInputUseCase = mobileInputUseCase,
+       isFixed = ValueNotifier<bool>(isFixed),
+       focusNode = focusNode {
     _dispFromValue();
     text = TextEditingController(text: _composeString().text);
     _lastComposed = text.text;
-    focusNode = FocusNode(onKeyEvent: _onKey);
+    _ownsFocusNode = this.focusNode == null;
+    this.focusNode ??= FocusNode(onKeyEvent: _onKey);
+    if (!_ownsFocusNode) this.focusNode?.onKeyEvent = _onKey;
     text.addListener(_onTextChanged);
-    focusNode.addListener(_onFocusChanged);
+    this.focusNode?.addListener(_onFocusChanged);
+    this.isFixed.addListener(_onFixedChanged);
   }
 
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key for the inner [FormField], exposing its [FormFieldState].
+  GlobalKey<FormFieldState<DateTime?>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
+
+  late final bool _ownsFocusNode;
+
   late final TextEditingController text;
-  late final FocusNode focusNode;
 
   // ── value + interaction ──
   DateTime? _value;
@@ -93,7 +117,7 @@ class SuperDateFieldController extends ChangeNotifier {
   // ── reads ──
   DateTime? get value => _value;
   bool get touched => _touched;
-  bool get focused => focusNode.hasFocus;
+  bool get focused => focusNode?.hasFocus ?? false;
 
   /// The active segment kind (0 year · 1 month · 2 day).
   int get activeSegment => _order[_ai];
@@ -168,6 +192,7 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// Marks the field touched without changing its value (submit-sweep helper).
   void markTouched() {
+    if (isFixed.value) return;
     if (_touched) return;
     _touched = true;
     notifyListeners();
@@ -177,6 +202,7 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// Programmatically set the value (external reset / linked range).
   void setValue(DateTime? v) {
+    if (isFixed.value) return;
     _value = v == null ? null : DateLogic.dateOnly(v);
     _dispFromValue();
     _ai = 0;
@@ -191,6 +217,7 @@ class SuperDateFieldController extends ChangeNotifier {
   /// Pick a date from the calendar popup: commits the present segments, marks
   /// touched, and writes the formatted text.
   void pick(DateTime date) {
+    if (isFixed.value) return;
     final d = DateLogic.dateOnly(date);
     for (final k in _order) {
       final v = k == 0 ? d.year : (k == 1 ? d.month : d.day);
@@ -209,6 +236,7 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// Clear the field.
   void clear() {
+    if (isFixed.value) return;
     for (final k in [0, 1, 2]) {
       _disp[k] = '';
       _committed[k] = false;
@@ -235,6 +263,7 @@ class SuperDateFieldController extends ChangeNotifier {
 
   /// Step the segment under the cursor by [direction] (±1).
   void stepAtCursor(int direction) {
+    if (isFixed.value) return;
     final off = text.selection.baseOffset;
     final i = off < 0 ? _ai : _indexForOffset(off);
     stepSegment(_order[i], direction);
@@ -245,6 +274,7 @@ class SuperDateFieldController extends ChangeNotifier {
   /// year is unbounded above. Seeds empty segments from today first so the value
   /// resolves.
   void stepSegment(int kind, int direction) {
+    if (isFixed.value) return;
     if (_readOnly || !_order.contains(kind)) return;
     _ai = _order.indexOf(kind);
     // Seed any empty present segments from today so the value can form.
@@ -723,7 +753,7 @@ class SuperDateFieldController extends ChangeNotifier {
   }
 
   void _onFocusChanged() {
-    if (focusNode.hasFocus) {
+    if (focusNode?.hasFocus ?? false) {
       _ai = 0;
       _buf = '';
       _fresh = true;
@@ -735,6 +765,10 @@ class SuperDateFieldController extends ChangeNotifier {
       _render();
       _emit();
     }
+    notifyListeners();
+  }
+
+  void _onFixedChanged() {
     notifyListeners();
   }
 
@@ -754,10 +788,12 @@ class SuperDateFieldController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
     text.removeListener(_onTextChanged);
-    focusNode.removeListener(_onFocusChanged);
+    focusNode?.removeListener(_onFocusChanged);
     text.dispose();
-    focusNode.dispose();
+    if (_ownsFocusNode) focusNode?.dispose();
     super.dispose();
   }
 }

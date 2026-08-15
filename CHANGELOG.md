@@ -4,6 +4,29 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.10.0]
+
+### Added
+
+- Added `isFixed`, `focusNode`, `formFieldKey`, and compatibility `isHiden`
+  metadata to field controllers, following the controller/view contract used by
+  `AutoSuggestionsBox`.
+- Added type-correct `FormFieldState` keys for text, numeric, OTP, date, select,
+  multi-select, and dropdown form-field controllers.
+- Added a controller-state gallery screen demonstrating fixed, focus, form key,
+  hidden, and guarded programmatic mutation behavior.
+- Added regression tests for fixed mutation guards, select menu closing,
+  dropdown direct-value guards, focus-node ownership, and hidden rendering.
+
+### Changed
+
+- Controller-backed field views now treat `isFixed` as a full-contrast read-only
+  lock instead of a disabled state.
+- Public controller mutation methods no-op while fixed.
+- Open select/multi-select menus close when their controllers become fixed.
+- Controller-owned editor focus nodes are now optional host-supplied nodes and
+  are disposed only when the controller created them.
+
 ## [1.9.0] — 2026-08-15
 
 ### Added

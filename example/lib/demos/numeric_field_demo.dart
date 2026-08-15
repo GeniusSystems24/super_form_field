@@ -37,6 +37,7 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
           child: Column(
             children: [
               SuperNumericFormField(
+                allowFixed: true,
                 decoration: const InputDecoration(
                   labelText: 'Debit Amount',
                   prefixText: 'SAR',

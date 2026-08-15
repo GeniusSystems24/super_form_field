@@ -193,15 +193,15 @@ void main() {
       ),
     );
 
-    controller.focusNode.requestFocus();
+    controller.focusNode?.requestFocus();
     await tester.pump();
-    expect(controller.focusNode.hasFocus, isTrue);
+    expect(controller.focusNode?.hasFocus, isTrue);
     expect(find.byIcon(SffIcons.calendar), findsOneWidget);
 
     await tester.tap(find.byIcon(SffIcons.calendarDays));
     await tester.pumpAndSettle();
 
-    expect(controller.focusNode.hasFocus, isFalse);
+    expect(controller.focusNode?.hasFocus, isFalse);
     expect(find.byType(BottomSheet), findsOneWidget);
     expect(find.byType(MiniCalendar), findsOneWidget);
   });
@@ -234,7 +234,7 @@ void main() {
       ),
     );
 
-    controller.focusNode.requestFocus();
+    controller.focusNode?.requestFocus();
     await tester.pump();
     await tester.showKeyboard(find.byType(TextField));
 

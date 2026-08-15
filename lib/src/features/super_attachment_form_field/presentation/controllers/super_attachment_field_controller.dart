@@ -8,16 +8,42 @@
 // the controller stays platform-plugin independent.
 // ============================================================
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../../../core/utils/validators.dart';
 import '../../domain/entities/super_file.dart';
 import '../../domain/usecases/attachment_logic.dart';
 
 class SuperAttachmentFieldController extends ChangeNotifier {
-  SuperAttachmentFieldController({List<SuperFile>? initial})
-    : _files = List<SuperFile>.from(initial ?? const []);
+  SuperAttachmentFieldController({
+    List<SuperFile>? initial,
+    bool isFixed = false,
+    this.focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : isFixed = ValueNotifier<bool>(isFixed),
+       _files = List<SuperFile>.from(initial ?? const []) {
+    this.isFixed.addListener(_onFixedChanged);
+  }
 
+
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key reserved for the field's FormField integration.
+  ///
+  /// SuperAttachmentFormField currently renders a custom field surface rather
+  /// than an inner FormField; the key is retained on the controller so hosts
+  /// can use one controller contract across field types.
+  GlobalKey<FormFieldState<List<SuperFile>>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
   List<SuperFile> _files;
   bool _touched = false;
   bool _dragOver = false;
@@ -78,6 +104,7 @@ class SuperAttachmentFieldController extends ChangeNotifier {
   void reportInitialValidity() => _reportValidity();
 
   void setDragOver(bool v) {
+    if (isFixed.value) return;
     if (_dragOver == v) return;
     _dragOver = v;
     notifyListeners();
@@ -86,6 +113,7 @@ class SuperAttachmentFieldController extends ChangeNotifier {
   /// Add files (from a host picker or OS drop). Assigns stable ids, dedupes by
   /// (name,size), and honors the single-file constraint when `multiple` is off.
   void add(Iterable<SuperFile> incoming) {
+    if (isFixed.value) return;
     final stamped = incoming
         .map((f) => f.copyWith(id: 'sff-${_seq++}'))
         .toList();
@@ -106,6 +134,7 @@ class SuperAttachmentFieldController extends ChangeNotifier {
 
   /// Remove one file by id.
   void remove(String id) {
+    if (isFixed.value) return;
     _files = _files.where((f) => f.id != id).toList();
     _touched = true;
     _emit();
@@ -114,6 +143,7 @@ class SuperAttachmentFieldController extends ChangeNotifier {
 
   /// Clear every attachment.
   void clear() {
+    if (isFixed.value) return;
     if (_files.isEmpty) return;
     _files = const [];
     _touched = true;
@@ -132,5 +162,16 @@ class SuperAttachmentFieldController extends ChangeNotifier {
       _lastReported = e;
       _onValidity?.call(e);
     }
+  }
+
+  void _onFixedChanged() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
+    super.dispose();
   }
 }

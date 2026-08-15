@@ -22,10 +22,15 @@ class FieldShell extends StatelessWidget {
     required this.child,
     this.hasError = false,
     this.labelRight,
+    this.allowFixed = false,
+    this.isFixed,
     this.arabic = false,
     @Deprecated('Use decoration: InputDecoration(labelText: ...)') this.label,
     @Deprecated('Use decoration: InputDecoration(helperText: ...)') this.hint,
-  });
+  }) : assert(
+         !allowFixed || isFixed != null,
+         'isFixed is required when allowFixed is true.',
+       );
 
   /// Canonical Material decoration mapped onto the GeniusLink field shell.
   final InputDecoration decoration;
@@ -41,6 +46,15 @@ class FieldShell extends StatelessWidget {
 
   /// Optional trailing slot on the label row (counter / count pill / badge).
   final Widget? labelRight;
+
+  /// Shows a compact lock/unlock action at the trailing edge of the label row.
+  ///
+  /// [isFixed] must be supplied when this is true. The button mirrors the
+  /// fixed-state affordance used by `AutoSuggestionsBox`.
+  final bool allowFixed;
+
+  /// Fixed-state notifier controlled by the label action.
+  final ValueNotifier<bool>? isFixed;
 
   /// Use the Arabic display face for label and helper content.
   final bool arabic;
@@ -66,9 +80,24 @@ class FieldShell extends StatelessWidget {
       arabic: arabic,
       legacyHint: hint,
     );
-    final effectiveRight =
+    final baseRight =
         labelRight ??
         SffDecoration.buildCounter(context, decoration, arabic: arabic);
+    final fixedButton = allowFixed
+        ? _FixedButton(
+            isFixed: isFixed!,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          )
+        : null;
+    Widget? effectiveRight;
+    if (baseRight != null && fixedButton != null) {
+      effectiveRight = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [baseRight, const SizedBox(width: 4), fixedButton],
+      );
+    } else {
+      effectiveRight = baseRight ?? fixedButton;
+    }
     final spacing = SuperThemeData.of(context).spacing;
 
     return Column(
@@ -76,14 +105,17 @@ class FieldShell extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (labelWidget != null || effectiveRight != null) ...[
-          Row(
-            children: [
-              if (labelWidget != null) Expanded(child: labelWidget),
-              if (labelWidget == null) const Spacer(),
-              if (effectiveRight != null) effectiveRight,
-            ],
+          SizedBox(
+            height: 26,
+            child: Row(
+              children: [
+                if (labelWidget != null) Expanded(child: labelWidget),
+                if (labelWidget == null) const Spacer(),
+                if (effectiveRight != null) effectiveRight,
+              ],
+            ),
           ),
-          SizedBox(height: spacing.space2),
+          // SizedBox(height: spacing.space2),
         ],
         child,
         if (helperWidget != null && !hasError) ...[
@@ -91,6 +123,32 @@ class FieldShell extends StatelessWidget {
           helperWidget,
         ],
       ],
+    );
+  }
+}
+
+class _FixedButton extends StatelessWidget {
+  const _FixedButton({required this.isFixed, required this.color});
+
+  final ValueNotifier<bool> isFixed;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: isFixed,
+      builder: (context, fixed, _) => Tooltip(
+        message: fixed ? 'Unfix' : 'Fix',
+        child: IconButton(
+          visualDensity: VisualDensity.compact,
+          constraints: const BoxConstraints.tightFor(width: 26, height: 26),
+          padding: EdgeInsets.zero,
+          iconSize: 14,
+          color: fixed ? Theme.of(context).colorScheme.primary : color,
+          onPressed: () => isFixed.value = !fixed,
+          icon: Icon(fixed ? Icons.lock_rounded : Icons.lock_open_rounded),
+        ),
+      ),
     );
   }
 }

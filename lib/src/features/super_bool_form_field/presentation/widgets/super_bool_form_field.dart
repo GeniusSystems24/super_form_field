@@ -23,6 +23,7 @@ class SuperBoolFormField extends StatefulWidget {
   const SuperBoolFormField({
     super.key,
     this.controller,
+    this.allowFixed = false,
     this.initialValue = false,
     this.onChanged,
     this.onValidity,
@@ -41,6 +42,12 @@ class SuperBoolFormField extends StatefulWidget {
   });
 
   final SuperBoolFieldController? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
   final bool initialValue;
   final ValueChanged<bool>? onChanged;
   final ValidityChanged? onValidity;
@@ -109,10 +116,11 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly;
+  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       validators: buildBoolValidators(
@@ -203,6 +211,8 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
         );
 
         return FieldShell(
+          allowFixed: widget.allowFixed,
+          isFixed: _controller.isFixed,
           decoration: widget.decoration,
           required: widget.required,
           hasError: error != null,

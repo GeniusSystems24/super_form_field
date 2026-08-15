@@ -37,6 +37,7 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             children: [
               const BilingualRow(
                 english: SuperBoolFormField(
+                  allowFixed: true,
                   decoration: InputDecoration(labelText: 'Account Status'),
                   initialValue: true,
                   enabledLabel: 'Active',

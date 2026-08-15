@@ -75,6 +75,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             children: [
               BilingualRow(
                 english: SuperSelectFormField<String>(
+                  allowFixed: true,
                   decoration: const InputDecoration(
                     labelText: 'Account Type',
                     hintText: 'Choose a type…',

@@ -29,6 +29,7 @@ class SuperTextFormField extends StatefulWidget {
   SuperTextFormField({
     super.key,
     this.controller,
+    this.allowFixed = false,
     this.initialValue = '',
     this.onChanged,
     this.onValidity,
@@ -115,6 +116,12 @@ class SuperTextFormField extends StatefulWidget {
        );
 
   final SuperTextFieldController? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
   final String initialValue;
   final ValueChanged<String>? onChanged;
   final ValidityChanged? onValidity;
@@ -348,8 +355,9 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     return FormField<String>(
-      key: ObjectKey(_controller),
+      key: _controller.formFieldKey ?? ObjectKey(_controller),
       initialValue: _controller.value,
       enabled: !widget.disabled,
       onSaved: (value) {
@@ -389,6 +397,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
                 widget.decoration.counterText != null;
 
             return FieldShell(
+              allowFixed: widget.allowFixed,
+              isFixed: _controller.isFixed,
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
@@ -414,7 +424,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     required bool multiline,
   }) {
     final hasError = error != null;
-    final editable = !widget.disabled && !widget.readOnly;
+    final editable = !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
     final focused = _controller.focused;
 
     // ── Border states ──
@@ -597,7 +607,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       controller: _controller.text,
       focusNode: _controller.focusNode,
       enabled: !widget.disabled,
-      readOnly: widget.readOnly,
+      readOnly: widget.readOnly || _controller.isFixed.value,
       autofocus: widget.autofocus,
       keyboardType: effectiveKeyboardType,
       inputFormatters:

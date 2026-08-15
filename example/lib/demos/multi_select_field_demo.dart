@@ -72,6 +72,7 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
           subtitle: 'Classify this entry — pick one or more',
           marker: SuperMarker.notes,
           child: SuperMultiSelectFormField<String>(
+            allowFixed: true,
             decoration: const InputDecoration(
               labelText: 'Entry Tags',
               hintText: 'Add tags…',

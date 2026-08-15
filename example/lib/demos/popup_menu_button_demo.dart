@@ -142,6 +142,11 @@ class _PopupMenuButtonDemoState extends State<PopupMenuButtonDemo> {
       eyebrow: 'Controls • Actions',
       title: 'Popup Menu Button',
       children: [
+        const FixedFeatureCallout(
+          title: 'Fixed-state scope',
+          message:
+              'allowFixed belongs to value-bearing form fields backed by a field controller. SuperPopupMenuButton is an action surface, so it intentionally has no fixed-value toggle.',
+        ),
         SuperSectionCard(
           title: 'Icon trigger',
           subtitle: 'Simple typed action menu with disabled options',

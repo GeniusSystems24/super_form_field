@@ -16,13 +16,34 @@ import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/multi_select_logic.dart';
 
 class SuperMultiSelectFieldController<T> extends ChangeNotifier {
-  SuperMultiSelectFieldController({List<T>? initialValue})
-    : _values = [...?initialValue] {
+  SuperMultiSelectFieldController({
+    List<T>? initialValue,
+    bool isFixed = false,
+    this.focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : isFixed = ValueNotifier<bool>(isFixed),
+       _values = [...?initialValue] {
     searchText = TextEditingController();
     searchFocus = FocusNode();
     searchText.addListener(_onQuery);
+    this.isFixed.addListener(_onFixedChanged);
   }
 
+
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key for the inner [FormField], exposing its [FormFieldState].
+  GlobalKey<FormFieldState<List<T>>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
   late final TextEditingController searchText;
   late final FocusNode searchFocus;
 
@@ -88,6 +109,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
 
   // ── menu ──
   void open() {
+    if (isFixed.value) return;
     if (_open) return;
     _open = true;
     notifyListeners();
@@ -107,6 +129,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
   /// Add or remove [option]'s value. No-op when disabled, or when adding past
   /// the maxSelections cap. Keeps the menu open.
   void toggle(SuperOption<T> option) {
+    if (isFixed.value) return;
     if (option.disabled) return;
     if (_values.contains(option.value)) {
       _values.remove(option.value);
@@ -121,6 +144,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
 
   /// Remove a single value (the chip × affordance).
   void removeValue(T value) {
+    if (isFixed.value) return;
     if (!_values.remove(value)) return;
     _touched = true;
     _emit();
@@ -129,6 +153,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
 
   /// Replace the whole selection (external reset).
   void setValues(List<T> vs) {
+    if (isFixed.value) return;
     _values
       ..clear()
       ..addAll(vs);
@@ -138,6 +163,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
 
   /// Clear all selections.
   void clear() {
+    if (isFixed.value) return;
     if (_values.isEmpty) return;
     _values.clear();
     _touched = true;
@@ -146,6 +172,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
   }
 
   void markTouched() {
+    if (isFixed.value) return;
     if (_touched) return;
     _touched = true;
     notifyListeners();
@@ -154,6 +181,14 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
   void _onQuery() {
     if (_query == searchText.text) return;
     _query = searchText.text;
+    notifyListeners();
+  }
+
+  void _onFixedChanged() {
+    if (isFixed.value && _open) {
+      _open = false;
+      searchText.clear();
+    }
     notifyListeners();
   }
 
@@ -172,6 +207,8 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
 
   @override
   void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
     searchText.removeListener(_onQuery);
     searchText.dispose();
     searchFocus.dispose();

@@ -7,6 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_form_field/super_form_field.dart'
+    hide SuperMarker, SuperSectionCard;
 
 import 'date/example_basic.dart';
 import 'date/example_controlled_range.dart';
@@ -24,10 +26,32 @@ class DateFieldDemo extends StatelessWidget {
       title: 'Super Date Field',
       children: [
         DateBasicExample(),
+        _DateFixedExample(),
         DateControlledRangeExample(),
         DateValidatedFormExample(),
         DateFormatsExample(),
       ],
+    );
+  }
+}
+
+class _DateFixedExample extends StatelessWidget {
+  const _DateFixedExample();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SuperSectionCard(
+      title: 'Fixed date',
+      subtitle: 'Use the label lock to guard the value without dimming it',
+      marker: SuperMarker.identity,
+      child: SuperDateFormField(
+        allowFixed: true,
+        decoration: InputDecoration(
+          labelText: 'Posting date',
+          helperText: 'Lock/unlock from the label action.',
+          prefixIcon: Icon(Icons.event_outlined),
+        ),
+      ),
     );
   }
 }

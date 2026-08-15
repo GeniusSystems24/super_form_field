@@ -79,6 +79,7 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
               'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
           marker: SuperMarker.notes,
           child: SuperAttachmentFormField(
+            allowFixed: true,
             decoration: const InputDecoration(
               labelText: 'Attachments',
               helperText:

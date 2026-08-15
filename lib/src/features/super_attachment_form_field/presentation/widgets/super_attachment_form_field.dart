@@ -25,6 +25,7 @@ class SuperAttachmentFormField extends StatefulWidget {
   const SuperAttachmentFormField({
     super.key,
     this.controller,
+    this.allowFixed = false,
     this.initialFiles = const [],
     this.onChanged,
     this.onValidity,
@@ -43,6 +44,12 @@ class SuperAttachmentFormField extends StatefulWidget {
   });
 
   final SuperAttachmentFieldController? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
   final List<SuperFile> initialFiles;
   final ValueChanged<List<SuperFile>>? onChanged;
   final ValidityChanged? onValidity;
@@ -110,7 +117,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
   }
 
   Future<void> _browse() async {
-    if (widget.disabled || widget.onBrowse == null) return;
+    if (widget.disabled || _controller.isFixed.value || widget.onBrowse == null) return;
     final picked = await widget.onBrowse!();
     if (picked.isNotEmpty) _controller.add(picked);
   }
@@ -126,6 +133,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
     _controller.configure(
       multiple: widget.multiple,
@@ -168,6 +176,8 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   : null);
 
         return FieldShell(
+          allowFixed: widget.allowFixed,
+          isFixed: _controller.isFixed,
           decoration: widget.decoration,
           required: widget.required,
           hasError: error != null,

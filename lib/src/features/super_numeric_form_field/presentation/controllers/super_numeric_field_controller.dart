@@ -16,15 +16,41 @@ import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/numeric_logic.dart';
 
 class SuperNumericFieldController extends ChangeNotifier {
-  SuperNumericFieldController({num? initialValue}) : _value = initialValue {
+  SuperNumericFieldController({
+    num? initialValue,
+    bool isFixed = false,
+    FocusNode? focusNode,
+    this.formFieldKey,
+    this.isHiden = false,
+  }) : _value = initialValue,
+       isFixed = ValueNotifier<bool>(isFixed),
+       focusNode = focusNode {
     text = TextEditingController(text: _formatted());
-    focusNode = FocusNode(onKeyEvent: _onKey);
+    _ownsFocusNode = this.focusNode == null;
+    this.focusNode ??= FocusNode(onKeyEvent: _onKey);
+    if (!_ownsFocusNode) this.focusNode?.onKeyEvent = _onKey;
     text.addListener(_onTextChanged);
-    focusNode.addListener(_onFocusChanged);
+    this.focusNode?.addListener(_onFocusChanged);
+    this.isFixed.addListener(_onFixedChanged);
   }
 
+  /// Guards user and controller-driven mutations when set to `true`.
+  final ValueNotifier<bool> isFixed;
+
+  /// Optional focus node associated with this field.
+  FocusNode? focusNode;
+
+  /// Optional key for the inner [FormField], exposing its [FormFieldState].
+  GlobalKey<FormFieldState<num?>>? formFieldKey;
+
+  /// Optional flag the UI can use to hide/show the field.
+  ///
+  /// The misspelling is retained for compatibility with the existing API.
+  bool isHiden;
+
+  late final bool _ownsFocusNode;
+
   late final TextEditingController text;
-  late final FocusNode focusNode;
 
   // ── value + interaction ──
   num? _value;
@@ -52,7 +78,7 @@ class SuperNumericFieldController extends ChangeNotifier {
   // ── reads ──
   num? get value => _value;
   bool get touched => _touched;
-  bool get focused => focusNode.hasFocus;
+  bool get focused => focusNode?.hasFocus ?? false;
   num? get lowerBound =>
       NumericLogic.lowerBound(min: _min, allowNegative: _allowNegative);
 
@@ -117,6 +143,7 @@ class SuperNumericFieldController extends ChangeNotifier {
 
   /// Programmatically set the value (external reset). Re-formats when idle.
   void setValue(num? v) {
+    if (isFixed.value) return;
     _value = v;
     if (!focused) _writeText(_formatted());
     _emit();
@@ -130,6 +157,7 @@ class SuperNumericFieldController extends ChangeNotifier {
   void bumpLarge(int direction) => _applyDelta(direction * _largeStep);
 
   void _applyDelta(num delta) {
+    if (isFixed.value) return;
     final base = _value ?? 0;
     _value = NumericLogic.clampRound(
       base + delta,
@@ -192,7 +220,7 @@ class SuperNumericFieldController extends ChangeNotifier {
   }
 
   void _onFocusChanged() {
-    if (focusNode.hasFocus) {
+    if (focusNode?.hasFocus ?? false) {
       // Enter edit mode → raw digits.
       _writeText(_value == null ? '' : _value.toString());
     } else {
@@ -216,6 +244,10 @@ class SuperNumericFieldController extends ChangeNotifier {
     _reportValidity();
   }
 
+  void _onFixedChanged() {
+    notifyListeners();
+  }
+
   void _reportValidity() {
     final e = error;
     if (e != _lastReported) {
@@ -226,10 +258,12 @@ class SuperNumericFieldController extends ChangeNotifier {
 
   @override
   void dispose() {
+    isFixed.removeListener(_onFixedChanged);
+    isFixed.dispose();
     text.removeListener(_onTextChanged);
-    focusNode.removeListener(_onFocusChanged);
+    focusNode?.removeListener(_onFocusChanged);
     text.dispose();
-    focusNode.dispose();
+    if (_ownsFocusNode) focusNode?.dispose();
     super.dispose();
   }
 }

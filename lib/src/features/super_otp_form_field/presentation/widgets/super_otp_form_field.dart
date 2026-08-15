@@ -24,6 +24,7 @@ class SuperOTPFormField extends StatefulWidget {
   const SuperOTPFormField({
     super.key,
     this.controller,
+    this.allowFixed = false,
     this.initialValue = '',
     this.length = 6,
     this.onChanged,
@@ -90,6 +91,12 @@ class SuperOTPFormField extends StatefulWidget {
 
   /// Controller for the code, focus, and touched state.
   final SuperOTPFieldController? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
 
   /// Initial code when the widget creates its own controller.
   final String initialValue;
@@ -273,7 +280,7 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
   }
 
   void _requestFocus() {
-    if (widget.disabled) return;
+    if (widget.disabled || widget.readOnly || _controller.isFixed.value) return;
     if (widget.canRequestFocus) _controller.requestFocus();
     widget.onTap?.call();
   }
@@ -291,8 +298,9 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     return _OTPFormField(
-      key: ObjectKey(_controller),
+      key: _controller.formFieldKey ?? ObjectKey(_controller),
       initialValue: _controller.value,
       enabled: !widget.disabled,
       onSaved: widget.onSaved ?? widget.onSave,
@@ -326,6 +334,8 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
                 : null;
 
             return FieldShell(
+              allowFixed: widget.allowFixed,
+              isFixed: _controller.isFixed,
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
@@ -410,7 +420,7 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
       excludeSemantics: true,
       textField: true,
       enabled: !widget.disabled,
-      readOnly: widget.readOnly,
+      readOnly: widget.readOnly || _controller.isFixed.value,
       obscured: widget.obscureText,
       focusable: widget.canRequestFocus && !widget.disabled,
       focused: _controller.focused,
@@ -436,7 +446,7 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
                     controller: _controller.text,
                     focusNode: _controller.focusNode,
                     enabled: !widget.disabled,
-                    readOnly: widget.readOnly,
+                    readOnly: widget.readOnly || _controller.isFixed.value,
                     autofocus: widget.autofocus,
                     keyboardType:
                         widget.keyboardType ??

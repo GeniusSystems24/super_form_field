@@ -93,3 +93,47 @@ class BilingualRow extends StatelessWidget {
     );
   }
 }
+
+/// Gallery note used where fixed-state behavior needs contextual explanation.
+class FixedFeatureCallout extends StatelessWidget {
+  const FixedFeatureCallout({
+    super.key,
+    required this.title,
+    required this.message,
+  });
+
+  final String title;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = SuperThemeData.of(context).spacing;
+    final t = context.sffTheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).dividerColor),
+        borderRadius: BorderRadius.circular(spacing.radiusControl),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(spacing.space3),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.lock_outline_rounded, size: 18, color: t.fg3),
+            SizedBox(width: spacing.space2),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: context.superTextTheme.body.copyWith(color: t.fg1)),
+                  SizedBox(height: spacing.space1),
+                  Text(message, style: context.superTextTheme.caption.copyWith(color: t.fg3)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

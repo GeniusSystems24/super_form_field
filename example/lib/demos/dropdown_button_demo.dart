@@ -107,6 +107,7 @@ class _DropdownButtonDemoState extends State<DropdownButtonDemo> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SuperDropdownButtonFormField<String>(
+                  allowFixed: true,
                   controller: _warehouseController,
                   options: _warehouseOptions,
                   required: true,

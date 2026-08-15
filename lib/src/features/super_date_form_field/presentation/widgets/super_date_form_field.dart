@@ -33,6 +33,7 @@ class SuperDateFormField extends StatefulWidget {
   const SuperDateFormField({
     super.key,
     this.controller,
+    this.allowFixed = false,
     this.initialValue,
     this.onChanged,
     this.onValidity,
@@ -100,6 +101,12 @@ class SuperDateFormField extends StatefulWidget {
 
   /// External controller — when null, the field manages its own.
   final SuperDateFieldController? controller;
+
+  /// Shows a compact lock/unlock action on the label row.
+  ///
+  /// The action toggles the controller's `isFixed` notifier. Fixed fields keep
+  /// normal contrast while blocking user and controller-driven mutations.
+  final bool allowFixed;
 
   /// Seed value, used only when [controller] is null.
   final DateTime? initialValue;
@@ -245,7 +252,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly;
+  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
   bool get _showCalendar => widget.calendar && widget.format.hasDay;
 
   Future<void> _toggleCalendar() async {
@@ -311,11 +318,12 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
     final isMobile = SuperDeviceMode.of(context).isMobile;
 
     return FormField<DateTime?>(
-      key: ObjectKey(_controller),
+      key: _controller.formFieldKey ?? ObjectKey(_controller),
       initialValue: _controller.value,
       enabled: !widget.disabled,
       onSaved: widget.onSaved ?? widget.onSave,
@@ -338,7 +346,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
               ? l10n.validDate
               : widget.invalidMessage,
           keyboardEnabled: widget.keyboardShortcuts,
-          readOnly: widget.readOnly,
+          readOnly: widget.readOnly || _controller.isFixed.value,
           interactionMode: isMobile
               ? DateInputInteractionMode.mobile
               : DateInputInteractionMode.desktop,
@@ -443,6 +451,8 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 );
               },
               child: FieldShell(
+                allowFixed: widget.allowFixed,
+                isFixed: _controller.isFixed,
                 decoration: widget.decoration,
                 required: widget.required,
                 hasError: error != null,
@@ -466,7 +476,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                       controller: _controller.text,
                       focusNode: _controller.focusNode,
                       enabled: !widget.disabled,
-                      readOnly: widget.readOnly,
+                      readOnly: widget.readOnly || _controller.isFixed.value,
                       autofocus: widget.autofocus,
                       keyboardType:
                           widget.keyboardType ??
