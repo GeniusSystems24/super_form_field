@@ -4,6 +4,36 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.9.0] — 2026-08-15
+
+### Added
+
+- Added `SuperDropdownEditingController<T>` for programmatic typed selection in both `SuperDropdownButton<T>` and `SuperDropdownButtonFormField<T>`.
+
+- Added `SuperDropdownButton<T>`, a lightweight typed dropdown control built on
+  the package `FieldBox`, `FieldPopover`, `OptionMenu`, and `OptionTile`
+  foundation.
+- Added `SuperDropdownButtonFormField<T>` with `FormState.validate()`,
+  `FormState.save()`, reset, required-value validation, and the standard
+  `InputDecoration` shell.
+- Added `SuperPopupMenuButton<T>` for typed action menus with icon or custom
+  triggers, disabled options, keyboard activation, selected state, and shared
+  design-system menu styling.
+- Added gallery screens demonstrating controlled dropdowns, Form integration,
+  disabled options, icon popup triggers, and custom popup triggers.
+
+### Changed
+
+- Updated the public library exports and package documentation for the three new
+  controls.
+- Updated README and `SKILL.md` usage guidance for dropdown and popup-menu APIs.
+
+### Fixed
+
+- Fixed recursive `SuperPopupMenuButton<T>` submenu height so each nested level shrink-wraps to its items instead of inheriting the full overlay height; `menuMaxHeight` remains only the scrolling upper bound.
+
+- Fixed `SuperPopupMenuButton<T>` nested branches so cascading submenus are inserted as overlay entries above the root popover barrier; branch clicks/hover now open real child menus at arbitrary depth.
+
 ## [1.8.2] — 2026-08-10
 
 ### Changed

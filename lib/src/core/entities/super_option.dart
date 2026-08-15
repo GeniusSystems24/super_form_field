@@ -6,7 +6,8 @@
 // generic over the value type [T] so a field can carry domain values (enums,
 // ids, records) while presenting a human [label]. Optional [description] /
 // [icon] enrich the row; [disabled] makes the option un-pickable; [group] lets a
-// menu render section headers. Lives in `core` so every feature can read it
+// menu render section headers; [children] builds recursive popup-menu trees.
+// Lives in `core` so every feature can read it
 // without importing another feature.
 // ============================================================
 
@@ -22,6 +23,7 @@ class SuperOption<T> {
     this.icon,
     this.disabled = false,
     this.group,
+    this.children = const [],
   });
 
   /// The underlying domain value carried when this option is chosen.
@@ -41,6 +43,17 @@ class SuperOption<T> {
 
   /// Optional section name — menus group consecutive options under a header.
   final String? group;
+
+  /// Nested child options.
+  ///
+  /// `SuperPopupMenuButton<T>` interprets this recursively and renders a
+  /// cascading submenu for every option whose [children] list is not empty.
+  /// Form/select controls continue to treat their supplied option list as flat
+  /// and do not recursively flatten these children.
+  final List<SuperOption<T>> children;
+
+  /// Whether this option owns at least one nested child option.
+  bool get hasChildren => children.isNotEmpty;
 
   /// Convenience to build a list of options from `value → label` pairs.
   static List<SuperOption<V>> fromMap<V>(Map<V, String> entries) => entries

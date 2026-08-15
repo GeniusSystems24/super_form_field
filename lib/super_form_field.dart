@@ -1,7 +1,7 @@
 /// GeniusLink design-system form fields for Flutter.
 ///
-/// The package provides nine ERP-oriented inputs with one shared
-/// `InputDecoration` contract:
+/// The package provides ERP-oriented form inputs plus design-system dropdown
+/// and popup-menu controls with one shared visual language:
 ///
 /// * [SuperTextFormField] — text, email, phone, password, multiline, and
 ///   declaratively masked input.
@@ -17,6 +17,9 @@
 /// * [SuperMultiSelectFormField] — typed multi-select with removable chips.
 /// * [SuperBoolFormField] — toggle or checkbox with optional true-value gate.
 /// * [SuperChoiceFormField] — segmented, radio, or checkbox option group.
+/// * [SuperDropdownButton] — typed design-system dropdown button.
+/// * [SuperDropdownButtonFormField] — Form-integrated typed dropdown button.
+/// * [SuperPopupMenuButton] — anchored design-system action menu button.
 ///
 /// Decoration content comes from each field's `decoration` parameter. The
 /// package maps Material labels, hints, helpers, adornments, counters, and
@@ -60,3 +63,5 @@ export 'src/features/super_select_form_field/super_select_form_field.dart';
 export 'src/features/super_multi_select_form_field/super_multi_select_form_field.dart';
 export 'src/features/super_bool_form_field/super_bool_form_field.dart';
 export 'src/features/super_choice_form_field/super_choice_form_field.dart';
+export 'src/features/super_dropdown_button/super_dropdown_button.dart';
+export 'src/features/super_popup_menu_button/super_popup_menu_button.dart';

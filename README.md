@@ -16,6 +16,9 @@ The package includes:
 - `SuperMultiSelectFormField<T>`
 - `SuperBoolFormField`
 - `SuperChoiceFormField<T>`
+- `SuperDropdownButton<T>`
+- `SuperDropdownButtonFormField<T>`
+- `SuperPopupMenuButton<T>`
 
 ## Features
 
@@ -28,6 +31,7 @@ The package includes:
 - Validation errors displayed through compact error badges and tooltips.
 - Responsive date input for mobile, tablet, and desktop.
 - Searchable single-select and multi-select menus.
+- Design-system dropdown buttons and anchored popup action menus.
 - Picker-agnostic file attachments.
 - Light and dark theme support through `super_core`.
 - English and Arabic package localizations.
@@ -54,7 +58,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.8.2
+  super_form_field: ^1.9.0
 ```
 
 Import the public library:
@@ -589,6 +593,76 @@ Use:
 The value is always `List<T>`. For single-select use, read the first value or use
 `SuperChoiceFieldController<T>.single`.
 
+## Dropdown and popup menu buttons
+
+`SuperDropdownButton<T>` is a lightweight typed selector. It uses
+`SuperOption<T>` and the same `FieldBox`, `FieldPopover`, `OptionMenu`, and
+`OptionTile` foundation as the package's select fields. Use
+`SuperDropdownEditingController<T>` when the selection must also be changed
+programmatically.
+
+```dart
+final statusController = SuperDropdownEditingController<String>(
+  initialValue: 'active',
+);
+
+SuperDropdownButton<String>(
+  controller: statusController,
+  decoration: const InputDecoration(hintText: 'Select status…'),
+  options: const [
+    SuperOption(value: 'active', label: 'Active'),
+    SuperOption(value: 'hold', label: 'On hold'),
+  ],
+  onChanged: (value) {},
+);
+
+// Programmatic selection.
+statusController.setValue('hold');
+statusController.clear();
+```
+
+Dispose controllers owned by a `State` object from `State.dispose()`.
+
+`SuperDropdownButton<T>` still supports the existing `value` API when no
+controller is supplied. Do not provide a non-null `value` together with a
+controller.
+
+Use `SuperDropdownButtonFormField<T>` when the value must participate in a
+`Form`. It supports `controller`, `initialValue`, `validator`, `onSaved`,
+`required`, and `autovalidateMode` while preserving the package decoration and
+validation surface. Provide either `controller` or `initialValue`, not both.
+
+```dart
+final warehouseController = SuperDropdownEditingController<String>();
+
+SuperDropdownButtonFormField<String>(
+  controller: warehouseController,
+  required: true,
+  decoration: const InputDecoration(labelText: 'Warehouse'),
+  options: const [
+    SuperOption(value: 'riyadh', label: 'Riyadh'),
+    SuperOption(value: 'jeddah', label: 'Jeddah'),
+  ],
+  onChanged: (value) {},
+  onSaved: (value) {},
+);
+```
+
+`SuperPopupMenuButton<T>` is for actions rather than form selection. It accepts
+the same typed `SuperOption<T>` descriptors, supports disabled entries, and can
+use either its default icon trigger or any custom `child`.
+
+```dart
+SuperPopupMenuButton<String>(
+  tooltip: 'More actions',
+  options: const [
+    SuperOption(value: 'edit', label: 'Edit'),
+    SuperOption(value: 'archive', label: 'Archive'),
+  ],
+  onSelected: (action) {},
+);
+```
+
 ## Options
 
 `SuperOption<T>` separates the displayed label from the domain value:
@@ -791,7 +865,7 @@ comfortable control layout.
 ## Advanced public API
 
 The main barrel also exports lower-level building blocks for custom controls.
-Prefer the nine form-field widgets for normal application screens.
+Prefer the public form-field widgets and design-system controls for normal application screens.
 
 ### Shared values and helpers
 
@@ -842,8 +916,8 @@ flutter pub get
 flutter run
 ```
 
-The gallery demonstrates all nine fields, including dedicated phone-input and
-OTP-input screens. It covers international phone formatting, OTP paste and
+The gallery demonstrates all form fields plus the dropdown and popup-menu controls,
+including dedicated phone-input and OTP-input screens. It covers international phone formatting, OTP paste and
 one-time-code autofill, secure PIN display, controller-driven values,
 validation flows, typed `FormState.save()`, date formats, linked ranges, light
 and dark themes, and LTR and RTL layouts.

@@ -27,6 +27,8 @@ class OptionTile extends StatefulWidget {
     this.checkbox = false,
     this.disabled = false,
     this.arabic = false,
+    this.shrinkWrapWidth = false,
+    this.trailing,
     this.onTap,
   });
 
@@ -39,6 +41,15 @@ class OptionTile extends StatefulWidget {
   final bool checkbox;
   final bool disabled;
   final bool arabic;
+
+  /// Whether the row uses its natural horizontal content width.
+  ///
+  /// Keep this false for select/dropdown menus, where rows fill the menu.
+  /// Popup action menus enable it so the popup can size to its widest item.
+  final bool shrinkWrapWidth;
+
+  /// Optional trailing widget, e.g. a recursive submenu chevron.
+  final Widget? trailing;
   final VoidCallback? onTap;
 
   @override
@@ -82,6 +93,9 @@ class _OptionTileState extends State<OptionTile> {
               ),
             ),
             child: Row(
+              mainAxisSize: widget.shrinkWrapWidth
+                  ? MainAxisSize.min
+                  : MainAxisSize.max,
               children: [
                 if (widget.checkbox) ...[
                   _CheckSquare(checked: widget.selected),
@@ -95,7 +109,10 @@ class _OptionTileState extends State<OptionTile> {
                   ),
                   SizedBox(width: SuperThemeData.of(context).spacing.space2),
                 ],
-                Expanded(
+                Flexible(
+                  fit: widget.shrinkWrapWidth
+                      ? FlexFit.loose
+                      : FlexFit.tight,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -127,7 +144,10 @@ class _OptionTileState extends State<OptionTile> {
                     ],
                   ),
                 ),
-                if (!widget.checkbox && widget.selected) ...[
+                if (widget.trailing != null) ...[
+                  SizedBox(width: SuperThemeData.of(context).spacing.space2),
+                  widget.trailing!,
+                ] else if (!widget.checkbox && widget.selected) ...[
                   SizedBox(width: SuperThemeData.of(context).spacing.space2),
                   Icon(SffIcons.check, size: 16, color: cs.primary),
                 ],

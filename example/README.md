@@ -1,8 +1,8 @@
 # Super Form Field example
 
-A runnable gallery for `super_form_field` 1.8.2.
+A runnable gallery for `super_form_field` 1.9.0.
 
-The app demonstrates all nine fields with the unified `InputDecoration` API,
+The app demonstrates all form fields plus the dropdown and popup-menu controls with the unified `InputDecoration` API,
 GeniusLink `super_core` section components and `SuperAppBar`, light/dark themes,
 LTR/RTL layouts,
 validation submit sweeps, numeric stepping, mobile/desktop date interactions,

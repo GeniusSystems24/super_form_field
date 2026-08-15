@@ -13,10 +13,12 @@ import 'demos/attachment_field_demo.dart';
 import 'demos/bool_field_demo.dart';
 import 'demos/choice_field_demo.dart';
 import 'demos/date_field_demo.dart';
+import 'demos/dropdown_button_demo.dart';
 import 'demos/multi_select_field_demo.dart';
 import 'demos/numeric_field_demo.dart';
 import 'demos/otp_field_demo.dart';
 import 'demos/phone_field_demo.dart';
+import 'demos/popup_menu_button_demo.dart';
 import 'demos/select_field_demo.dart';
 import 'demos/text_field_demo.dart';
 
@@ -162,10 +164,22 @@ class _Launcher extends StatelessWidget {
       (_) => const DateFieldDemo(),
     ),
     _DemoItem(
+      'Super Dropdown Button',
+      'Controlled dropdown · Form integration · validation',
+      Icons.expand_circle_down_outlined,
+      (_) => const DropdownButtonDemo(),
+    ),
+    _DemoItem(
       'Super Select Field',
       'Searchable single-select dropdown · options',
       Icons.arrow_drop_down_circle_outlined,
       (_) => const SelectFieldDemo(),
+    ),
+    _DemoItem(
+      'Super Popup Menu Button',
+      'Icon trigger · custom trigger · typed actions',
+      Icons.more_horiz_rounded,
+      (_) => const PopupMenuButtonDemo(),
     ),
     _DemoItem(
       'Super Multi-Select Field',

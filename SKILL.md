@@ -1,17 +1,19 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.8.2: text, OTP, numeric,
-  attachment, date, select, multi-select, bool, and choice fields. Use the
+  Build GeniusLink Flutter forms with super_form_field 1.9.0: text, OTP, numeric,
+  attachment, date, select, multi-select, bool, and choice fields plus typed dropdown and popup-menu controls. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.8.2
+# Super Form Field 1.9.0
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
+
+The public API also includes `SuperDropdownButton<T>`, `SuperDropdownButtonFormField<T>`, `SuperDropdownEditingController<T>`, and `SuperPopupMenuButton<T>` for design-system dropdown and action-menu controls.
 
 ## Setup
 
@@ -262,6 +264,49 @@ Use `style` (`segmented`, `radio`, or `checkbox`), `multiple`,
 `minSelections`, and `maxSelections`. Checkbox style is multi-select; use
 `controller.single` for a single-pick controller value.
 
+## Dropdown and popup controls
+
+### SuperDropdownButton<T>
+
+Use this for lightweight typed selection when search and the full
+`SuperSelectFormField` lifecycle are not needed. Provide
+`List<SuperOption<T>>`, `onChanged`, and either a current `value` or a
+`SuperDropdownEditingController<T>`.
+
+Use the controller when the host must change or clear the selection
+programmatically. The controller stores `T?`, exposes `value`, `hasValue`,
+`setValue`, and `clear`, and must be disposed when owned by a `State`.
+Do not provide a non-null `value` together with a controller.
+
+The control uses `FieldBox + FieldPopover + OptionMenu + OptionTile`, so do not
+replace it with Material `DropdownButton` merely to get a dropdown affordance.
+
+`decoration` supplies hint/prefix/suffix/error chrome inside the button.
+`menuWidth == null` keeps the floating menu aligned to the trigger width.
+`onChanged == null` disables the control, matching Flutter button conventions.
+
+### SuperDropdownButtonFormField<T>
+
+Use this when the dropdown value belongs to an ancestor `Form`. It wraps
+`SuperDropdownButton<T>` in a typed `FormField<T>` and supports `controller`,
+`initialValue`, `validator`, `onSaved`, `autovalidateMode`, `required`, and
+`requiredMessage`. Provide either `controller` or `initialValue`, not both.
+Programmatic controller changes synchronize into `FormFieldState`, so
+validation and save callbacks see the current controller value. `Form.reset()`
+also restores the controller to the field's initial value.
+
+Use the field's `decoration` for label/helper/hint/error content. Do not create a
+second `FieldShell` around it.
+
+### SuperPopupMenuButton<T>
+
+Use this for record/action menus, not form selection. Supply typed
+`SuperOption<T>` entries and handle `onSelected`. Options may be disabled. The
+trigger can be the default icon button (`icon`) or any custom `child`; the menu
+still uses the package `FieldPopover + OptionMenu + OptionTile` surface. Use
+`initialValue` only when a selected/check state is meaningful for the action
+menu.
+
 ## Validation rules
 
 - A `Validator<T>` returns `String?`; the first error wins.
@@ -323,6 +368,8 @@ rules. Shared visual behavior belongs under `lib/src/core/foundation`;
 decoration mapping belongs in `field_decoration.dart`.
 
 ## Review checklist
+
+- New dropdown/popup controls use the shared `FieldBox`, `FieldPopover`, `OptionMenu`, and `OptionTile` foundation.
 
 - Every new example uses `decoration: InputDecoration(...)`.
 - OTP changes preserve paste, autofill, exact-length validation, and completion semantics.
