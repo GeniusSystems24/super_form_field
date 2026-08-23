@@ -117,8 +117,9 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
   }
 
   Future<void> _browse() async {
-    if (widget.disabled || _controller.isFixed.value || widget.onBrowse == null)
+    if (widget.disabled || _controller.isFixed.value || widget.onBrowse == null) {
       return;
+    }
     final picked = await widget.onBrowse!();
     if (picked.isNotEmpty) _controller.add(picked);
   }

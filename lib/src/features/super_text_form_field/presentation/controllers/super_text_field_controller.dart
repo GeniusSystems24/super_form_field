@@ -18,17 +18,16 @@ class SuperTextFieldController extends ChangeNotifier {
     String initialValue = '',
     bool obscured = false,
     bool isFixed = false,
-    FocusNode? focusNode,
+    this.focusNode,
     this.formFieldKey,
     this.isHiden = false,
   }) : text = TextEditingController(text: initialValue),
        _obscured = obscured,
-       isFixed = ValueNotifier<bool>(isFixed),
-       focusNode = focusNode {
-    _ownsFocusNode = this.focusNode == null;
-    this.focusNode ??= FocusNode();
+       isFixed = ValueNotifier<bool>(isFixed) {
+    _ownsFocusNode = focusNode == null;
+    focusNode ??= FocusNode();
     text.addListener(_onTextChanged);
-    this.focusNode?.addListener(_onFocusChanged);
+    focusNode?.addListener(_onFocusChanged);
     this.isFixed.addListener(_onFixedChanged);
   }
 

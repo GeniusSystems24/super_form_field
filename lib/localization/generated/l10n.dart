@@ -18,10 +18,8 @@ class SuperFormTranslation {
   static SuperFormTranslation? _current;
 
   static SuperFormTranslation get current {
-    assert(
-      _current != null,
-      'No instance of SuperFormTranslation was loaded. Try to initialize the SuperFormTranslation delegate before accessing SuperFormTranslation.current.',
-    );
+    assert(_current != null,
+        'No instance of SuperFormTranslation was loaded. Try to initialize the SuperFormTranslation delegate before accessing SuperFormTranslation.current.');
     return _current!;
   }
 
@@ -43,18 +41,14 @@ class SuperFormTranslation {
 
   static SuperFormTranslation of(BuildContext context) {
     final instance = SuperFormTranslation.maybeOf(context);
-    assert(
-      instance != null,
-      'No instance of SuperFormTranslation present in the widget tree. Did you add SuperFormTranslation.delegate in localizationsDelegates?',
-    );
+    assert(instance != null,
+        'No instance of SuperFormTranslation present in the widget tree. Did you add SuperFormTranslation.delegate in localizationsDelegates?');
     return instance!;
   }
 
   static SuperFormTranslation? maybeOf(BuildContext context) {
     return Localizations.of<SuperFormTranslation>(
-      context,
-      SuperFormTranslation,
-    );
+        context, SuperFormTranslation);
   }
 
   /// `This field is required`
@@ -169,12 +163,22 @@ class SuperFormTranslation {
 
   /// `Search...`
   String get search {
-    return Intl.message('Search...', name: 'search', desc: '', args: []);
+    return Intl.message(
+      'Search...',
+      name: 'search',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `No matches`
   String get noMatches {
-    return Intl.message('No matches', name: 'noMatches', desc: '', args: []);
+    return Intl.message(
+      'No matches',
+      name: 'noMatches',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Select...`
@@ -189,27 +193,52 @@ class SuperFormTranslation {
 
   /// `Clear`
   String get clear {
-    return Intl.message('Clear', name: 'clear', desc: '', args: []);
+    return Intl.message(
+      'Clear',
+      name: 'clear',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Show`
   String get show {
-    return Intl.message('Show', name: 'show', desc: '', args: []);
+    return Intl.message(
+      'Show',
+      name: 'show',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Hide`
   String get hide {
-    return Intl.message('Hide', name: 'hide', desc: '', args: []);
+    return Intl.message(
+      'Hide',
+      name: 'hide',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Increment`
   String get increment {
-    return Intl.message('Increment', name: 'increment', desc: '', args: []);
+    return Intl.message(
+      'Increment',
+      name: 'increment',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Decrement`
   String get decrement {
-    return Intl.message('Decrement', name: 'decrement', desc: '', args: []);
+    return Intl.message(
+      'Decrement',
+      name: 'decrement',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Open calendar`
@@ -224,12 +253,22 @@ class SuperFormTranslation {
 
   /// `Close`
   String get close {
-    return Intl.message('Close', name: 'close', desc: '', args: []);
+    return Intl.message(
+      'Close',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Select date`
   String get selectDate {
-    return Intl.message('Select date', name: 'selectDate', desc: '', args: []);
+    return Intl.message(
+      'Select date',
+      name: 'selectDate',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Pick a date from the calendar`
@@ -244,17 +283,32 @@ class SuperFormTranslation {
 
   /// `Today`
   String get today {
-    return Intl.message('Today', name: 'today', desc: '', args: []);
+    return Intl.message(
+      'Today',
+      name: 'today',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Enabled`
   String get enabled {
-    return Intl.message('Enabled', name: 'enabled', desc: '', args: []);
+    return Intl.message(
+      'Enabled',
+      name: 'enabled',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Disabled`
   String get disabled {
-    return Intl.message('Disabled', name: 'disabled', desc: '', args: []);
+    return Intl.message(
+      'Disabled',
+      name: 'disabled',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `This must be enabled to continue`
@@ -331,7 +385,12 @@ class SuperFormTranslation {
 
   /// `Browse`
   String get browse {
-    return Intl.message('Browse', name: 'browse', desc: '', args: []);
+    return Intl.message(
+      'Browse',
+      name: 'browse',
+      desc: '',
+      args: [],
+    );
   }
 
   /// ` or drag files here`
@@ -428,77 +487,152 @@ class SuperFormTranslation {
 
   /// `January`
   String get january {
-    return Intl.message('January', name: 'january', desc: '', args: []);
+    return Intl.message(
+      'January',
+      name: 'january',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `February`
   String get february {
-    return Intl.message('February', name: 'february', desc: '', args: []);
+    return Intl.message(
+      'February',
+      name: 'february',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `March`
   String get march {
-    return Intl.message('March', name: 'march', desc: '', args: []);
+    return Intl.message(
+      'March',
+      name: 'march',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `April`
   String get april {
-    return Intl.message('April', name: 'april', desc: '', args: []);
+    return Intl.message(
+      'April',
+      name: 'april',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `May`
   String get may {
-    return Intl.message('May', name: 'may', desc: '', args: []);
+    return Intl.message(
+      'May',
+      name: 'may',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `June`
   String get june {
-    return Intl.message('June', name: 'june', desc: '', args: []);
+    return Intl.message(
+      'June',
+      name: 'june',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `July`
   String get july {
-    return Intl.message('July', name: 'july', desc: '', args: []);
+    return Intl.message(
+      'July',
+      name: 'july',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `August`
   String get august {
-    return Intl.message('August', name: 'august', desc: '', args: []);
+    return Intl.message(
+      'August',
+      name: 'august',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `September`
   String get september {
-    return Intl.message('September', name: 'september', desc: '', args: []);
+    return Intl.message(
+      'September',
+      name: 'september',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `October`
   String get october {
-    return Intl.message('October', name: 'october', desc: '', args: []);
+    return Intl.message(
+      'October',
+      name: 'october',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `November`
   String get november {
-    return Intl.message('November', name: 'november', desc: '', args: []);
+    return Intl.message(
+      'November',
+      name: 'november',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `December`
   String get december {
-    return Intl.message('December', name: 'december', desc: '', args: []);
+    return Intl.message(
+      'December',
+      name: 'december',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Su`
   String get weekdaySundayNarrow {
-    return Intl.message('Su', name: 'weekdaySundayNarrow', desc: '', args: []);
+    return Intl.message(
+      'Su',
+      name: 'weekdaySundayNarrow',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Mo`
   String get weekdayMondayNarrow {
-    return Intl.message('Mo', name: 'weekdayMondayNarrow', desc: '', args: []);
+    return Intl.message(
+      'Mo',
+      name: 'weekdayMondayNarrow',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Tu`
   String get weekdayTuesdayNarrow {
-    return Intl.message('Tu', name: 'weekdayTuesdayNarrow', desc: '', args: []);
+    return Intl.message(
+      'Tu',
+      name: 'weekdayTuesdayNarrow',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `We`
@@ -523,7 +657,12 @@ class SuperFormTranslation {
 
   /// `Fr`
   String get weekdayFridayNarrow {
-    return Intl.message('Fr', name: 'weekdayFridayNarrow', desc: '', args: []);
+    return Intl.message(
+      'Fr',
+      name: 'weekdayFridayNarrow',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Sa`
@@ -568,12 +707,22 @@ class SuperFormTranslation {
 
   /// `Reset`
   String get demoReset {
-    return Intl.message('Reset', name: 'demoReset', desc: '', args: []);
+    return Intl.message(
+      'Reset',
+      name: 'demoReset',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Not saved`
   String get demoNotSaved {
-    return Intl.message('Not saved', name: 'demoNotSaved', desc: '', args: []);
+    return Intl.message(
+      'Not saved',
+      name: 'demoNotSaved',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Not saved yet`
@@ -998,7 +1147,12 @@ class SuperFormTranslation {
 
   /// `PIN`
   String get otpPinResultLabel {
-    return Intl.message('PIN', name: 'otpPinResultLabel', desc: '', args: []);
+    return Intl.message(
+      'PIN',
+      name: 'otpPinResultLabel',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Backup code`

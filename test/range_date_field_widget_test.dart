@@ -55,7 +55,7 @@ void main() {
         theme: _testTheme(),
         home: Scaffold(
           body: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: SuperRangeDateFormField(),
           ),
         ),
@@ -85,7 +85,7 @@ void main() {
         theme: _testTheme(),
         home: Scaffold(
           body: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: SuperRangeDateFormField(),
           ),
         ),
@@ -108,7 +108,7 @@ void main() {
         theme: _testTheme(),
         home: Scaffold(
           body: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: SuperRangeDateFormField(
               isStartFixed: true,
               isEndFixed: false,

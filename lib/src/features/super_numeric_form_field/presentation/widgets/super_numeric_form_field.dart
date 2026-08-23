@@ -8,7 +8,6 @@
 // through the suffix ErrorBadge. Includes a +/- stepper and prefix/suffix units.
 // ============================================================
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

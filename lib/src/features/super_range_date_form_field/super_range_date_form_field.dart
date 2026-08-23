@@ -1,4 +1,5 @@
 /// Public barrel for the date-range form-field feature.
+library;
 export 'domain/entities/super_date_range.dart';
 export 'domain/entities/super_date_range_suggestion.dart';
 export 'domain/usecases/range_date_logic.dart';

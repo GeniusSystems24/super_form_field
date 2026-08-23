@@ -29,9 +29,9 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
     this.allowFixed = false,
     T? initialValue,
     ValueChanged<T?>? onChanged,
-    FormFieldSetter<T>? onSaved,
+    super.onSaved,
     FormFieldValidator<T>? validator,
-    AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
+    AutovalidateMode super.autovalidateMode = AutovalidateMode.disabled,
     InputDecoration decoration = const InputDecoration(),
     bool required = false,
     String requiredMessage = 'This field is required.',
@@ -56,9 +56,7 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
        super(
          key: controller?.formFieldKey ?? key,
          initialValue: controller?.value ?? initialValue,
-         onSaved: onSaved,
          enabled: !disabled && onChanged != null,
-         autovalidateMode: autovalidateMode,
          validator: (value) {
            if (required && value == null) return requiredMessage;
            return validator?.call(value);

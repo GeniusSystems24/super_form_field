@@ -41,23 +41,22 @@ class SuperDateFieldController extends ChangeNotifier {
     DateInputUseCase<MobileDateEditRequest> mobileInputUseCase =
         const MobileDateInputUseCase(),
     bool isFixed = false,
-    FocusNode? focusNode,
+    this.focusNode,
     this.formFieldKey,
     this.isHiden = false,
   }) : _value = initialValue == null ? null : DateLogic.dateOnly(initialValue),
        _interactionMode = interactionMode,
        _desktopInputUseCase = desktopInputUseCase,
        _mobileInputUseCase = mobileInputUseCase,
-       isFixed = ValueNotifier<bool>(isFixed),
-       focusNode = focusNode {
+       isFixed = ValueNotifier<bool>(isFixed) {
     _dispFromValue();
     text = TextEditingController(text: _composeString().text);
     _lastComposed = text.text;
-    _ownsFocusNode = this.focusNode == null;
-    this.focusNode ??= FocusNode(onKeyEvent: _onKey);
-    if (!_ownsFocusNode) this.focusNode?.onKeyEvent = _onKey;
+    _ownsFocusNode = focusNode == null;
+    focusNode ??= FocusNode(onKeyEvent: _onKey);
+    if (!_ownsFocusNode) focusNode?.onKeyEvent = _onKey;
     text.addListener(_onTextChanged);
-    this.focusNode?.addListener(_onFocusChanged);
+    focusNode?.addListener(_onFocusChanged);
     this.isFixed.addListener(_onFixedChanged);
   }
 
