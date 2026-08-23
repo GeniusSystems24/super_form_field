@@ -99,9 +99,7 @@ class _ControllerStateDemoState extends State<ControllerStateDemo> {
                     builder: (context, fixed, _) => OutlinedButton.icon(
                       onPressed: () => _toggleFixed(_textController.isFixed),
                       icon: Icon(
-                        fixed
-                            ? Icons.lock_rounded
-                            : Icons.lock_open_rounded,
+                        fixed ? Icons.lock_rounded : Icons.lock_open_rounded,
                       ),
                       label: Text(fixed ? 'Unfix' : 'Fix'),
                     ),

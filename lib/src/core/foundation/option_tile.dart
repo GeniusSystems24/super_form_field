@@ -110,9 +110,7 @@ class _OptionTileState extends State<OptionTile> {
                   SizedBox(width: SuperThemeData.of(context).spacing.space2),
                 ],
                 Flexible(
-                  fit: widget.shrinkWrapWidth
-                      ? FlexFit.loose
-                      : FlexFit.tight,
+                  fit: widget.shrinkWrapWidth ? FlexFit.loose : FlexFit.tight,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

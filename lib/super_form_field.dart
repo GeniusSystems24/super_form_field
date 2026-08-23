@@ -13,6 +13,8 @@
 /// * [SuperDateFormField] — responsive segmented date entry with mobile
 ///   software-keyboard handling, a bottom-sheet picker, and tablet/desktop
 ///   hardware-key navigation with an anchored calendar.
+/// * [SuperRangeDateFormField] — typed start/end date ranges with two-calendar
+///   selection, fixed boundaries, min/max constraints, and configurable presets.
 /// * [SuperSelectFormField] — searchable typed single-select.
 /// * [SuperMultiSelectFormField] — typed multi-select with removable chips.
 /// * [SuperBoolFormField] — toggle or checkbox with optional true-value gate.
@@ -27,7 +29,7 @@
 /// control geometry, focus treatment, typography, and error badges.
 ///
 /// Validation errors are quiet until touch/blur unless `forceError` is enabled.
-/// Text, OTP, numeric, date, select, and multi-select fields expose Material
+/// Text, OTP, numeric, date, range-date, select, and multi-select fields expose Material
 /// keyboard and editing callbacks and participate in `FormState.validate()` /
 /// `save()` with typed values. All fields support light/dark themes and
 /// LTR/RTL layouts.
@@ -59,6 +61,7 @@ export 'src/features/super_otp_form_field/super_otp_form_field.dart';
 export 'src/features/super_numeric_form_field/super_numeric_form_field.dart';
 export 'src/features/super_attachment_form_field/super_attachment_form_field.dart';
 export 'src/features/super_date_form_field/super_date_form_field.dart';
+export 'src/features/super_range_date_form_field/super_range_date_form_field.dart';
 export 'src/features/super_select_form_field/super_select_form_field.dart';
 export 'src/features/super_multi_select_form_field/super_multi_select_form_field.dart';
 export 'src/features/super_bool_form_field/super_bool_form_field.dart';

@@ -466,16 +466,11 @@ class _PopupTreeBranchState<T> extends State<_PopupTreeBranch<T>> {
           child: CompositedTransformFollower(
             link: _link,
             showWhenUnlinked: false,
-            targetAnchor: _openToStart
-                ? Alignment.topLeft
-                : Alignment.topRight,
+            targetAnchor: _openToStart ? Alignment.topLeft : Alignment.topRight,
             followerAnchor: _openToStart
                 ? Alignment.topRight
                 : Alignment.topLeft,
-            offset: Offset(
-              _openToStart ? -_gap : _gap,
-              _verticalOffset,
-            ),
+            offset: Offset(_openToStart ? -_gap : _gap, _verticalOffset),
             child: _PopupTreeSurface<T>(
               options: widget.option.children,
               selectedValue: widget.selectedValue,
@@ -643,10 +638,7 @@ class _PopupTreeSurface<T> extends StatelessWidget {
   }
 }
 
-bool _containsSelectedLeaf<T>(
-  List<SuperOption<T>> options,
-  T? selectedValue,
-) {
+bool _containsSelectedLeaf<T>(List<SuperOption<T>> options, T? selectedValue) {
   for (final option in options) {
     if (option.hasChildren) {
       if (_containsSelectedLeaf(option.children, selectedValue)) {

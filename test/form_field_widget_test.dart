@@ -51,7 +51,9 @@ void main() {
     expect(fields, hasLength(9));
   });
 
-  testWidgets('text fields preserve SuperTextTheme font families', (tester) async {
+  testWidgets('text fields preserve SuperTextTheme font families', (
+    tester,
+  ) async {
     final textTheme = SuperTextTheme(
       bodyFont: const TextStyle(fontFamily: 'CustomBody'),
       otherFont: const TextStyle(fontFamily: 'CustomDisplay'),

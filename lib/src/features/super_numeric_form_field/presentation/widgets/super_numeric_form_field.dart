@@ -321,9 +321,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             FieldIconButton(
-                              key: const ValueKey(
-                                'super_numeric_decrement',
-                              ),
+                              key: const ValueKey('super_numeric_decrement'),
                               icon: SffIcons.minus,
                               tooltip: l10n.decrement,
                               bordered: true,
@@ -336,9 +334,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                                   : () => _controller.bump(-1),
                             ),
                             FieldIconButton(
-                              key: const ValueKey(
-                                'super_numeric_increment',
-                              ),
+                              key: const ValueKey('super_numeric_increment'),
                               icon: SffIcons.plus,
                               tooltip: l10n.increment,
                               bordered: true,
@@ -356,9 +352,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           child: SizedBox(
                             width: stepperBorderSide.width,
                             height: controlHeight,
-                            child: ColoredBox(
-                              color: stepperBorderSide.color,
-                            ),
+                            child: ColoredBox(color: stepperBorderSide.color),
                           ),
                         ),
                       ],
@@ -401,7 +395,8 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           controller: _controller.text,
                           focusNode: _controller.focusNode,
                           enabled: !widget.disabled,
-                          readOnly: widget.readOnly || _controller.isFixed.value,
+                          readOnly:
+                              widget.readOnly || _controller.isFixed.value,
                           autofocus: widget.autofocus,
                           keyboardType:
                               widget.keyboardType ??
@@ -446,8 +441,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                           cursorHeight: widget.cursorHeight,
                           cursorRadius: widget.cursorRadius,
                           cursorColor: widget.cursorColor ?? cs.primary,
-                          cursorErrorColor:
-                              widget.cursorErrorColor ?? cs.error,
+                          cursorErrorColor: widget.cursorErrorColor ?? cs.error,
                           style: SffDecoration.mergeStyle(
                             context.sffTextTheme.mono.copyWith(color: t.fg1),
                             widget.style,

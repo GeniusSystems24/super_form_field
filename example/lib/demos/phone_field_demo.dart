@@ -89,8 +89,7 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
             children: [
               SuperSectionCard(
                 title: 'International number',
-                subtitle:
-                    'Phone keyboard with common international characters',
+                subtitle: 'Phone keyboard with common international characters',
                 marker: SuperMarker.identity,
                 child: SuperTextFormField(
                   allowFixed: true,
@@ -130,8 +129,7 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                   decoration: const InputDecoration(
                     labelText: 'Yemen mobile number',
                     hintText: '7XX XXX XXX',
-                    helperText:
-                        'Valid prefixes: 70, 71, 73, 77, or 78.',
+                    helperText: 'Valid prefixes: 70, 71, 73, 77, or 78.',
                     prefixText: '+967 ',
                     prefixIcon: Icon(Icons.phone_android_rounded),
                   ),
@@ -141,17 +139,14 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                   mask: '## ### ####',
                   pattern: _yemenMobilePattern,
                   patternMessage: 'Enter a valid Yemeni mobile number.',
-                  autofillHints: const [
-                    AutofillHints.telephoneNumberNational,
-                  ],
+                  autofillHints: const [AutofillHints.telephoneNumberNational],
                   textInputAction: TextInputAction.done,
                   keyboardAppearance: Theme.of(context).brightness,
                   onFieldSubmitted: (_) => _submit(),
                   onTapOutside: (_) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  onUnmaskedSaved: (value) => _savedYemenNumber = value == null
-                      ? null
-                      : '+967$value',
+                  onUnmaskedSaved: (value) =>
+                      _savedYemenNumber = value == null ? null : '+967$value',
                   forceError: _forceError,
                 ),
               ),
@@ -168,10 +163,7 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                       value: _savedInternationalNumber,
                     ),
                     SizedBox(height: spacing.space3),
-                    _SavedValue(
-                      label: 'Yemen',
-                      value: _savedYemenNumber,
-                    ),
+                    _SavedValue(label: 'Yemen', value: _savedYemenNumber),
                   ],
                 ),
               ),

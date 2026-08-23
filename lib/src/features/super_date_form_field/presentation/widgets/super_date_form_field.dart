@@ -252,7 +252,8 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
+  bool get _editable =>
+      !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
   bool get _showCalendar => widget.calendar && widget.format.hasDay;
 
   Future<void> _toggleCalendar() async {
@@ -433,9 +434,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                           ? (alignEnd
                                 ? Alignment.bottomRight
                                 : Alignment.bottomLeft)
-                          : (alignEnd
-                                ? Alignment.topRight
-                                : Alignment.topLeft),
+                          : (alignEnd ? Alignment.topRight : Alignment.topLeft),
                       offset: Offset(0, _above ? -6 : 6),
                       child: Directionality(
                         textDirection: TextDirection.ltr,
@@ -490,8 +489,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                         else
                           LengthLimitingTextInputFormatter(10),
                       ],
-                      textDirection:
-                          widget.textDirection ?? TextDirection.ltr,
+                      textDirection: widget.textDirection ?? TextDirection.ltr,
                       textInputAction: widget.textInputAction,
                       textCapitalization: widget.textCapitalization,
                       textAlign: widget.textAlign,

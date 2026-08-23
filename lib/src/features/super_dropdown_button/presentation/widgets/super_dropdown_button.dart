@@ -97,8 +97,7 @@ class SuperDropdownButton<T> extends StatefulWidget {
   final VoidCallback? onTap;
 
   @override
-  State<SuperDropdownButton<T>> createState() =>
-      _SuperDropdownButtonState<T>();
+  State<SuperDropdownButton<T>> createState() => _SuperDropdownButtonState<T>();
 }
 
 class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
@@ -106,7 +105,10 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
   bool _ownsFocusNode = false;
   bool _open = false;
 
-  bool get _enabled => !widget.disabled && !(widget.controller?.isFixed.value ?? false) && widget.onChanged != null;
+  bool get _enabled =>
+      !widget.disabled &&
+      !(widget.controller?.isFixed.value ?? false) &&
+      widget.onChanged != null;
 
   T? get _effectiveValue => widget.controller?.value ?? widget.value;
 
@@ -249,7 +251,8 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
       widget.decoration,
       textStyle: selectedStyle,
     );
-    final leading = explicitLeading ??
+    final leading =
+        explicitLeading ??
         (selected?.icon == null ? null : Icon(selected!.icon));
     final trailing = <Widget>[
       ...SffDecoration.buildTrailing(
@@ -260,7 +263,8 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
       AnimatedRotation(
         duration: SuperThemeData.of(context).tokens.durFast,
         turns: _open ? 0.5 : 0,
-        child: widget.icon ??
+        child:
+            widget.icon ??
             Icon(Icons.keyboard_arrow_down_rounded, size: 20, color: t.fg3),
       ),
     ];

@@ -11,8 +11,7 @@ void main() {
         textTheme: textTheme,
         primaryTextTheme: textTheme,
       ),
-      localizationsDelegates:
-          SuperFormLocalizations.localizationsDelegates,
+      localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
       supportedLocales: SuperFormLocalizations.supportedLocales,
       home: Scaffold(
         body: Padding(padding: const EdgeInsets.all(24), child: child),
@@ -37,9 +36,7 @@ void main() {
           child: SuperOTPFormField(
             controller: controller,
             length: 6,
-            decoration: const InputDecoration(
-              labelText: 'Verification code',
-            ),
+            decoration: const InputDecoration(labelText: 'Verification code'),
             onCompleted: (value) => completed = value,
             onSaved: (value) => saved = value,
           ),

@@ -225,7 +225,8 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
+  bool get _editable =>
+      !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
 
   void _handleTap() {
     widget.onTap?.call();

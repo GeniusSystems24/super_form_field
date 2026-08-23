@@ -30,7 +30,6 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
     this.isFixed.addListener(_onFixedChanged);
   }
 
-
   /// Guards user and controller-driven mutations when set to `true`.
   final ValueNotifier<bool> isFixed;
 
@@ -44,6 +43,7 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
   ///
   /// The misspelling is retained for compatibility with the existing API.
   bool isHiden;
+
   /// Backing controller for the in-menu search box.
   late final TextEditingController searchText;
 

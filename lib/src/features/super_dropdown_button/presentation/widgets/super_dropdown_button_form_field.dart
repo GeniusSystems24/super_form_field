@@ -116,8 +116,7 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
   final bool allowFixed;
 
   @override
-  FormFieldState<T> createState() =>
-      _SuperDropdownButtonFormFieldState<T>();
+  FormFieldState<T> createState() => _SuperDropdownButtonFormFieldState<T>();
 }
 
 class _SuperDropdownButtonFormFieldState<T> extends FormFieldState<T> {

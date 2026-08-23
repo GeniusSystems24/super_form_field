@@ -119,9 +119,7 @@ class _PopupMenuButtonDemoState extends State<PopupMenuButtonDemo> {
       description: 'Disabled branch',
       icon: Icons.history_rounded,
       disabled: true,
-      children: [
-        SuperOption(value: 'legacy_import', label: 'Legacy import'),
-      ],
+      children: [SuperOption(value: 'legacy_import', label: 'Legacy import')],
     ),
     SuperOption(
       value: 'settings',

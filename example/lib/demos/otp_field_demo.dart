@@ -215,10 +215,7 @@ class _OTPFieldDemoState extends State<OTPFieldDemo> {
                     TextButton.icon(
                       onPressed: _reset,
                       icon: const Icon(Icons.restart_alt_rounded),
-                      label: Text(
-                        'Reset',
-                        style: TextStyle(color: theme.fg2),
-                      ),
+                      label: Text('Reset', style: TextStyle(color: theme.fg2)),
                     ),
                   ],
                 ),

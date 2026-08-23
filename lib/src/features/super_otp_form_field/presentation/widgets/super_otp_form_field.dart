@@ -324,7 +324,8 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
                     widget.decoration,
                     _controller.visibleError,
                   );
-            final counter = widget.showCounter &&
+            final counter =
+                widget.showCounter &&
                     widget.decoration.counter == null &&
                     widget.decoration.counterText == null
                 ? _OTPCount(
@@ -413,7 +414,10 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
   Widget _buildOTPInput(BuildContext context, String? error) {
     final label = widget.decoration.labelText;
     final semanticValue = widget.obscureText
-        ? List.filled(_controller.value.length, widget.obscuringCharacter).join()
+        ? List.filled(
+            _controller.value.length,
+            widget.obscuringCharacter,
+          ).join()
         : _controller.value;
 
     return Semantics(
@@ -429,7 +433,8 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
       value: semanticValue,
       onTap: widget.disabled ? null : _requestFocus,
       child: MouseRegion(
-        cursor: widget.mouseCursor ??
+        cursor:
+            widget.mouseCursor ??
             (widget.disabled
                 ? SystemMouseCursors.basic
                 : SystemMouseCursors.text),
@@ -513,17 +518,13 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final availableWidth = constraints.maxWidth;
-        final totalGap =
-            gap * math.max(0, widget.length - 1).toDouble();
+        final totalGap = gap * math.max(0, widget.length - 1).toDouble();
         final fittedWidth = availableWidth.isFinite
             ? (availableWidth - totalGap) / widget.length
             : preferredWidth;
         final cellWidth = availableWidth.isFinite
             ? math
-                  .min(
-                    preferredWidth,
-                    math.max(32.0, fittedWidth).toDouble(),
-                  )
+                  .min(preferredWidth, math.max(32.0, fittedWidth).toDouble())
                   .toDouble()
             : preferredWidth;
         final contentWidth = (cellWidth * widget.length) + totalGap;
@@ -696,10 +697,7 @@ class _OTPCell extends StatelessWidget {
       decoration: BoxDecoration(
         color: fillColor,
         borderRadius: borderRadius,
-        border: Border.all(
-          color: borderColor,
-          width: active ? 1.8 : 1.4,
-        ),
+        border: Border.all(color: borderColor, width: active ? 1.8 : 1.4),
         boxShadow: hasError
             ? [
                 BoxShadow(

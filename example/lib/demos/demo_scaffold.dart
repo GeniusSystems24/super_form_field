@@ -50,7 +50,10 @@ class DemoPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: SuperThemeData.of(context).spacing.space2),
-                  Text(title, style: context.superTextTheme.h1.copyWith(color: t.fg1)),
+                  Text(
+                    title,
+                    style: context.superTextTheme.h1.copyWith(color: t.fg1),
+                  ),
                   SizedBox(height: SuperThemeData.of(context).spacing.space8),
                   for (var index = 0; index < children.length; index++) ...[
                     children[index],
@@ -125,9 +128,17 @@ class FixedFeatureCallout extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: context.superTextTheme.body.copyWith(color: t.fg1)),
+                  Text(
+                    title,
+                    style: context.superTextTheme.body.copyWith(color: t.fg1),
+                  ),
                   SizedBox(height: spacing.space1),
-                  Text(message, style: context.superTextTheme.caption.copyWith(color: t.fg3)),
+                  Text(
+                    message,
+                    style: context.superTextTheme.caption.copyWith(
+                      color: t.fg3,
+                    ),
+                  ),
                 ],
               ),
             ),

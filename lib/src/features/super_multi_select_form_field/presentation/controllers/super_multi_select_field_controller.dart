@@ -30,7 +30,6 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
     this.isFixed.addListener(_onFixedChanged);
   }
 
-
   /// Guards user and controller-driven mutations when set to `true`.
   final ValueNotifier<bool> isFixed;
 

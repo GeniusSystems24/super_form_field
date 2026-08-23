@@ -12,6 +12,7 @@ The package includes:
 - `SuperNumericFormField`
 - `SuperAttachmentFormField`
 - `SuperDateFormField`
+- `SuperRangeDateFormField`
 - `SuperSelectFormField<T>`
 - `SuperMultiSelectFormField<T>`
 - `SuperBoolFormField`
@@ -30,6 +31,7 @@ The package includes:
 - Custom validators with first-error-wins behavior.
 - Validation errors displayed through compact error badges and tooltips.
 - Responsive date input for mobile, tablet, and desktop.
+- Responsive two-calendar date-range selection with configurable presets.
 - Searchable single-select and multi-select menus.
 - Design-system dropdown buttons and anchored popup action menus.
 - Picker-agnostic file attachments.
@@ -58,7 +60,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.9.0
+  super_form_field: ^1.11.0
 ```
 
 Import the public library:
@@ -482,6 +484,100 @@ disable those behaviors.
 The leading calendar icon is used when no leading decoration is supplied. Use
 `prefixIcon` to replace it, or `prefixIcon: SizedBox.shrink()` to suppress it.
 
+### Range date field
+
+<!-- SUPER_RANGE_DATE_PICKER_SYNCFUSION_INSPIRED_V1 -->
+`SuperRangeDatePicker` uses a responsive enterprise date-range layout inspired
+by the interaction model of mature multi-view pickers: desktop uses two adjacent
+months with a vertical quick-range rail, tablet keeps two months with horizontal
+preset chips, and mobile switches to one swipeable month with touch-sized cells.
+Range selection is drawn as a continuous tinted band with circular start/end
+anchors, while today, disabled dates, fixed boundaries, `minDate`/`maxDate`, and
+RTL navigation retain the package theme and rules. The implementation is native
+to `super_form_field`; it does not require the Syncfusion package.
+
+<!-- SUPER_RANGE_DATE_PICKER_FIRST_DAY_OF_WEEK_V1 -->
+The calendar week start is configurable with `firstDayOfWeek`. Use Dart's
+weekday constants so the intent remains explicit; the default stays Sunday for
+backward-compatible rendering:
+
+```dart
+SuperRangeDateFormField(
+  firstDayOfWeek: DateTime.monday,
+);
+
+// The standalone picker exposes the same setting.
+SuperRangeDatePicker(
+  firstDayOfWeek: DateTime.saturday,
+  onApply: (range) {},
+);
+```
+
+`firstDayOfWeek` accepts `DateTime.monday` through `DateTime.sunday` and rotates
+both the weekday header and the actual date grid. It does not change keyboard
+date parsing, formatting, validation, `minDate`, or `maxDate`.
+
+`SuperRangeDateFormField` stores a typed `SuperDateRange` and renders **two
+separate keyboard-editable `SuperDateFormField` inputs**: one for the start date
+and one for the end date. Tapping or focusing either input only edits that date;
+the range-selection surface opens **only** from the trailing calendar action.
+Because the boundary inputs reuse `SuperDateFormField`, they share its segmented
+keyboard entry, ISO parsing/formatting, malformed-date behavior, and min/max
+validation.
+
+```dart
+final controller = SuperRangeDateFieldController(
+  initialValue: SuperDateRange(
+    start: DateTime(2026, 1, 1),
+    end: DateTime(2026, 3, 31),
+  ),
+);
+
+SuperRangeDateFormField(
+  controller: controller,
+  decoration: const InputDecoration(
+    labelText: 'Reporting period',
+    helperText: 'Type either date or use the calendar action.',
+  ),
+  startDecoration: const InputDecoration(labelText: 'Start date'),
+  endDecoration: const InputDecoration(labelText: 'End date'),
+  isStartFixed: true,
+  minDate: DateTime(2026, 1, 1),
+  maxDate: DateTime(2026, 12, 31),
+);
+```
+
+`isStartFixed: true` makes only the start input read-only and preserves that
+boundary during picker/preset changes. `isEndFixed: true` does the same for the
+end input. `minDate` and `maxDate` validate keyboard-entered values and constrain
+calendar/preset selection. A range picked from the selection form is written
+back into both visible date inputs, keeping controller state and text buffers
+synchronized.
+
+The picker uses the package defaults when `suggestions` is null:
+Past 7 days, Previous 30 days, Previous 6 months, and Previous year. Pass an
+empty list to remove all presets, replace them with custom resolvers, or
+extend the defaults:
+
+```dart
+SuperRangeDateFormField(
+  suggestions: [
+    ...SuperDateRangeSuggestion.defaults,
+    SuperDateRangeSuggestion(
+      label: 'Month to date',
+      resolve: (now) => SuperDateRange(
+        start: DateTime(now.year, now.month, 1),
+        end: DateTime(now.year, now.month, now.day),
+      ),
+    ),
+  ],
+);
+```
+
+When both boundaries are fixed, neither keyboard entry nor the picker can
+change them. Presets are constrained by the same fixed-boundary, minimum-date,
+maximum-date, and start-before-end rules as manual calendar selection.
+
 ### Select field
 
 `SuperSelectFormField<T>` is a typed single-select control with optional search,
@@ -719,7 +815,7 @@ Errors remain visually quiet until the field is touched, unless `forceError` is
 true. `onValidity` reports the current raw error whenever it changes.
 
 `SuperTextFormField`, `SuperOTPFormField`, `SuperNumericFormField`,
-`SuperDateFormField`, `SuperSelectFormField`, and
+`SuperDateFormField`, `SuperRangeDateFormField`, `SuperSelectFormField`, and
 `SuperMultiSelectFormField` also participate in an
 ancestor `Form`. `FormState.validate()` uses their existing typed validator
 chains, and `FormState.save()` invokes `onSaved` (or the `onSave` compatibility
@@ -738,6 +834,7 @@ controller when imperative access is required.
 | `SuperNumericFormField` | `SuperNumericFieldController` | `num?` |
 | `SuperAttachmentFormField` | `SuperAttachmentFieldController` | `List<SuperFile>` |
 | `SuperDateFormField` | `SuperDateFieldController` | `DateTime?` |
+| `SuperRangeDateFormField` | `SuperRangeDateFieldController` | `SuperDateRange?` |
 | `SuperSelectFormField<T>` | `SuperSelectFieldController<T>` | `T?` |
 | `SuperMultiSelectFormField<T>` | `SuperMultiSelectFieldController<T>` | `List<T>` |
 | `SuperBoolFormField` | `SuperBoolFieldController` | `bool` |

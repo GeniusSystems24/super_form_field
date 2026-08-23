@@ -32,11 +32,7 @@ class _DropdownButtonDemoState extends State<DropdownButtonDemo> {
       label: 'On hold',
       icon: Icons.pause_circle_outline,
     ),
-    SuperOption(
-      value: 'closed',
-      label: 'Closed',
-      icon: Icons.archive_outlined,
-    ),
+    SuperOption(value: 'closed', label: 'Closed', icon: Icons.archive_outlined),
   ];
 
   static const _warehouseOptions = [

@@ -116,7 +116,8 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
+  bool get _editable =>
+      !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
 
   @override
   Widget build(BuildContext context) {

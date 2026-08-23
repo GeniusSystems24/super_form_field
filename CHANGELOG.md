@@ -4,6 +4,53 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.11.0] — 2026-08-23
+
+- Simplified `SuperRangeDatePicker` by removing the internal Start/End boundary cards and connector; the picker footer now contains only Cancel, Reset, and Apply actions.
+- Made `SuperRangeDateFormField` and the range picker's Start/End boundary controls responsive, automatically switching between one-row and two-row layouts based on available width.
+- Fixed `SuperRangeDatePicker` so dimmed/outside-month days are display-only and cannot be clicked, hovered, or selected.
+- Compact desktop range picker layout: removes fixed-height whitespace, uses a content-driven preset/calendar body, reduces the anchored overlay width, and refreshes Cancel/Reset/Apply button density and hierarchy.
+- Matched `SuperRangeDatePicker` desktop calendar typography, day-cell, and navigation sizing to the compact `MiniCalendar` density.
+
+### Added
+
+<!-- SUPER_RANGE_DATE_PICKER_FIRST_DAY_OF_WEEK_V1 -->
+- Added configurable `firstDayOfWeek` support to both `SuperRangeDateFormField` and `SuperRangeDatePicker`. Use `DateTime.monday` through `DateTime.sunday`; weekday headers and calendar-grid alignment now rotate together on desktop, tablet, and mobile.
+
+- Added `SuperRangeDateFormField` with a typed `SuperDateRange` value and a
+  dedicated `SuperRangeDateFieldController` following the package controller
+  metadata, validation, focus, hidden-state, and Form integration conventions.
+- Added independent `isStartFixed` and `isEndFixed` boundary guards. A fixed
+  boundary cannot be changed by manual calendar selection, preset selection,
+  clear actions, or controller mutations; fixing both makes the range immutable.
+- Added `minDate` / `maxDate` range constraints for manual selection,
+  programmatic controller edits, validation, and predefined suggestions.
+- Added a responsive range picker matching the two-calendar reference layout,
+  including separate start/end value boxes, month/year navigation, reset,
+  apply, selected-range highlighting, and a preset rail.
+- Added configurable `SuperDateRangeSuggestion` presets. `null` uses package
+  defaults, `[]` removes all defaults, and callers can replace or extend the
+  defaults with custom resolver callbacks.
+- Added default Past 7 days, Previous 30 days, Previous 6 months, and Previous
+  year suggestions.
+- Added range logic/controller regression tests and a dedicated gallery screen
+  covering defaults, fixed boundaries, bounds, custom presets, and fully fixed
+  ranges.
+
+### Changed
+
+- Redesigned `SuperRangeDatePicker` with a responsive multi-view date-range UI:
+  two adjacent months and a preset rail on wide desktop, two months with compact
+  preset chips on tablet, and a single swipeable month on mobile. Range selection
+  now uses a continuous band with circular endpoints, min/max-aware navigation,
+  RTL-aware controls, and explicit Cancel/Reset/Apply actions without adding a
+  Syncfusion dependency.
+
+- Changed `SuperRangeDateFormField` to render separate Start date and End date inputs backed by `SuperDateFormField`; both accept keyboard edits, while the range picker opens only from the calendar action. Fixed-boundary and min/max rules now cover keyboard entry and remain synchronized with picker updates.
+
+- Updated package exports, README, example documentation, gallery navigation,
+  and `SKILL.md` for the 1.11.0 range-date API.
+
 ## [1.10.0]
 
 ### Added
@@ -314,6 +361,7 @@ to [Semantic Versioning](https://semver.org/).
     darkTheme: SuperMaterialThemeData.dark(mode: SuperDeviceMode.desktop),
   );
   ```
+
 - Minimum raised to `dart >=3.8.0`, `flutter >=3.32.0`.
 
 ---
@@ -405,7 +453,6 @@ Planned for future minor releases (non-breaking): `SuperPhoneFormField`
 (country code + national number), `SuperCurrencyFormField` (amount + currency
 preset), `SuperTimeFormField` / date-time, `SuperRangeFormField` (numeric / date
 ranges), `SuperColorFormField`, and masked inputs (IBAN / tax id / card).
-
 
 ## [0.2.0] — 2026-06-18
 

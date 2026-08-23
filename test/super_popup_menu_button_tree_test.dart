@@ -23,9 +23,7 @@ void main() {
             SuperOption(
               value: 'permissions_branch',
               label: 'Permissions',
-              children: [
-                SuperOption(value: 'roles', label: 'Roles'),
-              ],
+              children: [SuperOption(value: 'roles', label: 'Roles')],
             ),
           ],
         ),
@@ -35,10 +33,7 @@ void main() {
     expect(tree.hasChildren, isTrue);
     expect(tree.children.single.hasChildren, isTrue);
     expect(tree.children.single.children.single.hasChildren, isTrue);
-    expect(
-      tree.children.single.children.single.children.single.value,
-      'roles',
-    );
+    expect(tree.children.single.children.single.children.single.value, 'roles');
   });
 
   testWidgets('branch click opens submenu instead of selecting the branch', (
@@ -56,9 +51,7 @@ void main() {
                 SuperOption(
                   value: 'export_branch',
                   label: 'Export',
-                  children: [
-                    SuperOption(value: 'pdf', label: 'PDF'),
-                  ],
+                  children: [SuperOption(value: 'pdf', label: 'PDF')],
                 ),
               ],
               onSelected: (value) => selected = value,
@@ -155,7 +148,9 @@ void main() {
     expect(find.text('Roles'), findsNothing);
   });
 
-  testWidgets('disabled branch stays visible but does not open', (tester) async {
+  testWidgets('disabled branch stays visible but does not open', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: _testTheme(),
@@ -238,5 +233,4 @@ void main() {
     expect(submenuSize.height, lessThan(180));
     expect(submenuSize.height, lessThan(280));
   });
-
 }

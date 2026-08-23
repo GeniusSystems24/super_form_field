@@ -23,8 +23,7 @@ List<Validator<String>> buildOTPValidators({
   required String lengthMessage,
 }) {
   return <Validator<String>>[
-    if (required)
-      (value) => value.isEmpty ? requiredMessage : null,
+    if (required) (value) => value.isEmpty ? requiredMessage : null,
     (value) {
       if (value.isEmpty && !required) return null;
       return value.length == length ? null : lengthMessage;

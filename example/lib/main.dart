@@ -14,6 +14,7 @@ import 'demos/bool_field_demo.dart';
 import 'demos/choice_field_demo.dart';
 import 'demos/controller_state_demo.dart';
 import 'demos/date_field_demo.dart';
+import 'demos/range_date_field_demo.dart';
 import 'demos/dropdown_button_demo.dart';
 import 'demos/multi_select_field_demo.dart';
 import 'demos/numeric_field_demo.dart';
@@ -84,9 +85,7 @@ class _ExampleAppState extends State<ExampleApp> {
       builder: (context, child) {
         final mode = _themeMode.value;
         final dir = _textDir.value;
-        final textTheme = SuperTextTheme(
-          isArabic: dir == TextDirection.rtl,
-        );
+        final textTheme = SuperTextTheme(isArabic: dir == TextDirection.rtl);
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Super Form Field',
@@ -170,6 +169,13 @@ class _Launcher extends StatelessWidget {
       Icons.event_rounded,
       (_) => const DateFieldDemo(),
     ),
+    _DemoItem(
+      'Super Range Date Field',
+      'Two calendars · presets · fixed start/end · min/max',
+      Icons.date_range_rounded,
+      (_) => const RangeDateFieldDemo(),
+    ),
+
     _DemoItem(
       'Super Dropdown Button',
       'Controlled dropdown · Form integration · validation',
@@ -302,12 +308,16 @@ class _Card extends StatelessWidget {
                   children: [
                     Text(
                       item.title,
-                      style: context.superTextTheme.heading.copyWith(color: t.fg1),
+                      style: context.superTextTheme.heading.copyWith(
+                        color: t.fg1,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle,
-                      style: context.superTextTheme.caption.copyWith(color: t.fg3),
+                      style: context.superTextTheme.caption.copyWith(
+                        color: t.fg3,
+                      ),
                     ),
                   ],
                 ),

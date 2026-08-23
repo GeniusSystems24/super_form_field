@@ -32,9 +32,7 @@ void main() {
   });
 
   test('select controller closes and guards when fixed', () {
-    final controller = SuperSelectFieldController<String>(
-      initialValue: 'a',
-    );
+    final controller = SuperSelectFieldController<String>(initialValue: 'a');
 
     controller.configure(
       options: const [
@@ -85,9 +83,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: SuperTextFormField(controller: controller),
-        ),
+        home: Scaffold(body: SuperTextFormField(controller: controller)),
       ),
     );
 
@@ -96,9 +92,7 @@ void main() {
     controller.isHiden = false;
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: SuperTextFormField(controller: controller),
-        ),
+        home: Scaffold(body: SuperTextFormField(controller: controller)),
       ),
     );
 

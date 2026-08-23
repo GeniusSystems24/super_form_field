@@ -120,7 +120,8 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
     super.dispose();
   }
 
-  bool get _editable => !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
+  bool get _editable =>
+      !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
 
   void _pick(SuperOption<T> o) {
     if (!_editable || o.disabled) return;

@@ -424,7 +424,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     required bool multiline,
   }) {
     final hasError = error != null;
-    final editable = !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
+    final editable =
+        !widget.disabled && !widget.readOnly && !_controller.isFixed.value;
     final focused = _controller.focused;
 
     // ── Border states ──
@@ -445,8 +446,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
 
     final source = widget.decoration;
     final l10n = SuperFormTranslation.of(context);
-    final textDirection =
-        widget.textDirection ?? Directionality.of(context);
+    final textDirection = widget.textDirection ?? Directionality.of(context);
 
     // ── Suffix icon row ──
     final trailingWidgets = <Widget>[
@@ -513,7 +513,10 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
         : SuperThemeData.of(context).sizing.fieldComfortable;
 
     // ── Prefix / suffix text adornments ──
-    final adornStyle = context.sffTextTheme.body.copyWith(color: t.fg3, fontSize: 13);
+    final adornStyle = context.sffTextTheme.body.copyWith(
+      color: t.fg3,
+      fontSize: 13,
+    );
 
     final decoration = InputDecoration(
       // The external FieldShell owns label/helper/counter/error presentation.
@@ -592,12 +595,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
                 SuperTextType.phone => TextInputType.phone,
                 SuperTextType.password => TextInputType.text,
               });
-    final effectiveMinLines = multiline
-        ? (widget.minLines ?? widget.rows)
-        : 1;
-    final effectiveMaxLines = multiline
-        ? (widget.maxLines ?? widget.rows)
-        : 1;
+    final effectiveMinLines = multiline ? (widget.minLines ?? widget.rows) : 1;
+    final effectiveMaxLines = multiline ? (widget.maxLines ?? widget.rows) : 1;
     final effectiveInputFormatters = <TextInputFormatter>[
       ...?widget.inputFormatters,
       if (_maskFormatter != null) _maskFormatter!,
@@ -610,8 +609,9 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       readOnly: widget.readOnly || _controller.isFixed.value,
       autofocus: widget.autofocus,
       keyboardType: effectiveKeyboardType,
-      inputFormatters:
-          effectiveInputFormatters.isEmpty ? null : effectiveInputFormatters,
+      inputFormatters: effectiveInputFormatters.isEmpty
+          ? null
+          : effectiveInputFormatters,
       textInputAction: widget.textInputAction,
       textCapitalization: widget.textCapitalization,
       obscureText:
@@ -692,9 +692,11 @@ String _removeMaskLiterals({
   final unmasked = StringBuffer();
   var valueIndex = 0;
 
-  for (var maskIndex = 0;
-      maskIndex < mask.length && valueIndex < value.length;
-      maskIndex++) {
+  for (
+    var maskIndex = 0;
+    maskIndex < mask.length && valueIndex < value.length;
+    maskIndex++
+  ) {
     final maskCharacter = mask[maskIndex];
     final placeholderPattern = filter[maskCharacter];
 

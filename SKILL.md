@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.9.0: text, OTP, numeric,
-  attachment, date, select, multi-select, bool, and choice fields plus typed dropdown and popup-menu controls. Use the
+  Build GeniusLink Flutter forms with super_form_field 1.11.0: text, OTP, numeric,
+  attachment, date, range-date, select, multi-select, bool, and choice fields plus typed dropdown and popup-menu controls. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.9.0
+# Super Form Field 1.11.0
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -233,6 +233,61 @@ Both implement `DateInputUseCase<Request>` and produce `DateInputIntent` values.
 Do not duplicate parsing, validation, bounds, or segment state between device
 modes; those responsibilities remain shared in `SuperDateFieldController` and
 `DateLogic`.
+
+### SuperRangeDateFormField
+
+Value: `SuperDateRange?`. Controller: `SuperRangeDateFieldController`.
+
+Render the range as two independent date inputs: Start date and End date. The
+controller exposes `startController` / `endController` (both
+`SuperDateFieldController`) plus `startText` / `endText`. Reuse those child
+controllers rather than implementing a second parser or text-mask path.
+Keyboard parsing, formatting, malformed-date handling, segment navigation, and
+`minDate` / `maxDate` validation must therefore remain identical to
+`SuperDateFormField`.
+
+The range picker must never open from a start/end `TextField` tap or focus.
+Both boundary fields are normal keyboard-editable inputs with `calendar: false`.
+Only the explicit trailing `SffIcons.calendarDays` action opens
+`SuperRangeDatePicker`; applying a range writes the selected boundaries back
+through `SuperRangeDateFieldController.pickRange`, which synchronizes both
+visible text buffers.
+
+Use `isStartFixed` and `isEndFixed` to independently lock the two boundaries.
+A fixed boundary is read-only for keyboard entry and cannot be changed by
+picker taps, presets, clear actions, or controller mutation. `minDate` and
+`maxDate` apply to keyboard validation as well as calendar/preset selection.
+
+`suggestions: null` uses `SuperDateRangeSuggestion.defaults`. Pass `[]` for
+no suggestions, pass a custom list to replace the defaults, or spread the
+defaults together with custom `SuperDateRangeSuggestion` values. Each preset
+receives the current date through its `resolve(DateTime now)` callback and
+returns a `SuperDateRange`.
+
+Desktop/tablet opens the reference-style dialog: two month calendars, a
+right-side suggestion rail, start/end boundary boxes, Reset, and Apply.
+Mobile uses the same selection surface in a nearly full-height bottom sheet.
+Keep selection rules in `RangeDateLogic` / `SuperRangeDateFieldController`;
+picker widgets must not bypass fixed boundaries or min/max constraints.
+
+
+<!-- SUPER_RANGE_DATE_PICKER_SYNCFUSION_INSPIRED_V1 -->
+For `SuperRangeDatePicker` presentation, preserve the responsive multi-view
+contract: wide desktop shows two adjacent months plus the vertical suggestion
+rail; medium/tablet shows two months plus a horizontal suggestion strip; compact
+mobile shows one swipeable month. Use a continuous range band with circular
+start/end endpoints, compact month headers, explicit Cancel/Reset/Apply actions,
+min/max-aware navigation, and RTL-aware arrows/swipes. Keep these as presentation
+concerns only: fixed-boundary and range validity rules remain in `RangeDateLogic`
+and `SuperRangeDateFieldController`. Do not add a Syncfusion runtime dependency.
+
+<!-- SUPER_RANGE_DATE_PICKER_FIRST_DAY_OF_WEEK_V1 -->
+`SuperRangeDateFormField.firstDayOfWeek` and
+`SuperRangeDatePicker.firstDayOfWeek` accept the Dart weekday constants
+`DateTime.monday` through `DateTime.sunday`. Default to `DateTime.sunday` for
+compatibility. Always rotate the weekday labels and calendar-grid offset
+together; never change only the header. The setting is presentation-only and
+must not affect parsing, formatting, bounds, fixed boundaries, or validation.
 
 ### SuperSelectFormField<T>
 
