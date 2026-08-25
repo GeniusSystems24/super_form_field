@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -73,11 +73,11 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
       eyebrow: 'Documents • Supporting Files',
       title: 'Super Attachment Field',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Supporting Documents',
           subtitle:
               'Attach invoices, statements, or contracts (PDF, DOCX, XLSX, images)',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: SuperAttachmentFormField(
             allowFixed: true,
             decoration: const InputDecoration(
@@ -93,10 +93,10 @@ class _AttachmentFieldDemoState extends State<AttachmentFieldDemo> {
             forceError: _force,
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Single Receipt',
           subtitle: 'Single-file mode replaces the previous attachment',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: SuperAttachmentFormField(
             decoration: const InputDecoration(labelText: 'Receipt'),
             multiple: false,

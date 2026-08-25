@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -39,11 +39,11 @@ class _DateValidatedFormExampleState extends State<DateValidatedFormExample> {
   Widget build(BuildContext context) {
     final t = context.sffTheme;
     final valid = _error == null;
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: '3 · Validated',
       subtitle:
           'Required + min bound + custom rule, silent until blur or submit',
-      marker: SuperMarker.notes,
+      accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

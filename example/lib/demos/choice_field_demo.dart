@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -76,10 +76,10 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
       eyebrow: 'Journal • Entry Options',
       title: 'Super Choice Field',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Entry State',
           subtitle: 'A segmented single-pick control',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Column(
             children: [
               const SuperChoiceFormField<String>(
@@ -100,10 +100,10 @@ class _ChoiceFieldDemoState extends State<ChoiceFieldDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Supporting Documents',
           subtitle: 'Attach at least one document type (multi-pick)',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: SuperChoiceFormField<String>(
             decoration: const InputDecoration(
               labelText: 'Document Types',

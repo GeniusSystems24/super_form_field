@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperMarker, SuperSectionCard;
+    hide SuperMarker, SuperSectionCard1;
 
 import 'demo_scaffold.dart';
 
@@ -89,10 +89,10 @@ class _OTPFieldDemoState extends State<OTPFieldDemo> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SuperSectionCard(
+                SuperSectionCard1(
                   title: 'SMS verification code',
                   subtitle: 'Paste and one-time-code autofill with completion',
-                  marker: SuperMarker.identity,
+                  accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
                   child: SuperOTPFormField(
                     allowFixed: true,
                     controller: _smsController,
@@ -118,10 +118,10 @@ class _OTPFieldDemoState extends State<OTPFieldDemo> {
                   ),
                 ),
                 SizedBox(height: spacing.space8),
-                SuperSectionCard(
+                SuperSectionCard1(
                   title: 'Secure transaction PIN',
                   subtitle: 'Four digits displayed with an obscuring character',
-                  marker: SuperMarker.identity,
+                  accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
                   child: SuperOTPFormField(
                     controller: _pinController,
                     decoration: const InputDecoration(
@@ -141,10 +141,10 @@ class _OTPFieldDemoState extends State<OTPFieldDemo> {
                   ),
                 ),
                 SizedBox(height: spacing.space8),
-                SuperSectionCard(
+                SuperSectionCard1(
                   title: 'Alphanumeric backup code',
                   subtitle: 'Custom keyboard and formatter composition',
-                  marker: SuperMarker.notes,
+                  accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
                   child: SuperOTPFormField(
                     controller: _backupController,
                     decoration: const InputDecoration(
@@ -174,10 +174,10 @@ class _OTPFieldDemoState extends State<OTPFieldDemo> {
                   ),
                 ),
                 SizedBox(height: spacing.space8),
-                SuperSectionCard(
+                SuperSectionCard1(
                   title: 'Form result',
                   subtitle: 'Completion and FormState.save() values',
-                  marker: SuperMarker.notes,
+                  accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [

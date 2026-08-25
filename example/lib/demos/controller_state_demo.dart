@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperMarker, SuperSectionCard;
+    hide SuperMarker, SuperSectionCard1;
 
 import 'demo_scaffold.dart';
 
@@ -74,11 +74,11 @@ class _ControllerStateDemoState extends State<ControllerStateDemo> {
       eyebrow: 'Controllers • Field state',
       title: 'Controller metadata',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Text controller',
           subtitle:
               'isFixed, focusNode, formFieldKey, and compatibility isHiden',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -125,10 +125,10 @@ class _ControllerStateDemoState extends State<ControllerStateDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Select controller',
           subtitle: 'Fixing closes the menu and guards selection mutations',
-          marker: SuperMarker.ledger,
+          accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -161,10 +161,10 @@ class _ControllerStateDemoState extends State<ControllerStateDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Dropdown editing controller',
           subtitle: 'Direct value assignments are guarded while fixed',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

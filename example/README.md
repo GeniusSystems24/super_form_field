@@ -1,6 +1,6 @@
 # Super Form Field example
 
-A runnable gallery for `super_form_field` 1.11.0.9.0.
+A runnable gallery for `super_form_field` 1.11.0+1.
 
 The app demonstrates all form fields plus the dropdown and popup-menu controls with the unified `InputDecoration` API,
 GeniusLink `super_core` section components and `SuperAppBar`, light/dark themes,

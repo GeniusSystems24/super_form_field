@@ -2,7 +2,7 @@
 // example/lib/demos/demo_scaffold.dart
 // ------------------------------------------------------------
 // Shared gallery page chrome. The app bar and section surfaces come directly
-// from super_core (`SuperAppBar`, `SuperSectionCard`, and `SuperMarker`) so
+// from super_core (`SuperAppBar`, `SuperSectionCard1`, and `SuperMarker`) so
 // the example exercises the same design-system components used by production
 // applications.
 // ============================================================
@@ -12,7 +12,7 @@ import 'package:super_core/super_core.dart';
 import 'package:super_form_field/super_form_field.dart' show SuperFieldContextX;
 import 'package:super_form_field_example/main.dart';
 
-export 'package:super_core/super_core.dart' show SuperSectionCard, SuperMarker;
+export 'package:super_core/super_core.dart' show SuperSectionCard1, SuperMarker;
 
 /// A centered GeniusLink page with an eyebrow + title and spaced sections.
 class DemoPage extends StatelessWidget {

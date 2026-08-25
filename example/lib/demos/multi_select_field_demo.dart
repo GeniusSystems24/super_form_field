@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -67,10 +67,10 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
       eyebrow: 'Journal • Tagging & Access',
       title: 'Super Multi-Select Field',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Tags',
           subtitle: 'Classify this entry — pick one or more',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: SuperMultiSelectFormField<String>(
             allowFixed: true,
             decoration: const InputDecoration(
@@ -84,10 +84,10 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
             forceError: _force,
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Role Permissions',
           subtitle: 'Grant up to three permissions for this role',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: SuperMultiSelectFormField<String>(
             decoration: const InputDecoration(
               labelText: 'Permissions',

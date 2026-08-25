@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperMarker, SuperSectionCard;
+    hide SuperMarker, SuperSectionCard1;
 
 import 'demo_scaffold.dart';
 
@@ -40,11 +40,11 @@ class _DefaultSuggestionsExampleState
 
   @override
   Widget build(BuildContext context) {
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: 'Default range picker',
       subtitle:
           'Two keyboard-editable dates; calendar icon opens the range picker',
-      marker: SuperMarker.identity,
+      accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -79,11 +79,11 @@ class _WeekStartExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: 'Monday-first calendar',
       subtitle:
           'The week-start can be configured independently of date parsing',
-      marker: SuperMarker.identity,
+      accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
       child: SuperRangeDateFormField(
         initialValue: SuperDateRange(
           start: DateTime(2026, 8, 3),
@@ -104,11 +104,11 @@ class _FixedBoundaryExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: 'Fixed start + bounded range',
       subtitle:
           'The fixed start input is read-only; the end date stays keyboard-editable',
-      marker: SuperMarker.identity,
+      accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
       child: SuperRangeDateFormField(
         initialValue: SuperDateRange(
           start: DateTime(2026, 1, 1),
@@ -144,11 +144,11 @@ class _CustomSuggestionsExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: 'Custom suggestions only',
       subtitle:
           'Passing a list replaces the package defaults; [] removes all presets',
-      marker: SuperMarker.identity,
+      accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
       child: SuperRangeDateFormField(
         initialValue: SuperDateRange(
           start: DateTime(2026, 8, 1),
@@ -178,10 +178,10 @@ class _FullyFixedExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: 'Both boundaries fixed',
       subtitle: 'The picker remains inspectable, but neither date can change',
-      marker: SuperMarker.identity,
+      accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
       child: SuperRangeDateFormField(
         initialValue: SuperDateRange(
           start: DateTime(2026, 1, 1),

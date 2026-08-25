@@ -45,7 +45,7 @@ The package includes:
 |---|---:|
 | Dart | `3.8.0` |
 | Flutter | `3.32.0` |
-| `super_core` | `3.3.0` |
+| `super_core` | `3.6.0` |
 | `mask_text_input_formatter` | `2.9.0` |
 
 ## Installation
@@ -60,7 +60,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.11.0
+  super_form_field: ^1.11.0+1
 ```
 
 Import the public library:
@@ -114,7 +114,7 @@ class App extends StatelessWidget {
 
 All controls read colors, spacing, sizing, and interaction tokens from the
 active `SuperThemeData`. Typography is read separately from the required
-`SuperTextTheme` installed on `SuperMaterialThemeData` by `super_core` 3.3.0.
+`SuperTextTheme` installed on `SuperMaterialThemeData` by `super_core` 3.6.0.
 Normal field styles preserve the font families carried by `SuperTextTheme`;
 they no longer overwrite them with `SuperTokensData.bodyFont` / `monoFont`.
 

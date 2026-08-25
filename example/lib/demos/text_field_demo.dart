@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -29,10 +29,10 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
       eyebrow: 'Accounts • Create Account',
       title: 'Super Text Field',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Identity',
           subtitle: 'Define the account name in both languages',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Column(
             children: [
               BilingualRow(
@@ -71,10 +71,10 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Contact & Access',
           subtitle: 'Email, phone, and password input patterns',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Column(
             children: [
               SuperTextFormField(
@@ -112,10 +112,10 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Notes',
           subtitle: 'Add any notes about this account',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: SuperTextFormField(
             decoration: const InputDecoration(
               labelText: 'Description',

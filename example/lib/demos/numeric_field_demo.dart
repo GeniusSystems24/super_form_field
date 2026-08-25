@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -30,10 +30,10 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
       eyebrow: 'Ledger • Opening Journal Entry',
       title: 'Super Numeric Field',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Amounts',
           subtitle: 'Currency and quantity with mathematical constraints',
-          marker: SuperMarker.ledger,
+          accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
           child: Column(
             children: [
               SuperNumericFormField(
@@ -71,10 +71,10 @@ class _NumericFieldDemoState extends State<NumericFieldDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Rates',
           subtitle: 'Decimal precision and percentage units',
-          marker: SuperMarker.ledger,
+          accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
           child: Column(
             children: [
               const SuperNumericFormField(

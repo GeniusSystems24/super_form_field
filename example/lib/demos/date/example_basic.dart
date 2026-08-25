@@ -9,7 +9,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -26,10 +26,10 @@ class _DateBasicExampleState extends State<DateBasicExample> {
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: '1 · Basic',
       subtitle: 'Uncontrolled — type a masked date or pick from the calendar',
-      marker: SuperMarker.identity,
+      accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

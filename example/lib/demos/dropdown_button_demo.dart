@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -59,10 +59,10 @@ class _DropdownButtonDemoState extends State<DropdownButtonDemo> {
       eyebrow: 'Controls • Selection',
       title: 'Dropdown Buttons',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Editing controller',
           subtitle: 'Typed selection with programmatic value changes',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -93,10 +93,10 @@ class _DropdownButtonDemoState extends State<DropdownButtonDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Form field',
           subtitle: 'Controller, validation, save, reset, and disabled options',
-          marker: SuperMarker.ledger,
+          accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
           child: Form(
             key: _formKey,
             child: Column(

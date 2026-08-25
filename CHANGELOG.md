@@ -4,6 +4,14 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## [1.11.0+1] — 2026-08-25
+
+### Changed
+
+- Migrated the example gallery from the removed `SuperSectionCard` API to `SuperSectionCard1` for `super_core` 3.6.0 compatibility.
+- Replaced legacy `marker: SuperMarker.*` section-card arguments with `accentColor: SuperMarker.*.resolve(context.superTheme.tokens)`.
+- Raised the minimum `super_core` version to 3.6.0 across package metadata, examples, and documentation.
+
 ## [1.11.0] — 2026-08-23
 
 - Simplified `SuperRangeDatePicker` by removing the internal Start/End boundary cards and connector; the picker footer now contains only Cancel, Reset, and Apply actions.

@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -29,10 +29,10 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
       eyebrow: 'Accounts • Status & Flags',
       title: 'Super Bool Field',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Status Flags',
           subtitle: 'Toggle account behaviour',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Column(
             children: [
               const BilingualRow(
@@ -72,10 +72,10 @@ class _BoolFieldDemoState extends State<BoolFieldDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Compliance',
           subtitle: 'A required acknowledgement gate',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: SuperBoolFormField(
             decoration: const InputDecoration(
               labelText: 'Confirmation',

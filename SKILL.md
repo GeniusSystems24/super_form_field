@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.11.0: text, OTP, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.11.0+1: text, OTP, numeric,
   attachment, date, range-date, select, multi-select, bool, and choice fields plus typed dropdown and popup-menu controls. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.11.0
+# Super Form Field 1.11.0+1
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -35,7 +35,7 @@ MaterialApp(
 );
 ```
 
-### `super_core` 3.3.0 typography contract
+### `super_core` 3.6.0 typography contract
 
 `SuperMaterialThemeData.light` and `SuperMaterialThemeData.dark` now require
 `textTheme` and `primaryTextTheme`, both of type `SuperTextTheme`. Typography is

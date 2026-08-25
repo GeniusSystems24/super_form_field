@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -87,10 +87,10 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SuperSectionCard(
+              SuperSectionCard1(
                 title: 'International number',
                 subtitle: 'Phone keyboard with common international characters',
-                marker: SuperMarker.identity,
+                accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
                 child: SuperTextFormField(
                   allowFixed: true,
                   controller: _internationalController,
@@ -119,11 +119,11 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                 ),
               ),
               SizedBox(height: spacing.space8),
-              SuperSectionCard(
+              SuperSectionCard1(
                 title: 'Country-specific rules',
                 subtitle:
                     'Compose the phone type with a prefix, mask, and pattern',
-                marker: SuperMarker.identity,
+                accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
                 child: SuperTextFormField(
                   controller: _localController,
                   decoration: const InputDecoration(
@@ -151,10 +151,10 @@ class _PhoneFieldDemoState extends State<PhoneFieldDemo> {
                 ),
               ),
               SizedBox(height: spacing.space8),
-              SuperSectionCard(
+              SuperSectionCard1(
                 title: 'Form result',
                 subtitle: 'Values received through FormState.save()',
-                marker: SuperMarker.notes,
+                accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

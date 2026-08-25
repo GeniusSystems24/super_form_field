@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import 'demo_scaffold.dart';
 
@@ -67,10 +67,10 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
       eyebrow: 'Accounts • Classification',
       title: 'Super Select Field',
       children: [
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Classification',
           subtitle: 'Pick the account type and reporting currency',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Column(
             children: [
               BilingualRow(
@@ -119,10 +119,10 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
             ],
           ),
         ),
-        const SuperSectionCard(
+        SuperSectionCard1(
           title: 'Allocation',
           subtitle: 'Assign a cost center (some are locked)',
-          marker: SuperMarker.ledger,
+          accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
           child: SuperSelectFormField<String>(
             decoration: InputDecoration(
               labelText: 'Cost Center',

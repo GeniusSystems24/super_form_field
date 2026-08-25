@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperMarker, SuperSectionCard;
+    hide SuperMarker, SuperSectionCard1;
 
 import 'demo_scaffold.dart';
 
@@ -145,10 +145,10 @@ class _PopupMenuButtonDemoState extends State<PopupMenuButtonDemo> {
           message:
               'allowFixed belongs to value-bearing form fields backed by a field controller. SuperPopupMenuButton is an action surface, so it intentionally has no fixed-value toggle.',
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Icon trigger',
           subtitle: 'Simple typed action menu with disabled options',
-          marker: SuperMarker.identity,
+          accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -163,10 +163,10 @@ class _PopupMenuButtonDemoState extends State<PopupMenuButtonDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Custom trigger',
           subtitle: 'Any widget can act as the popup trigger',
-          marker: SuperMarker.ledger,
+          accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
           child: Align(
             alignment: AlignmentDirectional.centerStart,
             child: SuperPopupMenuButton<String>(
@@ -181,11 +181,11 @@ class _PopupMenuButtonDemoState extends State<PopupMenuButtonDemo> {
             ),
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Nested tree',
           subtitle:
               'Branch options open real cascading submenus; only leaves select',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -212,10 +212,10 @@ class _PopupMenuButtonDemoState extends State<PopupMenuButtonDemo> {
             ],
           ),
         ),
-        SuperSectionCard(
+        SuperSectionCard1(
           title: 'Selected path',
           subtitle: 'Selected leaves tint every parent branch in their path',
-          marker: SuperMarker.notes,
+          accentColor: SuperMarker.notes.resolve(context.superTheme.tokens),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -44,10 +44,10 @@ class _DateControlledRangeExampleState
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: '2 · Controlled range',
       subtitle: 'Linked controllers — Start caps End, and vice-versa',
-      marker: SuperMarker.ledger,
+      accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -9,7 +9,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard, SuperMarker;
+    hide SuperSectionCard1, SuperMarker;
 
 import '../demo_scaffold.dart';
 
@@ -18,10 +18,10 @@ class DateFormatsExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperSectionCard(
+    return SuperSectionCard1(
       title: '4 · Formats',
       subtitle: 'Year-month-day · year-month · year · month-day',
-      marker: SuperMarker.identity,
+      accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
