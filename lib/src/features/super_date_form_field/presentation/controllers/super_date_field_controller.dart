@@ -15,6 +15,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:super_core/super_core.dart' show Validator;
 
 import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/date_input_intent.dart';
@@ -102,7 +103,7 @@ class SuperDateFieldController extends ChangeNotifier {
   List<Validator<DateTime?>> _validators = const [];
   bool _forceError = false;
   String _malformedMessage = 'Enter a valid date';
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   ValueChanged<DateTime?>? _onChanged;
   String? _lastReported;
 
@@ -145,7 +146,7 @@ class SuperDateFieldController extends ChangeNotifier {
     bool keyboardEnabled = true,
     bool readOnly = false,
     DateInputInteractionMode interactionMode = DateInputInteractionMode.desktop,
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
     ValueChanged<DateTime?>? onChanged,
   }) {
     _validators = validators;

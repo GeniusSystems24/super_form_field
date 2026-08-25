@@ -11,13 +11,6 @@
 // Features import from here, never from each other.
 // ============================================================
 
-// Shared foundation (from super_core). The kit ships its own `FieldShell` /
-// `FieldDensity` (below) and its own `Validator` / `ValidityChanged` (in
-// validators.dart, whose `ValidityChanged` reports an error string, not a
-// bool), so those four names are hidden here to avoid an ambiguous re-export.
-export 'package:super_core/super_core.dart'
-    hide FieldShell, FieldDensity, Validator, ValidityChanged;
-
 // Utils (form-field-specific)
 export 'utils/validators.dart';
 

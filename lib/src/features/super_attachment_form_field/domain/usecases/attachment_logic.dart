@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../../../core/foundation/sff_icon.dart';
 import 'package:super_core/super_core.dart' hide Validator, ValidityChanged;
-import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
 import '../entities/super_file.dart';
 
 /// The icon and color used to represent a file type in the list.

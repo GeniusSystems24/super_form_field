@@ -6,7 +6,8 @@
 // Flutter presentation dependencies.
 // ============================================================
 
-import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
+
 
 /// Builds the ordered validator chain used by the OTP form field.
 ///

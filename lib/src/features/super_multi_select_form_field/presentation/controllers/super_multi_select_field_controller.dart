@@ -10,6 +10,7 @@
 // ============================================================
 
 import 'package:flutter/widgets.dart';
+import 'package:super_core/super_core.dart' show Validator;
 
 import 'package:super_form_field/src/core/entities/super_option.dart';
 import '../../../../core/utils/validators.dart';
@@ -57,7 +58,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
   int? _maxSelections;
   List<Validator<List<T>>> _validators = const [];
   bool _forceError = false;
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   ValueChanged<List<T>>? _onChanged;
   String? _lastReported;
 
@@ -93,7 +94,7 @@ class SuperMultiSelectFieldController<T> extends ChangeNotifier {
     int? maxSelections,
     required List<Validator<List<T>>> validators,
     required bool forceError,
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
     ValueChanged<List<T>>? onChanged,
   }) {
     _options = options;

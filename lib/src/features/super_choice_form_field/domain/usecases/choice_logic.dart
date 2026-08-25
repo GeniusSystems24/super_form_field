@@ -6,7 +6,8 @@
 // Generic over the value type. No Flutter imports — unit-testable in isolation.
 // ============================================================
 
-import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
+
 
 /// Choice-group business rules, grouped as a stateless helper.
 abstract final class ChoiceLogic {

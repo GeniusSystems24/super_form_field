@@ -6,6 +6,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
@@ -15,6 +16,7 @@ import 'super_dropdown_button.dart';
 /// A [FormField] version of [SuperDropdownButton].
 ///
 /// The field participates in [FormState.validate], [FormState.save], and
+// ignore: deprecated_member_use
 /// [FormState.reset]. Use [required] for the package's common null-value rule,
 /// and [validator] for domain-specific validation.
 ///
@@ -67,7 +69,7 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
              decoration,
              field.errorText,
            );
-           return FieldShell(
+           return FormFieldShell(
              allowFixed: allowFixed,
              isFixed: controller?.isFixed,
              decoration: decoration,

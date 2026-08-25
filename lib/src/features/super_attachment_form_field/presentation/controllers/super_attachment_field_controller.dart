@@ -11,6 +11,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
 import '../../domain/entities/super_file.dart';
 import '../../domain/usecases/attachment_logic.dart';
 
@@ -54,7 +55,7 @@ class SuperAttachmentFieldController extends ChangeNotifier {
   double? _maxSizeMB;
   List<Validator<List<SuperFile>>> _validators = const [];
   bool _forceError = false;
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   ValueChanged<List<SuperFile>>? _onChanged;
   String? _lastReported;
 
@@ -86,7 +87,7 @@ class SuperAttachmentFieldController extends ChangeNotifier {
     double? maxSizeMB,
     required List<Validator<List<SuperFile>>> validators,
     required bool forceError,
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
     ValueChanged<List<SuperFile>>? onChanged,
   }) {
     _multiple = multiple;

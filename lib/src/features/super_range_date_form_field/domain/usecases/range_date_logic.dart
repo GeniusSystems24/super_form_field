@@ -1,4 +1,5 @@
-import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
+
 import '../entities/super_date_range.dart';
 
 /// Pure date-range rules shared by controller, validation and picker UI.

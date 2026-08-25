@@ -7,8 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart'
-    hide SuperMarker, SuperSectionCard1;
+import 'package:super_core/super_core.dart';
+import 'package:super_form_field/super_form_field.dart';
 
 import 'date/example_basic.dart';
 import 'date/example_controlled_range.dart';
@@ -44,7 +44,7 @@ class _DateFixedExample extends StatelessWidget {
       title: 'Fixed date',
       subtitle: 'Use the label lock to guard the value without dimming it',
       accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
-      child: SuperDateFormField(
+      child: const SuperDateFormField(
         allowFixed: true,
         decoration: InputDecoration(
           labelText: 'Posting date',

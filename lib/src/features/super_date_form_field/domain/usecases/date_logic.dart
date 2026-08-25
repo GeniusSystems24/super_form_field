@@ -9,7 +9,8 @@
 // unit-testable in isolation.
 // ============================================================
 
-import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
+
 
 /// Date-field business rules, grouped as a stateless helper.
 abstract final class DateLogic {

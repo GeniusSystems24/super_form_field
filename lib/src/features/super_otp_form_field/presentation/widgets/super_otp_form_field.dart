@@ -10,6 +10,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
@@ -110,7 +111,7 @@ class SuperOTPFormField extends StatefulWidget {
   final ValueChanged<String>? onCompleted;
 
   /// Reports the current validation error, or null when valid.
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Label, helper, icon, adornment, counter, and external error source.
   final InputDecoration decoration;
@@ -333,7 +334,7 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
                   )
                 : null;
 
-            return FieldShell(
+            return FormFieldShell(
               allowFixed: widget.allowFixed,
               isFixed: _controller.isFixed,
               decoration: widget.decoration,

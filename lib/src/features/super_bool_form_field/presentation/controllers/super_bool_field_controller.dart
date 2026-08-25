@@ -8,6 +8,7 @@
 // ============================================================
 
 import 'package:flutter/widgets.dart';
+import 'package:super_core/super_core.dart' show Validator;
 
 import '../../../../core/utils/validators.dart';
 
@@ -43,7 +44,7 @@ class SuperBoolFieldController extends ChangeNotifier {
   // ── config (set by the View) ──
   List<Validator<bool>> _validators = const [];
   bool _forceError = false;
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   ValueChanged<bool>? _onChanged;
   String? _lastReported;
 
@@ -59,7 +60,7 @@ class SuperBoolFieldController extends ChangeNotifier {
   void configure({
     required List<Validator<bool>> validators,
     required bool forceError,
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
     ValueChanged<bool>? onChanged,
   }) {
     _validators = validators;

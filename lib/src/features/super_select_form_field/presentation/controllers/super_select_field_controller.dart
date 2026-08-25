@@ -13,6 +13,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:super_form_field/super_form_field.dart' show SuperOption;
 import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
 import '../../domain/usecases/select_logic.dart';
 
 class SuperSelectFieldController<T> extends ChangeNotifier {
@@ -60,7 +61,7 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
   List<SuperOption<T>> _options = const [];
   List<Validator<T?>> _validators = const [];
   bool _forceError = false;
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   ValueChanged<T?>? _onChanged;
   String? _lastReported;
 
@@ -94,7 +95,7 @@ class SuperSelectFieldController<T> extends ChangeNotifier {
     required List<SuperOption<T>> options,
     required List<Validator<T?>> validators,
     required bool forceError,
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
     ValueChanged<T?>? onChanged,
   }) {
     _options = options;

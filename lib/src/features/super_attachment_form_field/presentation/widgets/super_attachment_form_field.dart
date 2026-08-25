@@ -12,6 +12,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
@@ -52,7 +53,7 @@ class SuperAttachmentFormField extends StatefulWidget {
   final bool allowFixed;
   final List<SuperFile> initialFiles;
   final ValueChanged<List<SuperFile>>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   final InputDecoration decoration;
@@ -177,7 +178,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   ? CountPill(label: l10n.fileCount(n))
                   : null);
 
-        return FieldShell(
+        return FormFieldShell(
           allowFixed: widget.allowFixed,
           isFixed: _controller.isFixed,
           decoration: widget.decoration,

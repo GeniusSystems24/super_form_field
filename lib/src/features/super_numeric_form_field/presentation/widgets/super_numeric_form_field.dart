@@ -3,12 +3,13 @@
 // ------------------------------------------------------------
 // The View for the GeniusLink numeric field. A thin Flutter wrapper that builds
 // the validator chain (domain usecase), drives a [SuperNumericFieldController]
-// (the Model), and renders the FieldShell + FieldBox chrome. Numbers stay
+// (the Model), and renders the return FormFieldShell( + FieldBox chrome. Numbers stay
 // Western digits and right-aligned mono even in RTL. Validation surfaces only
 // through the suffix ErrorBadge. Includes a +/- stepper and prefix/suffix units.
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
@@ -99,7 +100,7 @@ class SuperNumericFormField extends StatefulWidget {
   final bool allowFixed;
   final num? initialValue;
   final ValueChanged<num?>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   /// Use `prefixText` and `suffixText` for units and currencies.
@@ -360,7 +361,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 ),
             ];
 
-            return FieldShell(
+            return FormFieldShell(
               allowFixed: widget.allowFixed,
               isFixed: _controller.isFixed,
               decoration: widget.decoration,

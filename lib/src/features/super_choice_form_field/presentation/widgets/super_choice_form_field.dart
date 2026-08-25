@@ -10,6 +10,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
@@ -56,7 +57,7 @@ class SuperChoiceFormField<T> extends StatefulWidget {
   final List<T>? initialValue;
 
   final ValueChanged<List<T>>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   final InputDecoration decoration;
@@ -190,7 +191,7 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
         );
         final hasIntro = leading != null || hasHint || trailing.isNotEmpty;
 
-        return FieldShell(
+        return FormFieldShell(
           allowFixed: widget.allowFixed,
           isFixed: _controller.isFixed,
           decoration: widget.decoration,

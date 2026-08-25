@@ -13,6 +13,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -123,7 +124,7 @@ class SuperTextFormField extends StatefulWidget {
   final bool allowFixed;
   final String initialValue;
   final ValueChanged<String>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   final InputDecoration decoration;
@@ -395,7 +396,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
                 widget.decoration.counter != null ||
                 widget.decoration.counterText != null;
 
-            return FieldShell(
+            return FormFieldShell(
               allowFixed: widget.allowFixed,
               isFixed: _controller.isFixed,
               decoration: widget.decoration,

@@ -10,7 +10,5 @@
 
 import 'package:super_core/super_core.dart';
 
-export 'package:super_core/super_core.dart';
-
 /// Back-compat alias: the form-field theme is the shared [SuperThemeData].
 typedef SuperFieldTheme = SuperThemeData;

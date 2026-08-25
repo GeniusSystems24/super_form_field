@@ -11,7 +11,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:super_core/super_core.dart' hide Validator, ValidityChanged;
+import 'package:super_core/super_core.dart' hide ValidityChanged;
 import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/numeric_logic.dart';
 
@@ -70,7 +70,7 @@ class SuperNumericFieldController extends ChangeNotifier {
   // ── validation config ──
   List<Validator<num?>> _validators = const [];
   bool _forceError = false;
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   ValueChanged<num?>? _onChanged;
   String? _lastReported;
 
@@ -101,7 +101,7 @@ class SuperNumericFieldController extends ChangeNotifier {
     bool keyboardEnabled = true,
     required List<Validator<num?>> validators,
     required bool forceError,
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
     ValueChanged<num?>? onChanged,
   }) {
     final fmtChanged = decimals != _decimals || grouping != _grouping;

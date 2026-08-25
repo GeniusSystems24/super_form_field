@@ -7,8 +7,8 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard1, SuperMarker;
+import 'package:super_core/super_core.dart';
+import 'package:super_form_field/super_form_field.dart';
 
 import 'demo_scaffold.dart';
 
@@ -123,7 +123,7 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
           title: 'Allocation',
           subtitle: 'Assign a cost center (some are locked)',
           accentColor: SuperMarker.ledger.resolve(context.superTheme.tokens),
-          child: SuperSelectFormField<String>(
+          child: const SuperSelectFormField<String>(
             decoration: InputDecoration(
               labelText: 'Cost Center',
               hintText: 'Optional…',

@@ -7,6 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:super_form_field/super_form_field.dart';
 
 import 'demos/attachment_field_demo.dart';

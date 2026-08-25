@@ -7,9 +7,9 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
-import 'package:super_form_field/super_form_field.dart'
-    hide SuperSectionCard1, SuperMarker;
+import 'package:super_form_field/super_form_field.dart';
 
 import 'demo_scaffold.dart';
 

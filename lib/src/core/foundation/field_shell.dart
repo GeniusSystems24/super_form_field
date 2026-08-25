@@ -6,16 +6,13 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_core/super_core.dart' hide FieldDensity, FieldShell;
+import 'package:super_core/super_core.dart';
 
 import 'field_decoration.dart';
 
-/// Vertical density of a field.
-enum FieldDensity { comfortable, compact }
-
 /// The label + control + helper chrome around any form control.
-class FieldShell extends StatelessWidget {
-  const FieldShell({
+class FormFieldShell extends StatelessWidget {
+  const FormFieldShell({
     super.key,
     this.decoration = const InputDecoration(),
     this.required = false,

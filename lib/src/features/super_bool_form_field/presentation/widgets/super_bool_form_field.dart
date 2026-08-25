@@ -10,6 +10,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
@@ -50,7 +51,7 @@ class SuperBoolFormField extends StatefulWidget {
   final bool allowFixed;
   final bool initialValue;
   final ValueChanged<bool>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   final InputDecoration decoration;
@@ -211,7 +212,7 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
           ],
         );
 
-        return FieldShell(
+        return FormFieldShell(
           allowFixed: widget.allowFixed,
           isFixed: _controller.isFixed,
           decoration: widget.decoration,

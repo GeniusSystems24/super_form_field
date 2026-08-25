@@ -6,7 +6,8 @@
 // by terms acknowledgements and required compliance flags). No Flutter imports.
 // ============================================================
 
-import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
+
 
 /// Builds the validator chain for a boolean field (mustBeTrue ▸ custom).
 List<Validator<bool>> buildBoolValidators({

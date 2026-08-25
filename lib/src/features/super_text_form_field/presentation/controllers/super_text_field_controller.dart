@@ -10,6 +10,7 @@
 // ============================================================
 
 import 'package:flutter/widgets.dart';
+import 'package:super_core/super_core.dart' show Validator;
 
 import '../../../../core/utils/validators.dart';
 
@@ -57,7 +58,7 @@ class SuperTextFieldController extends ChangeNotifier {
   // ── validation config (set by the View) ──
   List<Validator<String>> _validators = const [];
   bool _forceError = false;
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   String? _lastReported;
 
   // ── reads ──
@@ -79,7 +80,7 @@ class SuperTextFieldController extends ChangeNotifier {
   void configure({
     required List<Validator<String>> validators,
     required bool forceError,
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
   }) {
     _validators = validators;
     _forceError = forceError;

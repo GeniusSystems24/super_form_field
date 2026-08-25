@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:super_core/super_core.dart' show Validator;
 
 import '../../../../core/utils/validators.dart';
 import '../../../super_date_form_field/super_date_form_field.dart';
@@ -84,7 +85,7 @@ class SuperRangeDateFieldController extends ChangeNotifier {
   bool _forceError = false;
   String _incompleteMessage = 'Select both a start date and an end date';
   String _invalidMessage = 'Enter a valid date';
-  ValidityChanged? _onValidity;
+  FormValidityChanged? _onValidity;
   ValueChanged<SuperDateRange?>? _onChanged;
   String? _lastReportedError;
   DateTime? _lastStartDate;
@@ -152,7 +153,7 @@ class SuperRangeDateFieldController extends ChangeNotifier {
     String incompleteMessage = 'Select both a start date and an end date',
     String invalidMessage = 'Enter a valid date',
     String separator = ' → ',
-    ValidityChanged? onValidity,
+    FormValidityChanged? onValidity,
     ValueChanged<SuperDateRange?>? onChanged,
   }) {
     _validators = validators;

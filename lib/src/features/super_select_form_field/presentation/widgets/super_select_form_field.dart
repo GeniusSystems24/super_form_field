@@ -3,13 +3,14 @@
 // ------------------------------------------------------------
 // The View for the GeniusLink single-select field. A thin Flutter wrapper that
 // builds the validator chain (domain usecase), drives a
-// [SuperSelectFieldController] (the Model), and renders the FieldShell + a
+// [SuperSelectFieldController] (the Model), and renders the return FormFieldShell( + a
 // tappable FieldBox trigger that opens a FieldPopover → OptionMenu of
 // OptionTiles. Optionally searchable (a MenuSearchField filters the list).
 // Validation surfaces only through the suffix ErrorBadge. Light/dark + LTR/RTL.
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
@@ -102,7 +103,7 @@ class SuperSelectFormField<T> extends StatefulWidget {
   final T? initialValue;
 
   final ValueChanged<T?>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   final InputDecoration decoration;
@@ -362,7 +363,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
               ),
             ];
 
-            return FieldShell(
+            return FormFieldShell(
               allowFixed: widget.allowFixed,
               isFixed: _controller.isFixed,
               decoration: widget.decoration,

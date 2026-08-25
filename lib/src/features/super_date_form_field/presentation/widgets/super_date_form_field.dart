@@ -13,6 +13,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
@@ -111,7 +112,7 @@ class SuperDateFormField extends StatefulWidget {
   final DateTime? initialValue;
 
   final ValueChanged<DateTime?>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   ///
@@ -448,7 +449,7 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                   ],
                 );
               },
-              child: FieldShell(
+              child: FormFieldShell(
                 allowFixed: widget.allowFixed,
                 isFixed: _controller.isFixed,
                 decoration: widget.decoration,

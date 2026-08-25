@@ -11,6 +11,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/core.dart';
@@ -102,7 +103,7 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
   final List<T>? initialValue;
 
   final ValueChanged<List<T>>? onChanged;
-  final ValidityChanged? onValidity;
+  final FormValidityChanged? onValidity;
 
   /// Canonical source for label, helper, hint, and adornment chrome.
   final InputDecoration decoration;
@@ -413,7 +414,7 @@ class _SuperMultiSelectFormFieldState<T>
               ),
             ];
 
-            return FieldShell(
+            return FormFieldShell(
               allowFixed: widget.allowFixed,
               isFixed: _controller.isFixed,
               decoration: widget.decoration,

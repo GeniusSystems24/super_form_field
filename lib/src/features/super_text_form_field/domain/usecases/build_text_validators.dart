@@ -7,7 +7,9 @@
 // No Flutter imports — unit-testable in isolation.
 // ============================================================
 
+
 import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' show Validator;
 import '../entities/text_field_config.dart';
 
 /// Basic email shape — `a@b.c` with no whitespace.

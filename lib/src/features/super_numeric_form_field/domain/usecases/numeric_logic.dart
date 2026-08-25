@@ -7,8 +7,7 @@
 // imports — unit-testable in isolation.
 // ============================================================
 
-import 'package:super_core/super_core.dart' hide Validator, ValidityChanged;
-import '../../../../core/utils/validators.dart';
+import 'package:super_core/super_core.dart' hide ValidityChanged;
 
 /// Numeric field business rules, grouped as a stateless helper.
 abstract final class NumericLogic {
