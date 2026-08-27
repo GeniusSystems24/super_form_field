@@ -23,42 +23,125 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
   bool _force = false;
 
   static const _accountTypes = [
-    SuperOption(value: 'asset', label: 'Asset', icon: SffIcons.hash),
-    SuperOption(value: 'liability', label: 'Liability', icon: SffIcons.hash),
-    SuperOption(value: 'equity', label: 'Equity', icon: SffIcons.hash),
-    SuperOption(value: 'revenue', label: 'Revenue', icon: SffIcons.hash),
-    SuperOption(value: 'expense', label: 'Expense', icon: SffIcons.hash),
+    'asset',
+    'liability',
+    'equity',
+    'revenue',
+    'expense',
   ];
 
-  static const _currencies = [
-    SuperOption(value: 'SAR', label: 'SAR — Saudi Riyal', description: 'ر.س'),
-    SuperOption(value: 'USD', label: 'USD — US Dollar', description: r'$'),
-    SuperOption(value: 'EUR', label: 'EUR — Euro', description: '€'),
-    SuperOption(value: 'GBP', label: 'GBP — British Pound', description: '£'),
-    SuperOption(value: 'AED', label: 'AED — UAE Dirham', description: 'د.إ'),
-    SuperOption(
-      value: 'EGP',
-      label: 'EGP — Egyptian Pound',
-      description: 'ج.م',
-    ),
-    SuperOption(value: 'JPY', label: 'JPY — Japanese Yen', description: '¥'),
+  static const _arabicAccountTypes = [
+    'asset',
+    'liability',
+    'equity',
+    'revenue',
+    'expense',
   ];
 
-  static const _costCenters = [
-    SuperOption(value: 'cc-100', label: 'Operations', description: 'CC-100'),
-    SuperOption(
-      value: 'cc-200',
-      label: 'Sales & Marketing',
-      description: 'CC-200',
-    ),
-    SuperOption(value: 'cc-300', label: 'Research', description: 'CC-300'),
-    SuperOption(
-      value: 'cc-900',
-      label: 'Archived (locked)',
-      description: 'CC-900',
-      disabled: true,
-    ),
-  ];
+  static const _currencies = ['SAR', 'USD', 'EUR', 'GBP', 'AED', 'EGP', 'JPY'];
+
+  static const _costCenters = ['cc-100', 'cc-200', 'cc-300', 'cc-900'];
+
+  static SuperOption<String> _accountTypeOption(
+    List<String> items,
+    int index,
+    String item,
+  ) => SuperOption(value: item, label: _titleCase(item), icon: SffIcons.hash);
+
+  static SuperOption<String> _arabicAccountTypeOption(
+    List<String> items,
+    int index,
+    String item,
+  ) {
+    final label = switch (item) {
+      'asset' => 'أصول',
+      'liability' => 'التزامات',
+      'equity' => 'حقوق ملكية',
+      'revenue' => 'إيرادات',
+      'expense' => 'مصروفات',
+      _ => item,
+    };
+    return SuperOption(value: item, label: label);
+  }
+
+  static SuperOption<String> _currencyOption(
+    List<String> items,
+    int index,
+    String item,
+  ) {
+    return switch (item) {
+      'SAR' => const SuperOption(
+        value: 'SAR',
+        label: 'SAR — Saudi Riyal',
+        description: 'ر.س',
+      ),
+      'USD' => const SuperOption(
+        value: 'USD',
+        label: 'USD — US Dollar',
+        description: r'$',
+      ),
+      'EUR' => const SuperOption(
+        value: 'EUR',
+        label: 'EUR — Euro',
+        description: '€',
+      ),
+      'GBP' => const SuperOption(
+        value: 'GBP',
+        label: 'GBP — British Pound',
+        description: '£',
+      ),
+      'AED' => const SuperOption(
+        value: 'AED',
+        label: 'AED — UAE Dirham',
+        description: 'د.إ',
+      ),
+      'EGP' => const SuperOption(
+        value: 'EGP',
+        label: 'EGP — Egyptian Pound',
+        description: 'ج.م',
+      ),
+      'JPY' => const SuperOption(
+        value: 'JPY',
+        label: 'JPY — Japanese Yen',
+        description: '¥',
+      ),
+      _ => SuperOption(value: item, label: item),
+    };
+  }
+
+  static SuperOption<String> _costCenterOption(
+    List<String> items,
+    int index,
+    String item,
+  ) {
+    return switch (item) {
+      'cc-100' => const SuperOption(
+        value: 'cc-100',
+        label: 'Operations',
+        description: 'CC-100',
+      ),
+      'cc-200' => const SuperOption(
+        value: 'cc-200',
+        label: 'Sales & Marketing',
+        description: 'CC-200',
+      ),
+      'cc-300' => const SuperOption(
+        value: 'cc-300',
+        label: 'Research',
+        description: 'CC-300',
+      ),
+      'cc-900' => const SuperOption(
+        value: 'cc-900',
+        label: 'Archived (locked)',
+        description: 'CC-900',
+        disabled: true,
+      ),
+      _ => SuperOption(value: item, label: item),
+    };
+  }
+
+  static String _titleCase(String value) =>
+      value.isEmpty ? value : '${value[0].toUpperCase()}${value.substring(1)}';
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +165,10 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
                     prefixIcon: Icon(SffIcons.hash),
                   ),
                   required: true,
-                  options: _accountTypes,
+                  sources: const [
+                    SuperSelectListSource<String>(items: _accountTypes),
+                  ],
+                  optionBuilder: _accountTypeOption,
                   forceError: _force,
                 ),
                 arabic: SuperSelectFormField<String>(
@@ -92,13 +178,10 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
                   ),
                   required: true,
                   arabic: true,
-                  options: const [
-                    SuperOption(value: 'asset', label: 'أصول'),
-                    SuperOption(value: 'liability', label: 'التزامات'),
-                    SuperOption(value: 'equity', label: 'حقوق ملكية'),
-                    SuperOption(value: 'revenue', label: 'إيرادات'),
-                    SuperOption(value: 'expense', label: 'مصروفات'),
+                  sources: const [
+                    SuperSelectListSource<String>(items: _arabicAccountTypes),
                   ],
+                  optionBuilder: _arabicAccountTypeOption,
                   forceError: _force,
                 ),
               ),
@@ -113,7 +196,10 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
                 searchHint: 'Type a code or name…',
                 clearable: true,
                 initialValue: 'SAR',
-                options: _currencies,
+                sources: const [
+                  SuperSelectListSource<String>(items: _currencies),
+                ],
+                optionBuilder: _currencyOption,
                 forceError: _force,
               ),
             ],
@@ -130,7 +216,8 @@ class _SelectFieldDemoState extends State<SelectFieldDemo> {
               helperText: 'Locked centers cannot be selected.',
             ),
             clearable: true,
-            options: _costCenters,
+            sources: [SuperSelectListSource<String>(items: _costCenters)],
+            optionBuilder: _costCenterOption,
           ),
         ),
         Row(

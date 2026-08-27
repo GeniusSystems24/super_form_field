@@ -4,6 +4,23 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+<!-- SUPER_SELECT_SOURCES_1_12_0 -->
+## [1.12.0] — 2026-08-27
+
+### Added
+
+- Added `SuperSelectSource<T>` as the raw data-source contract for `SuperSelectFormField<T>`.
+- Added `SuperSelectListSource<T>` for local in-memory raw values.
+- Added `SuperSelectRemoteSource<T>` and `SuperSelectRemoteLoader<T>` for asynchronously loading raw values from repositories, APIs, or other data layers.
+- Added `SuperSelectOptionBuilder<T>`, using the same `(items, index, element)` metadata-builder pattern as `super_auto_suggestion_box`'s suggestion builder.
+- Added a dedicated select-sources gallery screen demonstrating both local and remote sources with `optionBuilder`.
+
+### Changed
+
+- Removed `SuperSelectFormField<T>.options`.
+- `SuperSelectFormField<T>` now requires `sources` and `optionBuilder`.
+- Sources return `List<T>` instead of `List<SuperOption<T>>`; presentation metadata is produced by `optionBuilder` after source results are merged in source order.
+- Source loading remains isolated from selection/search/validation controller logic; loading failures are reported through Flutter error reporting without discarding successful sources.
 ## [1.11.0+1] — 2026-08-25
 
 ### Changed

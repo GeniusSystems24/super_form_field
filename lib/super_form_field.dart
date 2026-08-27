@@ -15,7 +15,7 @@
 ///   hardware-key navigation with an anchored calendar.
 /// * [SuperRangeDateFormField] — typed start/end date ranges with two-calendar
 ///   selection, fixed boundaries, min/max constraints, and configurable presets.
-/// * [SuperSelectFormField] — searchable typed single-select.
+/// * [SuperSelectFormField] — searchable typed single-select with local and remote sources.
 /// * [SuperMultiSelectFormField] — typed multi-select with removable chips.
 /// * [SuperBoolFormField] — toggle or checkbox with optional true-value gate.
 /// * [SuperChoiceFormField] — segmented, radio, or checkbox option group.

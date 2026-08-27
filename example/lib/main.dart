@@ -23,6 +23,7 @@ import 'demos/otp_field_demo.dart';
 import 'demos/phone_field_demo.dart';
 import 'demos/popup_menu_button_demo.dart';
 import 'demos/select_field_demo.dart';
+import 'demos/select_sources_demo.dart';
 import 'demos/text_field_demo.dart';
 
 final ValueNotifier<ThemeMode> _themeMode = ValueNotifier(ThemeMode.dark);
@@ -188,6 +189,12 @@ class _Launcher extends StatelessWidget {
       'Searchable single-select dropdown · options',
       Icons.arrow_drop_down_circle_outlined,
       (_) => const SelectFieldDemo(),
+    ),
+    _DemoItem(
+      'Select Sources',
+      'Local list · asynchronous remote source',
+      Icons.cloud_download_outlined,
+      (_) => const SelectSourcesDemo(),
     ),
     _DemoItem(
       'Super Popup Menu Button',

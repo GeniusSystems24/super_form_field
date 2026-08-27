@@ -13,6 +13,26 @@ SuperMaterialThemeData _testTheme() {
   );
 }
 
+SuperOption<String> _testStringSelectOptionBuilder(
+  List<String> items,
+  int index,
+  String item,
+) {
+  final label = switch (item) {
+    'one' => 'One',
+    'two' => 'Two',
+    'asset' => 'Asset',
+    _ => item,
+  };
+  return SuperOption<String>(value: item, label: label);
+}
+
+SuperOption<int> _testIntSelectOptionBuilder(
+  List<int> items,
+  int index,
+  int item,
+) => SuperOption<int>(value: item, label: item == 1 ? 'One' : item.toString());
+
 void main() {
   test('all public fields accept InputDecoration', () {
     const options = [
@@ -35,7 +55,10 @@ void main() {
       const SuperDateFormField(decoration: decoration),
       const SuperSelectFormField<String>(
         decoration: decoration,
-        options: options,
+        sources: [
+          SuperSelectListSource<String>(items: ['one', 'two']),
+        ],
+        optionBuilder: _testStringSelectOptionBuilder,
       ),
       const SuperMultiSelectFormField<String>(
         decoration: decoration,
@@ -154,7 +177,10 @@ void main() {
                 suffixText: 'Required',
                 counterText: '1 of 5',
               ),
-              options: [SuperOption(value: 'asset', label: 'Asset')],
+              sources: [
+                SuperSelectListSource<String>(items: ['asset']),
+              ],
+              optionBuilder: _testStringSelectOptionBuilder,
             ),
           ),
         ),
@@ -452,7 +478,10 @@ void main() {
         keyboardAppearance: Brightness.light,
       ),
       SuperSelectFormField<int>(
-        options: const [SuperOption(value: 1, label: 'One')],
+        sources: const [
+          SuperSelectListSource<int>(items: [1]),
+        ],
+        optionBuilder: _testIntSelectOptionBuilder,
         searchable: true,
         keyboardType: TextInputType.text,
         inputFormatters: [formatter],
@@ -537,7 +566,10 @@ void main() {
                 ),
                 SuperSelectFormField<int>(
                   initialValue: 1,
-                  options: const [SuperOption(value: 1, label: 'One')],
+                  sources: const [
+                    SuperSelectListSource<int>(items: [1]),
+                  ],
+                  optionBuilder: _testIntSelectOptionBuilder,
                   onSaved: (value) => savedSelection = value,
                 ),
                 SuperMultiSelectFormField<String>(

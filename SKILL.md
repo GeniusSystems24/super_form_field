@@ -1,14 +1,14 @@
 ---
 name: super-form-field
 description: >
-  Build GeniusLink Flutter forms with super_form_field 1.11.0+1: text, OTP, numeric,
+  Build GeniusLink Flutter forms with super_form_field 1.12.0: text, OTP, numeric,
   attachment, date, range-date, select, multi-select, bool, and choice fields plus typed dropdown and popup-menu controls. Use the
   unified InputDecoration API, package controllers and validators, responsive
   date picker behavior, localized en/ar package strings, badge validation,
   light/dark themes, and LTR/RTL rules.
 ---
 
-# Super Form Field 1.11.0+1
+# Super Form Field 1.12.0
 
 Use this skill when implementing or reviewing forms that depend on
 `package:super_form_field/super_form_field.dart`.
@@ -293,9 +293,36 @@ must not affect parsing, formatting, bounds, fixed boundaries, or validation.
 
 Value: `T?`. Controller: `SuperSelectFieldController<T>`.
 
-Provide `List<SuperOption<T>> options`. Optional behavior includes `searchable`,
-`searchHint`, `clearable`, and `emptyLabel`. Disabled options cannot be selected.
+<!-- SUPER_SELECT_SOURCES_1_12_0 -->
+Version 1.12.0 uses raw data sources plus `optionBuilder`; do not add an
+`options` parameter back to `SuperSelectFormField<T>`.
 
+- `SuperSelectListSource<T>(items: ...)` provides local raw values.
+- `SuperSelectRemoteSource<T>(loader: ...)` asynchronously provides raw values.
+- `SuperSelectOptionBuilder<T>` maps `(List<T> items, int index, T element)` to
+  `SuperOption<T>`.
+
+Merge successful source results in source order, then invoke `optionBuilder`
+against the merged raw list. Keep selection, search filtering, validation,
+fixed-state behavior, and open/close state in `SuperSelectFieldController<T>`;
+sources only acquire raw values. A failing source is reported through Flutter
+error reporting and must not discard values resolved by other sources.
+
+```dart
+SuperSelectFormField<Warehouse>(
+  searchable: true,
+  sources: [
+    SuperSelectRemoteSource<Warehouse>(
+      loader: repository.loadWarehouses,
+    ),
+  ],
+  optionBuilder: (items, index, warehouse) => SuperOption(
+    value: warehouse,
+    label: warehouse.name,
+    description: warehouse.code,
+  ),
+);
+```
 ### SuperMultiSelectFormField<T>
 
 Value: `List<T>`. Controller: `SuperMultiSelectFieldController<T>`.

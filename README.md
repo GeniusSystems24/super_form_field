@@ -33,6 +33,7 @@ The package includes:
 - Responsive date input for mobile, tablet, and desktop.
 - Responsive two-calendar date-range selection with configurable presets.
 - Searchable single-select and multi-select menus.
+- Local and remote data sources for `SuperSelectFormField<T>`.
 - Design-system dropdown buttons and anchored popup action menus.
 - Picker-agnostic file attachments.
 - Light and dark theme support through `super_core`.
@@ -60,7 +61,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.11.0+1
+  super_form_field: ^1.12.0
 ```
 
 Import the public library:
@@ -183,11 +184,15 @@ class _AccountFormPageState extends State<AccountFormPage> {
             ),
             required: true,
             searchable: true,
-            options: const [
-              SuperOption(value: 'asset', label: 'Asset'),
-              SuperOption(value: 'liability', label: 'Liability'),
-              SuperOption(value: 'equity', label: 'Equity'),
+            sources: const [
+              SuperSelectListSource<String>(
+                items: ['asset', 'liability', 'equity'],
+              ),
             ],
+            optionBuilder: (items, index, item) => SuperOption(
+              value: item,
+              label: item[0].toUpperCase() + item.substring(1),
+            ),
             forceError: _forceErrors,
             onValidity: (error) => _typeError = error,
           ),
@@ -581,36 +586,129 @@ maximum-date, and start-before-end rules as manual calendar selection.
 ### Select field
 
 `SuperSelectFormField<T>` is a typed single-select control with optional search,
-clear behavior, disabled options, descriptions, icons, and option groups.
+clear behavior, disabled options, descriptions, icons, option groups, and
+local/remote raw-value sources.
+
+Version 1.12.0 uses a source + metadata-builder API. `options:` is no longer a
+`SuperSelectFormField` parameter. Sources return raw `T` values and
+`optionBuilder` converts them to `SuperOption<T>` metadata.
+
+<!-- SUPER_SELECT_SOURCES_1_12_0 -->
+Use `SuperSelectListSource<T>` when values already exist in memory:
 
 ```dart
-SuperSelectFormField<int>(
-  decoration: const InputDecoration(
-    labelText: 'Parent account',
-    hintText: 'Select an account',
-  ),
-  searchable: true,
-  clearable: true,
-  options: const [
-    SuperOption(
-      value: 1000,
-      label: 'Cash',
-      description: 'Current assets',
-      icon: SffIcons.hash,
-      group: 'Assets',
-    ),
-    SuperOption(
-      value: 2000,
-      label: 'Accounts payable',
-      group: 'Liabilities',
+SuperSelectFormField<String>(
+  decoration: const InputDecoration(labelText: 'Customer type'),
+  sources: const [
+    SuperSelectListSource<String>(
+      items: ['retail', 'wholesale'],
     ),
   ],
-  onChanged: (accountId) {},
+  optionBuilder: (items, index, item) => SuperOption(
+    value: item,
+    label: item == 'retail' ? 'Retail' : 'Wholesale',
+  ),
 );
 ```
 
-Search matches both `label` and `description`, without case sensitivity.
+Use `SuperSelectRemoteSource<T>` to load raw values asynchronously:
 
+```dart
+SuperSelectFormField<Warehouse>(
+  decoration: const InputDecoration(labelText: 'Warehouse'),
+  searchable: true,
+  sources: [
+    SuperSelectRemoteSource<Warehouse>(
+      loader: repository.fetchWarehouses,
+    ),
+  ],
+  optionBuilder: (items, index, warehouse) => SuperOption(
+    value: warehouse,
+    label: warehouse.name,
+    description: warehouse.code,
+  ),
+);
+```
+
+Results from all sources are merged in the same order as `sources`. The
+`optionBuilder` receives that merged raw list, each global index, and the raw
+element. Remote loaders run asynchronously; while no items are resolved, the
+menu shows a compact loading indicator. Search continues to use the controller's
+label/description filtering after `optionBuilder` creates the options.
+
+<!-- SUPER_SELECT_FOCUS_1_12_0_START -->
+#### Focus and keyboard interaction
+
+`SuperSelectFormField<T>` participates in Flutter's focus traversal system, so
+it can be reached with `Tab` on desktop and web without requiring a pointer
+click.
+
+Use `autofocus` for the select field itself:
+
+```dart
+final customerFocusNode = FocusNode();
+
+SuperSelectFormField<String>(
+  focusNode: customerFocusNode,
+  autofocus: true,
+  decoration: const InputDecoration(labelText: 'Customer'),
+  sources: const [
+    SuperSelectListSource<String>(
+      items: ['retail', 'wholesale'],
+    ),
+  ],
+  optionBuilder: (items, index, item) => SuperOption(
+    value: item,
+    label: item == 'retail' ? 'Retail' : 'Wholesale',
+  ),
+);
+```
+
+The focus-related parameters are:
+
+- `focusNode` — supplies an external `FocusNode` for the select trigger.
+- `autofocus` — requests focus for the select field when it enters the focus tree.
+- `onFocusChange` — reports when the select trigger gains or loses focus.
+- `canRequestFocus` — controls whether the field can request keyboard focus.
+- `searchAutofocus` — controls autofocus for the search input *inside* the open
+  options menu. It is independent from `autofocus` and defaults to `true`.
+
+When no `focusNode` is supplied, the field reuses
+`SuperSelectFieldController.focusNode` when available. Otherwise it creates and
+owns an internal focus node.
+
+Keyboard interaction is supported while the select trigger has focus:
+
+- `Enter`, `Space`, or `Arrow Down` opens the options menu.
+- `Escape` closes the menu.
+- After selecting an option, focus returns to the select trigger.
+
+For example, disable automatic focus of the search input while keeping the
+select itself focusable:
+
+```dart
+SuperSelectFormField<Warehouse>(
+  autofocus: false,
+  searchAutofocus: false,
+  canRequestFocus: true,
+  decoration: const InputDecoration(labelText: 'Warehouse'),
+  searchable: true,
+  sources: [
+    SuperSelectRemoteSource<Warehouse>(
+      loader: repository.fetchWarehouses,
+    ),
+  ],
+  optionBuilder: (items, index, warehouse) => SuperOption(
+    value: warehouse,
+    label: warehouse.name,
+    description: warehouse.code,
+  ),
+  onFocusChange: (hasFocus) {
+    debugPrint('Warehouse focus: $hasFocus');
+  },
+);
+```
+<!-- SUPER_SELECT_FOCUS_1_12_0_END -->
 ### Multi-select field
 
 `SuperMultiSelectFormField<T>` displays selected values as removable chips and
