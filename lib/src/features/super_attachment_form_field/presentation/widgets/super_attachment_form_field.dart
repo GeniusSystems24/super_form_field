@@ -41,6 +41,7 @@ class SuperAttachmentFormField extends StatefulWidget {
     this.multiple = true,
     this.validators = const [],
     this.forceError = false,
+    this.autovalidateMode,
     this.validationPosition,
     this.helpIcon,
     this.arabic = false,
@@ -78,6 +79,7 @@ class SuperAttachmentFormField extends StatefulWidget {
 
   final List<Validator<List<SuperFile>>> validators;
   final bool forceError;
+  final AutovalidateMode? autovalidateMode;
 
   /// Controls where validation feedback is rendered.
   ///
@@ -152,6 +154,10 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
   Widget build(BuildContext context) {
     if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
+    final autovalidateMode = SffDecoration.effectiveAutovalidateMode(
+      context,
+      widget.autovalidateMode,
+    );
     _controller.configure(
       multiple: widget.multiple,
       accept: widget.accept,
@@ -168,7 +174,8 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
             l10n.fileTooLarge(name, maxSizeMB ?? 0),
         fileNotAcceptedMessage: l10n.fileNotAccepted,
       ),
-      forceError: widget.forceError,
+      forceError:
+          widget.forceError || autovalidateMode == AutovalidateMode.always,
       onValidity: widget.onValidity,
       onChanged: widget.onChanged,
     );

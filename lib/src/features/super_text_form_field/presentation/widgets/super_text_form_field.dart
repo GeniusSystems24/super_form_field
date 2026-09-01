@@ -103,7 +103,7 @@ class SuperTextFormField extends StatefulWidget {
     this.maxLengthEnforcement,
     this.minLines,
     this.maxLines,
-    this.autovalidateMode = AutovalidateMode.disabled,
+    this.autovalidateMode,
   }) : assert(
          onSaved == null || onSave == null,
          'Provide either onSaved or onSave, not both.',
@@ -257,7 +257,7 @@ class SuperTextFormField extends StatefulWidget {
   final int? maxLines;
 
   /// Controls when the field participates in an ancestor [Form] validation.
-  final AutovalidateMode autovalidateMode;
+  final AutovalidateMode? autovalidateMode;
 
   @override
   State<SuperTextFormField> createState() => _SuperTextFormFieldState();
@@ -380,7 +380,10 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
         (widget.onSaved ?? widget.onSave)?.call(value);
         widget.onUnmaskedSaved?.call(_unmaskedValue);
       },
-      autovalidateMode: widget.autovalidateMode,
+      autovalidateMode: SffDecoration.effectiveAutovalidateMode(
+        context,
+        widget.autovalidateMode,
+      ),
       validator: (_) => _controller.error,
       builder: (formState) {
         _formState = formState;

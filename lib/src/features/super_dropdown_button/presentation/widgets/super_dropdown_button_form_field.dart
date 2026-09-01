@@ -33,7 +33,7 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
     ValueChanged<T?>? onChanged,
     super.onSaved,
     FormFieldValidator<T>? validator,
-    AutovalidateMode super.autovalidateMode = AutovalidateMode.disabled,
+    super.autovalidateMode,
     InputDecoration decoration = const InputDecoration(),
     bool required = false,
     String requiredMessage = 'This field is required.',

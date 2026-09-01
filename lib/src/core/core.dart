@@ -14,6 +14,9 @@
 // Utils (form-field-specific)
 export 'utils/validators.dart';
 
+// Package defaults.
+export 'super_form_field.dart';
+
 // Extensions
 export 'extensions/context_extensions.dart';
 

@@ -8,7 +8,8 @@ LTR/RTL layouts,
 validation submit sweeps, numeric stepping, mobile/desktop date interactions,
 range-date selection with two calendars, fixed boundaries, bounds, and configurable presets,
 dedicated masked phone-input and OTP-input screens, configurable validation
-positioning, and ERP-oriented sample data.
+positioning, Form-level autovalidation inheritance, and ERP-oriented sample
+data.
 
 ## Run
 

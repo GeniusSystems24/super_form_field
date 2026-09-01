@@ -39,6 +39,7 @@ class SuperChoiceFormField<T> extends StatefulWidget {
     this.readOnly = false,
     this.validators = const [],
     this.forceError = false,
+    this.autovalidateMode,
     this.validationPosition,
     this.helpIcon,
     this.arabic = false,
@@ -82,6 +83,7 @@ class SuperChoiceFormField<T> extends StatefulWidget {
 
   final List<Validator<List<T>>> validators;
   final bool forceError;
+  final AutovalidateMode? autovalidateMode;
 
   /// Controls where validation feedback is rendered.
   ///
@@ -145,6 +147,10 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
   Widget build(BuildContext context) {
     if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
+    final autovalidateMode = SffDecoration.effectiveAutovalidateMode(
+      context,
+      widget.autovalidateMode,
+    );
     _controller.configure(
       multiple: widget.multiple || widget.style == SuperChoiceStyle.checkbox,
       maxSelections: widget.maxSelections,
@@ -157,7 +163,8 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
         minSelectionsMessage: l10n.selectAtLeastOptions,
         maxSelectionsMessage: l10n.selectAtMostOptions,
       ),
-      forceError: widget.forceError,
+      forceError:
+          widget.forceError || autovalidateMode == AutovalidateMode.always,
       onValidity: widget.onValidity,
       onChanged: widget.onChanged,
     );

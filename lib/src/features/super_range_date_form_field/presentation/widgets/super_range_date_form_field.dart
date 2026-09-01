@@ -98,7 +98,7 @@ class SuperRangeDateFormField extends StatefulWidget {
 
     this.onSave,
 
-    this.autovalidateMode = AutovalidateMode.disabled,
+    this.autovalidateMode,
   }) : assert(
          onSaved == null || onSave == null,
 
@@ -230,7 +230,7 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final FormFieldSetter<SuperDateRange?>? onSave;
 
-  final AutovalidateMode autovalidateMode;
+  final AutovalidateMode? autovalidateMode;
 
   @override
   State<SuperRangeDateFormField> createState() =>
@@ -688,7 +688,10 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
       forceError: widget.forceError,
       validationPosition: validationPosition,
       arabic: widget.arabic,
-      autovalidateMode: widget.autovalidateMode,
+      autovalidateMode: SffDecoration.effectiveAutovalidateMode(
+        context,
+        widget.autovalidateMode,
+      ),
     );
 
     final endField = SuperDateFormField(
@@ -706,7 +709,10 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
       forceError: widget.forceError,
       validationPosition: validationPosition,
       arabic: widget.arabic,
-      autovalidateMode: widget.autovalidateMode,
+      autovalidateMode: SffDecoration.effectiveAutovalidateMode(
+        context,
+        widget.autovalidateMode,
+      ),
     );
 
     final gap = SuperThemeData.of(context).spacing.space3;
@@ -752,6 +758,10 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
     if (_controller.isHiden) return const SizedBox.shrink();
 
     final l10n = SuperFormTranslation.of(context);
+    final autovalidateMode = SffDecoration.effectiveAutovalidateMode(
+      context,
+      widget.autovalidateMode,
+    );
 
     return FormField<SuperDateRange?>(
       key: _controller.formFieldKey ?? ObjectKey(_controller),
@@ -762,7 +772,7 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
 
       onSaved: widget.onSaved ?? widget.onSave,
 
-      autovalidateMode: widget.autovalidateMode,
+      autovalidateMode: autovalidateMode,
 
       validator: (_) => _controller.error,
 

@@ -11,6 +11,7 @@ import 'package:super_core/super_core.dart';
 import 'package:super_form_field/super_form_field.dart';
 
 import 'demos/attachment_field_demo.dart';
+import 'demos/autovalidate_mode_demo.dart';
 import 'demos/bool_field_demo.dart';
 import 'demos/choice_field_demo.dart';
 import 'demos/controller_state_demo.dart';
@@ -137,17 +138,24 @@ class _Launcher extends StatelessWidget {
       (_) => const ControllerStateDemo(),
     ),
     _DemoItem(
-      'Super Text Field',
-      'Text · email · password · multiline · counter',
-      Icons.text_fields_rounded,
-      (_) => const TextFieldDemo(),
-    ),
-    _DemoItem(
       'Validation Position',
       'Suffix icon / under-box text / label-trailing icon',
       Icons.error_outline_rounded,
       (_) => const ValidationPositionDemo(),
     ),
+    _DemoItem(
+      'Autovalidate Mode',
+      'Field value / Form default / disabled fallback',
+      Icons.rule_rounded,
+      (_) => const AutovalidateModeDemo(),
+    ),
+    _DemoItem(
+      'Super Text Field',
+      'Text · email · password · multiline · counter',
+      Icons.text_fields_rounded,
+      (_) => const TextFieldDemo(),
+    ),
+
     _DemoItem(
       'Phone Text Field',
       'International · country rules · formatters · Form save',

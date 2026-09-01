@@ -86,7 +86,7 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
     this.cursorErrorColor,
     this.style,
     this.strutStyle,
-    this.autovalidateMode = AutovalidateMode.disabled,
+    this.autovalidateMode,
   }) : assert(
          onSaved == null || onSave == null,
          'Provide either onSaved or onSave, not both.',
@@ -197,7 +197,7 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
   final Color? cursorErrorColor;
   final TextStyle? style;
   final StrutStyle? strutStyle;
-  final AutovalidateMode autovalidateMode;
+  final AutovalidateMode? autovalidateMode;
 
   @override
   State<SuperMultiSelectFormField<T>> createState() =>
@@ -368,7 +368,10 @@ class _SuperMultiSelectFormFieldState<T>
       initialValue: _controller.values,
       enabled: !widget.disabled,
       onSaved: widget.onSaved ?? widget.onSave,
-      autovalidateMode: widget.autovalidateMode,
+      autovalidateMode: SffDecoration.effectiveAutovalidateMode(
+        context,
+        widget.autovalidateMode,
+      ),
       validator: (_) => _controller.error,
       builder: (formState) {
         _controller.configure(

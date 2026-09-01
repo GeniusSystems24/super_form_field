@@ -7,11 +7,11 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
-import 'package:super_core/super_core.dart';
 import 'package:super_core/super_core.dart' hide FieldDensity, FieldShell;
 import 'package:super_form_field/src/core/extensions/context_extensions.dart';
 
 import '../entities/validation_position.dart';
+import '../super_form_field.dart';
 import 'error_badge.dart';
 
 /// Internal helpers that apply [InputDecoration] consistently to custom fields.
@@ -286,11 +286,24 @@ abstract final class SffDecoration {
     ValidationPosition? explicit,
   ) {
     if (explicit != null) return explicit;
+    if (SuperFormField.validationPosition != null) {
+      return SuperFormField.validationPosition!;
+    }
 
     return SuperDeviceMode.of(context).isMobile
         ? ValidationPosition.underBox
         : ValidationPosition.labelTrailing;
   }
+
+  /// Resolves a field autovalidation mode from an explicit field value, then
+  /// the nearest [Form], then Flutter's disabled default.
+  static AutovalidateMode effectiveAutovalidateMode(
+    BuildContext context,
+    AutovalidateMode? explicit,
+  ) =>
+      explicit ??
+      context.findAncestorWidgetOfExactType<Form>()?.autovalidateMode ??
+      AutovalidateMode.disabled;
 
   /// Builds the shared label-row trailing content.
   static Widget? buildLabelRight(

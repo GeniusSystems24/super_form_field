@@ -1,8 +1,8 @@
 // ============================================================
 // example/lib/demos/validation_position_demo.dart
 // ------------------------------------------------------------
-// Demonstrates SuperTextFormField validation placement across the suffix icon,
-// under-box text, label-trailing icon, and responsive default.
+// Demonstrates validation placement across suffix icons, under-box text,
+// label-trailing icons, and responsive/package defaults.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -20,7 +20,16 @@ class ValidationPositionDemo extends StatefulWidget {
 
 class _ValidationPositionDemoState extends State<ValidationPositionDemo> {
   bool _force = true;
+  ValidationPosition? _globalPosition;
   ValidationPosition _position = ValidationPosition.labelTrailing;
+
+  @override
+  void dispose() {
+    if (SuperFormField.validationPosition == _globalPosition) {
+      SuperFormField.validationPosition = null;
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,18 +39,54 @@ class _ValidationPositionDemoState extends State<ValidationPositionDemo> {
       title: 'Validation Position',
       children: [
         SuperSectionCard1(
-          title: 'Responsive default',
+          title: 'Global default',
           subtitle:
-              'Mobile uses under-box text; larger screens use label trailing.',
+              'Leave it responsive, or set one package-wide validation position.',
           accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
-          child: SuperTextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Default placement',
-              hintText: 'Leave empty and validate',
-              prefixIcon: Icon(SffIcons.user),
-            ),
-            required: true,
-            forceError: _force,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Wrap(
+                spacing: SuperThemeData.of(context).spacing.space2,
+                runSpacing: SuperThemeData.of(context).spacing.space2,
+                children: [
+                  ChoiceChip(
+                    label: const Text('Responsive'),
+                    selected: _globalPosition == null,
+                    onSelected: (_) => _setGlobalPosition(null),
+                  ),
+                  ChoiceChip(
+                    label: const Text('Suffix'),
+                    selected: _globalPosition == ValidationPosition.suffixIcon,
+                    onSelected: (_) =>
+                        _setGlobalPosition(ValidationPosition.suffixIcon),
+                  ),
+                  ChoiceChip(
+                    label: const Text('Under'),
+                    selected: _globalPosition == ValidationPosition.underBox,
+                    onSelected: (_) =>
+                        _setGlobalPosition(ValidationPosition.underBox),
+                  ),
+                  ChoiceChip(
+                    label: const Text('Label'),
+                    selected:
+                        _globalPosition == ValidationPosition.labelTrailing,
+                    onSelected: (_) =>
+                        _setGlobalPosition(ValidationPosition.labelTrailing),
+                  ),
+                ],
+              ),
+              SizedBox(height: SuperThemeData.of(context).spacing.space6),
+              SuperTextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Uses package default',
+                  hintText: 'Leave empty and validate',
+                  prefixIcon: Icon(SffIcons.user),
+                ),
+                required: true,
+                forceError: _force,
+              ),
+            ],
           ),
         ),
         SuperSectionCard1(
@@ -157,6 +202,11 @@ class _ValidationPositionDemoState extends State<ValidationPositionDemo> {
         ),
       ],
     );
+  }
+
+  void _setGlobalPosition(ValidationPosition? position) {
+    setState(() => _globalPosition = position);
+    SuperFormField.validationPosition = position;
   }
 }
 

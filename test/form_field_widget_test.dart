@@ -51,31 +51,37 @@ void main() {
     final fields = <Widget>[
       SuperTextFormField(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperOTPFormField(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperNumericFormField(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperAttachmentFormField(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperDateFormField(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperSelectFormField<String>(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         sources: [
           SuperSelectListSource<String>(items: ['one', 'two']),
         ],
@@ -86,22 +92,26 @@ void main() {
       const SuperMultiSelectFormField<String>(
         decoration: decoration,
         options: options,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperBoolFormField(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperChoiceFormField<String>(
         decoration: decoration,
         options: options,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       SuperRangeDateFormField(
         decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
@@ -109,6 +119,7 @@ void main() {
         decoration: decoration,
         options: options,
         onChanged: (_) {},
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
@@ -246,6 +257,90 @@ void main() {
       expect(find.byType(ErrorBadge), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'global validation position is used when field position is null',
+    (tester) async {
+      addTearDown(() => SuperFormField.validationPosition = null);
+      SuperFormField.validationPosition = ValidationPosition.suffixIcon;
+
+      await _pumpTextValidationApp(tester);
+
+      expect(find.text('Manual validation error'), findsNothing);
+      expect(find.byType(ErrorBadge), findsOneWidget);
+    },
+  );
+
+  testWidgets('field validation position overrides global position', (
+    tester,
+  ) async {
+    addTearDown(() => SuperFormField.validationPosition = null);
+    SuperFormField.validationPosition = ValidationPosition.suffixIcon;
+
+    await _pumpTextValidationApp(
+      tester,
+      validationPosition: ValidationPosition.underBox,
+    );
+
+    expect(find.text('Manual validation error'), findsOneWidget);
+    expect(find.byType(ErrorBadge), findsNothing);
+  });
+
+  testWidgets('text field inherits autovalidate mode from form', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: _testTheme(),
+        localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+        supportedLocales: SuperFormLocalizations.supportedLocales,
+        home: Scaffold(
+          body: Form(
+            autovalidateMode: AutovalidateMode.always,
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: SuperTextFormField(
+                decoration: const InputDecoration(labelText: 'Account name'),
+                validators: const [_manualValidationError],
+                validationPosition: ValidationPosition.underBox,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Manual validation error'), findsOneWidget);
+  });
+
+  testWidgets('controller field inherits autovalidate mode from form', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: _testTheme(),
+        localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+        supportedLocales: SuperFormLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: Form(
+            autovalidateMode: AutovalidateMode.always,
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: SuperBoolFormField(
+                decoration: InputDecoration(labelText: 'Approved'),
+                mustBeTrue: true,
+                validationPosition: ValidationPosition.underBox,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('This must be enabled to continue'), findsOneWidget);
+  });
 
   testWidgets('text masks run after custom formatters', (tester) async {
     final digitsOnly = FilteringTextInputFormatter.digitsOnly;

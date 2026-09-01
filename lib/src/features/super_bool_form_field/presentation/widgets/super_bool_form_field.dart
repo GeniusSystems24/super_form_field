@@ -39,6 +39,7 @@ class SuperBoolFormField extends StatefulWidget {
     this.readOnly = false,
     this.validators = const [],
     this.forceError = false,
+    this.autovalidateMode,
     this.validationPosition,
     this.helpIcon,
     this.arabic = false,
@@ -79,6 +80,7 @@ class SuperBoolFormField extends StatefulWidget {
 
   final List<Validator<bool>> validators;
   final bool forceError;
+  final AutovalidateMode? autovalidateMode;
 
   /// Controls where validation feedback is rendered.
   ///
@@ -136,6 +138,10 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
   Widget build(BuildContext context) {
     if (_controller.isHiden) return const SizedBox.shrink();
     final l10n = SuperFormTranslation.of(context);
+    final autovalidateMode = SffDecoration.effectiveAutovalidateMode(
+      context,
+      widget.autovalidateMode,
+    );
     _controller.configure(
       validators: buildBoolValidators(
         mustBeTrue: widget.mustBeTrue,
@@ -145,7 +151,8 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
             : widget.mustBeTrueMessage,
         extra: widget.validators,
       ),
-      forceError: widget.forceError,
+      forceError:
+          widget.forceError || autovalidateMode == AutovalidateMode.always,
       onValidity: widget.onValidity,
       onChanged: widget.onChanged,
     );

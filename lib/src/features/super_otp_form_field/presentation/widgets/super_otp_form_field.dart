@@ -79,7 +79,7 @@ class SuperOTPFormField extends StatefulWidget {
     this.boxHeight,
     this.spacing,
     this.borderRadius,
-    this.autovalidateMode = AutovalidateMode.disabled,
+    this.autovalidateMode,
   }) : assert(length > 0),
        assert(obscuringCharacter.length == 1),
        assert(boxWidth == null || boxWidth > 0),
@@ -194,7 +194,7 @@ class SuperOTPFormField extends StatefulWidget {
   final double? boxHeight;
   final double? spacing;
   final BorderRadius? borderRadius;
-  final AutovalidateMode autovalidateMode;
+  final AutovalidateMode? autovalidateMode;
 
   @override
   State<SuperOTPFormField> createState() => _SuperOTPFormFieldState();
@@ -316,7 +316,10 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
       enabled: !widget.disabled,
       onSaved: widget.onSaved ?? widget.onSave,
       onResetValue: _reset,
-      autovalidateMode: widget.autovalidateMode,
+      autovalidateMode: SffDecoration.effectiveAutovalidateMode(
+        context,
+        widget.autovalidateMode,
+      ),
       validator: (_) => _controller.error,
       builder: (formState) {
         _formState = formState;

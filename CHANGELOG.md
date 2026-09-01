@@ -4,6 +4,19 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## 1.14.0
+
+### Added
+
+- Added responsive defaults for field validation placement: under-box text on
+  mobile and label-trailing icon on tablet/desktop.
+- Added nullable `SuperFormField.validationPosition` for choosing a package-wide
+  validation placement default without overriding field-level values.
+- Added nullable `autovalidateMode` support across input fields, inheriting the
+  nearest `Form.autovalidateMode` when a field-level value is omitted.
+- Added an autovalidate-mode example screen demonstrating Form-level defaults
+  and field-level overrides.
+
 ## 1.13.0
 
 ### Added
@@ -36,6 +49,7 @@ to [Semantic Versioning](https://semver.org/).
 - `SuperSelectFormField<T>` now requires `sources` and `optionBuilder`.
 - Sources return `List<T>` instead of `List<SuperOption<T>>`; presentation metadata is produced by `optionBuilder` after source results are merged in source order.
 - Source loading remains isolated from selection/search/validation controller logic; loading failures are reported through Flutter error reporting without discarding successful sources.
+
 ## [1.11.0+1] — 2026-08-25
 
 ### Changed

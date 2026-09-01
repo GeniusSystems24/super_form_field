@@ -53,7 +53,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.13.0
+  super_form_field: ^1.14.0
 ```
 
 Import the public library:
@@ -244,8 +244,9 @@ label/helper/error is supplied.
 | `ValidationPosition.underBox` | Shows validation text under the input box |
 | `ValidationPosition.labelTrailing` | Shows the validation icon at the trailing edge of the label row |
 
-When `validationPosition` is omitted, each field uses
-`ValidationPosition.underBox` on mobile and
+When a field-level `validationPosition` is omitted, the field uses the nullable
+`SuperFormField.validationPosition` package default. When that default is null,
+the responsive fallback is `ValidationPosition.underBox` on mobile and
 `ValidationPosition.labelTrailing` on tablet and desktop.
 
 ```dart
@@ -257,6 +258,13 @@ SuperTextFormField(
   required: true,
   validationPosition: ValidationPosition.underBox,
 );
+```
+
+Set a package-wide default when a screen or application should use one
+validation surface consistently:
+
+```dart
+SuperFormField.validationPosition = ValidationPosition.suffixIcon;
 ```
 
 Use `helpIcon` to add a custom help affordance at the end of a field label row:
@@ -287,7 +295,8 @@ Material editing controls that apply to their input model:
 - `onSaved` for Material naming, plus `onSave` as a compatibility alias. Supply
   only one of them.
 - `autovalidateMode` and typed participation in `FormState.validate()` and
-  `FormState.save()`.
+  `FormState.save()`. When omitted, fields inherit the nearest
+  `Form.autovalidateMode` before falling back to `AutovalidateMode.disabled`.
 
 Text, numeric, date, select, and multi-select retain their broader
 editor-specific options such as autocorrect, suggestions, smart punctuation,
