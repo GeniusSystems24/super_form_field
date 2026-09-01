@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:super_core/super_core.dart';
 
-
-
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 
 import '../../../../../localization/super_form_localizations.dart';
 
@@ -18,8 +17,6 @@ import '../../domain/usecases/range_date_logic.dart';
 import '../controllers/super_range_date_field_controller.dart';
 
 import 'super_range_date_picker.dart';
-
-
 
 // SUPER_RANGE_DATE_PICKER_FIRST_DAY_OF_WEEK_V1
 
@@ -38,9 +35,7 @@ import 'super_range_date_picker.dart';
 /// the explicit calendar action rendered with the end-date input.
 
 class SuperRangeDateFormField extends StatefulWidget {
-
   SuperRangeDateFormField({
-
     super.key,
 
     this.controller,
@@ -91,6 +86,10 @@ class SuperRangeDateFormField extends StatefulWidget {
 
     this.forceError = false,
 
+    this.validationPosition,
+
+    this.helpIcon,
+
     this.arabic = false,
 
     this.separator = ' → ',
@@ -100,32 +99,23 @@ class SuperRangeDateFormField extends StatefulWidget {
     this.onSave,
 
     this.autovalidateMode = AutovalidateMode.disabled,
-
   }) : assert(
-
          onSaved == null || onSave == null,
 
          'Provide either onSaved or onSave, not both.',
-
        ),
 
        assert(
-
          minDate == null || maxDate == null || !minDate.isAfter(maxDate),
 
          'minDate must not be after maxDate.',
-
        ),
 
        assert(
-
          firstDayOfWeek >= DateTime.monday && firstDayOfWeek <= DateTime.sunday,
 
          'firstDayOfWeek must use DateTime.monday through DateTime.sunday.',
-
        );
-
-
 
   final SuperRangeDateFieldController? controller;
 
@@ -135,19 +125,13 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final FormValidityChanged? onValidity;
 
-
-
   /// Group label/helper/counter metadata for the complete range control.
 
   final InputDecoration decoration;
 
-
-
   /// Decoration for the independent editable start-date field.
 
   final InputDecoration startDecoration;
-
-
 
   /// Decoration for the independent editable end-date field.
 
@@ -157,8 +141,6 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final InputDecoration endDecoration;
 
-
-
   final bool required;
 
   final FieldDensity density;
@@ -167,15 +149,11 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final bool readOnly;
 
-
-
   /// Prevents keyboard edits, picker changes, suggestions, clear actions, and
 
   /// controller mutations from changing the start boundary.
 
   final bool isStartFixed;
-
-
 
   /// Prevents keyboard edits, picker changes, suggestions, clear actions, and
 
@@ -183,13 +161,9 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final bool isEndFixed;
 
-
-
   final DateTime? minDate;
 
   final DateTime? maxDate;
-
-
 
   /// First weekday displayed by the range picker calendars.
 
@@ -200,8 +174,6 @@ class SuperRangeDateFormField extends StatefulWidget {
   /// calendar layout; typed date parsing/formatting is unaffected.
 
   final int firstDayOfWeek;
-
-
 
   /// Presets shown in the picker.
 
@@ -215,21 +187,15 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final List<SuperDateRangeSuggestion>? suggestions;
 
-
-
   /// Shows one range-level clear action beside the calendar trigger.
 
   /// Fixed boundaries are preserved when clearing.
 
   final bool clearable;
 
-
-
   /// Enables the same arrow-key segment navigation as [SuperDateFormField].
 
   final bool keyboardShortcuts;
-
-
 
   final List<Validator<SuperDateRange?>> validators;
 
@@ -241,9 +207,16 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final bool forceError;
 
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
+
   final bool arabic;
-
-
 
   /// Retained for compatibility with the old combined-text representation and
 
@@ -253,35 +226,23 @@ class SuperRangeDateFormField extends StatefulWidget {
 
   final String separator;
 
-
-
   final FormFieldSetter<SuperDateRange?>? onSaved;
 
   final FormFieldSetter<SuperDateRange?>? onSave;
 
   final AutovalidateMode autovalidateMode;
 
-
-
   @override
-
   State<SuperRangeDateFormField> createState() =>
-
       _SuperRangeDateFormFieldState();
-
 }
 
-
-
 class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
-
   late SuperRangeDateFieldController _controller;
 
   bool _ownsController = false;
 
   bool _pickerOpen = false;
-
-
 
   // SUPER_RANGE_DATE_FORM_FIELD_COMPACT_OVERLAY_V4
 
@@ -303,48 +264,29 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
 
   double _pickerHorizontalOffset = 0;
 
-
-
   List<SuperDateRangeSuggestion> get _suggestions =>
-
       widget.suggestions ?? SuperDateRangeSuggestion.defaults;
-
-
 
   bool get _canOpen => !widget.disabled && !widget.readOnly;
 
-
-
   bool get _canClear =>
-
       !widget.disabled &&
-
       !widget.readOnly &&
-
       !_controller.isFullyFixed &&
-
       (_controller.startDate != null || _controller.endDate != null);
 
-
-
   @override
-
   void initState() {
-
     super.initState();
 
     _controller =
-
         widget.controller ??
-
         SuperRangeDateFieldController(
-
           initialValue: widget.initialValue,
 
           isStartFixed: widget.isStartFixed,
 
           isEndFixed: widget.isEndFixed,
-
         );
 
     _ownsController = widget.controller == null;
@@ -352,84 +294,52 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
     _syncFixedConfiguration();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       if (mounted) _controller.reportInitialValidity();
-
     });
-
   }
 
-
-
   @override
-
   void didUpdateWidget(SuperRangeDateFormField oldWidget) {
-
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
-
       if (_ownsController) _controller.dispose();
 
       _controller =
-
           widget.controller ??
-
           SuperRangeDateFieldController(
-
             initialValue: widget.initialValue,
 
             isStartFixed: widget.isStartFixed,
 
             isEndFixed: widget.isEndFixed,
-
           );
 
       _ownsController = widget.controller == null;
-
     }
 
     if (widget.isStartFixed != oldWidget.isStartFixed ||
-
         widget.isEndFixed != oldWidget.isEndFixed ||
-
         widget.controller != oldWidget.controller) {
-
       _syncFixedConfiguration();
-
     }
-
   }
 
-
-
   void _syncFixedConfiguration() {
-
     _controller.isStartFixed = widget.isStartFixed;
 
     _controller.isEndFixed = widget.isEndFixed;
-
   }
 
-
-
   @override
-
   void dispose() {
-
     if (_ownsController) _controller.dispose();
 
     super.dispose();
-
   }
 
-
-
   Future<void> _openPicker() async {
-
     if (!_canOpen) return;
-
-
 
     // Exactly like SuperDateFormField, the calendar action commits/unfocuses
 
@@ -439,15 +349,10 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
 
     FocusManager.instance.primaryFocus?.unfocus();
 
-
-
     if (SuperDeviceMode.of(context).isMobile) {
-
       if (_pickerOverlay.isShowing) _dismissDesktopPicker();
 
       if (_pickerOpen) return;
-
-
 
       setState(() => _pickerOpen = true);
 
@@ -455,42 +360,28 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
 
       if (!mounted) return;
 
-
-
       if (picked != null) _controller.pickRange(picked);
 
       setState(() => _pickerOpen = false);
 
       return;
-
     }
 
-
-
     if (_pickerOverlay.isShowing) {
-
       _dismissDesktopPicker();
 
       return;
-
     }
-
-
 
     _placeDesktopPicker();
 
     _pickerOverlay.show();
 
     setState(() => _pickerOpen = true);
-
   }
 
-
-
   Future<SuperDateRange?> _showMobilePicker() {
-
     return showModalBottomSheet<SuperDateRange>(
-
       context: context,
 
       useSafeArea: true,
@@ -500,15 +391,12 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
       backgroundColor: Colors.transparent,
 
       builder: (sheetContext) => FractionallySizedBox(
-
         heightFactor: 0.94,
 
         child: ClipRRect(
-
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
 
           child: SuperRangeDatePicker(
-
             startDate: _controller.startDate,
 
             endDate: _controller.endDate,
@@ -528,21 +416,13 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
             onCancel: () => Navigator.of(sheetContext).pop(),
 
             onApply: (range) => Navigator.of(sheetContext).pop(range),
-
           ),
-
         ),
-
       ),
-
     );
-
   }
 
-
-
   void _placeDesktopPicker() {
-
     // Range picker is larger than MiniCalendar, but placement follows the same
 
     // above/below rule used by SuperDateFormField.
@@ -550,22 +430,15 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
     const estimatedHeight = 420.0;
 
     final box =
-
         _pickerButtonKey.currentContext?.findRenderObject() as RenderBox?;
 
     final screenHeight = MediaQuery.sizeOf(context).height;
 
-
-
     if (box == null) {
-
       _pickerAbove = false;
 
       return;
-
     }
-
-
 
     final origin = box.localToGlobal(Offset.zero);
 
@@ -574,8 +447,6 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
     final below = screenHeight - (top + box.size.height);
 
     _pickerAbove = below < estimatedHeight + 12 && top > below;
-
-
 
     // MiniCalendar can simply align to the button edge because it is narrow.
 
@@ -590,9 +461,7 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
     final rtl = context.isRtl;
 
     final desiredLeft = rtl
-
         ? origin.dx
-
         : origin.dx + box.size.width - panelWidth;
 
     final maxLeft = screenWidth - 12.0 - panelWidth;
@@ -600,39 +469,25 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
     final clampedLeft = desiredLeft.clamp(12.0, maxLeft).toDouble();
 
     _pickerHorizontalOffset = clampedLeft - desiredLeft;
-
   }
 
-
-
   void _dismissDesktopPicker() {
-
     if (_pickerOverlay.isShowing) _pickerOverlay.hide();
 
     if (_pickerOpen && mounted) setState(() => _pickerOpen = false);
-
   }
 
-
-
   void _applyDesktopRange(SuperDateRange range) {
-
     _controller.pickRange(range);
 
     _dismissDesktopPicker();
-
   }
 
-
-
   Widget _desktopPickerOverlayHost({required Widget child}) {
-
     return OverlayPortal(
-
       controller: _pickerOverlay,
 
       overlayChildBuilder: (overlayContext) {
-
         final rtl = context.isRtl;
 
         final alignEnd = !rtl;
@@ -642,9 +497,7 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
         final panelWidth = screen.width > 784 ? 760.0 : screen.width - 24.0;
 
         final panelMaxHeight = screen.height > 544
-
             ? 520.0
-
             : screen.height - 24.0;
 
         final spacing = SuperThemeData.of(overlayContext).spacing;
@@ -653,60 +506,42 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
 
         final radius = BorderRadius.circular(spacing.radiusCard);
 
-
-
         return Stack(
-
           children: [
-
             Positioned.fill(
-
               child: GestureDetector(
-
                 behavior: HitTestBehavior.translucent,
 
                 onTap: _dismissDesktopPicker,
-
               ),
-
             ),
 
             CompositedTransformFollower(
-
               link: _pickerLink,
 
               showWhenUnlinked: false,
 
               targetAnchor: _pickerAbove
-
                   ? (alignEnd ? Alignment.topRight : Alignment.topLeft)
-
                   : (alignEnd ? Alignment.bottomRight : Alignment.bottomLeft),
 
               followerAnchor: _pickerAbove
-
                   ? (alignEnd ? Alignment.bottomRight : Alignment.bottomLeft)
-
                   : (alignEnd ? Alignment.topRight : Alignment.topLeft),
 
               offset: Offset(_pickerHorizontalOffset, _pickerAbove ? -6 : 6),
 
               child: Directionality(
-
                 textDirection: Directionality.of(context),
 
                 child: SizedBox(
-
                   width: panelWidth,
 
                   child: ConstrainedBox(
-
                     constraints: BoxConstraints(maxHeight: panelMaxHeight),
 
                     child: Container(
-
                       decoration: BoxDecoration(
-
                         color: theme.surface,
 
                         borderRadius: radius,
@@ -714,9 +549,7 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
                         border: Border.all(color: theme.borderStrong),
 
                         boxShadow: const [
-
                           BoxShadow(
-
                             color: Color(0x40000000),
 
                             blurRadius: 28,
@@ -724,19 +557,14 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
                             spreadRadius: -7,
 
                             offset: Offset(0, 12),
-
                           ),
-
                         ],
-
                       ),
 
                       child: ClipRRect(
-
                         borderRadius: radius,
 
                         child: SuperRangeDatePicker(
-
                           startDate: _controller.startDate,
 
                           endDate: _controller.endDate,
@@ -756,85 +584,54 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
                           onCancel: _dismissDesktopPicker,
 
                           onApply: _applyDesktopRange,
-
                         ),
-
                       ),
-
                     ),
-
                   ),
-
                 ),
-
               ),
-
             ),
-
           ],
-
         );
-
       },
 
       child: child,
-
     );
-
   }
 
-
-
   InputDecoration _withoutFallbackCalendar(InputDecoration source) {
-
     final hasLeading =
-
         source.icon != null ||
-
         source.prefixIcon != null ||
-
         source.prefix != null ||
-
         source.prefixText != null;
 
     if (hasLeading) return source;
 
     return source.copyWith(prefixIcon: const SizedBox.shrink());
-
   }
 
-
-
   Widget _rangeActions(SuperFormTranslation l10n, Widget? callerSuffix) {
-
     return Row(
-
       mainAxisSize: MainAxisSize.min,
 
       children: [
-
         if (callerSuffix != null) callerSuffix,
 
         if (widget.clearable && _canClear)
-
           FieldIconButton(
-
             icon: SffIcons.clear,
 
             tooltip: l10n.clear,
 
             onPressed: _controller.clear,
-
           ),
 
         _desktopPickerOverlayHost(
-
           child: CompositedTransformTarget(
-
             link: _pickerLink,
 
             child: FieldIconButton(
-
               key: _pickerButtonKey,
 
               icon: SffIcons.calendarDays,
@@ -850,30 +647,26 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
               iconSize: 15,
 
               onPressed: _canOpen ? _openPicker : null,
-
             ),
-
           ),
-
         ),
-
       ],
-
     );
-
   }
 
   // SUPER_RANGE_DATE_BOUNDARY_FIELDS_RESPONSIVE_V3_FIXED
   Widget _buildBoundaryFields({
     required SuperFormTranslation l10n,
     required String? rangeError,
+    required ValidationPosition validationPosition,
   }) {
     final startDecoration = _withoutFallbackCalendar(widget.startDecoration);
 
     final endOwnError = _controller.endController.visibleError;
-    final inheritedError =
-        widget.decoration.errorText ??
-        (endOwnError == null ? rangeError : null);
+    final inheritedError = validationPosition == ValidationPosition.suffixIcon
+        ? (widget.decoration.errorText ??
+              (endOwnError == null ? rangeError : null))
+        : null;
     final baseEndDecoration = _withoutFallbackCalendar(widget.endDecoration);
     final endDecoration = baseEndDecoration.copyWith(
       errorText: widget.endDecoration.errorText ?? inheritedError,
@@ -893,6 +686,7 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
       keyboardShortcuts: widget.keyboardShortcuts,
       invalidMessage: widget.invalidMessage,
       forceError: widget.forceError,
+      validationPosition: validationPosition,
       arabic: widget.arabic,
       autovalidateMode: widget.autovalidateMode,
     );
@@ -910,6 +704,7 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
       keyboardShortcuts: widget.keyboardShortcuts,
       invalidMessage: widget.invalidMessage,
       forceError: widget.forceError,
+      validationPosition: validationPosition,
       arabic: widget.arabic,
       autovalidateMode: widget.autovalidateMode,
     );
@@ -952,20 +747,13 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
     );
   }
 
-
-
   @override
-
   Widget build(BuildContext context) {
-
     if (_controller.isHiden) return const SizedBox.shrink();
 
     final l10n = SuperFormTranslation.of(context);
 
-
-
     return FormField<SuperDateRange?>(
-
       key: _controller.formFieldKey ?? ObjectKey(_controller),
 
       initialValue: _controller.value,
@@ -979,11 +767,8 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
       validator: (_) => _controller.error,
 
       builder: (formState) {
-
         _controller.configure(
-
           validators: RangeDateLogic.buildValidators(
-
             required: widget.required,
 
             minDate: widget.minDate,
@@ -999,7 +784,6 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
             minDateMessage: l10n.minDate,
 
             maxDateMessage: l10n.maxDate,
-
           ),
 
           forceError: widget.forceError || formState.hasError,
@@ -1011,9 +795,7 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
           incompleteMessage: widget.incompleteMessage,
 
           invalidMessage: widget.invalidMessage == 'Enter a valid date'
-
               ? l10n.validDate
-
               : widget.invalidMessage,
 
           separator: widget.separator,
@@ -1021,64 +803,72 @@ class _SuperRangeDateFormFieldState extends State<SuperRangeDateFormField> {
           onValidity: widget.onValidity,
 
           onChanged: (value) {
-
             formState.didChange(value);
 
             widget.onChanged?.call(value);
-
           },
-
         );
 
-
-
         return ListenableBuilder(
-
           listenable: _controller,
 
           builder: (context, _) {
-
             final rangeError = widget.disabled
-
                 ? null
-
                 : _controller.visibleError;
 
+            final effectiveRangeError = widget.disabled
+                ? null
+                : SffDecoration.resolveError(widget.decoration, rangeError);
+
+            final validationPosition =
+                SffDecoration.effectiveValidationPosition(
+                  context,
+                  widget.validationPosition,
+                );
+
+            final labelRight = SffDecoration.buildLabelRight(
+              context,
+              widget.decoration,
+              arabic: widget.arabic,
+              error: effectiveRangeError,
+              validationPosition: validationPosition,
+              helpIcon: widget.helpIcon,
+            );
+
+            final underBoxError =
+                validationPosition == ValidationPosition.underBox
+                ? effectiveRangeError
+                : null;
+
             final hasError =
-
-                widget.decoration.errorText != null ||
-
+                effectiveRangeError != null ||
                 rangeError != null ||
-
                 _controller.startController.visibleError != null ||
-
                 _controller.endController.visibleError != null;
 
-
-
             return FormFieldShell(
-
               decoration: widget.decoration,
 
               required: widget.required,
 
               hasError: hasError,
 
+              errorText: underBoxError,
+
               arabic: widget.arabic,
 
-              child: _buildBoundaryFields(l10n: l10n, rangeError: rangeError),
+              labelRight: labelRight,
 
+              child: _buildBoundaryFields(
+                l10n: l10n,
+                rangeError: rangeError,
+                validationPosition: validationPosition,
+              ),
             );
-
           },
-
         );
-
       },
-
     );
-
   }
-
 }
-

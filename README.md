@@ -29,7 +29,8 @@ The package includes:
 - Declarative text masks powered by `mask_text_input_formatter`.
 - Segmented OTP/PIN input with paste, SMS autofill, and completion callbacks.
 - Custom validators with first-error-wins behavior.
-- Validation errors displayed through compact error badges and tooltips.
+- Validation errors displayed through compact error badges, tooltips, or
+  under-box text where supported.
 - Responsive date input for mobile, tablet, and desktop.
 - Responsive two-calendar date-range selection with configurable presets.
 - Searchable single-select and multi-select menus.
@@ -39,15 +40,6 @@ The package includes:
 - Light and dark theme support through `super_core`.
 - English and Arabic package localizations.
 - LTR and RTL layout support.
-
-## Requirements
-
-| Dependency | Minimum version |
-|---|---:|
-| Dart | `3.8.0` |
-| Flutter | `3.32.0` |
-| `super_core` | `3.6.0` |
-| `mask_text_input_formatter` | `2.9.0` |
 
 ## Installation
 
@@ -61,7 +53,7 @@ Or add it manually to `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.12.0
+  super_form_field: ^1.13.0
 ```
 
 Import the public library:
@@ -233,13 +225,53 @@ SuperTextFormField(
 | `icon`, `prefixIcon`, `prefix`, `prefixText` | Leading adornments |
 | `suffix`, `suffixText`, `suffixIcon` | Trailing adornments |
 | `counter` / `counterText` | Counter content where supported |
-| `errorText` | External error displayed through the package error badge |
+| `errorText` | External error displayed through the package validation surface |
 
 The package keeps ownership of field geometry, borders, fill, focus states,
 disabled states, and error presentation so all field types remain visually
-consistent. Use `errorText` for an external string error. The widget form of
-`InputDecoration.error` is not adapted because the package error surface
-requires a message for its tooltip.
+consistent. Use `errorText` for an external string error.
+
+### Validation position
+
+Validated form fields accept `validationPosition` when the validation surface
+needs to move for a specific form layout. `SuperPopupMenuButton` also supports
+the same placement for external `InputDecoration.errorText` when a decoration
+label/helper/error is supplied.
+
+| Value | Behavior |
+|---|---|
+| `ValidationPosition.suffixIcon` | Shows the validation icon in the input box suffix |
+| `ValidationPosition.underBox` | Shows validation text under the input box |
+| `ValidationPosition.labelTrailing` | Shows the validation icon at the trailing edge of the label row |
+
+When `validationPosition` is omitted, each field uses
+`ValidationPosition.underBox` on mobile and
+`ValidationPosition.labelTrailing` on tablet and desktop.
+
+```dart
+SuperTextFormField(
+  decoration: const InputDecoration(
+    labelText: 'Account name',
+    hintText: 'Enter a name',
+  ),
+  required: true,
+  validationPosition: ValidationPosition.underBox,
+);
+```
+
+Use `helpIcon` to add a custom help affordance at the end of a field label row:
+
+```dart
+SuperSelectFormField<String>(
+  decoration: const InputDecoration(labelText: 'Account name'),
+  sources: const [SuperSelectListSource(items: ['asset'])],
+  optionBuilder: (items, index, item) => SuperOption(value: item, label: item),
+  helpIcon: const Tooltip(
+    message: 'Shown in account reports.',
+    child: Icon(Icons.help_outline_rounded, size: 18),
+  ),
+);
+```
 
 ## Material-compatible input behavior
 

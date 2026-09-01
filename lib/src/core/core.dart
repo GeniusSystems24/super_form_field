@@ -19,6 +19,7 @@ export 'extensions/context_extensions.dart';
 
 // Entities (shared, cross-feature)
 export 'entities/super_option.dart';
+export 'entities/validation_position.dart';
 
 // Foundation widgets (form-field-specific)
 export 'foundation/sff_icon.dart';

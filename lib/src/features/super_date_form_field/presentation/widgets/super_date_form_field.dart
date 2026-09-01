@@ -51,6 +51,8 @@ class SuperDateFormField extends StatefulWidget {
     this.validators = const [],
     this.invalidMessage = 'Enter a valid date',
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.arabic = false,
     this.autofocus = false,
     this.keyboardType,
@@ -154,6 +156,15 @@ class SuperDateFormField extends StatefulWidget {
 
   /// Force the error to display even before the field is touched.
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
 
   final bool arabic;
 
@@ -371,6 +382,23 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                     widget.decoration,
                     _controller.visibleError,
                   );
+            final validationPosition =
+                SffDecoration.effectiveValidationPosition(
+                  context,
+                  widget.validationPosition,
+                );
+            final labelRight = SffDecoration.buildLabelRight(
+              context,
+              widget.decoration,
+              arabic: widget.arabic,
+              error: error,
+              validationPosition: validationPosition,
+              helpIcon: widget.helpIcon,
+            );
+            final underBoxError =
+                validationPosition == ValidationPosition.underBox
+                ? error
+                : null;
 
             final adornStyle = context.sffTextTheme.mono.copyWith(
               color: t.fg3,
@@ -455,13 +483,17 @@ class _SuperDateFormFieldState extends State<SuperDateFormField> {
                 decoration: widget.decoration,
                 required: widget.required,
                 hasError: error != null,
+                errorText: underBoxError,
                 arabic: widget.arabic,
+                labelRight: labelRight,
                 child: FieldBox(
                   focused: _controller.focused || _overlay.isShowing,
                   error: error,
                   disabled: widget.disabled,
                   density: widget.density,
                   flushTrailing: _showCalendar && error == null,
+                  showErrorBadge:
+                      validationPosition == ValidationPosition.suffixIcon,
                   leading: SffDecoration.buildLeading(
                     context,
                     widget.decoration,

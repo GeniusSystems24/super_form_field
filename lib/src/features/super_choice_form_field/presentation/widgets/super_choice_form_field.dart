@@ -39,6 +39,8 @@ class SuperChoiceFormField<T> extends StatefulWidget {
     this.readOnly = false,
     this.validators = const [],
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.arabic = false,
   });
 
@@ -80,6 +82,16 @@ class SuperChoiceFormField<T> extends StatefulWidget {
 
   final List<Validator<List<T>>> validators;
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
+
   final bool arabic;
 
   @override
@@ -190,6 +202,32 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
           widget.decoration,
         );
         final hasIntro = leading != null || hasHint || trailing.isNotEmpty;
+        final validationPosition = SffDecoration.effectiveValidationPosition(
+          context,
+          widget.validationPosition,
+        );
+        final labelRight = SffDecoration.buildLabelRight(
+          context,
+          widget.decoration,
+          arabic: widget.arabic,
+          error: error,
+          validationPosition: validationPosition,
+          helpIcon: widget.helpIcon,
+        );
+        final underBoxError = validationPosition == ValidationPosition.underBox
+            ? error
+            : null;
+        final control =
+            validationPosition == ValidationPosition.suffixIcon && error != null
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: choiceGroup),
+                  SizedBox(width: SuperThemeData.of(context).spacing.space2),
+                  ErrorBadge(error: error),
+                ],
+              )
+            : choiceGroup;
 
         return FormFieldShell(
           allowFixed: widget.allowFixed,
@@ -197,8 +235,9 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
           decoration: widget.decoration,
           required: widget.required,
           hasError: error != null,
+          errorText: underBoxError,
           arabic: widget.arabic,
-          labelRight: error != null ? ErrorBadge(error: error) : null,
+          labelRight: labelRight,
           child: Opacity(
             opacity: widget.disabled ? 0.55 : 1,
             child: Column(
@@ -234,7 +273,7 @@ class _SuperChoiceFormFieldState<T> extends State<SuperChoiceFormField<T>> {
                   ),
                   SizedBox(height: SuperThemeData.of(context).spacing.space2),
                 ],
-                choiceGroup,
+                control,
               ],
             ),
           ),

@@ -43,6 +43,8 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
     this.emptyLabel = 'No matches',
     this.validators = const [],
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.arabic = false,
     this.autofocus = true,
     this.keyboardType,
@@ -131,6 +133,16 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
 
   final List<Validator<List<T>>> validators;
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
+
   final bool arabic;
 
   // ── Material-compatible interaction and search input behaviour ──
@@ -389,6 +401,11 @@ class _SuperMultiSelectFormFieldState<T>
                     widget.decoration,
                     _controller.visibleError,
                   );
+            final validationPosition =
+                SffDecoration.effectiveValidationPosition(
+                  context,
+                  widget.validationPosition,
+                );
 
             final hasDecorationCounter =
                 widget.decoration.counter != null ||
@@ -398,6 +415,19 @@ class _SuperMultiSelectFormFieldState<T>
                     widget.showCount &&
                     _controller.count > 0)
                 ? CountPill(label: l10n.selectedCount(_controller.count))
+                : null;
+            final labelRight = SffDecoration.buildLabelRight(
+              context,
+              widget.decoration,
+              arabic: widget.arabic,
+              baseRight: countPill,
+              error: error,
+              validationPosition: validationPosition,
+              helpIcon: widget.helpIcon,
+            );
+            final underBoxError =
+                validationPosition == ValidationPosition.underBox
+                ? error
                 : null;
 
             final trailing = <Widget>[
@@ -420,8 +450,9 @@ class _SuperMultiSelectFormFieldState<T>
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
+              errorText: underBoxError,
               arabic: widget.arabic,
-              labelRight: countPill,
+              labelRight: labelRight,
               child: TapRegion(
                 onTapOutside: widget.onTapOutside,
                 onTapUpOutside: widget.onTapUpOutside,
@@ -441,6 +472,8 @@ class _SuperMultiSelectFormFieldState<T>
                         error: error,
                         disabled: widget.disabled,
                         density: widget.density,
+                        showErrorBadge:
+                            validationPosition == ValidationPosition.suffixIcon,
                         leading: SffDecoration.buildLeading(
                           context,
                           widget.decoration,

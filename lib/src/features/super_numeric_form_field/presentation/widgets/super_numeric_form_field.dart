@@ -43,6 +43,8 @@ class SuperNumericFormField extends StatefulWidget {
     this.allowNegative = true,
     this.validators = const [],
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.arabic = false,
     this.autofocus = false,
     this.keyboardType,
@@ -134,6 +136,16 @@ class SuperNumericFormField extends StatefulWidget {
 
   final List<Validator<num?>> validators;
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
+
   final bool arabic;
 
   // ── Material text-input behaviour ──
@@ -278,6 +290,23 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                     widget.decoration,
                     _controller.visibleError,
                   );
+            final validationPosition =
+                SffDecoration.effectiveValidationPosition(
+                  context,
+                  widget.validationPosition,
+                );
+            final labelRight = SffDecoration.buildLabelRight(
+              context,
+              widget.decoration,
+              arabic: widget.arabic,
+              error: error,
+              validationPosition: validationPosition,
+              helpIcon: widget.helpIcon,
+            );
+            final underBoxError =
+                validationPosition == ValidationPosition.underBox
+                ? error
+                : null;
 
             final sizing = SuperThemeData.of(context).sizing;
             final spacing = SuperThemeData.of(context).spacing;
@@ -367,7 +396,9 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
+              errorText: underBoxError,
               arabic: widget.arabic,
+              labelRight: labelRight,
               child: FieldBox(
                 focused: _controller.focused,
                 error: error,
@@ -375,6 +406,8 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 density: widget.density,
                 flushTrailing:
                     widget.stepper && !widget.disabled && error == null,
+                showErrorBadge:
+                    validationPosition == ValidationPosition.suffixIcon,
                 leading: SffDecoration.buildLeading(
                   context,
                   widget.decoration,

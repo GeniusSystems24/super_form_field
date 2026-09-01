@@ -4,6 +4,21 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## 1.13.0
+
+### Added
+
+- Added shared `ValidationPosition` support across validated form fields,
+  allowing validation to render as a suffix icon, under-box text, or a
+  label-trailing icon.
+- Added optional field `helpIcon` support for custom help affordances at the
+  end of the label row.
+- Added responsive defaults for text validation placement: under-box text on
+  mobile and label-trailing icon on tablet/desktop.
+- Added a validation-position example gallery screen covering text, numeric,
+  date, select, multi-select, OTP, attachment, bool, choice, range-date, and
+  dropdown form fields plus decorated popup menu buttons.
+
 <!-- SUPER_SELECT_SOURCES_1_12_0 -->
 ## [1.12.0] — 2026-08-27
 

@@ -9,6 +9,7 @@
 export 'package:mask_text_input_formatter/mask_text_input_formatter.dart'
     show MaskAutoCompletionType, MaskTextInputFormatter;
 
+export '../../core/entities/validation_position.dart';
 export 'domain/entities/text_field_config.dart';
 export 'domain/usecases/build_text_validators.dart';
 export 'presentation/controllers/super_text_field_controller.dart';

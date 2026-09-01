@@ -19,6 +19,7 @@ class FormFieldShell extends StatelessWidget {
     required this.child,
     this.hasError = false,
     this.labelRight,
+    this.errorText,
     this.allowFixed = false,
     this.isFixed,
     this.arabic = false,
@@ -43,6 +44,9 @@ class FormFieldShell extends StatelessWidget {
 
   /// Optional trailing slot on the label row (counter / count pill / badge).
   final Widget? labelRight;
+
+  /// Optional validation text rendered under the control.
+  final String? errorText;
 
   /// Shows a compact lock/unlock action at the trailing edge of the label row.
   ///
@@ -77,6 +81,14 @@ class FormFieldShell extends StatelessWidget {
       arabic: arabic,
       legacyHint: hint,
     );
+    final errorWidget = errorText == null
+        ? null
+        : SffDecoration.buildError(
+            context,
+            decoration,
+            text: errorText!,
+            arabic: arabic,
+          );
     final baseRight =
         labelRight ??
         SffDecoration.buildCounter(context, decoration, arabic: arabic);
@@ -115,7 +127,10 @@ class FormFieldShell extends StatelessWidget {
           // SizedBox(height: spacing.space2),
         ],
         child,
-        if (helperWidget != null && !hasError) ...[
+        if (errorWidget != null) ...[
+          SizedBox(height: spacing.space2),
+          errorWidget,
+        ] else if (helperWidget != null && !hasError) ...[
           SizedBox(height: spacing.space2),
           helperWidget,
         ],

@@ -8,8 +8,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:super_core/super_core.dart';
 
 import '../../../../core/core.dart';
+import '../../../../core/foundation/field_decoration.dart';
 
 /// A compact button that opens a typed Super design-system popup menu.
 ///
@@ -26,6 +28,9 @@ class SuperPopupMenuButton<T> extends StatefulWidget {
     this.onSelected,
     this.child,
     this.icon,
+    this.decoration = const InputDecoration(),
+    this.validationPosition,
+    this.helpIcon,
     this.tooltip,
     this.enabled = true,
     this.initialValue,
@@ -53,6 +58,17 @@ class SuperPopupMenuButton<T> extends StatefulWidget {
 
   /// Icon used by the default trigger.
   final IconData? icon;
+
+  /// Optional label, helper, counter, and external error decoration.
+  ///
+  /// When left empty, the popup trigger renders exactly as a standalone button.
+  final InputDecoration decoration;
+
+  /// Controls where [InputDecoration.errorText] is rendered.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
 
   /// Tooltip for the trigger.
   final String? tooltip;
@@ -212,9 +228,27 @@ class _SuperPopupMenuButtonState<T> extends State<SuperPopupMenuButton<T>> {
     );
   }
 
+  bool get _hasShellDecoration {
+    final decoration = widget.decoration;
+    return widget.helpIcon != null ||
+        decoration.label != null ||
+        decoration.labelText != null ||
+        decoration.helper != null ||
+        decoration.helperText != null ||
+        decoration.counter != null ||
+        decoration.counterText != null ||
+        decoration.error != null ||
+        decoration.errorText != null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Focus(
+    final validationPosition = SffDecoration.effectiveValidationPosition(
+      context,
+      widget.validationPosition,
+    );
+    final error = widget.enabled ? widget.decoration.errorText : null;
+    final trigger = Focus(
       focusNode: _focusNode,
       autofocus: widget.autofocus,
       canRequestFocus: widget.enabled,
@@ -234,6 +268,40 @@ class _SuperPopupMenuButtonState<T> extends State<SuperPopupMenuButton<T>> {
         ),
         child: _buildTrigger(context),
       ),
+    );
+
+    if (!_hasShellDecoration) return trigger;
+
+    final labelRight = SffDecoration.buildLabelRight(
+      context,
+      widget.decoration,
+      arabic: widget.arabic,
+      error: error,
+      validationPosition: validationPosition,
+      helpIcon: widget.helpIcon,
+    );
+    final underBoxError = validationPosition == ValidationPosition.underBox
+        ? error
+        : null;
+    final child =
+        validationPosition == ValidationPosition.suffixIcon && error != null
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              trigger,
+              SizedBox(width: SuperThemeData.of(context).spacing.space1),
+              ErrorBadge(error: error),
+            ],
+          )
+        : trigger;
+
+    return FormFieldShell(
+      decoration: widget.decoration,
+      hasError: error != null,
+      errorText: underBoxError,
+      arabic: widget.arabic,
+      labelRight: labelRight,
+      child: child,
     );
   }
 }

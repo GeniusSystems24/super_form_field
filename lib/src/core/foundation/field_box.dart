@@ -39,6 +39,7 @@ class FieldBox extends StatelessWidget {
     this.leading,
     this.trailing = const [],
     this.flushTrailing = false,
+    this.showErrorBadge = true,
   });
 
   final Widget child;
@@ -61,6 +62,9 @@ class FieldBox extends StatelessWidget {
   /// This is intended for full-height trailing controls such as the numeric
   /// stepper. Regular icons and badges retain the standard design-system inset.
   final bool flushTrailing;
+
+  /// Whether [error] should append an [ErrorBadge] in the trailing slot.
+  final bool showErrorBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +146,7 @@ class FieldBox extends StatelessWidget {
                 SizedBox(width: superTheme.spacing.space1),
                 w,
               ],
-              if (hasError) ...[
+              if (hasError && showErrorBadge) ...[
                 SizedBox(width: superTheme.spacing.space1),
                 ErrorBadge(error: error),
               ],

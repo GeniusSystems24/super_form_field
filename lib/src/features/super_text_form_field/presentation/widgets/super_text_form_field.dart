@@ -6,7 +6,8 @@
 // disabled) are driven by the field's own state rather than the ambient
 // inputDecorationTheme, eliminating any double-border artefact.
 //
-// Validation errors surface ONLY through the suffix ErrorBadge, never inline.
+// Validation errors can surface as a suffix badge, label-trailing badge, or
+// under-box text while preserving the package-owned error border treatment.
 // Supports leading icon, prefix / suffix adornments, clear, password reveal,
 // character counter, multiline, email, phone, declarative masks, disabled &
 // read-only, and LTR/RTL.
@@ -50,6 +51,8 @@ class SuperTextFormField extends StatefulWidget {
     this.showCounter = false,
     this.arabic = false,
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.autofocus = false,
     this.keyboardType,
     this.inputFormatters,
@@ -150,6 +153,19 @@ class SuperTextFormField extends StatefulWidget {
   final bool showCounter;
   final bool arabic;
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  ///
+  /// This slot is intended for help affordances such as an info icon or tooltip
+  /// and is composed after the counter and label-trailing validation badge.
+  final Widget? helpIcon;
+
   final bool autofocus;
 
   // ── Material text-input behaviour ──
@@ -395,6 +411,24 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
             final hasDecorationCounter =
                 widget.decoration.counter != null ||
                 widget.decoration.counterText != null;
+            final validationPosition =
+                SffDecoration.effectiveValidationPosition(
+                  context,
+                  widget.validationPosition,
+                );
+            final labelRight = SffDecoration.buildLabelRight(
+              context,
+              widget.decoration,
+              arabic: widget.arabic,
+              baseRight: hasDecorationCounter ? null : counter,
+              error: error,
+              validationPosition: validationPosition,
+              helpIcon: widget.helpIcon,
+            );
+            final underBoxError =
+                validationPosition == ValidationPosition.underBox
+                ? error
+                : null;
 
             return FormFieldShell(
               allowFixed: widget.allowFixed,
@@ -402,11 +436,26 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
+              errorText: underBoxError,
               arabic: widget.arabic,
-              labelRight: hasDecorationCounter ? null : counter,
+              labelRight: labelRight,
               child: widget.multiline
-                  ? _buildField(context, t, cs, error, multiline: true)
-                  : _buildField(context, t, cs, error, multiline: false),
+                  ? _buildField(
+                      context,
+                      t,
+                      cs,
+                      error,
+                      validationPosition: validationPosition,
+                      multiline: true,
+                    )
+                  : _buildField(
+                      context,
+                      t,
+                      cs,
+                      error,
+                      validationPosition: validationPosition,
+                      multiline: false,
+                    ),
             );
           },
         );
@@ -421,6 +470,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     SuperThemeData t,
     ColorScheme cs,
     String? error, {
+    required ValidationPosition validationPosition,
     required bool multiline,
   }) {
     final hasError = error != null;
@@ -466,7 +516,8 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
           tooltip: _controller.obscured ? l10n.show : l10n.hide,
           onPressed: _controller.toggleObscure,
         ),
-      if (hasError) ErrorBadge(error: error),
+      if (validationPosition == ValidationPosition.suffixIcon && hasError)
+        ErrorBadge(error: error),
     ];
 
     Widget? suffixWidget;

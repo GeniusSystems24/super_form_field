@@ -53,6 +53,8 @@ class SuperSelectFormField<T> extends StatefulWidget {
     this.emptyLabel = 'No matches',
     this.validators = const [],
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.arabic = false,
     this.searchAutofocus = true,
     this.keyboardType,
@@ -168,6 +170,16 @@ class SuperSelectFormField<T> extends StatefulWidget {
 
   /// Force the error to display even before the field is touched.
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
+
   final bool arabic;
 
   // ── Material-compatible interaction and search input behaviour ──
@@ -542,6 +554,23 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                     widget.decoration,
                     _controller.visibleError,
                   );
+            final validationPosition =
+                SffDecoration.effectiveValidationPosition(
+                  context,
+                  widget.validationPosition,
+                );
+            final labelRight = SffDecoration.buildLabelRight(
+              context,
+              widget.decoration,
+              arabic: widget.arabic,
+              error: error,
+              validationPosition: validationPosition,
+              helpIcon: widget.helpIcon,
+            );
+            final underBoxError =
+                validationPosition == ValidationPosition.underBox
+                ? error
+                : null;
             final selected = _controller.selectedOption;
 
             final trailing = <Widget>[
@@ -570,7 +599,9 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
+              errorText: underBoxError,
               arabic: widget.arabic,
+              labelRight: labelRight,
               child: Focus(
                 focusNode: _focusNode,
                 autofocus: widget.autofocus,
@@ -595,6 +626,9 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
                           error: error,
                           disabled: widget.disabled,
                           density: widget.density,
+                          showErrorBadge:
+                              validationPosition ==
+                              ValidationPosition.suffixIcon,
                           leading: SffDecoration.buildLeading(
                             context,
                             widget.decoration,

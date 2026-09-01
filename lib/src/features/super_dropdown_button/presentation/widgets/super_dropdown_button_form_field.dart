@@ -45,6 +45,8 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
     double? menuWidth,
     Widget? icon,
     TextStyle? style,
+    ValidationPosition? validationPosition,
+    Widget? helpIcon,
     bool arabic = false,
     VoidCallback? onTap,
   }) : assert(
@@ -69,13 +71,32 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
              decoration,
              field.errorText,
            );
+           final effectiveValidationPosition =
+               SffDecoration.effectiveValidationPosition(
+                 field.context,
+                 validationPosition,
+               );
+           final labelRight = SffDecoration.buildLabelRight(
+             field.context,
+             decoration,
+             arabic: arabic,
+             error: effectiveError,
+             validationPosition: effectiveValidationPosition,
+             helpIcon: helpIcon,
+           );
+           final underBoxError =
+               effectiveValidationPosition == ValidationPosition.underBox
+               ? effectiveError
+               : null;
            return FormFieldShell(
              allowFixed: allowFixed,
              isFixed: controller?.isFixed,
              decoration: decoration,
              required: required,
              hasError: effectiveError != null,
+             errorText: underBoxError,
              arabic: arabic,
+             labelRight: labelRight,
              child: SuperDropdownButton<T>(
                options: options,
                controller: controller,
@@ -95,6 +116,7 @@ class SuperDropdownButtonFormField<T> extends FormField<T> {
                menuWidth: menuWidth,
                icon: icon,
                style: style,
+               validationPosition: effectiveValidationPosition,
                arabic: arabic,
                onTap: onTap,
              ),

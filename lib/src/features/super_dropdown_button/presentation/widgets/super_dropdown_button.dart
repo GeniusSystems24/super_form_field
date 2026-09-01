@@ -39,6 +39,7 @@ class SuperDropdownButton<T> extends StatefulWidget {
     this.menuWidth,
     this.icon,
     this.style,
+    this.validationPosition,
     this.arabic = false,
     this.onTap,
   }) : assert(
@@ -90,6 +91,12 @@ class SuperDropdownButton<T> extends StatefulWidget {
 
   /// Optional text style merged over the package body style.
   final TextStyle? style;
+
+  /// Controls whether the decoration error badge is rendered in the suffix.
+  ///
+  /// Bare dropdown buttons do not own a label row or under-box area, so
+  /// non-suffix values only keep the error border.
+  final ValidationPosition? validationPosition;
 
   /// Uses the package Arabic font fallback for generated text.
   final bool arabic;
@@ -239,6 +246,8 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
     final tokens = SuperThemeData.of(context).tokens;
     final selected = _selected;
     final error = widget.decoration.errorText;
+    final validationPosition =
+        widget.validationPosition ?? ValidationPosition.suffixIcon;
     final selectedStyle = SffDecoration.mergeStyle(
       context.sffTextTheme.body.copyWith(
         color: t.fg1,
@@ -308,6 +317,8 @@ class _SuperDropdownButtonState<T> extends State<SuperDropdownButton<T>> {
               error: error,
               disabled: !_enabled,
               density: widget.density,
+              showErrorBadge:
+                  validationPosition == ValidationPosition.suffixIcon,
               leading: leading,
               trailing: trailing,
               child: Align(

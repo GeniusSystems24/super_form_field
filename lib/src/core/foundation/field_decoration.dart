@@ -11,6 +11,9 @@ import 'package:super_core/super_core.dart';
 import 'package:super_core/super_core.dart' hide FieldDensity, FieldShell;
 import 'package:super_form_field/src/core/extensions/context_extensions.dart';
 
+import '../entities/validation_position.dart';
+import 'error_badge.dart';
+
 /// Internal helpers that apply [InputDecoration] consistently to custom fields.
 abstract final class SffDecoration {
   /// Merges caller styling over the package design-system default.
@@ -104,6 +107,36 @@ abstract final class SffDecoration {
       overflow: decoration.helperMaxLines == null
           ? null
           : TextOverflow.ellipsis,
+      style: style,
+    );
+  }
+
+  /// Builds validation text under the control.
+  static Widget buildError(
+    BuildContext context,
+    InputDecoration decoration, {
+    required String text,
+    required bool arabic,
+  }) {
+    final customError = decoration.error;
+    final tokens = SuperThemeData.of(context).tokens;
+    final style = mergeStyle(
+      context.sffTextTheme.caption.copyWith(
+        color: Theme.of(context).colorScheme.error,
+        fontWeight: FontWeight.w600,
+        fontFamily: arabic ? tokens.arabicFont : null,
+      ),
+      decoration.errorStyle,
+    );
+
+    if (customError != null) {
+      return DefaultTextStyle.merge(style: style, child: customError);
+    }
+
+    return Text(
+      text,
+      maxLines: decoration.errorMaxLines,
+      overflow: decoration.errorMaxLines == null ? null : TextOverflow.ellipsis,
       style: style,
     );
   }
@@ -246,6 +279,52 @@ abstract final class SffDecoration {
     InputDecoration decoration,
     String? validationError,
   ) => decoration.errorText ?? validationError;
+
+  /// Resolves responsive validation placement defaults.
+  static ValidationPosition effectiveValidationPosition(
+    BuildContext context,
+    ValidationPosition? explicit,
+  ) {
+    if (explicit != null) return explicit;
+
+    return SuperDeviceMode.of(context).isMobile
+        ? ValidationPosition.underBox
+        : ValidationPosition.labelTrailing;
+  }
+
+  /// Builds the shared label-row trailing content.
+  static Widget? buildLabelRight(
+    BuildContext context,
+    InputDecoration decoration, {
+    required bool arabic,
+    Widget? baseRight,
+    String? error,
+    required ValidationPosition validationPosition,
+    Widget? helpIcon,
+  }) {
+    final effectiveBaseRight =
+        baseRight ?? buildCounter(context, decoration, arabic: arabic);
+    final widgets = <Widget>[
+      if (effectiveBaseRight != null) effectiveBaseRight,
+      if (validationPosition == ValidationPosition.labelTrailing &&
+          error != null)
+        ErrorBadge(error: error),
+      if (helpIcon != null) helpIcon,
+    ];
+
+    if (widgets.isEmpty) return null;
+    if (widgets.length == 1) return widgets.single;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < widgets.length; i++) ...[
+          if (i > 0) SizedBox(width: SuperThemeData.of(context).spacing.space1),
+          widgets[i],
+        ],
+      ],
+    );
+  }
 
   static bool _suppressesSlot(Widget widget) =>
       widget is SizedBox &&

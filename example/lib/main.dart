@@ -25,6 +25,7 @@ import 'demos/popup_menu_button_demo.dart';
 import 'demos/select_field_demo.dart';
 import 'demos/select_sources_demo.dart';
 import 'demos/text_field_demo.dart';
+import 'demos/validation_position_demo.dart';
 
 final ValueNotifier<ThemeMode> _themeMode = ValueNotifier(ThemeMode.dark);
 final ValueNotifier<TextDirection> _textDir = ValueNotifier(TextDirection.ltr);
@@ -140,6 +141,12 @@ class _Launcher extends StatelessWidget {
       'Text · email · password · multiline · counter',
       Icons.text_fields_rounded,
       (_) => const TextFieldDemo(),
+    ),
+    _DemoItem(
+      'Validation Position',
+      'Suffix icon / under-box text / label-trailing icon',
+      Icons.error_outline_rounded,
+      (_) => const ValidationPositionDemo(),
     ),
     _DemoItem(
       'Phone Text Field',

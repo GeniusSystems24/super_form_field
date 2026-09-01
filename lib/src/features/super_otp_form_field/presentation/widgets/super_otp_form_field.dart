@@ -35,6 +35,8 @@ class SuperOTPFormField extends StatefulWidget {
     this.showCounter = false,
     this.validators = const [],
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.density = FieldDensity.comfortable,
     this.disabled = false,
     this.readOnly = false,
@@ -127,6 +129,15 @@ class SuperOTPFormField extends StatefulWidget {
 
   /// Shows validation immediately instead of waiting for blur/touch.
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
 
   final FieldDensity density;
   final bool disabled;
@@ -333,6 +344,24 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
                     length: widget.length,
                   )
                 : null;
+            final validationPosition =
+                SffDecoration.effectiveValidationPosition(
+                  context,
+                  widget.validationPosition,
+                );
+            final labelRight = SffDecoration.buildLabelRight(
+              context,
+              widget.decoration,
+              arabic: widget.arabic,
+              baseRight: counter,
+              error: error,
+              validationPosition: validationPosition,
+              helpIcon: widget.helpIcon,
+            );
+            final underBoxError =
+                validationPosition == ValidationPosition.underBox
+                ? error
+                : null;
 
             return FormFieldShell(
               allowFixed: widget.allowFixed,
@@ -340,9 +369,10 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
               decoration: widget.decoration,
               required: widget.required,
               hasError: error != null,
+              errorText: underBoxError,
               arabic: widget.arabic,
-              labelRight: counter,
-              child: _buildControl(context, error),
+              labelRight: labelRight,
+              child: _buildControl(context, error, validationPosition),
             );
           },
         );
@@ -350,7 +380,11 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
     );
   }
 
-  Widget _buildControl(BuildContext context, String? error) {
+  Widget _buildControl(
+    BuildContext context,
+    String? error,
+    ValidationPosition validationPosition,
+  ) {
     final theme = context.sffTheme;
     final spacing = SuperThemeData.of(context).spacing;
     final adornStyle = context.sffTextTheme.body.copyWith(
@@ -400,7 +434,8 @@ class _SuperOTPFormFieldState extends State<SuperOTPFormField> {
                 SizedBox(width: spacing.space3),
                 ..._withSpacing(trailing, spacing.space2),
               ],
-              if (error != null) ...[
+              if (validationPosition == ValidationPosition.suffixIcon &&
+                  error != null) ...[
                 SizedBox(width: spacing.space2),
                 ErrorBadge(error: error),
               ],

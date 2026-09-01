@@ -41,6 +41,8 @@ class SuperAttachmentFormField extends StatefulWidget {
     this.multiple = true,
     this.validators = const [],
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.arabic = false,
   });
 
@@ -76,6 +78,16 @@ class SuperAttachmentFormField extends StatefulWidget {
 
   final List<Validator<List<SuperFile>>> validators;
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
+
   final bool arabic;
 
   @override
@@ -118,7 +130,9 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
   }
 
   Future<void> _browse() async {
-    if (widget.disabled || _controller.isFixed.value || widget.onBrowse == null) {
+    if (widget.disabled ||
+        _controller.isFixed.value ||
+        widget.onBrowse == null) {
       return;
     }
     final picked = await widget.onBrowse!();
@@ -172,11 +186,25 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
         final hasDecorationCounter =
             widget.decoration.counter != null ||
             widget.decoration.counterText != null;
-        final Widget? labelRight = error != null
-            ? ErrorBadge(error: error)
-            : (!hasDecorationCounter && n > 0
-                  ? CountPill(label: l10n.fileCount(n))
-                  : null);
+        final validationPosition = SffDecoration.effectiveValidationPosition(
+          context,
+          widget.validationPosition,
+        );
+        final countPill = !hasDecorationCounter && n > 0
+            ? CountPill(label: l10n.fileCount(n))
+            : null;
+        final labelRight = SffDecoration.buildLabelRight(
+          context,
+          widget.decoration,
+          arabic: widget.arabic,
+          baseRight: countPill,
+          error: error,
+          validationPosition: validationPosition,
+          helpIcon: widget.helpIcon,
+        );
+        final underBoxError = validationPosition == ValidationPosition.underBox
+            ? error
+            : null;
 
         return FormFieldShell(
           allowFixed: widget.allowFixed,
@@ -184,6 +212,7 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
           decoration: widget.decoration,
           required: widget.required,
           hasError: error != null,
+          errorText: underBoxError,
           arabic: widget.arabic,
           labelRight: labelRight,
           child: Opacity(
@@ -196,6 +225,9 @@ class _SuperAttachmentFormFieldState extends State<SuperAttachmentFormField> {
                   density: widget.density,
                   disabled: widget.disabled,
                   hasError: error != null,
+                  error: error,
+                  showErrorBadge:
+                      validationPosition == ValidationPosition.suffixIcon,
                   acceptHint: _acceptHint(l10n),
                   decoration: widget.decoration,
                   arabic: widget.arabic,
@@ -231,6 +263,8 @@ class _DropZone extends StatelessWidget {
     required this.density,
     required this.disabled,
     required this.hasError,
+    required this.error,
+    required this.showErrorBadge,
     required this.acceptHint,
     required this.decoration,
     required this.arabic,
@@ -242,6 +276,8 @@ class _DropZone extends StatelessWidget {
   final FieldDensity density;
   final bool disabled;
   final bool hasError;
+  final String? error;
+  final bool showErrorBadge;
   final String? acceptHint;
   final InputDecoration decoration;
   final bool arabic;
@@ -272,83 +308,95 @@ class _DropZone extends StatelessWidget {
             color: border,
             radius: SuperThemeData.of(context).spacing.radiusMd,
           ),
-          child: AnimatedContainer(
-            duration: SuperThemeData.of(context).tokens.durBase,
-            curve: SuperThemeData.of(context).tokens.curveStandard,
-            padding: pad,
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(
-                SuperThemeData.of(context).spacing.radiusMd,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Color.alphaBlend(
-                      cs.primary.withValues(alpha: 0.13),
-                      bg,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: IconTheme.merge(
-                    data: IconThemeData(size: 21, color: cs.primary),
-                    child:
-                        decoration.prefixIcon ??
-                        decoration.icon ??
-                        const Icon(SffIcons.uploadCloud),
+          child: Stack(
+            children: [
+              AnimatedContainer(
+                duration: SuperThemeData.of(context).tokens.durBase,
+                curve: SuperThemeData.of(context).tokens.curveStandard,
+                padding: pad,
+                decoration: BoxDecoration(
+                  color: bg,
+                  borderRadius: BorderRadius.circular(
+                    SuperThemeData.of(context).spacing.radiusMd,
                   ),
                 ),
-                SizedBox(height: SuperThemeData.of(context).spacing.space2),
-                if (decoration.hint == null && decoration.hintText == null)
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: translations.browse,
-                          style: context.sffTextTheme.body.copyWith(
-                            color: cs.primary,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13.5,
-                          ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Color.alphaBlend(
+                          cs.primary.withValues(alpha: 0.13),
+                          bg,
                         ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: IconTheme.merge(
+                        data: IconThemeData(size: 21, color: cs.primary),
+                        child:
+                            decoration.prefixIcon ??
+                            decoration.icon ??
+                            const Icon(SffIcons.uploadCloud),
+                      ),
+                    ),
+                    SizedBox(height: SuperThemeData.of(context).spacing.space2),
+                    if (decoration.hint == null && decoration.hintText == null)
+                      Text.rich(
                         TextSpan(
-                          text: translations.dragFilesHere,
-                          style: context.sffTextTheme.body.copyWith(
-                            color: t.fg2,
-                            fontSize: 13.5,
-                          ),
+                          children: [
+                            TextSpan(
+                              text: translations.browse,
+                              style: context.sffTextTheme.body.copyWith(
+                                color: cs.primary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13.5,
+                              ),
+                            ),
+                            TextSpan(
+                              text: translations.dragFilesHere,
+                              style: context.sffTextTheme.body.copyWith(
+                                color: t.fg2,
+                                fontSize: 13.5,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                else
-                  SffDecoration.buildHint(
-                    context,
-                    decoration,
-                    fallback: translations.browseOrDragFilesHere,
-                    arabic: arabic,
-                    baseStyle: context.sffTextTheme.body.copyWith(
-                      color: t.fg2,
-                      fontSize: 13.5,
-                    ),
-                  ),
-                if (acceptHint != null) ...[
-                  SizedBox(height: SuperThemeData.of(context).spacing.space1),
-                  Text(
-                    acceptHint!,
-                    style: context.sffTextTheme.mono.copyWith(
-                      color: t.fg4,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ],
-            ),
+                      )
+                    else
+                      SffDecoration.buildHint(
+                        context,
+                        decoration,
+                        fallback: translations.browseOrDragFilesHere,
+                        arabic: arabic,
+                        baseStyle: context.sffTextTheme.body.copyWith(
+                          color: t.fg2,
+                          fontSize: 13.5,
+                        ),
+                      ),
+                    if (acceptHint != null) ...[
+                      SizedBox(
+                        height: SuperThemeData.of(context).spacing.space1,
+                      ),
+                      Text(
+                        acceptHint!,
+                        style: context.sffTextTheme.mono.copyWith(
+                          color: t.fg4,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              if (showErrorBadge && error != null)
+                PositionedDirectional(
+                  top: SuperThemeData.of(context).spacing.space1,
+                  end: SuperThemeData.of(context).spacing.space1,
+                  child: ErrorBadge(error: error),
+                ),
+            ],
           ),
         ),
       ),

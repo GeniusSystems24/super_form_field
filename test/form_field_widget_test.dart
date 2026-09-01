@@ -46,32 +46,81 @@ void main() {
       prefixIcon: Icon(Icons.input),
       suffixText: 'Suffix',
     );
+    const helpIcon = Icon(Icons.help_outline_rounded);
 
     final fields = <Widget>[
-      SuperTextFormField(decoration: decoration),
-      const SuperOTPFormField(decoration: decoration),
-      const SuperNumericFormField(decoration: decoration),
-      const SuperAttachmentFormField(decoration: decoration),
-      const SuperDateFormField(decoration: decoration),
+      SuperTextFormField(
+        decoration: decoration,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
+      const SuperOTPFormField(
+        decoration: decoration,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
+      const SuperNumericFormField(
+        decoration: decoration,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
+      const SuperAttachmentFormField(
+        decoration: decoration,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
+      const SuperDateFormField(
+        decoration: decoration,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
       const SuperSelectFormField<String>(
         decoration: decoration,
         sources: [
           SuperSelectListSource<String>(items: ['one', 'two']),
         ],
         optionBuilder: _testStringSelectOptionBuilder,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
       ),
       const SuperMultiSelectFormField<String>(
         decoration: decoration,
         options: options,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
       ),
-      const SuperBoolFormField(decoration: decoration),
+      const SuperBoolFormField(
+        decoration: decoration,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
       const SuperChoiceFormField<String>(
         decoration: decoration,
         options: options,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
+      SuperRangeDateFormField(
+        decoration: decoration,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
+      SuperDropdownButtonFormField<String>(
+        decoration: decoration,
+        options: options,
+        onChanged: (_) {},
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
+      ),
+      const SuperPopupMenuButton<String>(
+        decoration: decoration,
+        options: options,
+        validationPosition: ValidationPosition.labelTrailing,
+        helpIcon: helpIcon,
       ),
     ];
 
-    expect(fields, hasLength(9));
+    expect(fields, hasLength(12));
   });
 
   testWidgets('text fields preserve SuperTextTheme font families', (
@@ -109,6 +158,94 @@ void main() {
     final textField = tester.widget<TextField>(find.byType(TextField));
     expect(textField.keyboardType, TextInputType.phone);
   });
+
+  testWidgets('text validation can render under the box', (tester) async {
+    await _pumpTextValidationApp(
+      tester,
+      validationPosition: ValidationPosition.underBox,
+    );
+
+    expect(find.text('Manual validation error'), findsOneWidget);
+    expect(find.byType(ErrorBadge), findsNothing);
+  });
+
+  testWidgets('text validation can render as a suffix icon', (tester) async {
+    await _pumpTextValidationApp(
+      tester,
+      validationPosition: ValidationPosition.suffixIcon,
+    );
+
+    expect(find.text('Manual validation error'), findsNothing);
+    expect(find.byType(ErrorBadge), findsOneWidget);
+  });
+
+  testWidgets('text validation can render in the label trailing slot', (
+    tester,
+  ) async {
+    await _pumpTextValidationApp(
+      tester,
+      validationPosition: ValidationPosition.labelTrailing,
+      counterText: '0/40',
+    );
+
+    expect(find.text('Manual validation error'), findsNothing);
+    expect(find.text('0/40'), findsOneWidget);
+    expect(find.byType(ErrorBadge), findsOneWidget);
+  });
+
+  testWidgets('text help icon renders at the end of the label row', (
+    tester,
+  ) async {
+    const helpKey = ValueKey('text_field_help_icon');
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: _testTheme(),
+        localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+        supportedLocales: SuperFormLocalizations.supportedLocales,
+        home: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(24),
+            child: SuperTextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Account name',
+                counterText: '0/40',
+              ),
+              helpIcon: const Icon(Icons.help_outline_rounded, key: helpKey),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('ACCOUNT NAME'), findsOneWidget);
+    expect(find.text('0/40'), findsOneWidget);
+    expect(find.byKey(helpKey), findsOneWidget);
+
+    final helpTop = tester.getTopLeft(find.byKey(helpKey)).dy;
+    final fieldTop = tester.getTopLeft(find.byType(TextField)).dy;
+    expect(helpTop, lessThan(fieldTop));
+  });
+
+  testWidgets(
+    'text validation defaults to mobile under-box and desktop label',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await _pumpTextValidationApp(tester);
+      expect(find.text('Manual validation error'), findsOneWidget);
+      expect(find.byType(ErrorBadge), findsNothing);
+
+      tester.view.physicalSize = const Size(900, 800);
+      await _pumpTextValidationApp(tester);
+      expect(find.text('Manual validation error'), findsNothing);
+      expect(find.byType(ErrorBadge), findsOneWidget);
+    },
+  );
 
   testWidgets('text masks run after custom formatters', (tester) async {
     final digitsOnly = FilteringTextInputFormatter.digitsOnly;
@@ -594,6 +731,37 @@ void main() {
     expect(savedSelections, ['read']);
   });
 }
+
+Future<void> _pumpTextValidationApp(
+  WidgetTester tester, {
+  ValidationPosition? validationPosition,
+  String? counterText,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: _testTheme(),
+      localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+      supportedLocales: SuperFormLocalizations.supportedLocales,
+      home: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(24),
+          child: SuperTextFormField(
+            decoration: InputDecoration(
+              labelText: 'Account name',
+              counterText: counterText,
+            ),
+            validators: const [_manualValidationError],
+            forceError: true,
+            validationPosition: validationPosition,
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+String? _manualValidationError(String value) => 'Manual validation error';
 
 void _noopPointerDown(PointerDownEvent event) {}
 void _noopPointerUp(PointerUpEvent event) {}

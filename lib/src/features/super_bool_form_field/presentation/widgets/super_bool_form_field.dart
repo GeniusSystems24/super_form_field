@@ -39,6 +39,8 @@ class SuperBoolFormField extends StatefulWidget {
     this.readOnly = false,
     this.validators = const [],
     this.forceError = false,
+    this.validationPosition,
+    this.helpIcon,
     this.arabic = false,
   });
 
@@ -77,6 +79,16 @@ class SuperBoolFormField extends StatefulWidget {
 
   final List<Validator<bool>> validators;
   final bool forceError;
+
+  /// Controls where validation feedback is rendered.
+  ///
+  /// When null, the field uses [ValidationPosition.underBox] on mobile and
+  /// [ValidationPosition.labelTrailing] on tablet/desktop.
+  final ValidationPosition? validationPosition;
+
+  /// Optional widget displayed at the end of the label row.
+  final Widget? helpIcon;
+
   final bool arabic;
 
   @override
@@ -191,6 +203,21 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
           context,
           widget.decoration,
         );
+        final validationPosition = SffDecoration.effectiveValidationPosition(
+          context,
+          widget.validationPosition,
+        );
+        final labelRight = SffDecoration.buildLabelRight(
+          context,
+          widget.decoration,
+          arabic: widget.arabic,
+          error: error,
+          validationPosition: validationPosition,
+          helpIcon: widget.helpIcon,
+        );
+        final underBoxError = validationPosition == ValidationPosition.underBox
+            ? error
+            : null;
 
         final row = Row(
           children: [
@@ -205,7 +232,8 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
               SizedBox(width: SuperThemeData.of(context).spacing.space1),
               item,
             ],
-            if (error != null) ...[
+            if (validationPosition == ValidationPosition.suffixIcon &&
+                error != null) ...[
               SizedBox(width: SuperThemeData.of(context).spacing.space1),
               ErrorBadge(error: error),
             ],
@@ -218,7 +246,9 @@ class _SuperBoolFormFieldState extends State<SuperBoolFormField> {
           decoration: widget.decoration,
           required: widget.required,
           hasError: error != null,
+          errorText: underBoxError,
           arabic: widget.arabic,
+          labelRight: labelRight,
           child: Opacity(
             opacity: widget.disabled ? 0.55 : 1,
             child: MouseRegion(
