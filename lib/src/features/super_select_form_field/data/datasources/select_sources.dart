@@ -3,50 +3,125 @@
 // ------------------------------------------------------------
 // Raw data-source abstractions for SuperSelectFormField.
 //
-// Sources only acquire domain values. SuperSelectFormField.optionBuilder
-// maps each raw T value to SuperOption<T> presentation/search metadata.
-// This mirrors the source + suggestionBuilder split used by
-// super_auto_suggestion_box.
+// The API intentionally follows the source style used by
+// SuperAutoSuggestionsBox: the widget consumes one source abstraction, factory
+// helpers create common source strategies, sources expose raw T values, and the
+// widget-owned optionBuilder creates SuperOption<T> presentation metadata.
 // ============================================================
 
-/// Loads raw typed values for a `SuperSelectFormField`.
+import 'dart:async';
+
+import 'package:flutter/widgets.dart';
+
+/// Produces raw values for [SuperSelectFormField].
 ///
-/// Implement this abstraction when an application needs a custom source.
-/// Most callers should use [SuperSelectListSource] for local data or
-/// [SuperSelectRemoteSource] for asynchronously fetched data.
+/// Sources own data acquisition only. Display/search metadata stays in the
+/// field's `optionBuilder`.
 abstract class SuperSelectSource<T> {
   const SuperSelectSource();
 
-  /// Resolves the raw values exposed by this source.
-  Future<List<T>> load();
+  /// Values that can be shown and searched immediately before any async query.
+  List<T> get initialItems => const [];
+
+  /// Whether [query] may perform asynchronous/external work.
+  bool get isAsync => false;
+
+  /// Returns raw values for [query].
+  ///
+  /// Async sources receive the active field [BuildContext], matching the
+  /// contextual fetch style used by `SuperAutoSuggestionsBox`.
+  FutureOr<List<T>> query(BuildContext context, String query);
+}
+
+/// Factory facade for the built-in select source strategies.
+abstract final class SuperSelectSources {
+  /// Creates a synchronous in-memory source.
+  static SuperSelectSource<T> list<T>(List<T> items) =>
+      SuperSelectListSource<T>(items: items);
+
+  /// Convenience source for raw String values.
+  static SuperSelectSource<String> strings(List<String> items) =>
+      SuperSelectListSource<String>(items: items);
+
+  /// Creates a query-aware asynchronous source.
+  ///
+  /// [fetch] receives the active field context and current search query.
+  /// Successful values are merged into an internal cache so previously loaded
+  /// items remain available for immediate local filtering on later queries.
+  static SuperSelectSource<T> async<T>(
+    Future<List<T>> Function(BuildContext context, String query) fetch, {
+    List<T> initialItems = const [],
+  }) => SuperSelectAsyncSource<T>(fetch, initialItems: initialItems);
 }
 
 /// A source backed by an in-memory list of raw values.
 class SuperSelectListSource<T> extends SuperSelectSource<T> {
   const SuperSelectListSource({required this.items});
 
-  /// The local raw values returned by [load].
   final List<T> items;
 
   @override
-  Future<List<T>> load() async => items;
-}
-
-/// Signature used by [SuperSelectRemoteSource] to fetch raw values.
-typedef SuperSelectRemoteLoader<T> = Future<List<T>> Function();
-
-/// A source that asynchronously resolves raw values from a remote source.
-///
-/// The loader is intentionally transport-agnostic. It can call REST,
-/// GraphQL, gRPC, a repository, or any other application data layer.
-/// Convert each returned value to `SuperOption<T>` with the field's
-/// `optionBuilder`, not inside the data source.
-class SuperSelectRemoteSource<T> extends SuperSelectSource<T> {
-  const SuperSelectRemoteSource({required this.loader});
-
-  /// Callback invoked whenever this source is loaded.
-  final SuperSelectRemoteLoader<T> loader;
+  List<T> get initialItems => items;
 
   @override
-  Future<List<T>> load() => loader();
+  List<T> query(BuildContext context, String query) => items;
+}
+
+/// Callback used by [SuperSelectAsyncSource].
+typedef SuperSelectFetch<T> =
+    Future<List<T>> Function(BuildContext context, String query);
+
+/// Query-aware asynchronous raw-value source.
+class SuperSelectAsyncSource<T> extends SuperSelectSource<T> {
+  SuperSelectAsyncSource(
+    this.fetch, {
+    List<T> initialItems = const [],
+  }) : _cache = <T>[...initialItems];
+
+  final SuperSelectFetch<T> fetch;
+  final List<T> _cache;
+
+  @override
+  bool get isAsync => true;
+
+  @override
+  List<T> get initialItems => List<T>.unmodifiable(_cache);
+
+  @override
+  Future<List<T>> query(BuildContext context, String query) async {
+    final fetched = await fetch(context, query);
+    for (final item in fetched) {
+      if (!_cache.contains(item)) _cache.add(item);
+    }
+    return List<T>.unmodifiable(_cache);
+  }
+}
+
+/// Legacy zero-argument loader retained for source compatibility.
+typedef SuperSelectRemoteLoader<T> = Future<List<T>> Function();
+
+/// Legacy remote source retained for compatibility with 1.12.x-1.14.x code.
+@Deprecated(
+  'Use SuperSelectSources.async((context, query) => ...) instead.',
+)
+class SuperSelectRemoteSource<T> extends SuperSelectSource<T> {
+  SuperSelectRemoteSource({required this.loader});
+
+  final SuperSelectRemoteLoader<T> loader;
+  final List<T> _cache = <T>[];
+
+  @override
+  bool get isAsync => true;
+
+  @override
+  List<T> get initialItems => List<T>.unmodifiable(_cache);
+
+  @override
+  Future<List<T>> query(BuildContext context, String query) async {
+    final fetched = await loader();
+    for (final item in fetched) {
+      if (!_cache.contains(item)) _cache.add(item);
+    }
+    return List<T>.unmodifiable(_cache);
+  }
 }

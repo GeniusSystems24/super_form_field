@@ -134,11 +134,9 @@ class _ControllerStateDemoState extends State<ControllerStateDemo> {
             children: [
               SuperSelectFormField<String>(
                 controller: _selectController,
-                sources: [
-                  SuperSelectListSource<String>(
-                    items: _options.map((option) => option.value).toList(),
-                  ),
-                ],
+                source: SuperSelectSources.list<String>(
+                  _options.map((option) => option.value).toList(),
+                ),
                 optionBuilder: (items, index, item) => _options[index],
                 decoration: const InputDecoration(labelText: 'State'),
                 onChanged: (_) {},

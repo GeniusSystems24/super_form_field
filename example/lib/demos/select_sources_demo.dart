@@ -1,9 +1,9 @@
 // ============================================================
 // example/lib/demos/select_sources_demo.dart
 // ------------------------------------------------------------
-// SuperSelectFormField source examples for 1.12.0:
-//   1) local raw values through SuperSelectListSource
-//   2) asynchronously loaded raw values through SuperSelectRemoteSource
+// SuperSelectFormField source examples for 1.15.0:
+//   1) local raw values through SuperSelectSources.list
+//   2) query-aware raw values through SuperSelectSources.async
 //   3) optionBuilder maps raw values to SuperOption metadata
 // ============================================================
 
@@ -16,8 +16,8 @@ import 'demo_scaffold.dart';
 class SelectSourcesDemo extends StatelessWidget {
   const SelectSourcesDemo({super.key});
 
-  static const _localSource = SuperSelectListSource<String>(
-    items: ['retail', 'wholesale', 'internal'],
+  static final _localSource = SuperSelectSources.list<String>(
+    ['retail', 'wholesale', 'internal'],
   );
 
   static SuperOption<String> _customerTypeOption(
@@ -48,11 +48,18 @@ class SelectSourcesDemo extends StatelessWidget {
     };
   }
 
-  Future<List<String>> _loadWarehouses() async {
+  static Future<List<String>> _loadWarehouses(
+    BuildContext context,
+    String query,
+  ) async {
     // Replace this delay with a repository/API request in production.
     await Future<void>.delayed(const Duration(milliseconds: 900));
     return const ['sanaa-main', 'aden-port', 'taiz-east'];
   }
+
+  static final _remoteSource = SuperSelectSources.async<String>(
+    _loadWarehouses,
+  );
 
   static SuperOption<String> _warehouseOption(
     List<String> items,
@@ -92,15 +99,15 @@ class SelectSourcesDemo extends StatelessWidget {
           title: 'List source',
           subtitle: 'Map local raw values with optionBuilder',
           accentColor: SuperMarker.identity.resolve(context.superTheme.tokens),
-          child: const SuperSelectFormField<String>(
-            decoration: InputDecoration(
+          child: SuperSelectFormField<String>(
+            decoration: const InputDecoration(
               labelText: 'Customer type',
               hintText: 'Choose a customer type…',
               helperText: 'Loaded from an in-memory raw-value source.',
             ),
             searchable: false,
             clearable: true,
-            sources: [_localSource],
+            source: _localSource,
             optionBuilder: _customerTypeOption,
           ),
         ),
@@ -116,7 +123,7 @@ class SelectSourcesDemo extends StatelessWidget {
             ),
             searchable: true,
             clearable: true,
-            sources: [SuperSelectRemoteSource<String>(loader: _loadWarehouses)],
+            source: _remoteSource,
             optionBuilder: _warehouseOption,
           ),
         ),

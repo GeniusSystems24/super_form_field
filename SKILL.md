@@ -289,46 +289,45 @@ compatibility. Always rotate the weekday labels and calendar-grid offset
 together; never change only the header. The setting is presentation-only and
 must not affect parsing, formatting, bounds, fixed boundaries, or validation.
 
-### SuperSelectFormField<T>
+### Select/multi-select source contract (1.15.0)
 
-Value: `T?`. Controller: `SuperSelectFieldController<T>`.
+Use a singular raw-value source, matching the source style of
+`SuperAutoSuggestionsBox`.
 
-<!-- SUPER_SELECT_SOURCES_1_12_0 -->
-Version 1.12.0 uses raw data sources plus `optionBuilder`; do not add an
-`options` parameter back to `SuperSelectFormField<T>`.
-
-- `SuperSelectListSource<T>(items: ...)` provides local raw values.
-- `SuperSelectRemoteSource<T>(loader: ...)` asynchronously provides raw values.
-- `SuperSelectOptionBuilder<T>` maps `(List<T> items, int index, T element)` to
-  `SuperOption<T>`.
-
-Merge successful source results in source order, then invoke `optionBuilder`
-against the merged raw list. Keep selection, search filtering, validation,
-fixed-state behavior, and open/close state in `SuperSelectFieldController<T>`;
-sources only acquire raw values. A failing source is reported through Flutter
-error reporting and must not discard values resolved by other sources.
+- `SuperSelectSources.list<T>(items)` and
+  `SuperMultiSelectSources.list<T>(items)` are the normal local constructors.
+- `SuperSelectSources.strings(items)` and
+  `SuperMultiSelectSources.strings(items)` are convenience constructors.
+- `SuperSelectSources.async<T>((context, query) => ...)` and
+  `SuperMultiSelectSources.async<T>((context, query) => ...)` are query-aware
+  external sources.
+- Keep domain values raw in the source. Build `SuperOption<T>` only in
+  `optionBuilder`.
+- External querying is debounced by the field; cached/local values remain
+  immediately filterable.
+- Use `minChars` to delay external querying until enough characters exist.
 
 ```dart
 SuperSelectFormField<Warehouse>(
   searchable: true,
-  sources: [
-    SuperSelectRemoteSource<Warehouse>(
-      loader: repository.loadWarehouses,
-    ),
-  ],
+  source: SuperSelectSources.async<Warehouse>(
+    (context, query) => repository.searchWarehouses(query),
+    initialItems: cachedWarehouses,
+  ),
   optionBuilder: (items, index, warehouse) => SuperOption(
     value: warehouse,
     label: warehouse.name,
-    description: warehouse.code,
   ),
 );
 ```
-### SuperMultiSelectFormField<T>
 
-Value: `List<T>`. Controller: `SuperMultiSelectFieldController<T>`.
-
-Use `minSelections`, `maxSelections`, `showCount`, and `searchable`.
-`maxSelections` is a hard cap. Selected values render as removable chips.
+```dart
+SuperMultiSelectFormField<String>(
+  source: SuperMultiSelectSources.list(['read', 'write']),
+  optionBuilder: (items, index, value) =>
+      SuperOption(value: value, label: value),
+);
+```
 
 ### SuperBoolFormField
 

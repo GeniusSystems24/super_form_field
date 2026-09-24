@@ -7,6 +7,7 @@
 // The shared `SuperOption<T>` value type is exported from `core`.
 // ============================================================
 
+export 'data/datasources/multi_select_sources.dart';
 export 'domain/usecases/multi_select_logic.dart';
 export 'presentation/controllers/super_multi_select_field_controller.dart';
 export 'presentation/widgets/super_multi_select_form_field.dart';

@@ -32,6 +32,13 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
     SuperOption(value: 'deferred', label: 'Deferred'),
   ];
 
+  static SuperOption<String> _tagOption(
+    List<String> items,
+    int index,
+    String value,
+  ) => _tags.firstWhere((option) => option.value == value);
+
+
   static const _permissions = [
     SuperOption(
       value: 'post',
@@ -60,6 +67,22 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
     ),
   ];
 
+  static SuperOption<String> _permissionOption(
+    List<String> items,
+    int index,
+    String value,
+  ) => _permissions.firstWhere((option) => option.value == value);
+
+
+
+  static final _tagSource = SuperMultiSelectSources.list<String>(
+    _tags.map((option) => option.value).toList(growable: false),
+  );
+
+  static final _permissionSource = SuperMultiSelectSources.list<String>(
+    _permissions.map((option) => option.value).toList(growable: false),
+  );
+
   @override
   Widget build(BuildContext context) {
     final t = context.sffTheme;
@@ -80,7 +103,8 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
             required: true,
             searchable: true,
             initialValue: const ['recurring'],
-            options: _tags,
+            source: _tagSource,
+            optionBuilder: _tagOption,
             forceError: _force,
           ),
         ),
@@ -97,7 +121,8 @@ class _MultiSelectFieldDemoState extends State<MultiSelectFieldDemo> {
             required: true,
             minSelections: 1,
             maxSelections: 3,
-            options: _permissions,
+            source: _permissionSource,
+            optionBuilder: _permissionOption,
             forceError: _force,
           ),
         ),

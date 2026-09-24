@@ -4,6 +4,44 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## 1.15.0
+
+### Added
+
+- Added `SuperSelectSources` and `SuperMultiSelectSources` factory facades,
+  following the source-construction style used by `SuperAutoSuggestionsBox`.
+- Added singular `source` support to both `SuperSelectFormField<T>` and
+  `SuperMultiSelectFormField<T>`.
+- Added `list`, `strings`, and query-aware `async` source strategies for both
+  single-select and multi-select fields.
+- Added contextual async fetch callbacks with
+  `(BuildContext context, String query)` so external sources can use inherited
+  application context when necessary.
+- Added configurable `debounce` and `minChars` handling for external select
+  source queries.
+- Added `SuperMultiSelectOptionBuilder<T>` so multi-select sources can return
+  raw domain values while the field owns `SuperOption<T>` presentation metadata.
+
+### Changed
+
+- Select and multi-select data acquisition now follows the same separation used
+  by `SuperAutoSuggestionsBox`: sources own raw values; widgets own presentation
+  metadata and controllers own interaction/selection state.
+- Async source results are retained in a local cache. Existing/initial items are
+  filtered immediately in the menu while external refreshes are debounced.
+- Remote loading state begins when an external query actually starts, not while
+  waiting for its debounce interval.
+- Updated select and multi-select examples, README, and `SKILL.md` to use the
+  new singular-source API.
+
+### Deprecated
+
+- Deprecated `SuperSelectFormField.sources`; use `source` instead.
+- Deprecated the legacy zero-argument `SuperSelectRemoteSource`; use
+  `SuperSelectSources.async((context, query) => ...)` instead.
+- Deprecated `SuperMultiSelectFormField.options`; use `source` plus
+  `optionBuilder` instead.
+
 ## 1.14.1
 
 ### Fixed

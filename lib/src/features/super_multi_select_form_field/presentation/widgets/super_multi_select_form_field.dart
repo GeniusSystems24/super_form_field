@@ -10,6 +10,8 @@
 // ErrorBadge. Light/dark + LTR/RTL.
 // ============================================================
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
@@ -17,14 +19,23 @@ import 'package:flutter/services.dart';
 import '../../../../core/core.dart';
 import '../../../../core/foundation/field_decoration.dart';
 import '../../../../../localization/super_form_localizations.dart';
+import '../../data/datasources/multi_select_sources.dart';
 import '../../domain/usecases/multi_select_logic.dart';
 import '../controllers/super_multi_select_field_controller.dart';
+
+/// Builds option metadata for a raw multi-select source item.
+typedef SuperMultiSelectOptionBuilder<T> =
+    SuperOption<T> Function(List<T> items, int index, T element);
 
 /// A themeable, validated multi-select dropdown on the GeniusLink foundation.
 class SuperMultiSelectFormField<T> extends StatefulWidget {
   const SuperMultiSelectFormField({
     super.key,
-    required this.options,
+    this.source,
+    this.optionBuilder,
+    @Deprecated('Use source and optionBuilder instead.') this.options,
+    this.debounce = const Duration(milliseconds: 300),
+    this.minChars = 0,
     this.controller,
     this.allowFixed = false,
     this.initialValue,
@@ -88,12 +99,32 @@ class SuperMultiSelectFormField<T> extends StatefulWidget {
     this.strutStyle,
     this.autovalidateMode,
   }) : assert(
+         source != null || options != null,
+         'Provide source. The deprecated options list is accepted for compatibility.',
+       ),
+       assert(minChars >= 0, 'minChars must be >= 0.'),
+       assert(
          onSaved == null || onSave == null,
          'Provide either onSaved or onSave, not both.',
        );
 
-  /// The choosable options.
-  final List<SuperOption<T>> options;
+  /// Preferred singular raw-value source.
+  final SuperMultiSelectSource<T>? source;
+
+  /// Maps raw source values to display/search metadata.
+  ///
+  /// When omitted, the field falls back to `element.toString()` labels.
+  final SuperMultiSelectOptionBuilder<T>? optionBuilder;
+
+  /// Legacy pre-1.15.0 metadata list retained for compatibility.
+  @Deprecated('Use source and optionBuilder instead.')
+  final List<SuperOption<T>>? options;
+
+  /// Delay applied only before asynchronous/external source queries.
+  final Duration debounce;
+
+  /// Minimum trimmed search length required before an async source query.
+  final int minChars;
 
   final SuperMultiSelectFieldController<T>? controller;
 
@@ -208,6 +239,10 @@ class _SuperMultiSelectFormFieldState<T>
     extends State<SuperMultiSelectFormField<T>> {
   late SuperMultiSelectFieldController<T> _controller;
   bool _ownsController = false;
+  List<T> _sourceItems = const [];
+  bool _loadingSource = false;
+  int _sourceQueryGeneration = 0;
+  Timer? _sourceDebounce;
 
   @override
   void initState() {
@@ -216,6 +251,8 @@ class _SuperMultiSelectFormFieldState<T>
         widget.controller ??
         SuperMultiSelectFieldController<T>(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
+    _attachSourceListener();
+    _resetSource();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
     });
@@ -225,18 +262,118 @@ class _SuperMultiSelectFormFieldState<T>
   void didUpdateWidget(SuperMultiSelectFormField<T> old) {
     super.didUpdateWidget(old);
     if (widget.controller != old.controller) {
+      _detachSourceListener();
       if (_ownsController) _controller.dispose();
       _controller =
           widget.controller ??
           SuperMultiSelectFieldController<T>(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
+      _attachSourceListener();
+    }
+    if (!identical(widget.source, old.source) ||
+        !identical(widget.options, old.options)) {
+      _resetSource();
     }
   }
 
   @override
   void dispose() {
+    _sourceQueryGeneration++;
+    _sourceDebounce?.cancel();
+    _detachSourceListener();
     if (_ownsController) _controller.dispose();
     super.dispose();
+  }
+
+  List<SuperOption<T>> get _effectiveOptions {
+    final legacy = widget.options;
+    if (widget.source == null && legacy != null) return legacy;
+
+    final items = _sourceItems;
+    final builder = widget.optionBuilder;
+    return List<SuperOption<T>>.generate(
+      items.length,
+      (index) => builder?.call(items, index, items[index]) ??
+          SuperOption<T>(value: items[index], label: items[index].toString()),
+      growable: false,
+    );
+  }
+
+  void _attachSourceListener() {
+    _controller.searchText.addListener(_handleSourceQueryChanged);
+  }
+
+  void _detachSourceListener() {
+    _controller.searchText.removeListener(_handleSourceQueryChanged);
+  }
+
+  void _resetSource() {
+    _sourceDebounce?.cancel();
+    final generation = ++_sourceQueryGeneration;
+    _sourceItems = List<T>.unmodifiable(widget.source?.initialItems ?? const []);
+    _loadingSource = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || generation != _sourceQueryGeneration) return;
+      _scheduleSourceQuery(_controller.searchText.text, immediate: true);
+    });
+  }
+
+  void _handleSourceQueryChanged() {
+    _scheduleSourceQuery(_controller.searchText.text);
+  }
+
+  void _scheduleSourceQuery(String query, {bool immediate = false}) {
+    final source = widget.source;
+    if (source == null || !source.isAsync) return;
+
+    _sourceDebounce?.cancel();
+    final generation = ++_sourceQueryGeneration;
+    if (query.trim().length < widget.minChars) {
+      if (_loadingSource && mounted) setState(() => _loadingSource = false);
+      return;
+    }
+
+    void run() => _resolveSourceQuery(source, query, generation);
+    if (immediate || widget.debounce <= Duration.zero) {
+      run();
+    } else {
+      _sourceDebounce = Timer(widget.debounce, run);
+    }
+  }
+
+  Future<void> _resolveSourceQuery(
+    SuperMultiSelectSource<T> source,
+    String query,
+    int generation,
+  ) async {
+    if (!mounted || generation != _sourceQueryGeneration) return;
+    setState(() => _loadingSource = true);
+
+    try {
+      final values = await Future<List<T>>.value(source.query(context, query));
+      if (!mounted || generation != _sourceQueryGeneration) return;
+      setState(() {
+        _sourceItems = List<T>.unmodifiable(values);
+        _loadingSource = false;
+      });
+    } catch (error, stackTrace) {
+      if (!mounted || generation != _sourceQueryGeneration) return;
+      setState(() {
+        _sourceItems = List<T>.unmodifiable(source.initialItems);
+        _loadingSource = false;
+      });
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'super_form_field',
+          context: ErrorDescription(
+            'while querying a SuperMultiSelectFormField source',
+          ),
+        ),
+      );
+    }
   }
 
   bool get _editable =>
@@ -298,11 +435,23 @@ class _SuperMultiSelectFormFieldState<T>
               strutStyle: widget.strutStyle,
             )
           : null,
-      empty: Text(
-        widget.emptyLabel == 'No matches' ? l10n.noMatches : widget.emptyLabel,
-        textAlign: TextAlign.center,
-        style: context.sffTextTheme.caption.copyWith(color: t.fg4),
-      ),
+      empty: _loadingSource && filtered.isEmpty
+          ? const Padding(
+              padding: EdgeInsets.all(12),
+              child: Center(
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            )
+          : Text(
+              widget.emptyLabel == 'No matches'
+                  ? l10n.noMatches
+                  : widget.emptyLabel,
+              textAlign: TextAlign.center,
+              style: context.sffTextTheme.caption.copyWith(color: t.fg4),
+            ),
       children: [
         for (final o in filtered)
           OptionTile(
@@ -375,7 +524,7 @@ class _SuperMultiSelectFormFieldState<T>
       validator: (_) => _controller.error,
       builder: (formState) {
         _controller.configure(
-          options: widget.options,
+          options: _effectiveOptions,
           maxSelections: widget.maxSelections,
           validators: MultiSelectLogic.buildValidators<T>(
             required: widget.required,

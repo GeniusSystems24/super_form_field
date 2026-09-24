@@ -88,11 +88,9 @@ class _AutovalidateModeDemoState extends State<AutovalidateModeDemo> {
                     SizedBox(height: spacing.space6),
                     const SuperSelectFormField<String>(
                       decoration: InputDecoration(labelText: 'Account type'),
-                      sources: [
-                        SuperSelectListSource<String>(
-                          items: ['asset', 'liability', 'revenue'],
-                        ),
-                      ],
+                      source: SuperSelectListSource<String>(
+                        items: ['asset', 'liability', 'revenue'],
+                      ),
                       optionBuilder: _optionBuilder,
                       required: true,
                       validationPosition: ValidationPosition.underBox,

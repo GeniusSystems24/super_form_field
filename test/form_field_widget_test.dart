@@ -33,6 +33,27 @@ SuperOption<int> _testIntSelectOptionBuilder(
   int item,
 ) => SuperOption<int>(value: item, label: item == 1 ? 'One' : item.toString());
 
+
+SuperOption<String> _testStringMultiSelectOptionBuilder(
+  List<String> items,
+  int index,
+  String item,
+) {
+  final label = switch (item) {
+    'one' => 'One',
+    'two' => 'Two',
+    'read' => 'Read',
+    _ => item,
+  };
+  return SuperOption<String>(value: item, label: label);
+}
+
+SuperOption<int> _testIntMultiSelectOptionBuilder(
+  List<int> items,
+  int index,
+  int item,
+) => SuperOption<int>(value: item, label: item == 1 ? 'One' : item.toString());
+
 void main() {
   test('all public fields accept InputDecoration', () {
     const options = [
@@ -82,16 +103,17 @@ void main() {
       const SuperSelectFormField<String>(
         decoration: decoration,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        sources: [
-          SuperSelectListSource<String>(items: ['one', 'two']),
-        ],
+        source: SuperSelectListSource<String>(items: ['one', 'two']),
         optionBuilder: _testStringSelectOptionBuilder,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
       ),
       const SuperMultiSelectFormField<String>(
         decoration: decoration,
-        options: options,
+        source: SuperMultiSelectListSource<String>(
+          items: ['one', 'two'],
+        ),
+        optionBuilder: _testStringMultiSelectOptionBuilder,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validationPosition: ValidationPosition.labelTrailing,
         helpIcon: helpIcon,
@@ -409,9 +431,7 @@ void main() {
                 suffixText: 'Required',
                 counterText: '1 of 5',
               ),
-              sources: [
-                SuperSelectListSource<String>(items: ['asset']),
-              ],
+              source: SuperSelectListSource<String>(items: ['asset']),
               optionBuilder: _testStringSelectOptionBuilder,
             ),
           ),
@@ -766,9 +786,7 @@ void main() {
         keyboardAppearance: Brightness.light,
       ),
       SuperSelectFormField<int>(
-        sources: const [
-          SuperSelectListSource<int>(items: [1]),
-        ],
+        source: const SuperSelectListSource<int>(items: [1]),
         optionBuilder: _testIntSelectOptionBuilder,
         searchable: true,
         keyboardType: TextInputType.text,
@@ -790,7 +808,8 @@ void main() {
         keyboardAppearance: Brightness.light,
       ),
       SuperMultiSelectFormField<int>(
-        options: const [SuperOption(value: 1, label: 'One')],
+        source: const SuperMultiSelectListSource<int>(items: [1]),
+        optionBuilder: _testIntMultiSelectOptionBuilder,
         searchable: true,
         keyboardType: TextInputType.text,
         inputFormatters: [formatter],
@@ -854,15 +873,16 @@ void main() {
                 ),
                 SuperSelectFormField<int>(
                   initialValue: 1,
-                  sources: const [
-                    SuperSelectListSource<int>(items: [1]),
-                  ],
+                  source: const SuperSelectListSource<int>(items: [1]),
                   optionBuilder: _testIntSelectOptionBuilder,
                   onSaved: (value) => savedSelection = value,
                 ),
                 SuperMultiSelectFormField<String>(
                   initialValue: const ['read'],
-                  options: const [SuperOption(value: 'read', label: 'Read')],
+                  source: const SuperMultiSelectListSource<String>(
+                    items: ['read'],
+                  ),
+                  optionBuilder: _testStringMultiSelectOptionBuilder,
                   onSave: (value) => savedSelections = value,
                 ),
               ],

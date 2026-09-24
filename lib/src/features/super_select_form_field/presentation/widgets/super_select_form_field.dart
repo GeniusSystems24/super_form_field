@@ -9,6 +9,8 @@
 // Validation surfaces only through the suffix ErrorBadge. Light/dark + LTR/RTL.
 // ============================================================
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:super_core/super_core.dart';
 import 'package:flutter/services.dart';
@@ -32,8 +34,11 @@ typedef SuperSelectOptionBuilder<T> =
 class SuperSelectFormField<T> extends StatefulWidget {
   const SuperSelectFormField({
     super.key,
-    required this.sources,
+    this.source,
+    @Deprecated('Use source instead.') this.sources,
     required this.optionBuilder,
+    this.debounce = const Duration(milliseconds: 300),
+    this.minChars = 0,
     this.controller,
     this.focusNode,
     this.autofocus = false,
@@ -98,22 +103,32 @@ class SuperSelectFormField<T> extends StatefulWidget {
     this.strutStyle,
     this.autovalidateMode,
   }) : assert(
+         source != null || sources != null,
+         'Provide source. The deprecated sources list is accepted for compatibility.',
+       ),
+       assert(minChars >= 0, 'minChars must be >= 0.'),
+       assert(
          onSaved == null || onSave == null,
          'Provide either onSaved or onSave, not both.',
        );
 
-  /// Local and/or remote sources used to resolve raw selectable values.
+  /// Preferred singular raw-value source.
   ///
-  /// Sources are loaded when the field is mounted and reloaded when the
-  /// [sources] list instance changes. Their results are merged in source
-  /// order before [optionBuilder] is evaluated.
-  final List<SuperSelectSource<T>> sources;
+  /// Construct common sources through [SuperSelectSources].
+  final SuperSelectSource<T>? source;
+
+  /// Legacy multi-source API retained for compatibility.
+  @Deprecated('Use source instead.')
+  final List<SuperSelectSource<T>>? sources;
 
   /// Converts each raw source value into `SuperOption<T>` metadata.
-  ///
-  /// The callback receives the merged raw item list, the item's global
-  /// index in that list, and the raw item itself.
   final SuperSelectOptionBuilder<T> optionBuilder;
+
+  /// Delay applied only before asynchronous/external source queries.
+  final Duration debounce;
+
+  /// Minimum trimmed search length required before an async source query.
+  final int minChars;
 
   /// External controller — when null, the field manages its own.
   final SuperSelectFieldController<T>? controller;
@@ -244,26 +259,15 @@ class SuperSelectFormField<T> extends StatefulWidget {
       _SuperSelectFormFieldState<T>();
 }
 
-class _SuperSelectSourceLoadResult<T> {
-  const _SuperSelectSourceLoadResult({
-    required this.items,
-    this.error,
-    this.stackTrace,
-  });
-
-  final List<T> items;
-  final Object? error;
-  final StackTrace? stackTrace;
-}
-
 class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
   late SuperSelectFieldController<T> _controller;
   bool _ownsController = false;
   late FocusNode _focusNode;
   bool _ownsFocusNode = false;
   List<T> _sourceItems = const [];
-  bool _loadingSources = false;
-  int _sourceLoadGeneration = 0;
+  bool _loadingSource = false;
+  int _sourceQueryGeneration = 0;
+  Timer? _sourceDebounce;
 
   @override
   void initState() {
@@ -273,7 +277,8 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
         SuperSelectFieldController<T>(initialValue: widget.initialValue);
     _ownsController = widget.controller == null;
     _attachFocusNode();
-    _startLoadingSources();
+    _attachSourceListener();
+    _resetSource();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _controller.reportInitialValidity();
     });
@@ -284,24 +289,29 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
     super.didUpdateWidget(old);
     final controllerChanged = widget.controller != old.controller;
     if (controllerChanged) {
+      _detachSourceListener();
       if (_ownsController) _controller.dispose();
       _controller =
           widget.controller ??
           SuperSelectFieldController<T>(initialValue: widget.initialValue);
       _ownsController = widget.controller == null;
+      _attachSourceListener();
     }
     if (controllerChanged || widget.focusNode != old.focusNode) {
       _detachFocusNode();
       _attachFocusNode();
     }
-    if (!identical(widget.sources, old.sources)) {
-      _startLoadingSources();
+    if (!identical(widget.source, old.source) ||
+        !identical(widget.sources, old.sources)) {
+      _resetSource();
     }
   }
 
   @override
   void dispose() {
-    _sourceLoadGeneration++;
+    _sourceQueryGeneration++;
+    _sourceDebounce?.cancel();
+    _detachSourceListener();
     _detachFocusNode();
     if (_ownsController) _controller.dispose();
     super.dispose();
@@ -337,59 +347,105 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
     );
   }
 
-  void _startLoadingSources() {
-    final generation = ++_sourceLoadGeneration;
-    final sources = List<SuperSelectSource<T>>.of(widget.sources);
-
-    _sourceItems = const [];
-    _loadingSources = sources.isNotEmpty;
-    if (sources.isEmpty) return;
-
-    _resolveSources(sources, generation);
+  List<SuperSelectSource<T>> get _activeSources {
+    final source = widget.source;
+    if (source != null) return <SuperSelectSource<T>>[source];
+    return List<SuperSelectSource<T>>.of(widget.sources ?? const []);
   }
 
-  Future<void> _resolveSources(
-    List<SuperSelectSource<T>> sources,
-    int generation,
-  ) async {
-    final results = await Future.wait(
-      sources.map((source) async {
-        try {
-          return _SuperSelectSourceLoadResult<T>(items: await source.load());
-        } catch (error, stackTrace) {
-          return _SuperSelectSourceLoadResult<T>(
-            items: const [],
-            error: error,
-            stackTrace: stackTrace,
-          );
+  void _attachSourceListener() {
+    _controller.searchText.addListener(_handleSourceQueryChanged);
+  }
+
+  void _detachSourceListener() {
+    _controller.searchText.removeListener(_handleSourceQueryChanged);
+  }
+
+  void _resetSource() {
+    _sourceDebounce?.cancel();
+    final generation = ++_sourceQueryGeneration;
+    final merged = <T>[];
+    for (final source in _activeSources) {
+      for (final item in source.initialItems) {
+        if (!merged.contains(item)) merged.add(item);
+      }
+    }
+    _sourceItems = List<T>.unmodifiable(merged);
+    _loadingSource = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || generation != _sourceQueryGeneration) return;
+      _scheduleSourceQuery(_controller.searchText.text, immediate: true);
+    });
+  }
+
+  void _handleSourceQueryChanged() {
+    _scheduleSourceQuery(_controller.searchText.text);
+  }
+
+  void _scheduleSourceQuery(String query, {bool immediate = false}) {
+    final asyncSources = _activeSources.where((source) => source.isAsync).toList();
+    if (asyncSources.isEmpty) return;
+
+    _sourceDebounce?.cancel();
+    final generation = ++_sourceQueryGeneration;
+    final normalized = query.trim();
+    if (normalized.length < widget.minChars) {
+      if (_loadingSource && mounted) setState(() => _loadingSource = false);
+      return;
+    }
+
+    void run() => _resolveSourceQuery(query, generation);
+    if (immediate || widget.debounce <= Duration.zero) {
+      run();
+    } else {
+      _sourceDebounce = Timer(widget.debounce, run);
+    }
+  }
+
+  Future<void> _resolveSourceQuery(String query, int generation) async {
+    if (!mounted || generation != _sourceQueryGeneration) return;
+    setState(() => _loadingSource = true);
+
+    final merged = <T>[];
+    Object? firstError;
+    StackTrace? firstStack;
+
+    for (final source in _activeSources) {
+      try {
+        final values = source.isAsync
+            ? await Future<List<T>>.value(source.query(context, query))
+            : source.initialItems;
+        for (final item in values) {
+          if (!merged.contains(item)) merged.add(item);
         }
-      }),
-    );
-
-    if (!mounted || generation != _sourceLoadGeneration) return;
-
-    final loaded = <T>[];
-    for (final result in results) {
-      loaded.addAll(result.items);
-      final error = result.error;
-      if (error != null) {
-        FlutterError.reportError(
-          FlutterErrorDetails(
-            exception: error,
-            stack: result.stackTrace,
-            library: 'super_form_field',
-            context: ErrorDescription(
-              'while loading a SuperSelectFormField source',
-            ),
-          ),
-        );
+      } catch (error, stackTrace) {
+        firstError ??= error;
+        firstStack ??= stackTrace;
+        for (final item in source.initialItems) {
+          if (!merged.contains(item)) merged.add(item);
+        }
       }
     }
 
+    if (!mounted || generation != _sourceQueryGeneration) return;
     setState(() {
-      _sourceItems = List<T>.unmodifiable(loaded);
-      _loadingSources = false;
+      _sourceItems = List<T>.unmodifiable(merged);
+      _loadingSource = false;
     });
+
+    if (firstError != null) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: firstError,
+          stack: firstStack,
+          library: 'super_form_field',
+          context: ErrorDescription(
+            'while querying a SuperSelectFormField source',
+          ),
+        ),
+      );
+    }
   }
 
   bool get _editable =>
@@ -485,7 +541,7 @@ class _SuperSelectFormFieldState<T> extends State<SuperSelectFormField<T>> {
               strutStyle: widget.strutStyle,
             )
           : null,
-      empty: _loadingSources && filtered.isEmpty
+      empty: _loadingSource && filtered.isEmpty
           ? const Padding(
               padding: EdgeInsets.all(12),
               child: Center(

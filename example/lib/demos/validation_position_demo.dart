@@ -221,6 +221,12 @@ class _OtherFieldsPreview extends StatelessWidget {
     SuperOption(value: 'bank', label: 'Bank'),
   ];
 
+  static SuperOption<String> _multiSelectOptionBuilder(
+    List<String> items,
+    int index,
+    String item,
+  ) => _options.firstWhere((option) => option.value == item);
+
   Widget _help(BuildContext context) {
     return Tooltip(
       message: 'Configured by the shared validation placement API.',
@@ -271,9 +277,9 @@ class _OtherFieldsPreview extends StatelessWidget {
             'Account type',
             Icons.account_balance_outlined,
           ),
-          sources: const [
-            SuperSelectListSource(items: ['cash', 'bank']),
-          ],
+          source: const SuperSelectListSource<String>(
+            items: ['cash', 'bank'],
+          ),
           optionBuilder: (items, index, item) =>
               SuperOption(value: item, label: item == 'cash' ? 'Cash' : 'Bank'),
           required: true,
@@ -288,7 +294,10 @@ class _OtherFieldsPreview extends StatelessWidget {
             'Permissions',
             Icons.checklist_rounded,
           ),
-          options: _options,
+          source: const SuperMultiSelectListSource<String>(
+            items: ['cash', 'bank'],
+          ),
+          optionBuilder: _multiSelectOptionBuilder,
           required: true,
           forceError: force,
           validationPosition: position,

@@ -1,75 +1,109 @@
 # super_form_field
 
+[![Pub](https://img.shields.io/pub/v/super_form_field.svg)](https://pub.dev/packages/super_form_field)
+[![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.32.0-02569B?logo=flutter)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A Flutter form-field toolkit for ERP and business applications, built on the
-GeniusLink design system. It provides consistent decoration, validation,
-responsive interaction, controller support, light and dark themes, and English
-and Arabic layouts.
+GeniusLink design system. `super_form_field` provides typed inputs, shared
+validation and decoration behavior, responsive interaction, controller support,
+light/dark themes, and English/Arabic layouts.
 
-The package includes:
+The package keeps form controls visually and behaviorally consistent through a
+shared `FormFieldShell`/field foundation while still exposing typed APIs for
+text, numeric, date, selection, attachment, OTP, boolean, choice, dropdown, and
+popup-menu workflows.
 
-- `SuperTextFormField`
-- `SuperOTPFormField`
-- `SuperNumericFormField`
-- `SuperAttachmentFormField`
-- `SuperDateFormField`
-- `SuperRangeDateFormField`
-- `SuperSelectFormField<T>`
-- `SuperMultiSelectFormField<T>`
-- `SuperBoolFormField`
-- `SuperChoiceFormField<T>`
-- `SuperDropdownButton<T>`
-- `SuperDropdownButtonFormField<T>`
-- `SuperPopupMenuButton<T>`
+<details>
+<summary>Table of contents</summary>
+
+<!-- TOC -->
+- [Features](#features)
+- [Get started](#get-started)
+  - [Install](#install)
+  - [App setup](#app-setup)
+  - [Quick start](#quick-start)
+- [Fields](#fields)
+  - [Text](#text)
+  - [OTP](#otp)
+  - [Numeric](#numeric)
+  - [Attachment](#attachment)
+  - [Date](#date)
+  - [Date range](#date-range)
+  - [Single select](#single-select)
+  - [Multi-select](#multi-select)
+  - [Boolean](#boolean)
+  - [Choice](#choice)
+  - [Dropdown and popup menu](#dropdown-and-popup-menu)
+- [Select sources](#select-sources)
+  - [Local source](#local-source)
+  - [Async source](#async-source)
+  - [Multi-select sources](#multi-select-sources)
+- [Input decoration and field shell](#input-decoration-and-field-shell)
+- [Validation and Form integration](#validation-and-form-integration)
+- [Controllers](#controllers)
+- [Desktop keyboard and focus behavior](#desktop-keyboard-and-focus-behavior)
+- [Responsive behavior](#responsive-behavior)
+- [Localization and RTL](#localization-and-rtl)
+- [Advanced public API](#advanced-public-api)
+- [Examples](#examples)
+- [Documentation](#documentation)
+<!-- TOC -->
+</details>
 
 ## Features
 
-- One `InputDecoration` contract across all fields.
-- Typed values and dedicated controllers for every field.
+- Unified `InputDecoration` behavior across form fields.
+- Shared `FormFieldShell` layout for labels, helpers, validation, and field
+  geometry.
+- Typed values and dedicated controllers.
 - Built-in required, range, length, format, and selection validation.
-- Declarative text masks powered by `mask_text_input_formatter`.
-- Segmented OTP/PIN input with paste, SMS autofill, and completion callbacks.
-- Custom validators with first-error-wins behavior.
-- Validation errors displayed through compact error badges, tooltips, or
-  under-box text where supported.
-- Responsive date input for mobile, tablet, and desktop.
-- Responsive two-calendar date-range selection with configurable presets.
-- Searchable single-select and multi-select menus.
-- Local and remote data sources for `SuperSelectFormField<T>`.
-- Design-system dropdown buttons and anchored popup action menus.
-- Picker-agnostic file attachments.
-- Light and dark theme support through `super_core`.
-- English and Arabic package localizations.
-- LTR and RTL layout support.
+- Material `FormState.validate()` and `FormState.save()` integration on editable
+  typed fields.
+- Text masks through `mask_text_input_formatter`.
+- Segmented OTP/PIN input with paste and one-time-code autofill.
+- Grouped numeric display, precision rules, stepping, and keyboard shortcuts.
+- Responsive date and date-range interaction.
+- Searchable single-select and multi-select controls.
+- Raw-value local and async source APIs for select fields.
+- Debounced external queries while locally available values remain immediately
+  searchable.
+- Picker-agnostic attachment input.
+- Design-system dropdown buttons and popup action menus.
+- Single-stop desktop focus traversal for composite input fields.
+- Light/dark themes through `super_core`.
+- English and Arabic localization with LTR/RTL support.
 
-## Installation
+## Get started
 
-Add the package with Flutter:
+### Install
+
+Add the package:
 
 ```bash
 flutter pub add super_form_field
 ```
 
-Or add it manually to `pubspec.yaml`:
+Or add it manually:
 
 ```yaml
 dependencies:
-  super_form_field: ^1.14.0
+  super_form_field: ^1.15.0
 ```
 
-Import the public library:
+Import the public barrel:
 
 ```dart
 import 'package:super_form_field/super_form_field.dart';
 ```
 
-Application code should normally import only this barrel file. It exports the
-form fields, their controllers, shared value types, localization helpers, and
-the required `super_core` design-system APIs.
+Application code should normally import only this file. It exports the public
+fields, controllers, source APIs, shared value types, localization helpers, and
+design-system foundations intended for package consumers.
 
-## App setup
+### App setup
 
-Use `SuperMaterialThemeData` and register the package localization delegates at
-the application root:
+Use the GeniusLink material theme and register the package localizations:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -85,8 +119,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = SuperTextTheme();
+
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       theme: SuperMaterialThemeData.light(
         textTheme: textTheme,
         primaryTextTheme: textTheme,
@@ -96,102 +130,76 @@ class App extends StatelessWidget {
         primaryTextTheme: textTheme,
       ),
       themeMode: ThemeMode.system,
-      localizationsDelegates:
-          SuperFormLocalizations.localizationsDelegates,
+      localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
       supportedLocales: SuperFormLocalizations.supportedLocales,
-      home: const AccountFormPage(),
+      home: const CustomerFormPage(),
     );
   }
 }
 ```
 
-All controls read colors, spacing, sizing, and interaction tokens from the
-active `SuperThemeData`. Typography is read separately from the required
-`SuperTextTheme` installed on `SuperMaterialThemeData` by `super_core` 3.6.0.
-Normal field styles preserve the font families carried by `SuperTextTheme`;
-they no longer overwrite them with `SuperTokensData.bodyFont` / `monoFont`.
-
-## Quick start
+### Quick start
 
 ```dart
-class AccountFormPage extends StatefulWidget {
-  const AccountFormPage({super.key});
+class CustomerFormPage extends StatefulWidget {
+  const CustomerFormPage({super.key});
 
   @override
-  State<AccountFormPage> createState() => _AccountFormPageState();
+  State<CustomerFormPage> createState() => _CustomerFormPageState();
 }
 
-class _AccountFormPageState extends State<AccountFormPage> {
-  final _nameController = SuperTextFieldController();
-  final _typeController = SuperSelectFieldController<String>();
-
-  bool _forceErrors = false;
-  String? _nameError;
-  String? _typeError;
-
-  bool get _isValid => _nameError == null && _typeError == null;
-
-  void _submit() {
-    setState(() => _forceErrors = true);
-
-    if (!_isValid) return;
-
-    final name = _nameController.value;
-    final type = _typeController.value;
-
-    // Send name and type to the application layer.
-  }
+class _CustomerFormPageState extends State<CustomerFormPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _name = SuperTextFieldController();
+  final _type = SuperSelectFieldController<String>();
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _typeController.dispose();
+    _name.dispose();
+    _type.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Create account')),
-      body: ListView(
+    return Form(
+      key: _formKey,
+      child: ListView(
         padding: const EdgeInsets.all(24),
         children: [
           SuperTextFormField(
-            controller: _nameController,
+            controller: _name,
             decoration: const InputDecoration(
-              labelText: 'Account name',
-              hintText: 'Enter the account name',
+              labelText: 'Customer name',
+              hintText: 'Enter a name',
             ),
             required: true,
             minLength: 3,
-            forceError: _forceErrors,
-            onValidity: (error) => _nameError = error,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           SuperSelectFormField<String>(
-            controller: _typeController,
+            controller: _type,
             decoration: const InputDecoration(
-              labelText: 'Account type',
+              labelText: 'Customer type',
               hintText: 'Select a type',
             ),
             required: true,
-            searchable: true,
-            sources: const [
-              SuperSelectListSource<String>(
-                items: ['asset', 'liability', 'equity'],
-              ),
-            ],
-            optionBuilder: (items, index, item) => SuperOption(
-              value: item,
-              label: item[0].toUpperCase() + item.substring(1),
+            source: SuperSelectSources.list(
+              ['retail', 'wholesale', 'government'],
             ),
-            forceError: _forceErrors,
-            onValidity: (error) => _typeError = error,
+            optionBuilder: (items, index, value) => SuperOption(
+              value: value,
+              label: value,
+            ),
           ),
           const SizedBox(height: 24),
           FilledButton(
-            onPressed: _submit,
-            child: const Text('Create account'),
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+              }
+            },
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -200,10 +208,307 @@ class _AccountFormPageState extends State<AccountFormPage> {
 }
 ```
 
-## Input decoration
+## Fields
 
-Every public field accepts `decoration`. Use it as the single source for labels,
-hints, helper text, icons, prefixes, suffixes, counters, and external errors.
+### Text
+
+`SuperTextFormField` supports normal text, email, phone, password, multiline,
+masking, counters, clear actions, autofill, formatters, and typed form saving.
+
+```dart
+SuperTextFormField(
+  decoration: const InputDecoration(
+    labelText: 'Reference',
+    hintText: 'INV-0001',
+  ),
+  required: true,
+  maxLength: 20,
+);
+```
+
+For masked input:
+
+```dart
+SuperTextFormField(
+  decoration: const InputDecoration(labelText: 'Phone'),
+  type: SuperTextType.phone,
+  mask: '+967 ## ### ####',
+  onUnmaskedChanged: (value) {
+    // Raw placeholder characters only.
+  },
+);
+```
+
+### OTP
+
+`SuperOTPFormField` uses one real editor behind segmented cells, preserving
+desktop typing, paste, one-time-code autofill, validation, and form saving.
+
+```dart
+SuperOTPFormField(
+  decoration: const InputDecoration(labelText: 'Verification code'),
+  length: 6,
+  required: true,
+  autofillHints: const [AutofillHints.oneTimeCode],
+  onCompleted: (code) {},
+);
+```
+
+### Numeric
+
+`SuperNumericFormField` supports grouped display values, decimal precision,
+range validation, negative values, stepping, and keyboard shortcuts.
+
+```dart
+SuperNumericFormField(
+  decoration: const InputDecoration(labelText: 'Amount'),
+  required: true,
+  decimals: 2,
+  min: 0,
+  max: 1000000,
+  step: 1,
+);
+```
+
+`stepper` is responsive when omitted: it is hidden on mobile and shown on
+tablet/desktop. Set `stepper: true` or `stepper: false` to override that
+behavior. Increment/decrement actions remain part of the field interaction
+without becoming additional desktop Tab stops.
+
+### Attachment
+
+`SuperAttachmentFormField` is picker-agnostic. The host application provides
+the browse/drop integration and the field manages typed `SuperFile` values,
+validation, and presentation.
+
+```dart
+SuperAttachmentFormField(
+  decoration: const InputDecoration(
+    labelText: 'Supporting documents',
+    hintText: 'Browse or drop files',
+  ),
+  accept: '.pdf,.docx',
+  maxFiles: 5,
+  maxSizeMB: 10,
+  onBrowse: () async {
+    return <SuperFile>[];
+  },
+);
+```
+
+### Date
+
+`SuperDateFormField` provides segmented editing, configurable formats, min/max
+validation, keyboard navigation, and a responsive calendar surface.
+
+```dart
+SuperDateFormField(
+  decoration: const InputDecoration(labelText: 'Posting date'),
+  format: SuperDateFormat.yearMonthDay,
+  minDate: DateTime(2026, 1, 1),
+  maxDate: DateTime(2026, 12, 31),
+  required: true,
+);
+```
+
+### Date range
+
+`SuperRangeDateFormField` manages a typed `SuperDateRange` with configurable
+boundaries and responsive range picking.
+
+```dart
+SuperRangeDateFormField(
+  decoration: const InputDecoration(labelText: 'Reporting period'),
+  required: true,
+  minDate: DateTime(2026, 1, 1),
+  maxDate: DateTime(2026, 12, 31),
+);
+```
+
+### Single select
+
+`SuperSelectFormField<T>` consumes one raw-value `SuperSelectSource<T>`. The
+source owns data acquisition; `optionBuilder` owns display/search metadata.
+
+```dart
+SuperSelectFormField<String>(
+  decoration: const InputDecoration(labelText: 'Account type'),
+  searchable: true,
+  source: SuperSelectSources.list(
+    ['asset', 'liability', 'equity', 'income', 'expense'],
+  ),
+  optionBuilder: (items, index, value) => SuperOption(
+    value: value,
+    label: value,
+  ),
+);
+```
+
+### Multi-select
+
+`SuperMultiSelectFormField<T>` follows the same source model while returning a
+typed `List<T>` and rendering selected values as removable chips.
+
+```dart
+SuperMultiSelectFormField<String>(
+  decoration: const InputDecoration(labelText: 'Permissions'),
+  searchable: true,
+  source: SuperMultiSelectSources.list(
+    ['read', 'create', 'update', 'delete'],
+  ),
+  optionBuilder: (items, index, value) => SuperOption(
+    value: value,
+    label: value,
+  ),
+  minSelections: 1,
+  maxSelections: 3,
+);
+```
+
+### Boolean
+
+`SuperBoolFormField` renders a toggle or checkbox and supports `mustBeTrue` for
+acknowledgement/compliance flows.
+
+```dart
+SuperBoolFormField(
+  decoration: const InputDecoration(labelText: 'Confirmation'),
+  style: SuperBoolStyle.checkbox,
+  mustBeTrue: true,
+);
+```
+
+### Choice
+
+`SuperChoiceFormField<T>` is designed for small fixed option sets. It supports
+segmented, radio, and checkbox presentation.
+
+```dart
+SuperChoiceFormField<String>(
+  decoration: const InputDecoration(labelText: 'Status'),
+  style: SuperChoiceStyle.segmented,
+  options: const [
+    SuperOption(value: 'draft', label: 'Draft'),
+    SuperOption(value: 'posted', label: 'Posted'),
+  ],
+);
+```
+
+### Dropdown and popup menu
+
+Use `SuperDropdownButton<T>` for lightweight typed selection,
+`SuperDropdownButtonFormField<T>` when a dropdown must participate directly in
+a `Form`, and `SuperPopupMenuButton<T>` for anchored action menus.
+
+```dart
+SuperDropdownButton<String>(
+  decoration: const InputDecoration(hintText: 'Select status'),
+  options: const [
+    SuperOption(value: 'active', label: 'Active'),
+    SuperOption(value: 'inactive', label: 'Inactive'),
+  ],
+  onChanged: (value) {},
+);
+```
+
+## Select sources
+
+Version `1.15.0` exposes source APIs for single-select and multi-select
+fields in the same data/presentation separation style used by
+`SuperAutoSuggestionsBox`:
+
+- the widget receives one source;
+- the source returns raw `T` values;
+- `optionBuilder` maps raw values to `SuperOption<T>`;
+- local values are available immediately;
+- debounce applies only to asynchronous/external queries.
+
+### Local source
+
+```dart
+final source = SuperSelectSources.list<String>(
+  ['Cash', 'Bank', 'Inventory'],
+);
+```
+
+For strings, the shorter convenience factory is also available:
+
+```dart
+final source = SuperSelectSources.strings(
+  ['Cash', 'Bank', 'Inventory'],
+);
+```
+
+The source stays presentation-free:
+
+```dart
+SuperSelectFormField<String>(
+  source: source,
+  optionBuilder: (items, index, value) => SuperOption(
+    value: value,
+    label: value,
+  ),
+);
+```
+
+### Async source
+
+The async callback receives the active field `BuildContext` and the current
+search query:
+
+```dart
+final source = SuperSelectSources.async<Warehouse>(
+  (context, query) => repository.searchWarehouses(query),
+  initialItems: cachedWarehouses,
+);
+```
+
+Use it with field-level query controls:
+
+```dart
+SuperSelectFormField<Warehouse>(
+  searchable: true,
+  debounce: const Duration(milliseconds: 300),
+  minChars: 2,
+  source: source,
+  optionBuilder: (items, index, warehouse) => SuperOption(
+    value: warehouse,
+    label: warehouse.name,
+    description: warehouse.code,
+  ),
+);
+```
+
+`debounce` delays only asynchronous source work. Values already present in
+`initialItems` or the source cache remain available to the menu immediately.
+
+`minChars` prevents an external query until the trimmed search text reaches the
+configured length.
+
+### Multi-select sources
+
+The same factories are available through `SuperMultiSelectSources`:
+
+```dart
+final source = SuperMultiSelectSources.async<User>(
+  (context, query) => repository.searchUsers(query),
+  initialItems: cachedUsers,
+);
+
+SuperMultiSelectFormField<User>(
+  searchable: true,
+  source: source,
+  optionBuilder: (items, index, user) => SuperOption(
+    value: user,
+    label: user.name,
+    description: user.email,
+  ),
+);
+```
+
+## Input decoration and field shell
+
+Public fields use `InputDecoration` for content-level configuration:
 
 ```dart
 SuperTextFormField(
@@ -211,721 +516,41 @@ SuperTextFormField(
     labelText: 'Reference',
     hintText: 'Enter a reference',
     helperText: 'Visible in reports',
-    prefixIcon: Icon(SffIcons.hash),
+    prefixIcon: Icon(Icons.tag_outlined),
     suffixText: 'ERP',
   ),
 );
 ```
 
-| `InputDecoration` property | Package behavior |
-|---|---|
-| `label` / `labelText` | External field label |
-| `hint` / `hintText` | Empty-value prompt or field statement |
-| `helper` / `helperText` | Supporting content below the control |
-| `icon`, `prefixIcon`, `prefix`, `prefixText` | Leading adornments |
-| `suffix`, `suffixText`, `suffixIcon` | Trailing adornments |
-| `counter` / `counterText` | Counter content where supported |
-| `errorText` | External error displayed through the package validation surface |
+The package retains ownership of field geometry, borders, fill, focus state,
+disabled/read-only treatment, and validation placement so different field types
+stay visually consistent.
 
-The package keeps ownership of field geometry, borders, fill, focus states,
-disabled states, and error presentation so all field types remain visually
-consistent. Use `errorText` for an external string error.
+`FormFieldShell` is the shared outer layout used for label, helper, error,
+fixed-state, and field-content composition. Composite fields use the same
+foundation rather than implementing independent shell geometry.
 
 ### Validation position
 
-Validated form fields accept `validationPosition` when the validation surface
-needs to move for a specific form layout. `SuperPopupMenuButton` also supports
-the same placement for external `InputDecoration.errorText` when a decoration
-label/helper/error is supplied.
+Validated fields support:
 
 | Value | Behavior |
-|---|---|
-| `ValidationPosition.suffixIcon` | Shows the validation icon in the input box suffix |
-| `ValidationPosition.underBox` | Shows validation text under the input box |
-| `ValidationPosition.labelTrailing` | Shows the validation icon at the trailing edge of the label row |
+| --- | --- |
+| `ValidationPosition.suffixIcon` | Error badge inside the field suffix |
+| `ValidationPosition.underBox` | Error text below the field |
+| `ValidationPosition.labelTrailing` | Error badge at the end of the label row |
 
-When a field-level `validationPosition` is omitted, the field uses the nullable
-`SuperFormField.validationPosition` package default. When that default is null,
-the responsive fallback is `ValidationPosition.underBox` on mobile and
-`ValidationPosition.labelTrailing` on tablet and desktop.
-
-```dart
-SuperTextFormField(
-  decoration: const InputDecoration(
-    labelText: 'Account name',
-    hintText: 'Enter a name',
-  ),
-  required: true,
-  validationPosition: ValidationPosition.underBox,
-);
-```
-
-Set a package-wide default when a screen or application should use one
-validation surface consistently:
+When no field-level position is provided, the package can use
+`SuperFormField.validationPosition`; otherwise the responsive fallback is
+under-box on mobile and label-trailing on larger layouts.
 
 ```dart
 SuperFormField.validationPosition = ValidationPosition.suffixIcon;
 ```
 
-Use `helpIcon` to add a custom help affordance at the end of a field label row:
+## Validation and Form integration
 
-```dart
-SuperSelectFormField<String>(
-  decoration: const InputDecoration(labelText: 'Account name'),
-  sources: const [SuperSelectListSource(items: ['asset'])],
-  optionBuilder: (items, index, item) => SuperOption(value: item, label: item),
-  helpIcon: const Tooltip(
-    message: 'Shown in account reports.',
-    child: Icon(Icons.help_outline_rounded, size: 18),
-  ),
-);
-```
-
-## Material-compatible input behavior
-
-The text, OTP, numeric, date, select, and multi-select fields expose the useful
-Material editing controls that apply to their input model:
-
-- `keyboardType`, `inputFormatters`, `textDirection`, `textInputAction`,
-  `textCapitalization`, and `keyboardAppearance`.
-- `onFieldSubmitted`, `onEditingComplete`, `onTap`, `onTapOutside`, and
-  `onTapUpOutside`.
-- Autofill, cursor/selection behavior, context menus, restoration, IME learning,
-  focus requests, and clipping where applicable.
-- `onSaved` for Material naming, plus `onSave` as a compatibility alias. Supply
-  only one of them.
-- `autovalidateMode` and typed participation in `FormState.validate()` and
-  `FormState.save()`. When omitted, fields inherit the nearest
-  `Form.autovalidateMode` before falling back to `AutovalidateMode.disabled`.
-
-Text, numeric, date, select, and multi-select retain their broader
-editor-specific options such as autocorrect, suggestions, smart punctuation,
-and scrolling. OTP input intentionally disables autocorrect, suggestions,
-and smart punctuation. Caller formatters run first, followed by the optional
-digits-only restriction and the package exact-length limiter.
-
-For `SuperSelectFormField` and `SuperMultiSelectFormField`, keyboard and editing
-properties configure the menu search editor and therefore take effect when
-`searchable` is `true`. Their tap and outside-tap callbacks belong to the
-selection trigger. Date input always applies its internal formatter after any
-custom `inputFormatters` so the configured date mask remains valid.
-
-## Fields
-
-### Text field
-
-`SuperTextFormField` supports regular text, email, phone, password, and
-multiline input.
-
-```dart
-SuperTextFormField(
-  decoration: const InputDecoration(
-    labelText: 'Email address',
-    hintText: 'name@example.com',
-    prefixIcon: Icon(SffIcons.mail),
-  ),
-  type: SuperTextType.email,
-  required: true,
-  clearable: true,
-  maxLength: 120,
-);
-```
-
-For phone-number input, use the semantic phone type and add only the formatting
-or validation rules required by your product and locale. The optional `mask`
-API is powered by `mask_text_input_formatter`:
-
-```dart
-String? rawPhone;
-
-SuperTextFormField(
-  decoration: const InputDecoration(
-    labelText: 'Phone number',
-    hintText: '+967 7X XXX XXXX',
-    prefixIcon: Icon(Icons.phone_outlined),
-  ),
-  type: SuperTextType.phone,
-  mask: '+967 ## ### ####',
-  autofillHints: const [AutofillHints.telephoneNumber],
-  onUnmaskedChanged: (value) => rawPhone = value,
-);
-```
-
-The default mask placeholders are `#` for digits, `A` for Latin letters, and
-`N` for Latin letters or digits. Override them with `maskFilter`, and select
-`MaskAutoCompletionType.lazy` or `MaskAutoCompletionType.eager` through
-`maskAutoCompletionType`.
-
-`onChanged` and `onSaved` receive the visible masked value.
-`onUnmaskedChanged` and `onUnmaskedSaved` receive only placeholder characters,
-without literals such as spaces, separators, or a fixed dialing-code prefix.
-Custom `inputFormatters` run before the mask formatter so the mask remains the
-final formatting authority.
-
-`SuperTextType.phone` still does not impose a global mask, digits-only
-formatter, or phone regex because valid formats vary by locale and product.
-
-Common options:
-
-- `type`: `text`, `email`, `phone`, or `password`. For single-line input, the
-  `phone` type selects `TextInputType.phone` unless `keyboardType` is supplied
-  explicitly.
-- `multiline` and `rows` for long-form input.
-- `minLength`, `maxLength`, `pattern`, and `patternMessage`.
-- `showCounter`, `clearable`, and `autofocus`.
-- `mask`, `maskFilter`, `maskAutoCompletionType`, `onUnmaskedChanged`, and
-  `onUnmaskedSaved` for declarative masked input.
-- `disabled`, `readOnly`, `arabic`, and `forceError`.
-
-### OTP field
-
-`SuperOTPFormField` renders a verification code as separate cells while using
-one real editor internally. This preserves paste, SMS one-time-code autofill,
-desktop keyboard input, and predictable `Form` behavior.
-
-```dart
-final otpController = SuperOTPFieldController();
-
-SuperOTPFormField(
-  controller: otpController,
-  decoration: const InputDecoration(
-    labelText: 'Verification code',
-    hintText: 'Enter the code sent by SMS',
-    helperText: 'The code expires in five minutes.',
-    prefixIcon: Icon(Icons.sms_outlined),
-  ),
-  length: 6,
-  required: true,
-  autofillHints: const [AutofillHints.oneTimeCode],
-  onCompleted: (code) {
-    // Verify the completed code through the application layer.
-  },
-  onSaved: (code) {
-    // Receives the code from FormState.save().
-  },
-);
-```
-
-OTP behavior:
-
-- `length` sets the exact accepted code length and the number of visual cells.
-- `digitsOnly` defaults to `true`, adding a numeric keyboard and digits-only
-  formatter. Set it to `false` for alphanumeric backup codes.
-- `obscureText` masks a PIN without changing the saved value.
-- `onCompleted` runs once for each newly completed value, including pasted and
-  autofilled codes.
-- Caller `inputFormatters` run first, followed by the optional digits-only
-  restriction and the package length limiter. Use `maxLengthEnforcement`
-  when composition behavior must differ from the enforced default.
-- `boxWidth`, `boxHeight`, `spacing`, `borderRadius`, and `textStyle` customize
-  the cells without replacing package focus and validation states.
-- `showCounter`, `disabled`, `readOnly`, `autofocus`, `forceError`,
-  `onFieldSubmitted`, outside-tap callbacks, and typed Form saving are supported.
-- OTP content remains LTR by default, including inside an RTL application. Set
-  `textDirection` explicitly only when the product requires another order.
-
-### Numeric field
-
-`SuperNumericFormField` supports grouped display values, decimal precision,
-range validation, negative-value control, keyboard shortcuts, and an optional
-stepper.
-
-```dart
-SuperNumericFormField(
-  decoration: const InputDecoration(
-    labelText: 'Amount',
-    hintText: '0.00',
-    prefixText: 'SAR',
-  ),
-  required: true,
-  decimals: 2,
-  min: 0,
-  max: 1000000,
-  step: 0.25,
-  largeStep: 100,
-);
-```
-
-While focused, Arrow Up and Arrow Down change the value by `step`. Page Up and
-Page Down use `largeStep`, or `step * 10` when `largeStep` is not supplied. Set
-`keyboardShortcuts: false` or `stepper: false` when those interactions are not
-needed.
-
-### Attachment field
-
-`SuperAttachmentFormField` renders an attachment drop zone and a validated list
-of `SuperFile` values. File acquisition remains the responsibility of the host
-application, so the package does not depend on a picker plugin.
-
-```dart
-SuperAttachmentFormField(
-  decoration: const InputDecoration(
-    labelText: 'Supporting documents',
-    hintText: 'Browse or drop files here',
-    helperText: 'PDF and DOCX files only',
-    prefixIcon: Icon(SffIcons.uploadCloud),
-  ),
-  required: true,
-  accept: '.pdf,.docx',
-  maxSizeMB: 10,
-  maxFiles: 5,
-  onBrowse: () async {
-    // Use file_picker, image_picker, or an application service here.
-    return <SuperFile>[];
-  },
-);
-```
-
-A `SuperFile` carries platform-neutral metadata:
-
-```dart
-final file = SuperFile(
-  id: 'invoice-42',
-  name: 'invoice.pdf',
-  size: 245760,
-  mimeType: 'application/pdf',
-  path: '/local/path/invoice.pdf',
-);
-```
-
-For desktop drag-and-drop adapters, pass an external
-`SuperAttachmentFieldController` and call `setDragOver`, `add`, `remove`, or
-`clear` from the host integration.
-
-### Date field
-
-`SuperDateFormField` provides segmented date editing, configurable formats,
-range validation, keyboard navigation, and a responsive calendar picker.
-
-```dart
-SuperDateFormField(
-  decoration: const InputDecoration(
-    labelText: 'Posting date',
-    helperText: 'Must be inside the open fiscal period',
-  ),
-  required: true,
-  format: SuperDateFormat.yearMonthDay,
-  minDate: DateTime(2026, 1, 1),
-  maxDate: DateTime(2026, 12, 31),
-  clearable: true,
-);
-```
-
-Available formats:
-
-| Value | Display |
-|---|---|
-| `SuperDateFormat.yearMonthDay` | `YYYY-MM-DD` |
-| `SuperDateFormat.yearMonth` | `YYYY-MM` |
-| `SuperDateFormat.year` | `YYYY` |
-| `SuperDateFormat.monthDay` | `MM-DD` |
-| `SuperDateFormat.month` | `MM` |
-| `SuperDateFormat.day` | `DD` |
-
-On mobile, the calendar opens in a modal bottom sheet and segmented editing is
-adapted for software keyboards. Tablet and desktop use an anchored popover with
-hardware-key navigation. Set `calendar: false` or `keyboardShortcuts: false` to
-disable those behaviors.
-
-The leading calendar icon is used when no leading decoration is supplied. Use
-`prefixIcon` to replace it, or `prefixIcon: SizedBox.shrink()` to suppress it.
-
-### Range date field
-
-<!-- SUPER_RANGE_DATE_PICKER_SYNCFUSION_INSPIRED_V1 -->
-`SuperRangeDatePicker` uses a responsive enterprise date-range layout inspired
-by the interaction model of mature multi-view pickers: desktop uses two adjacent
-months with a vertical quick-range rail, tablet keeps two months with horizontal
-preset chips, and mobile switches to one swipeable month with touch-sized cells.
-Range selection is drawn as a continuous tinted band with circular start/end
-anchors, while today, disabled dates, fixed boundaries, `minDate`/`maxDate`, and
-RTL navigation retain the package theme and rules. The implementation is native
-to `super_form_field`; it does not require the Syncfusion package.
-
-<!-- SUPER_RANGE_DATE_PICKER_FIRST_DAY_OF_WEEK_V1 -->
-The calendar week start is configurable with `firstDayOfWeek`. Use Dart's
-weekday constants so the intent remains explicit; the default stays Sunday for
-backward-compatible rendering:
-
-```dart
-SuperRangeDateFormField(
-  firstDayOfWeek: DateTime.monday,
-);
-
-// The standalone picker exposes the same setting.
-SuperRangeDatePicker(
-  firstDayOfWeek: DateTime.saturday,
-  onApply: (range) {},
-);
-```
-
-`firstDayOfWeek` accepts `DateTime.monday` through `DateTime.sunday` and rotates
-both the weekday header and the actual date grid. It does not change keyboard
-date parsing, formatting, validation, `minDate`, or `maxDate`.
-
-`SuperRangeDateFormField` stores a typed `SuperDateRange` and renders **two
-separate keyboard-editable `SuperDateFormField` inputs**: one for the start date
-and one for the end date. Tapping or focusing either input only edits that date;
-the range-selection surface opens **only** from the trailing calendar action.
-Because the boundary inputs reuse `SuperDateFormField`, they share its segmented
-keyboard entry, ISO parsing/formatting, malformed-date behavior, and min/max
-validation.
-
-```dart
-final controller = SuperRangeDateFieldController(
-  initialValue: SuperDateRange(
-    start: DateTime(2026, 1, 1),
-    end: DateTime(2026, 3, 31),
-  ),
-);
-
-SuperRangeDateFormField(
-  controller: controller,
-  decoration: const InputDecoration(
-    labelText: 'Reporting period',
-    helperText: 'Type either date or use the calendar action.',
-  ),
-  startDecoration: const InputDecoration(labelText: 'Start date'),
-  endDecoration: const InputDecoration(labelText: 'End date'),
-  isStartFixed: true,
-  minDate: DateTime(2026, 1, 1),
-  maxDate: DateTime(2026, 12, 31),
-);
-```
-
-`isStartFixed: true` makes only the start input read-only and preserves that
-boundary during picker/preset changes. `isEndFixed: true` does the same for the
-end input. `minDate` and `maxDate` validate keyboard-entered values and constrain
-calendar/preset selection. A range picked from the selection form is written
-back into both visible date inputs, keeping controller state and text buffers
-synchronized.
-
-The picker uses the package defaults when `suggestions` is null:
-Past 7 days, Previous 30 days, Previous 6 months, and Previous year. Pass an
-empty list to remove all presets, replace them with custom resolvers, or
-extend the defaults:
-
-```dart
-SuperRangeDateFormField(
-  suggestions: [
-    ...SuperDateRangeSuggestion.defaults,
-    SuperDateRangeSuggestion(
-      label: 'Month to date',
-      resolve: (now) => SuperDateRange(
-        start: DateTime(now.year, now.month, 1),
-        end: DateTime(now.year, now.month, now.day),
-      ),
-    ),
-  ],
-);
-```
-
-When both boundaries are fixed, neither keyboard entry nor the picker can
-change them. Presets are constrained by the same fixed-boundary, minimum-date,
-maximum-date, and start-before-end rules as manual calendar selection.
-
-### Select field
-
-`SuperSelectFormField<T>` is a typed single-select control with optional search,
-clear behavior, disabled options, descriptions, icons, option groups, and
-local/remote raw-value sources.
-
-Version 1.12.0 uses a source + metadata-builder API. `options:` is no longer a
-`SuperSelectFormField` parameter. Sources return raw `T` values and
-`optionBuilder` converts them to `SuperOption<T>` metadata.
-
-<!-- SUPER_SELECT_SOURCES_1_12_0 -->
-Use `SuperSelectListSource<T>` when values already exist in memory:
-
-```dart
-SuperSelectFormField<String>(
-  decoration: const InputDecoration(labelText: 'Customer type'),
-  sources: const [
-    SuperSelectListSource<String>(
-      items: ['retail', 'wholesale'],
-    ),
-  ],
-  optionBuilder: (items, index, item) => SuperOption(
-    value: item,
-    label: item == 'retail' ? 'Retail' : 'Wholesale',
-  ),
-);
-```
-
-Use `SuperSelectRemoteSource<T>` to load raw values asynchronously:
-
-```dart
-SuperSelectFormField<Warehouse>(
-  decoration: const InputDecoration(labelText: 'Warehouse'),
-  searchable: true,
-  sources: [
-    SuperSelectRemoteSource<Warehouse>(
-      loader: repository.fetchWarehouses,
-    ),
-  ],
-  optionBuilder: (items, index, warehouse) => SuperOption(
-    value: warehouse,
-    label: warehouse.name,
-    description: warehouse.code,
-  ),
-);
-```
-
-Results from all sources are merged in the same order as `sources`. The
-`optionBuilder` receives that merged raw list, each global index, and the raw
-element. Remote loaders run asynchronously; while no items are resolved, the
-menu shows a compact loading indicator. Search continues to use the controller's
-label/description filtering after `optionBuilder` creates the options.
-
-<!-- SUPER_SELECT_FOCUS_1_12_0_START -->
-#### Focus and keyboard interaction
-
-`SuperSelectFormField<T>` participates in Flutter's focus traversal system, so
-it can be reached with `Tab` on desktop and web without requiring a pointer
-click.
-
-Use `autofocus` for the select field itself:
-
-```dart
-final customerFocusNode = FocusNode();
-
-SuperSelectFormField<String>(
-  focusNode: customerFocusNode,
-  autofocus: true,
-  decoration: const InputDecoration(labelText: 'Customer'),
-  sources: const [
-    SuperSelectListSource<String>(
-      items: ['retail', 'wholesale'],
-    ),
-  ],
-  optionBuilder: (items, index, item) => SuperOption(
-    value: item,
-    label: item == 'retail' ? 'Retail' : 'Wholesale',
-  ),
-);
-```
-
-The focus-related parameters are:
-
-- `focusNode` — supplies an external `FocusNode` for the select trigger.
-- `autofocus` — requests focus for the select field when it enters the focus tree.
-- `onFocusChange` — reports when the select trigger gains or loses focus.
-- `canRequestFocus` — controls whether the field can request keyboard focus.
-- `searchAutofocus` — controls autofocus for the search input *inside* the open
-  options menu. It is independent from `autofocus` and defaults to `true`.
-
-When no `focusNode` is supplied, the field reuses
-`SuperSelectFieldController.focusNode` when available. Otherwise it creates and
-owns an internal focus node.
-
-Keyboard interaction is supported while the select trigger has focus:
-
-- `Enter`, `Space`, or `Arrow Down` opens the options menu.
-- `Escape` closes the menu.
-- After selecting an option, focus returns to the select trigger.
-
-For example, disable automatic focus of the search input while keeping the
-select itself focusable:
-
-```dart
-SuperSelectFormField<Warehouse>(
-  autofocus: false,
-  searchAutofocus: false,
-  canRequestFocus: true,
-  decoration: const InputDecoration(labelText: 'Warehouse'),
-  searchable: true,
-  sources: [
-    SuperSelectRemoteSource<Warehouse>(
-      loader: repository.fetchWarehouses,
-    ),
-  ],
-  optionBuilder: (items, index, warehouse) => SuperOption(
-    value: warehouse,
-    label: warehouse.name,
-    description: warehouse.code,
-  ),
-  onFocusChange: (hasFocus) {
-    debugPrint('Warehouse focus: $hasFocus');
-  },
-);
-```
-<!-- SUPER_SELECT_FOCUS_1_12_0_END -->
-### Multi-select field
-
-`SuperMultiSelectFormField<T>` displays selected values as removable chips and
-keeps the options menu open while values are toggled.
-
-```dart
-SuperMultiSelectFormField<String>(
-  decoration: const InputDecoration(
-    labelText: 'Permissions',
-    hintText: 'Select permissions',
-  ),
-  searchable: true,
-  required: true,
-  minSelections: 1,
-  maxSelections: 4,
-  showCount: true,
-  options: const [
-    SuperOption(value: 'read', label: 'Read'),
-    SuperOption(value: 'create', label: 'Create'),
-    SuperOption(value: 'update', label: 'Update'),
-    SuperOption(value: 'delete', label: 'Delete'),
-  ],
-  onChanged: (permissions) {},
-);
-```
-
-`maxSelections` is enforced as a hard selection cap. The field value is always
-`List<T>`.
-
-### Boolean field
-
-`SuperBoolFormField` renders either a toggle or a checkbox. Use `mustBeTrue` for
-acknowledgement and compliance gates.
-
-```dart
-SuperBoolFormField(
-  decoration: const InputDecoration(
-    labelText: 'Confirmation',
-    hintText: 'I confirm that this entry was reviewed',
-  ),
-  style: SuperBoolStyle.checkbox,
-  mustBeTrue: true,
-  mustBeTrueMessage: 'Confirmation is required',
-);
-```
-
-When `decoration.hint` and `decoration.hintText` are absent, the control shows
-`enabledLabel` or `disabledLabel` according to its current value.
-
-### Choice field
-
-`SuperChoiceFormField<T>` renders a small fixed option set inline as a segmented
-control, radio list, or checkbox list.
-
-```dart
-SuperChoiceFormField<String>(
-  decoration: const InputDecoration(
-    labelText: 'Entry status',
-    helperText: 'Choose the initial workflow state',
-  ),
-  style: SuperChoiceStyle.segmented,
-  options: const [
-    SuperOption(value: 'draft', label: 'Draft'),
-    SuperOption(value: 'posted', label: 'Posted'),
-  ],
-  onChanged: (values) {},
-);
-```
-
-Use:
-
-- `SuperChoiceStyle.segmented` for two to four short options.
-- `SuperChoiceStyle.radio` for a single selection from a longer inline list.
-- `SuperChoiceStyle.checkbox` with `multiple: true` for multiple selections.
-
-The value is always `List<T>`. For single-select use, read the first value or use
-`SuperChoiceFieldController<T>.single`.
-
-## Dropdown and popup menu buttons
-
-`SuperDropdownButton<T>` is a lightweight typed selector. It uses
-`SuperOption<T>` and the same `FieldBox`, `FieldPopover`, `OptionMenu`, and
-`OptionTile` foundation as the package's select fields. Use
-`SuperDropdownEditingController<T>` when the selection must also be changed
-programmatically.
-
-```dart
-final statusController = SuperDropdownEditingController<String>(
-  initialValue: 'active',
-);
-
-SuperDropdownButton<String>(
-  controller: statusController,
-  decoration: const InputDecoration(hintText: 'Select status…'),
-  options: const [
-    SuperOption(value: 'active', label: 'Active'),
-    SuperOption(value: 'hold', label: 'On hold'),
-  ],
-  onChanged: (value) {},
-);
-
-// Programmatic selection.
-statusController.setValue('hold');
-statusController.clear();
-```
-
-Dispose controllers owned by a `State` object from `State.dispose()`.
-
-`SuperDropdownButton<T>` still supports the existing `value` API when no
-controller is supplied. Do not provide a non-null `value` together with a
-controller.
-
-Use `SuperDropdownButtonFormField<T>` when the value must participate in a
-`Form`. It supports `controller`, `initialValue`, `validator`, `onSaved`,
-`required`, and `autovalidateMode` while preserving the package decoration and
-validation surface. Provide either `controller` or `initialValue`, not both.
-
-```dart
-final warehouseController = SuperDropdownEditingController<String>();
-
-SuperDropdownButtonFormField<String>(
-  controller: warehouseController,
-  required: true,
-  decoration: const InputDecoration(labelText: 'Warehouse'),
-  options: const [
-    SuperOption(value: 'riyadh', label: 'Riyadh'),
-    SuperOption(value: 'jeddah', label: 'Jeddah'),
-  ],
-  onChanged: (value) {},
-  onSaved: (value) {},
-);
-```
-
-`SuperPopupMenuButton<T>` is for actions rather than form selection. It accepts
-the same typed `SuperOption<T>` descriptors, supports disabled entries, and can
-use either its default icon trigger or any custom `child`.
-
-```dart
-SuperPopupMenuButton<String>(
-  tooltip: 'More actions',
-  options: const [
-    SuperOption(value: 'edit', label: 'Edit'),
-    SuperOption(value: 'archive', label: 'Archive'),
-  ],
-  onSelected: (action) {},
-);
-```
-
-## Options
-
-`SuperOption<T>` separates the displayed label from the domain value:
-
-```dart
-const option = SuperOption<String>(
-  value: 'asset',
-  label: 'Asset',
-  description: 'Resources controlled by the business',
-  icon: SffIcons.hash,
-  group: 'Balance sheet',
-);
-```
-
-Use `disabled: true` to keep an option visible but unavailable. For simple
-value-to-label mappings, use `SuperOption.fromMap`:
-
-```dart
-final options = SuperOption.fromMap<int>({
-  1: 'Cash',
-  2: 'Bank',
-  3: 'Inventory',
-});
-```
-
-## Validation
-
-A validator returns an error message or `null`:
+Custom validators return an error string or `null`:
 
 ```dart
 String? positiveAmount(num? value) {
@@ -936,38 +561,46 @@ String? positiveAmount(num? value) {
 }
 ```
 
-Pass custom validators through `validators`:
-
 ```dart
 SuperNumericFormField(
   decoration: const InputDecoration(labelText: 'Amount'),
   required: true,
   validators: [positiveAmount],
-  onValidity: (error) {
-    // error is null when the field is valid.
-  },
 );
 ```
 
-Built-in validators run before custom validators, and the first error wins.
-Errors remain visually quiet until the field is touched, unless `forceError` is
-true. `onValidity` reports the current raw error whenever it changes.
+Built-in validation runs before custom validators and the first error wins.
 
-`SuperTextFormField`, `SuperOTPFormField`, `SuperNumericFormField`,
-`SuperDateFormField`, `SuperRangeDateFormField`, `SuperSelectFormField`, and
-`SuperMultiSelectFormField` also participate in an
-ancestor `Form`. `FormState.validate()` uses their existing typed validator
-chains, and `FormState.save()` invokes `onSaved` (or the `onSave` compatibility
-alias) with the typed value. The attachment, bool, and choice fields retain the
-controller/callback validation workflow described above.
+Editable typed fields participate in Flutter `Form`:
+
+```dart
+final formKey = GlobalKey<FormState>();
+
+Form(
+  key: formKey,
+  child: SuperSelectFormField<String>(
+    source: SuperSelectSources.strings(['Cash', 'Bank']),
+    optionBuilder: (items, index, value) =>
+        SuperOption(value: value, label: value),
+    required: true,
+    onSaved: (value) {
+      // Save the typed selection.
+    },
+  ),
+);
+
+// Later:
+formKey.currentState!.validate();
+formKey.currentState!.save();
+```
 
 ## Controllers
 
-Each widget can create and dispose its own controller, or receive an external
-controller when imperative access is required.
+Use an external controller when the application needs imperative access.
+Otherwise, fields can manage controllers internally.
 
 | Field | Controller | Value |
-|---|---|---|
+| --- | --- | --- |
 | `SuperTextFormField` | `SuperTextFieldController` | `String` |
 | `SuperOTPFormField` | `SuperOTPFieldController` | `String` |
 | `SuperNumericFormField` | `SuperNumericFieldController` | `num?` |
@@ -982,229 +615,120 @@ controller when imperative access is required.
 Example:
 
 ```dart
-class ControlledAmountField extends StatefulWidget {
-  const ControlledAmountField({super.key});
+final amount = SuperNumericFieldController(initialValue: 100);
 
-  @override
-  State<ControlledAmountField> createState() =>
-      _ControlledAmountFieldState();
-}
-
-class _ControlledAmountFieldState extends State<ControlledAmountField> {
-  final _controller = SuperNumericFieldController(initialValue: 100);
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SuperNumericFormField(
-          controller: _controller,
-          decoration: const InputDecoration(labelText: 'Amount'),
-          decimals: 2,
-        ),
-        TextButton(
-          onPressed: () => _controller.setValue(0),
-          child: const Text('Reset amount'),
-        ),
-      ],
-    );
-  }
-}
-```
-
-External controllers must be disposed by the owner that created them.
-
-Common imperative operations include:
-
-| Controller | Common operations |
-|---|---|
-| `SuperTextFieldController` | `setValue`, `clear`, `markTouched`, `toggleObscure` |
-| `SuperOTPFieldController` | `setValue`, `clear`, `requestFocus`, `markTouched`, `resetTouched` |
-| `SuperNumericFieldController` | `setValue`, `bump`, `bumpLarge` |
-| `SuperAttachmentFieldController` | `add`, `remove`, `clear`, `setDragOver` |
-| `SuperDateFieldController` | `setValue`, `pick`, `clear`, `markTouched` |
-| `SuperSelectFieldController<T>` | `select`, `setValue`, `clear`, `markTouched` |
-| `SuperMultiSelectFieldController<T>` | `toggle`, `removeValue`, `setValues`, `clear` |
-| `SuperBoolFieldController` | `set`, `setValue`, `toggle`, `markTouched` |
-| `SuperChoiceFieldController<T>` | `pick`, `setValues`, `setSingle`, `clear` |
-
-## Localization and RTL
-
-The package includes English and Arabic strings for built-in validation
-messages, OTP length errors, search and empty states, attachment actions,
-numeric controls, boolean captions, calendar content, and the dedicated phone
-and OTP example screens.
-
-Register the delegates once:
-
-```dart
-final textTheme = SuperTextTheme(isArabic: true);
-MaterialApp(
-  locale: const Locale('ar'),
-  localizationsDelegates:
-      SuperFormLocalizations.localizationsDelegates,
-  supportedLocales: SuperFormLocalizations.supportedLocales,
-  theme: SuperMaterialThemeData.light(
-    textTheme: textTheme,
-    primaryTextTheme: textTheme,
-  ),
-  darkTheme: SuperMaterialThemeData.dark(
-    textTheme: textTheme,
-    primaryTextTheme: textTheme,
-  ),
-  home: const ArabicFormPage(),
+SuperNumericFormField(
+  controller: amount,
+  decoration: const InputDecoration(labelText: 'Amount'),
 );
+
+// Read or update through the controller.
+final current = amount.value;
+amount.setValue(250);
 ```
 
-For app-wide Arabic typography, build the active theme with
-`SuperTextTheme(isArabic: true)`. Use normal Flutter directionality and set
-`arabic: true` only when a field needs the package's field-level Arabic-font
-fallback:
+Dispose externally owned controllers when their owner is disposed.
 
-```dart
-Directionality(
-  textDirection: TextDirection.rtl,
-  child: SuperTextFormField(
-    arabic: true,
-    decoration: const InputDecoration(
-      labelText: 'اسم الحساب',
-      hintText: 'أدخل اسم الحساب',
-    ),
-  ),
-);
+## Desktop keyboard and focus behavior
+
+Composite inputs behave as one logical form field in desktop/web focus
+traversal. A single `Tab` moves from the active editor/trigger to the next form
+field; internal prefix, suffix, clear, calendar, stepper, help, and fixed-state
+actions do not consume an extra normal traversal stop.
+
+Typical flow:
+
+```text
+previous field
+    |
+   Tab
+    v
+current super_form_field
+    |
+   Tab
+    v
+next field
 ```
 
-Application-owned labels, option text, helper text, and custom validation
-messages are not translated automatically. Numeric, OTP, and segmented date
-editing retain Western digits and LTR behavior inside RTL layouts by default.
+Interactive internal actions remain clickable. `Shift + Tab` performs reverse
+traversal in one step.
+
+Select controls keep keyboard interaction on their main trigger. Searchable
+menus use their search editor after the menu is opened.
 
 ## Responsive behavior
 
-Most visual sizing comes from the active `SuperThemeData` and its
-`SuperDeviceMode`. The date field also changes its interaction model:
+Field sizing and interaction adapt to the active GeniusLink device mode.
 
-| Device mode | Date interaction |
-|---|---|
-| Mobile | Software-keyboard-safe segmented editing and modal bottom-sheet calendar |
-| Tablet | Hardware-key segmented editing and anchored calendar popover |
-| Desktop | Hardware-key navigation, stepping shortcuts, and anchored calendar popover |
+Common field densities:
 
-Use `FieldDensity` on supported fields when the screen requires a denser or more
-comfortable control layout.
+- `FieldDensity.comfortable`
+- `FieldDensity.compact`
+
+Date and range-date controls use mobile-friendly sheets/pickers on compact
+devices and anchored desktop/tablet interactions on larger layouts.
+
+Select and multi-select menus keep local items responsive while async search
+work follows `debounce` and `minChars`.
+
+## Localization and RTL
+
+Register:
+
+```dart
+localizationsDelegates: SuperFormLocalizations.localizationsDelegates,
+supportedLocales: SuperFormLocalizations.supportedLocales,
+```
+
+The package includes English and Arabic strings and supports LTR/RTL field
+layout. Explicit strings supplied by the application continue to take
+precedence over package defaults where the relevant API allows them.
 
 ## Advanced public API
 
-The main barrel also exports lower-level building blocks for custom controls.
-Prefer the public form-field widgets and design-system controls for normal application screens.
-
-### Shared values and helpers
+The public barrel exposes shared building blocks for custom design-system
+controls.
 
 | API | Purpose |
-|---|---|
-| `SuperOption<T>` | Typed option descriptor for select and choice fields |
-| `SuperFile` | Platform-neutral attachment descriptor |
-| `Validator<T>` | Custom validation callback type |
-| `ValidityChanged` | Validation-state callback type |
-| `FieldDensity` | Shared compact or comfortable field-density setting |
-| `SuperFormLocalizations` | Supported locales and localization delegates |
-| `SuperFormTranslation` | Generated package translation lookup |
-| `SffIcons` | Package icon vocabulary |
-| `SuperFieldContextX` | `context.sffTheme` and `context.sffColorScheme` |
-
-### Field foundation
-
-| API | Purpose |
-|---|---|
-| `FieldShell` | External label, helper, counter, and field layout |
-| `FieldBox` | Bordered shell for composed custom controls |
-| `FieldIconButton` | Design-system icon action used inside fields |
-| `FieldPopover` | Anchored responsive popover surface |
-| `OptionMenu` | Menu container for option-driven controls |
-| `OptionTile` | Selectable option row |
-| `OptionGroupHeader` | Group label inside an option menu |
-| `MenuSearchField` | Search input for option menus |
+| --- | --- |
+| `SuperOption<T>` | Typed option metadata |
+| `SuperFile` | Platform-neutral attachment metadata |
+| `Validator<T>` | Typed custom validation callback |
+| `ValidationPosition` | Validation surface placement |
+| `FieldDensity` | Compact/comfortable density |
+| `FormFieldShell` | Shared label/helper/error/fixed-state shell |
+| `FieldBox` | Shared bordered field container |
+| `FieldIconButton` | In-field icon action |
+| `FieldPopover` | Anchored responsive popover |
+| `OptionMenu` / `OptionTile` | Option-driven menu primitives |
+| `MenuSearchField` | Search editor for option menus |
 | `SuperChip` | Removable selected-value chip |
-| `CountPill` | Compact count indicator |
-| `ErrorBadge` | Tooltip-based validation error indicator |
+| `ErrorBadge` | Compact tooltip-backed error indicator |
+| `SuperFormLocalizations` | Localization registration helpers |
 
-### Pure logic and date interaction
+Prefer the high-level fields for normal application forms. Use these foundations
+when building a custom control that must match the package's geometry and theme.
 
-The package exports pure logic helpers such as `buildOTPValidators`,
-`DateLogic`, `NumericLogic`,
-`SelectLogic`, `MultiSelectLogic`, `ChoiceLogic`, and `AttachmentLogic` for unit
-testing or advanced integrations. It also exports `DateInputIntent`,
-`DesktopDateInputUseCase`, `MobileDateInputUseCase`, and `MiniCalendar` for
-custom date-input adapters.
+## Examples
 
-## Example application
-
-Run the included gallery from the package root:
+The package includes an example gallery covering the field types, controllers,
+validation modes, source strategies, LTR/RTL behavior, and light/dark themes.
 
 ```bash
 cd example
-flutter pub get
 flutter run
 ```
 
-The gallery demonstrates all form fields plus the dropdown and popup-menu controls,
-including dedicated phone-input and OTP-input screens. It covers international phone formatting, OTP paste and
-one-time-code autofill, secure PIN display, controller-driven values,
-validation flows, typed `FormState.save()`, date formats, linked ranges, light
-and dark themes, and LTR and RTL layouts.
+See the [`example`](example) directory for source code.
 
-## Additional information
+## Documentation
 
+- [API documentation](https://pub.dev/documentation/super_form_field/latest/)
+- [Package page](https://pub.dev/packages/super_form_field)
+- [Homepage](https://geniussystems24.github.io/super_form_field)
 - [Repository](https://github.com/GeniusSystems24/super_form_field)
 - [Issue tracker](https://github.com/GeniusSystems24/super_form_field/issues)
 - [Changelog](CHANGELOG.md)
 - [License](LICENSE)
 
-This package is licensed under the MIT License.
-
-## Controller field metadata
-
-Version 1.10.0 aligns the package's field controllers with the controller/view
-contract used by `AutoSuggestionsBox`. Controller-backed fields expose:
-
-```dart
-final ValueNotifier<bool> isFixed;
-FocusNode? focusNode;
-GlobalKey<FormFieldState<TValue>>? formFieldKey;
-bool isHiden;
-```
-
-`isFixed` is a **view/read-only lock**, not a disabled state. The field keeps
-normal contrast, user interaction is blocked, and public controller mutation
-methods no-op while the lock is active. Select/dropdown overlays close when the
-controller becomes fixed.
-
-`focusNode` lets the host associate focus with the controller. Controllers that
-need an editor focus node create one when none is supplied and only dispose
-nodes they own.
-
-`formFieldKey` is forwarded to the inner `FormField` where that component has
-one, so hosts can call APIs such as `validate()`, `save()`, and `reset()` from
-the controller relationship:
-
-```dart
-final formFieldKey = GlobalKey<FormFieldState<String>>();
-final controller = SuperTextFieldController(
-  formFieldKey: formFieldKey,
-  isFixed: false,
-);
-
-controller.isFixed.value = true;
-controller.focusNode?.requestFocus();
-controller.formFieldKey?.currentState?.validate();
-```
-
-`isHiden` intentionally preserves the existing misspelling for compatibility.
-When true, controller-backed field views render `SizedBox.shrink()`. Because it
-is a plain compatibility flag rather than a notifier, update it inside a host
-rebuild (for example, `setState`).
+Current package version: `1.15.0`.
