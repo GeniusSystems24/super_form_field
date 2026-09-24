@@ -482,7 +482,7 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
     final focused = _controller.focused;
 
     // ── Border states ──
-    final enabledBorderColor = hasError ? cs.error : t.borderStrong;
+    final enabledBorderColor = hasError ? cs.error : t.border;
     final focusedBorderColor = hasError ? cs.error : cs.primary;
     final disabledBorderColor = t.border;
 
@@ -589,8 +589,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       hintMaxLines: source.hintMaxLines,
 
       // Caller adornments are retained; package controls are appended.
-      prefix: source.prefix,
-      prefixIcon: prefixIconWidget,
+      prefix: source.prefix == null
+          ? null
+          : ExcludeFocusTraversal(child: source.prefix!),
+      prefixIcon: prefixIconWidget == null
+          ? null
+          : ExcludeFocusTraversal(child: prefixIconWidget),
       prefixIconColor: defaultIconColor,
       prefixIconConstraints:
           source.prefixIconConstraints ??
@@ -599,8 +603,12 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
               : null),
       prefixText: source.prefixText,
       prefixStyle: SffDecoration.mergeStyle(adornStyle, source.prefixStyle),
-      suffix: source.suffix,
-      suffixIcon: suffixWidget,
+      suffix: source.suffix == null
+          ? null
+          : ExcludeFocusTraversal(child: source.suffix!),
+      suffixIcon: suffixWidget == null
+          ? null
+          : ExcludeFocusTraversal(child: suffixWidget),
       suffixIconColor: source.suffixIconColor ?? t.fg4,
       suffixIconConstraints:
           source.suffixIconConstraints ??
@@ -616,11 +624,11 @@ class _SuperTextFormFieldState extends State<SuperTextFormField> {
       constraints: multiline
           ? BoxConstraints(minHeight: minH)
           : BoxConstraints.tightFor(height: minH),
+      // Match SuperAutoSuggestionsBox: the fixed field constraint owns
+      // vertical sizing; content keeps the shared 12px horizontal inset.
       contentPadding: EdgeInsets.symmetric(
         horizontal: SuperThemeData.of(context).spacing.space3,
-        vertical: widget.density == FieldDensity.compact
-            ? SuperThemeData.of(context).spacing.space1
-            : SuperThemeData.of(context).spacing.space2,
+        vertical: multiline ? SuperThemeData.of(context).spacing.space2 : 0,
       ),
       border: border(enabledBorderColor),
       enabledBorder: border(enabledBorderColor),

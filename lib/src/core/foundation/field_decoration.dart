@@ -256,9 +256,11 @@ abstract final class SffDecoration {
         textStyle ?? context.sffTextTheme.body.copyWith(color: theme.fg3);
     return <Widget>[
       if (decoration.suffix != null)
-        DefaultTextStyle.merge(
-          style: mergeStyle(baseStyle, decoration.suffixStyle),
-          child: decoration.suffix!,
+        ExcludeFocusTraversal(
+          child: DefaultTextStyle.merge(
+            style: mergeStyle(baseStyle, decoration.suffixStyle),
+            child: decoration.suffix!,
+          ),
         ),
       if (decoration.suffixText != null)
         Text(
@@ -266,10 +268,12 @@ abstract final class SffDecoration {
           style: mergeStyle(baseStyle, decoration.suffixStyle),
         ),
       if (decoration.suffixIcon != null)
-        _iconSlot(
-          decoration.suffixIcon!,
-          color: decoration.suffixIconColor ?? theme.fg4,
-          constraints: decoration.suffixIconConstraints,
+        ExcludeFocusTraversal(
+          child: _iconSlot(
+            decoration.suffixIcon!,
+            color: decoration.suffixIconColor ?? theme.fg4,
+            constraints: decoration.suffixIconConstraints,
+          ),
         ),
     ];
   }
@@ -326,17 +330,21 @@ abstract final class SffDecoration {
     ];
 
     if (widgets.isEmpty) return null;
-    if (widgets.length == 1) return widgets.single;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < widgets.length; i++) ...[
-          if (i > 0) SizedBox(width: SuperThemeData.of(context).spacing.space1),
-          widgets[i],
-        ],
-      ],
-    );
+    final result = widgets.length == 1
+        ? widgets.single
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < widgets.length; i++) ...[
+                if (i > 0)
+                  SizedBox(width: SuperThemeData.of(context).spacing.space1),
+                widgets[i],
+              ],
+            ],
+          );
+
+    return ExcludeFocusTraversal(child: result);
   }
 
   static bool _suppressesSlot(Widget widget) =>
@@ -362,15 +370,24 @@ abstract final class SffDecoration {
 
   static Widget? _pack(BuildContext context, List<Widget> widgets) {
     if (widgets.isEmpty) return null;
-    if (widgets.length == 1) return widgets.single;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < widgets.length; i++) ...[
-          if (i > 0) SizedBox(width: SuperThemeData.of(context).spacing.space1),
-          widgets[i],
-        ],
-      ],
+
+    final packed = widgets.length == 1
+        ? widgets.single
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < widgets.length; i++) ...[
+                if (i > 0)
+                  SizedBox(width: SuperThemeData.of(context).spacing.space1),
+                widgets[i],
+              ],
+            ],
+          );
+
+    return ExcludeFocusTraversal(
+      // Decoration chrome belongs to the field but is not a separate form
+      // traversal destination.
+      child: packed,
     );
   }
 }

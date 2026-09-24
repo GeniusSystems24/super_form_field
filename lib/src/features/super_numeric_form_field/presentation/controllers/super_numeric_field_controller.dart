@@ -85,8 +85,13 @@ class SuperNumericFieldController extends ChangeNotifier {
   String? get visibleError =>
       (_touched || _forceError) && error != null ? error : null;
 
-  String _formatted() =>
-      SuperFormat.number(_value, decimals: _decimals, grouping: _grouping);
+  String _formatted() => NumericLogic.formatValue(
+    _value,
+    decimals: _decimals,
+    grouping: _grouping,
+  );
+
+  String _editable() => NumericLogic.editableValue(_value);
 
   // ── View → controller config ──
   void configure({
@@ -166,7 +171,7 @@ class SuperNumericFieldController extends ChangeNotifier {
     );
     _touched = true;
     if (focused) {
-      _writeText(_value.toString());
+      _writeText(_editable());
     } else {
       _writeText(_formatted());
     }
@@ -221,7 +226,7 @@ class SuperNumericFieldController extends ChangeNotifier {
   void _onFocusChanged() {
     if (focusNode?.hasFocus ?? false) {
       // Enter edit mode → raw digits.
-      _writeText(_value == null ? '' : _value.toString());
+      _writeText(_editable());
     } else {
       _touched = true;
       if (_value != null) {

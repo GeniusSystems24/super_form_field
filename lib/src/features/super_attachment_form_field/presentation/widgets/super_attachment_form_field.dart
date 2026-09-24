@@ -342,10 +342,14 @@ class _DropZone extends StatelessWidget {
                       ),
                       child: IconTheme.merge(
                         data: IconThemeData(size: 21, color: cs.primary),
+                        child: ExcludeFocusTraversal(
+                        // The attachment field is one form traversal stop;
+                        // decorative/caller-provided icon actions remain clickable.
                         child:
                             decoration.prefixIcon ??
                             decoration.icon ??
                             const Icon(SffIcons.uploadCloud),
+                      ),
                       ),
                     ),
                     SizedBox(height: SuperThemeData.of(context).spacing.space2),
@@ -497,13 +501,17 @@ class _FileCard extends StatelessWidget {
               ),
             ),
           if (!disabled)
-            FieldIconButton(
-              icon: SffIcons.trash,
-              iconSize: 15,
-              size: 28,
-              danger: true,
-              tooltip: translations.removeFile(file.name),
-              onPressed: onRemove,
+            ExcludeFocusTraversal(
+              // File-card actions belong to the attachment field and must not
+              // consume an extra Tab press before the next form field.
+              child: FieldIconButton(
+                icon: SffIcons.trash,
+                iconSize: 15,
+                size: 28,
+                danger: true,
+                tooltip: translations.removeFile(file.name),
+                onPressed: onRemove,
+              ),
             ),
         ],
       ),

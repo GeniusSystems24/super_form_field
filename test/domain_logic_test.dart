@@ -72,6 +72,27 @@ void main() {
       expect(NumericLogic.sanitize('-5', allowNegative: false), '5');
     });
 
+    test('formatValue removes insignificant decimal zeros', () {
+      expect(
+        NumericLogic.formatValue(5240, decimals: 2, grouping: true),
+        '5,240',
+      );
+      expect(
+        NumericLogic.formatValue(5240.0, decimals: 2, grouping: true),
+        '5,240',
+      );
+      expect(
+        NumericLogic.formatValue(5240.50, decimals: 2, grouping: true),
+        '5,240.5',
+      );
+      expect(
+        NumericLogic.formatValue(5240.05, decimals: 2, grouping: true),
+        '5,240.05',
+      );
+      expect(NumericLogic.editableValue(5240.0), '5240');
+      expect(NumericLogic.editableValue(5240.5), '5240.5');
+    });
+
     test('clampRound clamps and rounds', () {
       expect(
         NumericLogic.clampRound(12.345, min: 0, max: 100, decimals: 2),

@@ -592,6 +592,7 @@ void main() {
             padding: EdgeInsets.all(24),
             child: SuperNumericFormField(
               initialValue: 5240,
+              stepper: true,
               decoration: InputDecoration(
                 labelText: 'Debit amount',
                 prefixText: 'SAR',
@@ -645,6 +646,61 @@ void main() {
     expect(incrementRect.bottom, moreOrLessEquals(fieldRect.bottom));
     expect(decrementRect.right, moreOrLessEquals(incrementRect.left));
     expect(incrementRect.right, moreOrLessEquals(fieldRect.right));
+  });
+
+  testWidgets('numeric stepper buttons are borderless', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: _testTheme(),
+        home: const Scaffold(
+          body: SuperNumericFormField(
+            initialValue: 5240,
+            decimals: 2,
+            stepper: true,
+          ),
+        ),
+      ),
+    );
+
+    final decrement = tester.widget<FieldIconButton>(
+      find.byKey(const ValueKey('super_numeric_decrement')),
+    );
+    final increment = tester.widget<FieldIconButton>(
+      find.byKey(const ValueKey('super_numeric_increment')),
+    );
+
+    expect(decrement.bordered, isFalse);
+    expect(decrement.border, isNull);
+    expect(increment.bordered, isFalse);
+    expect(increment.border, isNull);
+  });
+
+  testWidgets('numeric field omits zero-only decimals when idle and focused', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: _testTheme(),
+        home: const Scaffold(
+          body: SuperNumericFormField(
+            initialValue: 5240,
+            decimals: 2,
+            grouping: true,
+            stepper: false,
+          ),
+        ),
+      ),
+    );
+
+    final fieldFinder = find.byType(TextField);
+    var field = tester.widget<TextField>(fieldFinder);
+    expect(field.controller!.text, '5,240');
+
+    await tester.tap(fieldFinder);
+    await tester.pump();
+
+    field = tester.widget<TextField>(fieldFinder);
+    expect(field.controller!.text, '5240');
   });
 
   test('enhanced fields accept Material text-input options', () {

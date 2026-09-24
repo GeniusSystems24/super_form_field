@@ -45,6 +45,52 @@ abstract final class NumericLogic {
     return double.tryParse(sanitized);
   }
 
+  /// Formats a committed value for the idle field display while removing
+  /// insignificant decimal zeros.
+  ///
+  /// Examples with `decimals: 2`:
+  /// - `5240` -> `5,240`
+  /// - `5240.0` -> `5,240`
+  /// - `5240.50` -> `5,240.5`
+  /// - `5240.05` -> `5,240.05`
+  static String formatValue(
+    num? value, {
+    int decimals = 0,
+    bool grouping = true,
+  }) {
+    if (value == null) return '';
+    final formatted = SuperFormat.number(
+      value,
+      decimals: decimals,
+      grouping: grouping,
+    );
+    return _trimInsignificantFractionZeros(formatted);
+  }
+
+  /// Returns the minimal ungrouped value used while the field is focused.
+  /// Whole doubles such as `5240.0` are exposed as `5240` so focusing a field
+  /// never introduces an artificial decimal zero.
+  static String editableValue(num? value) {
+    if (value == null) return '';
+    final d = value.toDouble();
+    if (d.isFinite && d == d.truncateToDouble()) {
+      return value.toInt().toString();
+    }
+    return value.toString();
+  }
+
+  static String _trimInsignificantFractionZeros(String value) {
+    final decimalIndex = value.lastIndexOf('.');
+    if (decimalIndex < 0) return value;
+
+    var end = value.length;
+    while (end > decimalIndex + 1 && value.codeUnitAt(end - 1) == 0x30) {
+      end--;
+    }
+    if (end == decimalIndex + 1) end = decimalIndex;
+    return value.substring(0, end);
+  }
+
   /// Clamps [n] into [min, max] and rounds to [decimals] fraction digits.
   static num clampRound(num n, {num? min, num? max, int decimals = 0}) {
     var v = n;

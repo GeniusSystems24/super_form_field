@@ -4,6 +4,33 @@ All notable changes to **super_form_field** are documented here. The format
 follows [Keep a Changelog](https://keepachangelog.com/) and the project adheres
 to [Semantic Versioning](https://semver.org/).
 
+## 1.14.1
+
+### Fixed
+
+- Fixed desktop/web focus traversal across form inputs so a composite field
+  behaves as a single `Tab` stop instead of requiring an extra `Tab` press to
+  move to the next field.
+- Excluded label-row actions, leading/trailing adornments, clear buttons,
+  steppers, calendar actions, and other in-field chrome from normal focus
+  traversal while keeping those controls clickable.
+- Kept the actual editor/field trigger as the field's keyboard focus target,
+  including reverse `Shift+Tab` traversal.
+- Applied the same traversal contract across attachment, bool, choice, date,
+  dropdown, multi-select, numeric, OTP, range-date, and select field families;
+  internal action buttons remain clickable without becoming extra `Tab` stops.
+
+### Changed
+
+- Standardized input-field chrome through the shared `FormFieldShell` contract
+  used by `SuperAutoSuggestionsBox`.
+- Aligned shared field sizing and theme behavior with
+  `SuperAutoSuggestionsBox`: 42px comfortable height, 36px compact height,
+  shared `SuperThemeData` fill/focus colors, control radius, and 1.4px borders.
+- Updated resting borders to use the shared `SuperThemeData.border` token so
+  text, numeric, date, select, multi-select, dropdown, and related fields use
+  the same field-border theme as `SuperAutoSuggestionsBox`.
+
 ## 1.14.0
 
 ### Added

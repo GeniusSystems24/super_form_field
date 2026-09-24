@@ -38,7 +38,7 @@ class SuperNumericFormField extends StatefulWidget {
     this.grouping = true,
     this.step = 1,
     this.largeStep,
-    this.stepper = true,
+    this.stepper,
     this.keyboardShortcuts = true,
     this.allowNegative = true,
     this.validators = const [],
@@ -124,8 +124,12 @@ class SuperNumericFormField extends StatefulWidget {
   /// The increment applied by PageUp / PageDown. Defaults to `step * 10`.
   final num? largeStep;
 
-  /// Show the +/- stepper buttons.
-  final bool stepper;
+  /// Controls whether the +/- stepper buttons are shown.
+  ///
+  /// When null, the responsive default is used: the stepper is visible on
+  /// tablet/desktop and hidden on mobile. Pass `true` or `false` to override
+  /// that default explicitly.
+  final bool? stepper;
 
   /// Enable keyboard stepping while focused: ↑/↓ by [step], PageUp/PageDown by
   /// [largeStep].
@@ -312,80 +316,55 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 : null;
 
             final sizing = SuperThemeData.of(context).sizing;
-            final spacing = SuperThemeData.of(context).spacing;
             final controlHeight = widget.density == FieldDensity.compact
                 ? sizing.fieldCompact
                 : sizing.fieldComfortable;
+            final showStepper =
+                widget.stepper ?? !SuperDeviceMode.of(context).isMobile;
             final unitStyle = context.sffTextTheme.mono.copyWith(
               color: t.fg3,
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
             );
-            final stepperBorderRadius = BorderRadius.circular(
-              spacing.radiusControl,
-            );
-            final stepperBorderSide = BorderSide(color: t.borderStrong);
             final trailing = <Widget>[
               ...SffDecoration.buildTrailing(
                 context,
                 widget.decoration,
                 textStyle: unitStyle,
               ),
-              if (widget.stepper && !widget.disabled)
+              if (showStepper && !widget.disabled)
                 Directionality(
                   textDirection: TextDirection.ltr,
-                  child: Container(
+                  child: SizedBox(
                     height: controlHeight,
-                    decoration: BoxDecoration(
-                      color: t.inputBg,
-                      borderRadius: stepperBorderRadius,
-                    ),
-                    foregroundDecoration: BoxDecoration(
-                      border: Border.fromBorderSide(stepperBorderSide),
-                      borderRadius: stepperBorderRadius,
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Stack(
-                      alignment: Alignment.center,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FieldIconButton(
-                              key: const ValueKey('super_numeric_decrement'),
-                              icon: SffIcons.minus,
-                              tooltip: l10n.decrement,
-                              bordered: true,
-                              size: controlHeight,
-                              border: Border.all(color: Colors.transparent),
-                              borderRadius: BorderRadius.zero,
-                              iconSize: 14,
-                              onPressed: widget.readOnly
-                                  ? null
-                                  : () => _controller.bump(-1),
-                            ),
-                            FieldIconButton(
-                              key: const ValueKey('super_numeric_increment'),
-                              icon: SffIcons.plus,
-                              tooltip: l10n.increment,
-                              bordered: true,
-                              size: controlHeight,
-                              border: Border.all(color: Colors.transparent),
-                              borderRadius: BorderRadius.zero,
-                              iconSize: 14,
-                              onPressed: widget.readOnly
-                                  ? null
-                                  : () => _controller.bump(1),
-                            ),
-                          ],
+                        FieldIconButton(
+                          key: const ValueKey('super_numeric_decrement'),
+                          icon: SffIcons.minus,
+                          tooltip: l10n.decrement,
+                          // The field owns the outline. Step actions are
+                          // intentionally borderless in 1.14.1.
+                          bordered: false,
+                          size: controlHeight,
+                          iconSize: 14,
+                          onPressed: widget.readOnly
+                              ? null
+                              : () => _controller.bump(-1),
                         ),
-                        IgnorePointer(
-                          child: SizedBox(
-                            width: stepperBorderSide.width,
-                            height: controlHeight,
-                            child: ColoredBox(color: stepperBorderSide.color),
-                          ),
+                        const SizedBox(width: 2),
+                        FieldIconButton(
+                          key: const ValueKey('super_numeric_increment'),
+                          icon: SffIcons.plus,
+                          tooltip: l10n.increment,
+                          bordered: false,
+                          size: controlHeight,
+                          iconSize: 14,
+                          onPressed: widget.readOnly
+                              ? null
+                              : () => _controller.bump(1),
                         ),
                       ],
                     ),
@@ -407,8 +386,7 @@ class _SuperNumericFormFieldState extends State<SuperNumericFormField> {
                 error: error,
                 disabled: widget.disabled,
                 density: widget.density,
-                flushTrailing:
-                    widget.stepper && !widget.disabled && error == null,
+                flushTrailing: false,
                 showErrorBadge:
                     validationPosition == ValidationPosition.suffixIcon,
                 leading: SffDecoration.buildLeading(

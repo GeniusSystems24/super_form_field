@@ -266,7 +266,11 @@ class _SuperPopupMenuButtonState<T> extends State<SuperPopupMenuButton<T>> {
           arabic: widget.arabic,
           onSelected: _select,
         ),
-        child: _buildTrigger(context),
+        child: ExcludeFocusTraversal(
+          // The outer Focus is the popup's single traversal destination.
+          // The IconButton/custom trigger remains clickable.
+          child: _buildTrigger(context),
+        ),
       ),
     );
 

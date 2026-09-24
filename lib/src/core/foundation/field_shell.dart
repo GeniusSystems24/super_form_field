@@ -120,7 +120,13 @@ class FormFieldShell extends StatelessWidget {
               children: [
                 if (labelWidget != null) Expanded(child: labelWidget),
                 if (labelWidget == null) const Spacer(),
-                if (effectiveRight != null) effectiveRight,
+                if (effectiveRight != null)
+                  ExcludeFocusTraversal(
+                    // Field-shell chrome must not become an extra Tab stop.
+                    // It stays pointer-interactive, matching
+                    // SuperAutoSuggestionsBox.
+                    child: effectiveRight,
+                  ),
               ],
             ),
           ),

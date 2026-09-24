@@ -72,6 +72,8 @@ class FieldBox extends StatelessWidget {
     final t = context.sffTheme;
     final cs = context.sffColorScheme;
     final hasError = error != null;
+    // These are the same 36px compact / 42px comfortable field metrics used
+    // by SuperAutoSuggestionsBox through the shared SuperThemeData sizing.
     final h = density == FieldDensity.compact
         ? superTheme.sizing.fieldCompact
         : superTheme.sizing.fieldComfortable;
@@ -80,7 +82,7 @@ class FieldBox extends StatelessWidget {
         ? cs.error
         : focused
         ? cs.primary
-        : t.borderStrong;
+        : t.border;
 
     final bgColor = disabled
         ? Colors.transparent
@@ -132,23 +134,25 @@ class FieldBox extends StatelessWidget {
           child: Row(
             children: [
               if (leading != null) ...[
-                IconTheme.merge(
-                  data: IconThemeData(
-                    size: 16,
-                    color: focused ? cs.primary : t.fg4,
+                ExcludeFocusTraversal(
+                  child: IconTheme.merge(
+                    data: IconThemeData(
+                      size: 16,
+                      color: focused ? cs.primary : t.fg4,
+                    ),
+                    child: leading!,
                   ),
-                  child: leading!,
                 ),
                 SizedBox(width: superTheme.spacing.space2),
               ],
               Expanded(child: child),
               for (final w in trailing) ...[
                 SizedBox(width: superTheme.spacing.space1),
-                w,
+                ExcludeFocusTraversal(child: w),
               ],
               if (hasError && showErrorBadge) ...[
                 SizedBox(width: superTheme.spacing.space1),
-                ErrorBadge(error: error),
+                ExcludeFocusTraversal(child: ErrorBadge(error: error)),
               ],
             ],
           ),
